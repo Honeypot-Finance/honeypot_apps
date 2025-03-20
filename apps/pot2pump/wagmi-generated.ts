@@ -1820,7 +1820,7 @@ export const algebraFactoryAbi = [
 ] as const
 
 export const algebraFactoryAddress =
-  '0x7d53327D78EFD0b463bd8d7dc938C52402323b95' as const
+  '0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d' as const
 
 export const algebraFactoryConfig = {
   address: algebraFactoryAddress,
@@ -3230,7 +3230,7 @@ export const algebraPositionManagerAbi = [
 ] as const
 
 export const algebraPositionManagerAddress =
-  '0xBB203aADbE36C125028a54584f5d48C1764317D0' as const
+  '0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27' as const
 
 export const algebraPositionManagerConfig = {
   address: algebraPositionManagerAddress,
@@ -3344,7 +3344,7 @@ export const algebraQuoterAbi = [
 ] as const
 
 export const algebraQuoterAddress =
-  '0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73' as const
+  '0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545' as const
 
 export const algebraQuoterConfig = {
   address: algebraQuoterAddress,
@@ -3676,7 +3676,7 @@ export const algebraRouterAbi = [
 ] as const
 
 export const algebraRouterAddress =
-  '0xFff605964840a5511f595EB970011EcBffa46b39' as const
+  '0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69' as const
 
 export const algebraRouterConfig = {
   address: algebraRouterAddress,
@@ -4115,7 +4115,7 @@ export const algerbaQuoterV2Abi = [
 ] as const
 
 export const algerbaQuoterV2Address =
-  '0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2' as const
+  '0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C' as const
 
 export const algerbaQuoterV2Config = {
   address: algerbaQuoterV2Address,

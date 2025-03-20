@@ -1,6 +1,6 @@
 import { Token } from './contract/token';
 import { Chain } from 'viem/chains';
-import { berachain } from '@/lib/chain';
+import { berachainTestnet } from '@/lib/chain';
 import { ALGEBRA_POSITION_MANAGER } from '@/config/algebra/addresses';
 
 export class Network {
@@ -84,8 +84,8 @@ export class Network {
   }
 }
 
-export const berachainNetwork = new Network({
-  chain: berachain,
+export const berachainNetworkTestnet = new Network({
+  chain: berachainTestnet,
   officialFaucets: [
     {
       url: 'https://bartio.faucet.berachain.com',
@@ -118,21 +118,6 @@ export const berachainNetwork = new Network({
       symbol: 'Honey',
       address: '0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce'.toLowerCase(),
       amount: BigInt('20000000000000000000000'),
-    },
-    {
-      symbol: 'NECT',
-      address: '0x1cE0a25D13CE4d52071aE7e02Cf1F6606F4C79d3'.toLowerCase(),
-      amount: BigInt('20000000000000000000000'),
-    },
-    {
-      symbol: 'WGBERA',
-      address: '0xd77552d3849ab4d8c3b189a9582d0ba4c1f4f912'.toLowerCase(),
-      amount: BigInt('2000000000000000000000'),
-    },
-    {
-      symbol: 'HENLO',
-      address: '0xb2F776e9c1C926C4b2e54182Fac058dA9Af0B6A5'.toLowerCase(),
-      amount: BigInt('40000000000000000000000000'),
     },
   ],
   nativeFaucet: {
@@ -343,7 +328,7 @@ export const berachainNetwork = new Network({
   validatedMemeAddresses: [],
 });
 
-export const networks = [berachainNetwork];
+export const networks = [berachainNetworkTestnet];
 export const networksMap = networks.reduce((acc, network) => {
   acc[network.chainId] = network;
   return acc;

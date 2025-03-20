@@ -12,7 +12,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.11.9",
-    "@cryptoalgebra/sdk": "npm:@cryptoalgebra/wasabee-sdk@^1.0.0",
+    "@cryptoalgebra/sdk": "npm:@hongming-wang/algebra-sdk@^1.4.0",
     "@dynamic-labs/sdk-react-core": "^4.0.1",
     "@dynamic-labs/wagmi-connector": "^4.0.1",
     "@ethersproject/bytes": "^5.7.0",
