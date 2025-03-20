@@ -1,17 +1,17 @@
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Controller, set, useForm } from "react-hook-form";
-import { observer, useLocalObservable } from "mobx-react-lite";
-import { wallet } from "@/services/wallet";
-import launchpad from "@/services/launchpad";
-import { Button } from "@nextui-org/react";
-import { Button as FTOButton } from "@/components/button";
-import { NextLayoutPage } from "@/types/nextjs";
-import { RocketSvg } from "@/components/svg/Rocket";
-import { PeddingSvg } from "@/components/svg/Pedding";
-import { DreampadSvg } from "@/components/svg/Dreampad";
-import { now, getLocalTimeZone, fromDate } from "@internationalized/date";
-import { dayjs } from "@/lib/dayjs";
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { Controller, set, useForm } from 'react-hook-form';
+import { observer, useLocalObservable } from 'mobx-react-lite';
+import { wallet } from '@/services/wallet';
+import launchpad from '@/services/launchpad';
+import { Button } from '@nextui-org/react';
+import { Button as FTOButton } from '@/components/button';
+import { NextLayoutPage } from '@/types/nextjs';
+import { RocketSvg } from '@/components/svg/Rocket';
+import { PeddingSvg } from '@/components/svg/Pedding';
+import { DreampadSvg } from '@/components/svg/Dreampad';
+import { now, getLocalTimeZone, fromDate } from '@internationalized/date';
+import { dayjs } from '@/lib/dayjs';
 import {
   Accordion,
   AccordionItem,
@@ -22,29 +22,29 @@ import {
   DropdownMenu,
   DropdownTrigger,
   SelectItem,
-} from "@nextui-org/react";
-import { useRouter } from "next/router";
-import { Copy } from "@/components/Copy";
-import { BiSolidDownArrow } from "react-icons/bi";
-import { WarppedNextSelect } from "@/components/wrappedNextUI/Select/Select";
-import { WrappedNextDatePicker } from "@/components/wrappedNextUI/DatePicker/DatePicker";
-import { FaQuestionCircle } from "react-icons/fa";
-import { popmodal } from "@/services/popmodal";
-import store from "store2";
-import { cn } from "@/lib/tailwindcss";
-import { uploadFile, UploadImage } from "@/components/UploadImage/UploadImage";
-import BigNumber from "bignumber.js";
-import TokenLogo from "@/components/TokenLogo/TokenLogo";
-import { Token } from "@/services/contract/token";
-import { amountFormatted, formatAmount } from "@/lib/format";
-import { trpcClient } from "@/lib/trpc";
-import { Blob, File } from "buffer";
-import { base64ToFile } from "@/lib/blob/uploadProjectIcon";
+} from '@nextui-org/react';
+import { useRouter } from 'next/router';
+import { Copy } from '@/components/Copy';
+import { BiSolidDownArrow } from 'react-icons/bi';
+import { WarppedNextSelect } from '@/components/wrappedNextUI/Select/Select';
+import { WrappedNextDatePicker } from '@/components/wrappedNextUI/DatePicker/DatePicker';
+import { FaQuestionCircle } from 'react-icons/fa';
+import { popmodal } from '@/services/popmodal';
+import store from 'store2';
+import { cn } from '@/lib/tailwindcss';
+import { uploadFile, UploadImage } from '@/components/UploadImage/UploadImage';
+import BigNumber from 'bignumber.js';
+import TokenLogo from '@/components/TokenLogo/TokenLogo';
+import { Token } from '@/services/contract/token';
+import { amountFormatted, formatAmount } from '@/lib/format';
+import { trpcClient } from '@/lib/trpc';
+import { Blob, File } from 'buffer';
+import { base64ToFile } from '@/lib/blob/uploadProjectIcon';
 import AITokenGenerator, {
   TokenGeneratedSuccessValues,
-} from "@/components/AI/AITokenGenerator/AITokenGenerator";
-import { HoneyContainer } from "@/components/CardContianer";
-import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
+} from '@/components/AI/AITokenGenerator/AITokenGenerator';
+import { HoneyContainer } from '@/components/CardContianer';
+import { MemePairContract } from '@/services/contract/launches/pot2pump/memepair-contract';
 const positiveIntegerPattern = /^[1-9]\d*$/;
 
 type FormValues = {
@@ -65,9 +65,9 @@ type FormValues = {
 };
 
 const inputBaseClass =
-  "w-full bg-white rounded-[12px] md:rounded-[16px] px-3 md:px-4 py-2 md:py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-sm md:text-base font-medium h-[40px] md:h-[60px]";
+  'w-full bg-white rounded-[12px] md:rounded-[16px] px-3 md:px-4 py-2 md:py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-sm md:text-base font-medium h-[40px] md:h-[60px]';
 
-const labelBaseClass = "text-black text-sm md:text-base font-medium";
+const labelBaseClass = 'text-black text-sm md:text-base font-medium';
 
 const FTOLaunchModal: NextLayoutPage = observer(() => {
   const {
@@ -78,8 +78,8 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
   } = useForm<FormValues>();
   const router = useRouter();
   const state = useLocalObservable(() => ({
-    pairAddress: "",
-    launchedTokenAddress: "",
+    pairAddress: '',
+    launchedTokenAddress: '',
     setPairAddress(pairAddress: string) {
       this.pairAddress = pairAddress;
     },
@@ -107,7 +107,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
       const [pairAddress] = await launchpad.createLaunchProject.call({
         ...data,
         // @ts-ignore
-        launchType: "fto",
+        launchType: 'fto',
         raisingCycle: Math.floor(
           (data.raisingCycle.toDate(getLocalTimeZone()).getTime() -
             Date.now()) /
@@ -168,7 +168,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
               {wallet.account && (
                 <input
                   type="text"
-                  {...register("provider")}
+                  {...register('provider')}
                   defaultValue={wallet.account}
                   className="outline-none w-full sm:w-[522px] lg:w-[800px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
                 />
@@ -181,7 +181,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
               </label>
               <input
                 type="text"
-                {...register("tokenName", { required: true })}
+                {...register('tokenName', { required: true })}
                 className={inputBaseClass}
               />
               {errors.tokenName && (
@@ -197,7 +197,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
               </label>
               <input
                 type="text"
-                {...register("tokenSymbol", { required: true })}
+                {...register('tokenSymbol', { required: true })}
                 className={inputBaseClass}
               />
               {errors.tokenSymbol && (
@@ -211,24 +211,24 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                 aria-label="advanced"
                 title="Advanced Options"
                 classNames={{
-                  title: "text-white/50 text-sm md:text-base",
+                  title: 'text-white/50 text-sm md:text-base',
                   trigger:
-                    "text-white/50 text-sm md:text-base h-[36px] md:h-[56px] flex items-center",
-                  content: "space-y-3",
+                    'text-white/50 text-sm md:text-base h-[36px] md:h-[56px] flex items-center',
+                  content: 'space-y-3',
                 }}
               >
                 <div className="flex flex-col gap-4">
                   <label className="text-sm md:text-base font-medium">
-                    Token Amount{" "}
+                    Token Amount{' '}
                     <span className="text-red-500 text-[10px]">*</span>
                   </label>
                   <input
                     type="text"
-                    {...register("tokenAmount", {
-                      required: "Token Amount is required",
+                    {...register('tokenAmount', {
+                      required: 'Token Amount is required',
                       pattern: {
                         value: positiveIntegerPattern,
-                        message: "Token Amount should be a positive integer",
+                        message: 'Token Amount should be a positive integer',
                       },
                       value: 1_000_000,
                     })}
@@ -249,7 +249,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                       defaultValue={wallet.currentChain?.contracts?.routerV2}
                       value={wallet.currentChain?.contracts?.routerV2}
                       type="text"
-                      {...register("poolHandler", {})}
+                      {...register('poolHandler', {})}
                       className="outline-none w-full h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
                     />
                   )}
@@ -261,7 +261,7 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                     control={control}
                     name="raisingCycle"
                     defaultValue={fromDate(
-                      dayjs().add(48, "hour").toDate(),
+                      dayjs().add(48, 'hour').toDate(),
                       getLocalTimeZone()
                     )}
                     render={({ field: { onChange, onBlur, value, ref } }) => {
@@ -280,14 +280,14 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                   ></Controller>
                   {errors.raisingCycle && (
                     <span className="text-red-500">
-                      {"Please select an end date"}
+                      {'Please select an end date'}
                     </span>
                   )}
                 </div>
 
                 <div className="flex flex-col gap-4 pb-4">
-                  <label className={cn(labelBaseClass, "text-white")}>
-                    Raised Token{" "}
+                  <label className={cn(labelBaseClass, 'text-white')}>
+                    Raised Token{' '}
                     <span className="text-red-500 text-[10px]">*</span>
                   </label>
                   {wallet.currentChain?.contracts.ftoTokens && (
@@ -296,12 +296,12 @@ const FTOLaunchModal: NextLayoutPage = observer(() => {
                       selectionMode="single"
                       classNames={{
                         trigger:
-                          "bg-[#2F200B] data-[hover=true]:bg-[#2F200B] text-white h-[40px] md:h-[60px] rounded-[12px] md:rounded-[16px]",
-                        value: "text-white",
-                        base: "w-full",
+                          'bg-[#2F200B] data-[hover=true]:bg-[#2F200B] text-white h-[40px] md:h-[60px] rounded-[12px] md:rounded-[16px]',
+                        value: 'text-white',
+                        base: 'w-full',
                       }}
-                      defaultSelectedKeys={"all"}
-                      {...register("raisedToken", {
+                      defaultSelectedKeys={'all'}
+                      {...register('raisedToken', {
                         required: true,
                         value: wallet.currentChain?.contracts.ftoTokens[0]
                           .address as string,
@@ -363,7 +363,7 @@ const MemePadInstruction = () => {
   const InstructionMarker = ({ className }: { className?: string }) => (
     <div
       className={cn(
-        "w-9 h-9 bg-[#271A0C] rounded-[50%] flex justify-center items-center",
+        'w-9 h-9 bg-[#271A0C] rounded-[50%] flex justify-center items-center',
         className
       )}
     >
@@ -374,22 +374,22 @@ const MemePadInstruction = () => {
   );
   const steps = [
     {
-      content: "Pick a coin that you like 💖",
+      content: 'Pick a coin that you like 💖',
     },
     {
       content:
-        "Deposit your coin to create your LP position in the AMM pool 💸",
+        'Deposit your coin to create your LP position in the AMM pool 💸',
     },
     {
-      content: "Withdraw anytime with no gains or losses🚪",
-    },
-    {
-      content:
-        "Once $20k market cap is reached, Liquidity is locked & burned on HenloDEX 🔥 + distrubute deployer rewards!",
+      content: 'Withdraw anytime with no gains or losses🚪',
     },
     {
       content:
-        "claim your LP position and earn txn fee, BGT, and other protocol interest",
+        'Once $20k market cap is reached, Liquidity is locked & burned on HenloDEX 🔥 + distrubute deployer rewards!',
+    },
+    {
+      content:
+        'claim your LP position and earn txn fee, BGT, and other protocol interest',
     },
   ];
   return (
@@ -411,10 +411,7 @@ const MemePadInstruction = () => {
           "
         >
           {steps.map((step, idx) => (
-            <li
-              key={idx}
-              className="flex relative"
-            >
+            <li key={idx} className="flex relative">
               <div className="flex flex-col items-center ">
                 {idx !== 0 && (
                   <div className="w-[1px] flex-1 bg-[#FFCD4D]"></div>
@@ -426,12 +423,12 @@ const MemePadInstruction = () => {
               </div>
               <div
                 className={cn(
-                  "bg-[#3e2a0f]   px-5 py-2 ml-8 rounded-[2rem] relative overflow-visible",
+                  'bg-[#3e2a0f]   px-5 py-2 ml-8 rounded-[2rem] relative overflow-visible',
                   idx !== 0 && idx !== steps.length - 1
-                    ? "my-2"
+                    ? 'my-2'
                     : idx === 0
-                      ? "mb-2"
-                      : "mt-2"
+                    ? 'mb-2'
+                    : 'mt-2'
                 )}
               >
                 {step.content}
@@ -444,7 +441,7 @@ const MemePadInstruction = () => {
         className="w-full mt-4"
         onClick={() => {
           popmodal.closeModal();
-          store.set("pot2pump_notice_read", true);
+          store.set('pot2pump_notice_read', true);
         }}
       >
         I&apos;m ready to pump
@@ -462,17 +459,17 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
     setValue,
   } = useForm<FormValues>({
     defaultValues: {
-      logoUrl: "/images/empty-logo.png",
+      logoUrl: '/images/empty-logo.png',
     },
   });
   const router = useRouter();
   const state = useLocalObservable(() => ({
-    pairAddress: "",
-    launchedTokenAddress: "",
+    pairAddress: '',
+    launchedTokenAddress: '',
     setPairAddress(pairAddress: string) {
       this.pairAddress = pairAddress;
     },
-    raisedTokenAddress: "",
+    raisedTokenAddress: '',
     raisedTokenAmount: BigInt(0),
     setRaisedTokenAddress(raisedTokenAddress: string) {
       this.raisedTokenAddress = raisedTokenAddress;
@@ -492,7 +489,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
         ...data,
         raisedToken: state.raisedTokenAddress,
         tokenAmount: state.raisedTokenAmount,
-        launchType: "meme",
+        launchType: 'meme',
         raisingCycle: dayjs().unix(),
       });
 
@@ -511,7 +508,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
   };
 
   useEffect(() => {
-    const notice_read = store.get("pot2pump_notice_read");
+    const notice_read = store.get('pot2pump_notice_read');
     if (!notice_read) {
       openInstructionModal();
     }
@@ -520,7 +517,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
   useEffect(() => {
     if (wallet.isInit) {
       state.setRaisedTokenAddress(
-        wallet.currentChain.raisedTokenData[1].address
+        wallet.currentChain.raisedTokenData[0].address
       );
     }
   }, [wallet.isInit]);
@@ -533,16 +530,16 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
 
   const tokenGeneratedCallback = (tokenInfo: TokenGeneratedSuccessValues) => {
     if (tokenInfo.image) {
-      setValue("logoUrl", tokenInfo.image);
+      setValue('logoUrl', tokenInfo.image);
     }
     if (tokenInfo.name) {
-      setValue("tokenName", tokenInfo.name);
+      setValue('tokenName', tokenInfo.name);
     }
     if (tokenInfo.description) {
-      setValue("description", tokenInfo.description);
+      setValue('description', tokenInfo.description);
     }
     if (tokenInfo.symbol) {
-      setValue("tokenSymbol", tokenInfo.symbol);
+      setValue('tokenSymbol', tokenInfo.symbol);
     }
   };
 
@@ -553,7 +550,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
           <DreampadSvg />
           <span className="text-black text-base md:text-xl font-bold text-center">
             Pot2Pump
-          </span>{" "}
+          </span>{' '}
           <FaQuestionCircle
             onClick={() => openInstructionModal()}
             className="cursor-pointer hover:scale-150 transition-all text-black"
@@ -568,7 +565,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
             <Controller
               control={control}
               name="logoUrl"
-              rules={{ required: "Token Logo is required" }}
+              rules={{ required: 'Token Logo is required' }}
               render={({ field: { onChange, value } }) => (
                 <UploadImage
                   onUpload={onChange}
@@ -578,7 +575,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
               )}
             />
             <div className="text-black opacity-50 text-center text-sm">
-              Click icon to upload new token icon{" "}
+              Click icon to upload new token icon{' '}
               <span className="text-red-500">*</span>
             </div>
             {errors.logoUrl && (
@@ -593,7 +590,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
             {wallet.account && (
               <input
                 type="text"
-                {...register("provider")}
+                {...register('provider')}
                 defaultValue={wallet.account}
                 className="outline-none w-full sm:w-[522px] lg:w-[800px] h-[60px] bg-[#2F200B] pl-3 pr-4 py-3 rounded-2xl cursor-not-allowed"
               />
@@ -606,7 +603,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
             </label>
             <input
               type="text"
-              {...register("tokenName", { required: true })}
+              {...register('tokenName', { required: true })}
               className={inputBaseClass}
               placeholder="Enter token name"
             />
@@ -623,7 +620,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
             </label>
             <input
               type="text"
-              {...register("tokenSymbol", { required: true })}
+              {...register('tokenSymbol', { required: true })}
               className={inputBaseClass}
               placeholder="Enter token symbol"
             />
@@ -647,9 +644,9 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                 items={wallet.currentChain?.raisedTokenData}
                 selectorIcon={<></>}
                 onSelectionChange={(value) => {
-                  state.setRaisedTokenAddress(value.currentKey ?? "");
+                  state.setRaisedTokenAddress(value.currentKey ?? '');
                 }}
-                {...register("raisedToken")}
+                {...register('raisedToken')}
               >
                 {wallet.currentChain?.raisedTokenData.map((token) => (
                   <SelectItem
@@ -670,7 +667,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                         .div(10 ** 18)
                         .toString(),
                       {
-                        prefix: "",
+                        prefix: '',
                         decimals: 0,
                         fixed: 3,
                         symbol: ` ${token.symbol}`,
@@ -683,30 +680,27 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
           )}
 
           <div className="custom-dashed-less-round">
-            <Accordion
-              variant="bordered"
-              title="Advanced Options"
-            >
+            <Accordion variant="bordered" title="Advanced Options">
               <AccordionItem
                 key="advanced"
                 aria-label="advanced"
                 title="Advanced Options"
                 classNames={{
-                  title: "text-black font-bold text-sm md:text-base",
+                  title: 'text-black font-bold text-sm md:text-base',
                   trigger:
-                    "text-white/50 text-sm md:text-base h-[36px] md:h-[56px] flex items-center",
-                  content: "space-y-3",
-                  base: "border-none",
+                    'text-white/50 text-sm md:text-base h-[36px] md:h-[56px] flex items-center',
+                  content: 'space-y-3',
+                  base: 'border-none',
                 }}
               >
                 <div className="flex flex-col gap-2">
                   <label className={labelBaseClass}>
-                    Description{" "}
+                    Description{' '}
                     <span className="text-black/50">(Optional)</span>
                   </label>
                   <input
                     type="text"
-                    {...register("description")}
+                    {...register('description')}
                     className={inputBaseClass}
                     placeholder="Enter description"
                   />
@@ -718,7 +712,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                   </label>
                   <input
                     type="text"
-                    {...register("twitter")}
+                    {...register('twitter')}
                     className={inputBaseClass}
                     placeholder="Enter Twitter URL"
                   />
@@ -730,7 +724,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                   </label>
                   <input
                     type="text"
-                    {...register("website")}
+                    {...register('website')}
                     className={inputBaseClass}
                     placeholder="Enter website URL"
                   />
@@ -742,7 +736,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                   </label>
                   <input
                     type="text"
-                    {...register("telegram")}
+                    {...register('telegram')}
                     className={inputBaseClass}
                     placeholder="Enter Telegram URL"
                   />
@@ -782,21 +776,21 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
   );
 });
 
-export type LaunchType = "fto" | "meme";
+export type LaunchType = 'fto' | 'meme';
 
 const LaunchTokenPage: NextLayoutPage = observer(() => {
   const router = useRouter();
   const { launchType } = router.query || {};
-  const [selectedLaunch, setSelectedLaunch] = useState<LaunchType>("fto");
+  const [selectedLaunch, setSelectedLaunch] = useState<LaunchType>('fto');
 
   const launchs = [
     {
-      key: "fto",
-      label: "FTO Launch",
+      key: 'fto',
+      label: 'FTO Launch',
     },
     {
-      key: "meme",
-      label: "Pot2pump launch",
+      key: 'meme',
+      label: 'Pot2pump launch',
     },
   ];
 
@@ -849,7 +843,7 @@ const LaunchTokenPage: NextLayoutPage = observer(() => {
           </DropdownMenu>
         </Dropdown> */}
         <div className="flex items-center justify-center mt-4 md:mt-8">
-          {selectedLaunch === "fto" ? <FTOLaunchModal /> : <MEMELaunchModal />}
+          {selectedLaunch === 'fto' ? <FTOLaunchModal /> : <MEMELaunchModal />}
         </div>
       </div>
     </div>

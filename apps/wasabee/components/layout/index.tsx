@@ -1,25 +1,25 @@
 /* eslint-disable @next/next/no-before-interactive-script-outside-document */
-import { useEffect, useState } from "react";
-import { Header } from "./header/v3";
-import { useRouter } from "next/router";
-import { useAccount } from "wagmi";
-import { networksMap } from "@/services/chain";
-import { cn } from "@/lib/tailwindcss";
-import NotConnetctedDisplay from "../NotConnetctedDisplay/NotConnetctedDisplay";
-import ConfettiComponent from "../atoms/Confetti/Confetti";
-import PopOverModal from "../PopOverModal/PopOverModal";
-import { trpcClient } from "@/lib/trpc";
-import { popmodal } from "@/services/popmodal";
-import { metadata } from "@/config/metadata";
-import AnnouncementBar from "./AnnouncementBar";
-import Link from "next/link";
-import ChatWidget from "../ServiceChat";
-import Script from "next/script";
-import { Footer } from "./footer";
-import { chatService, presetQuestions, questionTitles } from "@/services/chat";
-import _ from "lodash";
-import { InvitationCodeModal } from "../InvitationCodeModal/InvitationCodeModal";
-import { wallet } from "@/services/wallet";
+import { useEffect, useState } from 'react';
+import { Header } from './header/v3';
+import { useRouter } from 'next/router';
+import { useAccount } from 'wagmi';
+import { networksMap } from '@/services/chain';
+import { cn } from '@/lib/tailwindcss';
+import NotConnetctedDisplay from '../NotConnetctedDisplay/NotConnetctedDisplay';
+import ConfettiComponent from '../atoms/Confetti/Confetti';
+import PopOverModal from '../PopOverModal/PopOverModal';
+import { trpcClient } from '@/lib/trpc';
+import { popmodal } from '@/services/popmodal';
+import { metadata } from '@/config/metadata';
+import AnnouncementBar from './AnnouncementBar';
+import Link from 'next/link';
+import ChatWidget from '../ServiceChat';
+import Script from 'next/script';
+import { Footer } from './footer';
+import { chatService, presetQuestions, questionTitles } from '@/services/chat';
+import _ from 'lodash';
+import { InvitationCodeModal } from '../InvitationCodeModal/InvitationCodeModal';
+import { wallet } from '@/services/wallet';
 
 export const Layout = ({
   children,
@@ -43,42 +43,42 @@ export const Layout = ({
       chatService.agentMessage(
         chatService.getPresetQuestions()[questions[0] as questionTitles].answer
       );
-      window.localStorage.setItem(`pageVisited`, "true");
+      window.localStorage.setItem(`pageVisited`, 'true');
     }
   }, [router.pathname]);
 
-  useEffect(() => {
-    trpcClient.metadata.getServerMetadata.query().then((res) => {
-      if (
-        res.latest_version === metadata.version ||
-        process.env.NODE_ENV === "development"
-      )
-        return;
-      popmodal.openModal({
-        content: (
-          <div className="min-h-[300px] line-[24px]">
-            <div className="text-center  font-bold text-[30px]">
-              Announcement
-            </div>
-            <h1 className="mt-[24px]">
-              This version is outdated, please check our newest link:&nbsp;{" "}
-              <a
-                className="hover:text-orange-500 transition-all underline"
-                href={res.latest_site}
-              >
-                {res.latest_site}.
-              </a>
-            </h1>
-            <p>
-              Pls have fun with brand new features with pot2pump meme launch. we
-              will not update and maintain this version anymore so feel free to
-              migrate your assets to our new version
-            </p>
-          </div>
-        ),
-      });
-    });
-  }, []);
+  // useEffect(() => {
+  //   trpcClient.metadata.getServerMetadata.query().then((res) => {
+  //     if (
+  //       res.latest_version === metadata.version ||
+  //       process.env.NODE_ENV === "development"
+  //     )
+  //       return;
+  //     popmodal.openModal({
+  //       content: (
+  //         <div className="min-h-[300px] line-[24px]">
+  //           <div className="text-center  font-bold text-[30px]">
+  //             Announcement
+  //           </div>
+  //           <h1 className="mt-[24px]">
+  //             This version is outdated, please check our newest link:&nbsp;{" "}
+  //             <a
+  //               className="hover:text-orange-500 transition-all underline"
+  //               href={res.latest_site}
+  //             >
+  //               {res.latest_site}.
+  //             </a>
+  //           </h1>
+  //           <p>
+  //             Pls have fun with brand new features with pot2pump meme launch. we
+  //             will not update and maintain this version anymore so feel free to
+  //             migrate your assets to our new version
+  //           </p>
+  //         </div>
+  //       ),
+  //     });
+  //   });
+  // }, []);
 
   // useEffect(() => {
   //   const inviteCode = localStorage.getItem("inviteCode");
@@ -89,10 +89,10 @@ export const Layout = ({
 
   const handleInviteCodeSubmit = async (code: string) => {
     try {
-      const response = await fetch("/api/verify-invitation-code", {
-        method: "POST",
+      const response = await fetch('/api/verify-invitation-code', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ code }),
       });
@@ -100,13 +100,13 @@ export const Layout = ({
       const data = await response.json();
 
       if (data.success) {
-        localStorage.setItem("inviteCode", code);
+        localStorage.setItem('inviteCode', code);
         setShowInviteModal(false);
       } else {
-        throw new Error(data.message || "Invalid invitation code");
+        throw new Error(data.message || 'Invalid invitation code');
       }
     } catch (error) {
-      throw new Error("Invalid invitation code");
+      throw new Error('Invalid invitation code');
     }
   };
 
@@ -148,10 +148,7 @@ export const Layout = ({
         strategy="beforeInteractive"
       />
 
-      <AnnouncementBar
-        slogans={slogans}
-        interval={5000}
-      />
+      <AnnouncementBar slogans={slogans} interval={5000} />
       {/* <GuideModal /> */}
       <ChatWidget />
 
@@ -180,8 +177,8 @@ export const Layout = ({
           <div className="text-center">
             <p className="text-lg">
               {showInviteModal
-                ? "Please enter invitation code to continue"
-                : "Coming soon check back later"}
+                ? 'Please enter invitation code to continue'
+                : 'Coming soon check back later'}
             </p>
           </div>
         </div>
