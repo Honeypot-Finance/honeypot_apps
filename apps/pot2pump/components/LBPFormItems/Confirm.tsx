@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { useFormContext } from "react-hook-form";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { ERC20ABI } from "@/lib/abis/erc20";
+import React, { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { useAccount, useReadContract, useWriteContract } from 'wagmi';
+import { ERC20ABI } from '@/lib/abis/erc20';
 import {
   decodeEventLog,
   formatUnits,
@@ -9,21 +9,21 @@ import {
   maxUint256,
   parseEther,
   parseUnits,
-} from "viem";
-import { LiquidityBootstrapPoolFactoryAddress } from "@/services/network";
-import { waitForTransactionReceipt } from "@wagmi/core";
-import { config } from "@/config/wagmi";
-import { WrappedToastify } from "@/lib/wrappedToastify";
-import { LiquidityBootstrapPoolFactoryABI } from "@/lib/abis/LiquidityBootstrapPoolFactory";
-import dayjs from "dayjs";
-import { useRouter } from "next/router";
-import useMulticall3 from "../hooks/useMulticall3";
-import { formatErc20Data } from "@/services/lib/helper";
-import { useMutation } from "@tanstack/react-query";
-import FjordHoneySdk, { TCreatePool } from "@/services/fjord_honeypot_sdk";
-import { berachainBartioTestnet } from "@/lib/chain";
-import { FormContainer } from "./Components";
-import { Button } from "@nextui-org/react";
+} from 'viem';
+import { LiquidityBootstrapPoolFactoryAddress } from '@/services/network';
+import { waitForTransactionReceipt } from '@wagmi/core';
+import { config } from '@/config/wagmi';
+import { WrappedToastify } from '@/lib/wrappedToastify';
+import { LiquidityBootstrapPoolFactoryABI } from '@/lib/abis/LiquidityBootstrapPoolFactory';
+import dayjs from 'dayjs';
+import { useRouter } from 'next/router';
+import useMulticall3 from '../hooks/useMulticall3';
+import { formatErc20Data } from '@/services/lib/helper';
+import { useMutation } from '@tanstack/react-query';
+import FjordHoneySdk, { TCreatePool } from '@/services/fjord_honeypot_sdk';
+import { berachainTestnet } from '@/lib/chain';
+import { FormContainer } from './Components';
+import { Button } from '@nextui-org/react';
 type FomatedTokenType = {
   allowance: bigint;
   balanceOf: bigint;
@@ -58,7 +58,7 @@ const ApprovalsCard = ({
   buttonTitle: string;
   onClick: () => void;
   isLoading: boolean;
-  status?: "idle" | "pending" | "success" | "error";
+  status?: 'idle' | 'pending' | 'success' | 'error';
   disabled?: boolean;
   isApproved: boolean;
 }) => {
@@ -68,8 +68,8 @@ const ApprovalsCard = ({
       style={{
         background:
           "url('/images/launch-project/subtract-sticky.png'), url('/images/launch-project/subtract-bg.png')",
-        backgroundSize: "300% 42px, cover",
-        backgroundRepeat: "no-repeat, no-repeat",
+        backgroundSize: '300% 42px, cover',
+        backgroundRepeat: 'no-repeat, no-repeat',
       }}
     >
       <div className="absolute top-0 left-4">
@@ -79,15 +79,19 @@ const ApprovalsCard = ({
         </p>
       </div>
 
-      <div className='absolute top-0 left-0 right-0 flex justify-center'>
-        <img src="/images/launch-project/token-bg.svg" alt="token-bg" className="" />
-        <div className='w-[40px] h-[40px] border border-black rounded-full bg-[#C4C4C4] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'></div>
+      <div className="absolute top-0 left-0 right-0 flex justify-center">
+        <img
+          src="/images/launch-project/token-bg.svg"
+          alt="token-bg"
+          className=""
+        />
+        <div className="w-[40px] h-[40px] border border-black rounded-full bg-[#C4C4C4] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
         {/* {title} */}
       </div>
-      <div className='w-full h-full flex flex-col justify-end relative z-50'>
-        <p className='text-sm text-[#33250F] mb-2 text-center'>{title}</p>
+      <div className="w-full h-full flex flex-col justify-end relative z-50">
+        <p className="text-sm text-[#33250F] mb-2 text-center">{title}</p>
         <div className="w-full h-[6px] bg-[#211708] rounded-[32px] mb-4" />
-        {isApproved && title == "Approve" ? (
+        {isApproved && title == 'Approve' ? (
           <Button
             className="bg-white w-full min-h-8 h-8 border border-black text-[10px] text-[#211708]"
             isDisabled={true}
@@ -101,7 +105,7 @@ const ApprovalsCard = ({
             isDisabled={isLoading || disabled}
             onClick={onClick}
           >
-            {!isLoading ? buttonTitle : "Loading..."}
+            {!isLoading ? buttonTitle : 'Loading...'}
           </Button>
         )}
       </div>
@@ -116,10 +120,10 @@ const Confirm = (props: Props) => {
   const { writeContractAsync } = useWriteContract();
   const [approvalTokenStatus, setApprovalTokenStatus] = useState<{
     loading: boolean;
-    status: "idle" | "pending" | "success" | "error";
+    status: 'idle' | 'pending' | 'success' | 'error';
   }>({
     loading: false,
-    status: "idle",
+    status: 'idle',
   });
   const [createPoolLoading, setPoolLoading] = useState(false);
   const router = useRouter();
@@ -135,7 +139,6 @@ const Confirm = (props: Props) => {
     assetTokenQuantity,
   } = getValues();
 
-
   const { mutateAsync: createPoolAsync } = useMutation({
     mutationFn: async (data: TCreatePool) => FjordHoneySdk.createPool(data),
   });
@@ -143,7 +146,7 @@ const Confirm = (props: Props) => {
   const { data } = useReadContract({
     abi: LiquidityBootstrapPoolFactoryABI,
     address: LiquidityBootstrapPoolFactoryAddress,
-    functionName: "factorySettings",
+    functionName: 'factorySettings',
   });
 
   const {
@@ -156,34 +159,34 @@ const Confirm = (props: Props) => {
       {
         abi: ERC20ABI as any,
         contractAddress: assetTokenAddress,
-        reference: "assetToken",
+        reference: 'assetToken',
         calls: [
           {
-            methodName: "balanceOf",
-            reference: "balanceOf",
+            methodName: 'balanceOf',
+            reference: 'balanceOf',
             methodParameters: [account?.address],
           },
           {
-            methodName: "allowance",
-            reference: "allowance",
+            methodName: 'allowance',
+            reference: 'allowance',
             methodParameters: [
               account?.address,
               LiquidityBootstrapPoolFactoryAddress,
             ],
           },
           {
-            methodName: "decimals",
-            reference: "decimals",
+            methodName: 'decimals',
+            reference: 'decimals',
             methodParameters: [],
           },
           {
-            methodName: "name",
-            reference: "name",
+            methodName: 'name',
+            reference: 'name',
             methodParameters: [],
           },
           {
-            methodName: "symbol",
-            reference: "symbol",
+            methodName: 'symbol',
+            reference: 'symbol',
             methodParameters: [],
           },
         ],
@@ -191,34 +194,34 @@ const Confirm = (props: Props) => {
       {
         abi: ERC20ABI as any,
         contractAddress: projectToken,
-        reference: "projectToken",
+        reference: 'projectToken',
         calls: [
           {
-            methodName: "balanceOf",
-            reference: "balanceOf",
+            methodName: 'balanceOf',
+            reference: 'balanceOf',
             methodParameters: [account?.address],
           },
           {
-            methodName: "allowance",
-            reference: "allowance",
+            methodName: 'allowance',
+            reference: 'allowance',
             methodParameters: [
               account?.address,
               LiquidityBootstrapPoolFactoryAddress,
             ],
           },
           {
-            methodName: "decimals",
-            reference: "decimals",
+            methodName: 'decimals',
+            reference: 'decimals',
             methodParameters: [],
           },
           {
-            methodName: "name",
-            reference: "name",
+            methodName: 'name',
+            reference: 'name',
             methodParameters: [],
           },
           {
-            methodName: "symbol",
-            reference: "symbol",
+            methodName: 'symbol',
+            reference: 'symbol',
             methodParameters: [],
           },
         ],
@@ -238,31 +241,31 @@ const Confirm = (props: Props) => {
 
   const SummaryItemData = [
     {
-      title: "Swap Fee",
+      title: 'Swap Fee',
       value: `${swapFee ? swapFee / 1000 : 0}%`,
     },
     {
-      title: "Platform Fee",
+      title: 'Platform Fee',
       value: `${platformFee ? platformFee / 1000 : 0}%`,
     },
     {
-      title: "Project Token Quantity",
+      title: 'Project Token Quantity',
       value: projectTokenQuantity,
     },
     {
-      title: "Collateral Token Quantity",
+      title: 'Collateral Token Quantity',
       value: customTotalSupplyType ? customTotalSupply : 0,
     },
     {
-      title: "Start Time",
-      value: dayjs(startTime).format("MM/DD/YYYY HH:mm"),
+      title: 'Start Time',
+      value: dayjs(startTime).format('MM/DD/YYYY HH:mm'),
     },
     {
-      title: "End Time",
-      value: dayjs(endTime).format("MM/DD/YYYY HH:mm"),
+      title: 'End Time',
+      value: dayjs(endTime).format('MM/DD/YYYY HH:mm'),
     },
     {
-      title: "Duration",
+      title: 'Duration',
       value: `${(
         (dayjs(endTime).unix() - dayjs(startTime).unix()) /
         86400
@@ -275,7 +278,7 @@ const Confirm = (props: Props) => {
       formatedAssetToken?.allowance || BigInt(0),
       formatedAssetToken?.decimals || 18
     ) -
-    assetTokenQuantity >=
+      assetTokenQuantity >=
     0;
 
   const isProjectTokenApproved =
@@ -283,7 +286,7 @@ const Confirm = (props: Props) => {
       formatedProjectToken?.allowance || BigInt(0),
       formatedProjectToken?.decimals || 18
     ) -
-    projectTokenQuantity >=
+      projectTokenQuantity >=
     0;
 
   const handleApprovalTokens = async () => {
@@ -292,13 +295,13 @@ const Confirm = (props: Props) => {
       setApprovalTokenStatus((prev) => ({
         ...prev,
         loading: true,
-        status: "pending",
+        status: 'pending',
       }));
       if (!isAssetTokenApproved) {
         const txHash1 = await writeContractAsync({
           abi: ERC20ABI,
           address: assetTokenAddress,
-          functionName: "approve",
+          functionName: 'approve',
           args: [LiquidityBootstrapPoolFactoryAddress, maxUint256],
         });
 
@@ -310,7 +313,7 @@ const Confirm = (props: Props) => {
         const txHash2 = await writeContractAsync({
           abi: ERC20ABI,
           address: projectToken,
-          functionName: "approve",
+          functionName: 'approve',
           args: [LiquidityBootstrapPoolFactoryAddress, maxUint256],
         });
 
@@ -318,12 +321,12 @@ const Confirm = (props: Props) => {
         await waitForTransactionReceipt(config, { hash: txHash2 });
       }
       await refetch();
-      setApprovalTokenStatus((prev) => ({ loading: false, status: "success" }));
+      setApprovalTokenStatus((prev) => ({ loading: false, status: 'success' }));
     } catch (error) {
       console.log(error);
-      setApprovalTokenStatus((prev) => ({ loading: false, status: "error" }));
+      setApprovalTokenStatus((prev) => ({ loading: false, status: 'error' }));
     }
-    WrappedToastify.success({ message: "Approved Token Successfully " });
+    WrappedToastify.success({ message: 'Approved Token Successfully ' });
   };
 
   const handleCreatePool = async () => {
@@ -347,7 +350,7 @@ const Confirm = (props: Props) => {
       lbpDescription,
       projectName,
     } = getValues();
-    const sellingAllowed = lbpType === "buy-sell";
+    const sellingAllowed = lbpType === 'buy-sell';
     if (account.address) {
       try {
         setPoolLoading(true);
@@ -357,14 +360,14 @@ const Confirm = (props: Props) => {
         const txHash = await writeContractAsync({
           abi: LiquidityBootstrapPoolFactoryABI,
           address: LiquidityBootstrapPoolFactoryAddress,
-          functionName: "createLiquidityBootstrapPool",
+          functionName: 'createLiquidityBootstrapPool',
           args: [
             {
               asset: assetTokenAddress,
               share: projectToken,
               creator: account.address,
               whitelistMerkleRoot:
-                "0x0000000000000000000000000000000000000000000000000000000000000000",
+                '0x0000000000000000000000000000000000000000000000000000000000000000',
               sellingAllowed: sellingAllowed,
               saleStart: dayjs(startTime).unix(),
               saleEnd: dayjs(endTime).unix(),
@@ -407,22 +410,22 @@ const Confirm = (props: Props) => {
               topics: log.topics,
             });
 
-            if (decode.eventName == "PoolCreated") {
+            if (decode.eventName == 'PoolCreated') {
               poolAddress = decode.args.pool;
             }
-          } catch (error) { }
+          } catch (error) {}
         });
         if (poolAddress) {
           await createPoolAsync({
             address: poolAddress,
             name: projectName,
             description: lbpDescription,
-            chainId: berachainBartioTestnet.id,
+            chainId: berachainTestnet.id,
             owner: account.address as string,
             endsAt: dayjs(endTime).toDate(),
             startsAt: dayjs(startTime).toDate(),
             swapCount: 0,
-            swapFee: "0.3",
+            swapFee: '0.3',
             swapEnabled: sellingAllowed,
             blockNumber: +res.blockNumber.toString(),
             sellingAllowed: sellingAllowed,
@@ -434,14 +437,14 @@ const Confirm = (props: Props) => {
             shareTokenSymbol: formatedProjectToken.symbol,
             txHash: txHash,
             assetTokenDecimals: formatedAssetToken.decimals,
-            assetsInitial: "",
+            assetsInitial: '',
             fundsRaised: 0,
-            lbpMarketcap: "",
-            liquidity: "",
+            lbpMarketcap: '',
+            liquidity: '',
             shareTokenDecimals: formatedProjectToken.decimals,
-            sharesInitial: "",
-            sharesReleased: "",
-            volume: "",
+            sharesInitial: '',
+            sharesReleased: '',
+            volume: '',
             weightStart: parseEther(`${startWeight / 100}`).toString(),
             weightEnd: parseEther(`${endWeight / 100}`).toString(),
             assetsCurrent: parseUnits(
@@ -464,7 +467,7 @@ const Confirm = (props: Props) => {
       } catch (error) {
         console.log(error);
         WrappedToastify.error({
-          message: "Something went wrong! Please try again",
+          message: 'Something went wrong! Please try again',
         });
       }
       setPoolLoading(false);
@@ -477,18 +480,20 @@ const Confirm = (props: Props) => {
       formatedAssetToken?.balanceOf || BigInt(0),
       formatedAssetToken?.decimals || 18
     ) -
-    assetTokenQuantity >=
-    0 &&
+      assetTokenQuantity >=
+      0 &&
     +formatUnits(
       formatedProjectToken?.balanceOf || BigInt(0),
       formatedProjectToken?.decimals || 18
     ) -
-    projectTokenQuantity >=
-    0;
+      projectTokenQuantity >=
+      0;
 
   return (
     <FormContainer>
-      <h3 className="text-[23px] md:text-2xl md:leading-[26px] font-semibold">Quick Summary</h3>
+      <h3 className="text-[23px] md:text-2xl md:leading-[26px] font-semibold">
+        Quick Summary
+      </h3>
       <div className="flex flex-col gap-9">
         <div className="mt-3 md:mt-6 flex flex-wrap justify-between px-3 py-5 md:p-6 border border-black rounded-2xl shadow-field gap-y-4">
           {SummaryItemData.map((d) => (
@@ -502,7 +507,7 @@ const Confirm = (props: Props) => {
           <div className="flex flex-col md:flex-row gap-3.5">
             <ApprovalsCard
               step={1}
-              title={"Approve"}
+              title={'Approve'}
               buttonTitle="Approve"
               onClick={handleApprovalTokens}
               isLoading={approvalTokenStatus.loading || tokensDataLoading}
@@ -518,9 +523,9 @@ const Confirm = (props: Props) => {
               isLoading={createPoolLoading}
               onClick={handleCreatePool}
               step={2}
-              title={"Schedule Sale "}
+              title={'Schedule Sale '}
               buttonTitle={
-                !isBothSufficientBalance ? "Insufficient balance" : "Approve"
+                !isBothSufficientBalance ? 'Insufficient balance' : 'Approve'
               }
               isApproved={isBothTokenApproved}
             />

@@ -1,38 +1,38 @@
-import { createCache, kv } from "@/lib/kv";
-import { publicProcedure, router } from "../trpc";
-import requestIp from "request-ip";
-import { TRPCError } from "@trpc/server";
-import dayjs from "dayjs";
-import { LRUCache } from "lru-cache";
-import { createPublicClientByChain } from "@/lib/client";
-import BigNumber from "bignumber.js";
+import { createCache, kv } from '@/lib/kv';
+import { publicProcedure, router } from '../trpc';
+import requestIp from 'request-ip';
+import { TRPCError } from '@trpc/server';
+import dayjs from 'dayjs';
+import { LRUCache } from 'lru-cache';
+import { createPublicClientByChain } from '@/lib/client';
+import BigNumber from 'bignumber.js';
 import {
   createWalletClient,
   defineChain,
   http,
   parseGwei,
   nonceManager,
-} from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { defichainEvm, mainnet } from "viem/chains";
-import { berachain } from "@/lib/chain";
-import { z } from "zod";
+} from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
+import { defichainEvm, mainnet } from 'viem/chains';
+import { berachainTestnet } from '@/lib/chain';
+import { z } from 'zod';
 
 const ethPublicClient = createPublicClientByChain({
   ...mainnet,
   rpcUrls: {
     default: {
       http: [
-        "https://cloudflare-eth.com",
-        "https://eth.llamarpc.com",
-        "https://rpc.ankr.com/eth",
-        "https://eth-pokt.nodies.app",
-        "ttps://eth-mainnet.public.blastapi.io",
+        'https://cloudflare-eth.com',
+        'https://eth.llamarpc.com',
+        'https://rpc.ankr.com/eth',
+        'https://eth-pokt.nodies.app',
+        'ttps://eth-mainnet.public.blastapi.io',
       ],
     },
   },
 });
-const beraPublicClient = createPublicClientByChain(berachain);
+const beraPublicClient = createPublicClientByChain(berachainTestnet);
 const account = privateKeyToAccount(
   process.env.FAUCET_PRIVATE_KEY! as `0x${string}`,
   {
@@ -42,11 +42,11 @@ const account = privateKeyToAccount(
 
 const walletClient = createWalletClient({
   account,
-  chain: berachain,
+  chain: berachainTestnet,
   transport: http(),
 });
 
-const ipCache = createCache("ip");
+const ipCache = createCache('ip');
 const requestStatus = {} as Record<string, boolean>;
 const interval = 1000 * 60 * 60 * 24;
 const faucetAmount = 0.05;
@@ -88,14 +88,14 @@ export const tokenRouter = router({
 
       if (!ip) {
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid IP",
+          code: 'BAD_REQUEST',
+          message: 'Invalid IP',
         });
       }
       if (requestStatus[JSON.stringify(ip!)] === true) {
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Please wait for the last request to finish",
+          code: 'BAD_REQUEST',
+          message: 'Please wait for the last request to finish',
         });
       }
       requestStatus[JSON.stringify(ip!)] = true;
@@ -110,7 +110,7 @@ export const tokenRouter = router({
       if (ipCacheValue?.claimableUntil) {
         requestStatus[JSON.stringify(ip!)] = false;
         throw new TRPCError({
-          code: "BAD_REQUEST",
+          code: 'BAD_REQUEST',
           message: `Your IP can claim after ${new Date(
             ipCacheValue.claimableUntil
           ).toLocaleString()}`,
@@ -118,7 +118,7 @@ export const tokenRouter = router({
       } else if (addressCacheValue?.claimableUntil) {
         requestStatus[JSON.stringify(ip!)] = false;
         throw new TRPCError({
-          code: "BAD_REQUEST",
+          code: 'BAD_REQUEST',
           message: `Your address can claim after ${new Date(
             addressCacheValue.claimableUntil
           ).toLocaleString()}`,
@@ -127,36 +127,36 @@ export const tokenRouter = router({
         const ethBalance = await ethPublicClient.getBalance({
           address: address as `0x${string}`,
         });
-        console.log("ethBalance", ethBalance.toString());
+        console.log('ethBalance', ethBalance.toString());
         if (new BigNumber(ethBalance.toString()).lt(0.01 * 10 ** 18)) {
           requestStatus[JSON.stringify(ip!)] = false;
           throw new TRPCError({
-            code: "BAD_REQUEST",
+            code: 'BAD_REQUEST',
             message:
-              "Please make sure your account has at least 0.01ETH to claim",
+              'Please make sure your account has at least 0.01ETH to claim',
           });
         }
         let sendRes: any;
-        let hash = "";
+        let hash = '';
         try {
           hash = await walletClient.sendTransaction({
             to: address as `0x${string}`,
             value: BigInt(faucetAmount * 10 ** 18),
           });
-          console.log("hash", hash);
+          console.log('hash', hash);
           sendRes = await beraPublicClient.waitForTransactionReceipt({
             hash: hash as `0x${string}`,
           });
-          console.log("sendRes", sendRes);
+          console.log('sendRes', sendRes);
         } catch (error) {
           console.error(error);
           requestStatus[JSON.stringify(ip!)] = false;
           throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Claimed failed, Please try again later",
+            code: 'BAD_REQUEST',
+            message: 'Claimed failed, Please try again later',
           });
         }
-        if (sendRes.status === "success") {
+        if (sendRes.status === 'success') {
           await Promise.all([
             ipCache.set(
               JSON.stringify(ip!),
@@ -180,8 +180,8 @@ export const tokenRouter = router({
         } else {
           requestStatus[JSON.stringify(ip!)] = false;
           throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Claimed failed, Please try again later",
+            code: 'BAD_REQUEST',
+            message: 'Claimed failed, Please try again later',
           });
         }
 

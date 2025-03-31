@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   FormContainer,
   InputField,
   NumberField,
   SliderField,
-} from "./Components";
-import { Controller, useFormContext } from "react-hook-form";
+} from './Components';
+import { Controller, useFormContext } from 'react-hook-form';
 import {
   Modal,
   ModalBody,
@@ -17,15 +17,15 @@ import {
   Switch,
   Selection,
   Button,
-} from "@nextui-org/react";
-import SearchIcon from "../svg/SearchIcon";
-import { berachainNetwork } from "@/services/network";
-import Image from "next/image";
-import { useReadContract } from "wagmi";
-import { ERC20ABI } from "@/lib/abis/erc20";
-import { symbol } from "zod";
-import ArrowDownSvg from "../svg/ArrowDown";
-import CloseIcon from "../svg/CloseIcon";
+} from '@nextui-org/react';
+import SearchIcon from '../svg/SearchIcon';
+import { berachainNetworkTestnet } from '@/services/network';
+import Image from 'next/image';
+import { useReadContract } from 'wagmi';
+import { ERC20ABI } from '@/lib/abis/erc20';
+import { symbol } from 'zod';
+import ArrowDownSvg from '../svg/ArrowDown';
+import CloseIcon from '../svg/CloseIcon';
 
 type AssetTokenData = {
   tokenName: string;
@@ -38,7 +38,7 @@ const AssetTokenModal = ({
   projectTokenAddress: `0x${string}`;
 }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [searchValue, setSearchValue] = React.useState("");
+  const [searchValue, setSearchValue] = React.useState('');
 
   const {
     control,
@@ -47,10 +47,10 @@ const AssetTokenModal = ({
     watch,
   } = useFormContext();
 
-  const listToken = Object.keys(berachainNetwork.validatedTokensInfo)
+  const listToken = Object.keys(berachainNetworkTestnet.validatedTokensInfo)
     .map((address) => ({
       addr: address,
-      ...berachainNetwork.validatedTokensInfo[address],
+      ...berachainNetworkTestnet.validatedTokensInfo[address],
     }))
     .filter((item) => item.addr !== projectTokenAddress);
 
@@ -59,7 +59,7 @@ const AssetTokenModal = ({
   );
 
   const selectedToken = listToken.find(
-    (item) => item.symbol === watch("assetTokenType")
+    (item) => item.symbol === watch('assetTokenType')
   );
 
   const handleSelect = (value: Selection) => {
@@ -68,10 +68,10 @@ const AssetTokenModal = ({
       (item) => item.symbol === assetTokenType
     );
 
-    setValue("assetTokenType", assetTokenType);
-    setValue("assetTokenName", selectedToken?.name);
-    setValue("assetTokenLogo", selectedToken?.logoURI);
-    setValue("assetTokenAddress", selectedToken?.address);
+    setValue('assetTokenType', assetTokenType);
+    setValue('assetTokenName', selectedToken?.name);
+    setValue('assetTokenLogo', selectedToken?.logoURI);
+    setValue('assetTokenAddress', selectedToken?.address);
   };
 
   return (
@@ -97,7 +97,7 @@ const AssetTokenModal = ({
       </div>
       <Modal
         classNames={{
-          base: "!overflow-y-visible absolute top-0 px-4 shadow-none !mt-[170px]",
+          base: '!overflow-y-visible absolute top-0 px-4 shadow-none !mt-[170px]',
         }}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -126,8 +126,8 @@ const AssetTokenModal = ({
             style={{
               background:
                 "url('/images/launch-project/subtract-sticky.png'), url('/images/launch-project/subtract-bg.png')",
-              backgroundSize: "contain, cover",
-              backgroundRepeat: "no-repeat, no-repeat",
+              backgroundSize: 'contain, cover',
+              backgroundRepeat: 'no-repeat, no-repeat',
             }}
           >
             <div className="flex items-center justify-between pt-6 pb-4 border-b px-6 border-[#202020]">
@@ -149,8 +149,8 @@ const AssetTokenModal = ({
                 placeholder="Search"
                 startContent={<SearchIcon className="size-5 !text-[#202020]" />}
                 classNames={{
-                  input: "text-sm mt-1 leading-[16px]",
-                  inputWrapper: "h-[40px]",
+                  input: 'text-sm mt-1 leading-[16px]',
+                  inputWrapper: 'h-[40px]',
                 }}
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
@@ -171,7 +171,7 @@ const AssetTokenModal = ({
                     onSelectionChange={handleSelect}
                     className="bg-transparent rounded-md px-0"
                     classNames={{
-                      list: "gap-3",
+                      list: 'gap-3',
                     }}
                   >
                     {filteredList.map((token) => (
@@ -179,10 +179,10 @@ const AssetTokenModal = ({
                         key={token.symbol}
                         className="hover:bg-white/60"
                         classNames={{
-                          base: "select-item bg-white py-3 item-center data-[hover=true]:bg-white/80 data-[selectable=true]:focus:bg-white/80 data-[selectable=true]:text-[#202020] data-[selectable=true]:focus:text-[#202020] data-[selected=true]:border-b data-[selected=true]:border-[#2F302B] px-3 rounded-lg border border-black shadow-[1px_2px_0px_0px_#9B7D2F]",
-                          title: "text-base leading-[16px]",
+                          base: 'select-item bg-white py-3 item-center data-[hover=true]:bg-white/80 data-[selectable=true]:focus:bg-white/80 data-[selectable=true]:text-[#202020] data-[selectable=true]:focus:text-[#202020] data-[selected=true]:border-b data-[selected=true]:border-[#2F302B] px-3 rounded-lg border border-black shadow-[1px_2px_0px_0px_#9B7D2F]',
+                          title: 'text-base leading-[16px]',
                           selectedIcon:
-                            "block p-1 w-6 h-6 border-[0.5px] border-[#202020] shadow-[1.125px_1.125px_0px_0px_#000] rounded hidden",
+                            'block p-1 w-6 h-6 border-[0.5px] border-[#202020] shadow-[1.125px_1.125px_0px_0px_#000] rounded hidden',
                         }}
                         textValue={token.symbol}
                       >
@@ -217,17 +217,17 @@ const TokenomicsAndPreview = () => {
     watch,
   } = useFormContext();
 
-  const projectTokenLogo = getValues("projectTokenLogo");
-  const assetTokenName = getValues("assetTokenName");
-  const assetTokenLogo = getValues("assetTokenLogo");
-  const projectTokenAddress = getValues("projectToken");
-  const isCustomTotalSupply = watch("customTotalSupplyType");
+  const projectTokenLogo = getValues('projectTokenLogo');
+  const assetTokenName = getValues('assetTokenName');
+  const assetTokenLogo = getValues('assetTokenLogo');
+  const projectTokenAddress = getValues('projectToken');
+  const isCustomTotalSupply = watch('customTotalSupplyType');
   const [isFetchImageError, setIsFetchImageError] = useState(false);
 
   const { data: projectTokenName, isLoading } = useReadContract({
     abi: ERC20ABI,
-    address: getValues("projectToken"),
-    functionName: "name",
+    address: getValues('projectToken'),
+    functionName: 'name',
   });
 
   return (
@@ -260,7 +260,7 @@ const TokenomicsAndPreview = () => {
                       className="size-[24px] md:size-[32px] aspect-square rounded-full"
                       src={
                         isFetchImageError
-                          ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png"
+                          ? 'https://cdn-icons-png.flaticon.com/512/6681/6681925.png'
                           : projectTokenLogo
                       }
                       alt={projectTokenName}
@@ -278,7 +278,7 @@ const TokenomicsAndPreview = () => {
                   </div>
                 }
                 classNames={{
-                  input: "text-right flex-1",
+                  input: 'text-right flex-1',
                 }}
 
                 // description={
@@ -308,7 +308,7 @@ const TokenomicsAndPreview = () => {
                   <AssetTokenModal projectTokenAddress={projectTokenAddress} />
                 }
                 classNames={{
-                  input: "text-right flex-1",
+                  input: 'text-right flex-1',
                 }}
               />
             )}
@@ -332,8 +332,8 @@ const TokenomicsAndPreview = () => {
                   size="sm"
                   classNames={{
                     wrapper:
-                      "group-data-[selected=true]:bg-white border border-[#202020] bg-white",
-                    thumb: "bg-[#ECC94E]",
+                      'group-data-[selected=true]:bg-white border border-[#202020] bg-white',
+                    thumb: 'bg-[#ECC94E]',
                   }}
                   isSelected={field.value}
                   onValueChange={(isSelected) => field.onChange(isSelected)}
@@ -375,7 +375,7 @@ const TokenomicsAndPreview = () => {
                 firstTokenName={projectTokenName}
                 firstTokenIcon={
                   isFetchImageError
-                    ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png"
+                    ? 'https://cdn-icons-png.flaticon.com/512/6681/6681925.png'
                     : projectTokenLogo
                 }
                 secondTokenName={assetTokenName}
@@ -395,7 +395,7 @@ const TokenomicsAndPreview = () => {
                 firstTokenName={projectTokenName}
                 firstTokenIcon={
                   isFetchImageError
-                    ? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png"
+                    ? 'https://cdn-icons-png.flaticon.com/512/6681/6681925.png'
                     : projectTokenLogo
                 }
                 secondTokenName={assetTokenName}
