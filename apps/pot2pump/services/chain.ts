@@ -1,8 +1,9 @@
-import { create } from "zustand";
-import { PublicClient } from "viem";
-import { StorageState } from "./utils";
-import { createPublicClientByChain } from "@/lib/client";
-import { Network, networks, networksMap } from "./network";
+import { create } from 'zustand';
+import { PublicClient } from 'viem';
+import { StorageState } from './utils';
+import { createPublicClientByChain } from '@/lib/client';
+import { Network, networks, networksMap } from './network';
+import { DEFAULT_CHAIN_ID } from '@/config/algebra/default-chain-id';
 
 // Define ChainStore state interface
 interface ChainState {
@@ -23,19 +24,16 @@ interface ChainState {
 export const useChainStore = create<ChainState>((set, get) => ({
   // TODO: Move networks logic to network.ts
   networks: networks,
-  currentChainId: -1,
+  currentChainId: DEFAULT_CHAIN_ID,
   publicClient: null,
   isInit: false,
 
   // Implement computed properties with getter functions
   get networksMap() {
-    return get().networks.reduce(
-      (acc, network) => {
-        acc[network.chainId] = network;
-        return acc;
-      },
-      {} as Record<number, Network>
-    );
+    return get().networks.reduce((acc, network) => {
+      acc[network.chainId] = network;
+      return acc;
+    }, {} as Record<number, Network>);
   },
 
   get currentChain() {
@@ -44,17 +42,15 @@ export const useChainStore = create<ChainState>((set, get) => ({
 
   // Methods
   initChain: async (walletChainId?: number) => {
-    const defaultChainId = process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID
-      ? parseInt(process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID)
-      : -1;
+    const defaultChainId = DEFAULT_CHAIN_ID;
 
     // Select the first valid chain ID
     const chainId =
       walletChainId && networksMap[walletChainId]?.isActive
         ? walletChainId
         : networksMap[defaultChainId]?.isActive
-          ? defaultChainId
-          : -1;
+        ? defaultChainId
+        : -1;
 
     if (chainId !== -1) {
       const publicClient = createPublicClientByChain(
