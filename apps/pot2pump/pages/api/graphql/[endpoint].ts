@@ -4,9 +4,10 @@ import { cacheProvider, getCacheKey } from '@/lib/server/cache';
 const CACHE_TTL = 10; // 缓存时间，单位秒
 
 const GRAPHQL_ENDPOINTS = {
-  info: process.env.NEXT_PUBLIC_INFO_GRAPH,
+  info: 'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-core-bepolia/1.0.0/gn',
   blocks: process.env.NEXT_PUBLIC_BLOCKS_GRAPH,
-  farming: process.env.NEXT_PUBLIC_FARMING_GRAPH,
+  farming:
+    'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-farming-bepolia/1.0.0/gn',
 };
 
 export default async function handler(
