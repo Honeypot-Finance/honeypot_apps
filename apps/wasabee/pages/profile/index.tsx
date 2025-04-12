@@ -69,7 +69,7 @@ export const Profile = observer(() => {
                         <Link
                           target="_blank"
                           className="text-[#4D4D4D] hover:text-[#0D0D0D] hover:underline decoration-2 transition-colors"
-                          href={`${wallet.currentChain.chain.blockExplorers?.default.url}/address/${wallet.account}`}
+                          href={`${wallet.currentChain.chain.blockExplorers?.default.url}address/${wallet.account}`}
                         >
                           {truncate(wallet.account, 8)}
                         </Link>

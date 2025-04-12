@@ -1,6 +1,6 @@
-import { put } from '@vercel/blob';
 import type { NextApiResponse, NextApiRequest, PageConfig } from 'next';
 import { getAccountSwapsWithPools } from '@/lib/algebra/graphql/clients/account';
+import { getSingleBitgetParticipantInfo } from '@/lib/algebra/graphql/clients/bitget_event';
 import { getInfoClientByChainId } from '@/lib/hooks/useSubgraphClients';
 import { wallet } from '@/services/wallet';
 import { DEFAULT_CHAIN_ID } from '@/config/algebra/default-chain-id';
@@ -51,18 +51,28 @@ export default async function handler(
   ];
 
   const swaps = await getAccountSwapsWithPools(infoClient, accountId, pools);
+  const bitgetParticipantInfo = await getSingleBitgetParticipantInfo(
+    infoClient,
+    accountId
+  );
+
+  console.log('swaps', swaps);
+  console.log('bitgetParticipantInfo', bitgetParticipantInfo);
 
   swaps.account?.transaction.map((transaction) => {
     transaction.swaps.map((swap) => {
-      console.log('swap.pool.id ', swap.pool.id);
       const swapPool = amountUsdTradedForEachPool[swap.pool.id.toLowerCase()];
       if (swapPool) {
-        totalAmountUsdTraded += Number(swap.amountUSD);
         totalSwaps += 1;
-        swapPool.amountUsd += Number(swap.amountUSD);
         swapPool.swaps += 1;
       }
     });
+  });
+
+  bitgetParticipantInfo?.map((participant: any) => {
+    totalAmountUsdTraded += Number(participant.amountUSD);
+    amountUsdTradedForEachPool[participant.pool.id.toLowerCase()].amountUsd +=
+      Number(participant.amountUSD);
   });
 
   return response.status(200).json({

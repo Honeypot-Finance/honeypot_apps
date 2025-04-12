@@ -63,6 +63,11 @@ export const appPathsList: Menu[] = [
     routePath: '/swap',
   },
   {
+    path: `/xswap`,
+    title: 'XSwap',
+    routePath: '/xswap',
+  },
+  {
     path: `/pools`,
     title: 'Pools',
     routePath: '/pools',

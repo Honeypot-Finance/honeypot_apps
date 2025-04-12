@@ -16,19 +16,20 @@ import { wallet } from '@/services/wallet';
 import { SwapField } from '@/types/algebra/types/swap-field';
 import { useSwapActionHandlers } from '../../state/swapStore';
 import { useObserver } from 'mobx-react-lite';
-interface SwapCallEstimate {
-  calldata: string;
+
+export interface SwapCallEstimate {
+  calldata: string | string[];
   value: bigint;
 }
 
-interface SuccessfulCall extends SwapCallEstimate {
-  calldata: string;
+export interface SuccessfulCall extends SwapCallEstimate {
+  calldata: string | string[];
   value: bigint;
   gasEstimate: bigint;
 }
 
 interface FailedCall extends SwapCallEstimate {
-  calldata: string;
+  calldata: string | string[];
   value: bigint;
   error: Error;
 }
@@ -40,7 +41,9 @@ export function useSwapCallback(
 ) {
   const { address: account } = useAccount();
 
-  const [bestCall, setBestCall] = useState<any>();
+  const [bestCall, setBestCall] = useState<
+    SuccessfulCall | SwapCallEstimate | undefined
+  >();
 
   const swapCalldata = useSwapCallArguments(trade, allowedSlippage);
 
@@ -139,13 +142,14 @@ export function useSwapCallback(
   }, [swapCalldata, approvalState, account]);
 
   const { data: swapConfig } = useSimulateAlgebraRouterMulticall({
-    args: bestCall && [bestCall.calldata],
+    args: bestCall && ([bestCall.calldata] as any),
     value: BigInt(bestCall?.value || 0),
     query: {
       enabled: Boolean(bestCall),
     },
-    gas: bestCall
-      ? (bestCall.gasEstimate * (BigInt(10000) + BigInt(2000))) / BigInt(10000)
+    gas: (bestCall as any)?.gasEstimate
+      ? ((bestCall as any).gasEstimate * (BigInt(10000) + BigInt(2000))) /
+        BigInt(10000)
       : undefined,
   });
 
@@ -179,6 +183,8 @@ export function useSwapCallback(
       };
 
     return {
+      bestCall,
+      swapConfig,
       state: SwapCallbackState.VALID,
       callback: () => swapConfig && swapCallback(swapConfig?.request),
       error: null,

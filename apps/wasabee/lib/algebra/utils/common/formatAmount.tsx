@@ -46,7 +46,6 @@ export function DynamicFormatAmount({
   const isNegative = Number(amount) < 0;
   const absAmount = new BigNumber(amount).abs().toFixed(40);
   const amountStr = absAmount.toString();
-  console.log({ amountStr });
   const output: ReactNode = isNaN(Number(amountStr))
     ? '0'
     : getFirstDecimalPlace(amountStr) < decimals
@@ -92,7 +91,6 @@ export function FormatSmallDecimal({
       2 + firstNonZeroIndex
     );
 
-    console.log({ numStr, first2digit, compressedCount, first2NonZero });
     return (
       <>
         {first2digit}

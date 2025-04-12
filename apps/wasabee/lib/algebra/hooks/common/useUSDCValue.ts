@@ -40,6 +40,7 @@ export function useUSDCValue(
   return useMemo(() => {
     return DynamicFormatAmount({
       amount: Number(currencyAmount?.toSignificant()) * priceDisplay,
+      decimals: 5,
       endWith: ' $',
     });
   }, [currencyAmount, priceDisplay]);

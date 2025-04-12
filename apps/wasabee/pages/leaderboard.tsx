@@ -5,7 +5,6 @@ import { useTotalUsers } from '@/lib/hooks/useTotalUsers';
 import CardContainer from '@/components/CardContianer/v3';
 import { useLeaderboard } from '@/lib/hooks/useLeaderboard';
 import { shortenAddressString, formatVolume } from '@/lib/utils';
-import { wallet } from '@/services/wallet';
 import {
   useAccounts,
   useTopSwapAccounts,
@@ -13,6 +12,7 @@ import {
   useTopParticipateAccounts,
 } from '@/lib/hooks/useAccounts';
 import { formatExtremelyLargeNumber } from '@/lib/format';
+import { wallet } from '@/services/wallet';
 
 interface LeaderboardItem {
   rank: number;
@@ -260,7 +260,7 @@ const LeaderboardPage = () => {
                                 placement="top"
                               >
                                 <Link
-                                  href={`${wallet.currentChain.chain.blockExplorers?.default.url}/address/${item.walletAddress}`}
+                                  href={`${wallet.currentChain.chain.blockExplorers?.default.url}address/${item.walletAddress}`}
                                   target="_blank"
                                   className="text-blue-400 text-xs sm:text-sm md:text-base"
                                 >

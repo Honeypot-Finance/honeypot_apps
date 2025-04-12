@@ -14,6 +14,10 @@ import {
   arbitrumSepoliaTestnet,
   //sepolia,
 } from '@/lib/chain';
+import { ICHIVaultContract } from './contract/aquabera/ICHIVault-contract';
+import { getMultipleTokensData } from '@/lib/algebra/graphql/clients/token';
+import { Token as IndexerToken } from '@/lib/algebra/graphql/generated/graphql';
+
 import { Address, zeroAddress } from 'viem';
 import {
   contractAddresses,
@@ -23,7 +27,6 @@ import {
   subgraphAddresses,
   SubgraphAddresses,
 } from '@/config/subgraphEndPoint';
-import { ICHIVaultContract } from './contract/aquabera/ICHIVault-contract';
 
 export class Network {
   supportDEX: boolean = false;
@@ -82,24 +85,34 @@ export class Network {
   }
   init() {
     this.nativeToken = Token.getToken(this.nativeToken);
-    this.nativeToken.init().then(() => {
-      console.log('this.nativeToken', this.nativeToken.name);
+    this.nativeToken.init(true, { loadIndexerTokenData: true }).then(() => {
+      console.log('this.nativeToken', this.nativeToken);
     });
-    this.faucetTokens = this.faucetTokens.map((t) => {
-      const token = Token.getToken(t);
-      token.init();
-      return token;
-    });
+
+    this.validatedTokens = [];
 
     Object.entries(this.validatedTokensInfo).forEach(([address, t]) => {
       const token = Token.getToken({
         ...t,
         address,
       });
-      token.init();
       this.validatedTokensInfo[address] = token;
       this.validatedTokens.push(token);
     });
+
+    getMultipleTokensData(
+      this.validatedTokens.map((t) => t.address.toLowerCase()),
+      this.chainId.toString()
+    ).then((tokenData) => {
+      tokenData.forEach((t) => {
+        const token = Token.getToken({
+          address: t.id,
+          chainId: this.chainId.toString(),
+        });
+        token.assignIndexerTokenData(t as IndexerToken);
+      });
+    });
+
     this.validatedVault.forEach((vault) => {
       const vaultContract = ICHIVaultContract.getVault(vault);
     });
@@ -348,7 +361,6 @@ export const berachainNetwork = new Network({
       decimals: 18,
       logoURI: '/images/icons/tokens/henlo.png',
       isPopular: true,
-      isBitgetCampaignToken: true,
     },
     '0xbaadcc2962417c01af99fb2b7c75706b9bd6babe': {
       name: 'Liquid BGT',
@@ -362,7 +374,6 @@ export const berachainNetwork = new Network({
       symbol: 'XI',
       decimals: 18,
       logoURI: '/images/icons/tokens/xi.webp',
-      isBitgetCampaignToken: true,
       isPopular: true,
     },
     '0x10acd894a40d8584ad74628812525ef291e16c47': {
@@ -370,7 +381,6 @@ export const berachainNetwork = new Network({
       symbol: 'Q5',
       decimals: 18,
       logoURI: '/images/icons/tokens/q5.webp',
-      isBitgetCampaignToken: true,
       isPopular: true,
     },
     '0x539aced84ebb5cbd609cfaf4047fb78b29553da9': {
@@ -378,7 +388,6 @@ export const berachainNetwork = new Network({
       symbol: 'BERACHAIN',
       decimals: 18,
       logoURI: '/images/icons/tokens/berachain.webp',
-      isBitgetCampaignToken: true,
       isPopular: true,
     },
     '0xab7e0f3d69de8061aa46d7c9964dbc11878468eb': {
@@ -398,6 +407,12 @@ export const berachainNetwork = new Network({
       symbol: 'NAV',
       decimals: 18,
       logoURI: 'https://images.oogabooga.io/nav.png',
+    },
+    '0x28e0e3b9817012b356119df9e217c25932d609c2': {
+      name: 'Burr Governance Token',
+      symbol: 'BURR',
+      decimals: 18,
+      logoURI: '/images/icons/tokens/burr_bear_logo.webp',
     },
   },
   validatedFtoAddresses: [],

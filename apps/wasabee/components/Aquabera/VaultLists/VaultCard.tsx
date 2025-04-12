@@ -48,16 +48,13 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
             vaultContract?.getBalanceOf(wallet.account),
           ]);
 
-          vaultContract?.token0?.init(true, {
+          vaultContract?.token0?.init(false, {
             loadIndexerTokenData: true,
           });
 
-          vaultContract?.token1?.init(true, {
+          vaultContract?.token1?.init(false, {
             loadIndexerTokenData: true,
           });
-
-          tokenA.init();
-          tokenB.init();
 
           setVaultContract(vaultContract);
         }

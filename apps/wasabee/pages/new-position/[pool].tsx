@@ -112,7 +112,7 @@ const NewPositionPage = () => {
   }, [leftrange, rightrange, mintInfo.poolState]);
 
   return (
-    <div className="font-gliker space-y-2 sm:space-y-4">
+    <div className="font-gliker space-y-2 sm:space-y-4 w-full">
       <div className="px-2 sm:px-4 md:px-8">
         <Button
           onPress={() => router.push('/pools')}

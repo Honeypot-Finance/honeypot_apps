@@ -125,7 +125,7 @@ const SwapTransactionHistory = () => {
                       <div className="flex items-center gap-1 sm:gap-2">
                         {console.log(tx) === undefined && <></>}
                         <a
-                          href={`${wallet.currentChain.chain.blockExplorers?.default.url}/address/${tx.origin}`}
+                          href={`${wallet.currentChain.chain.blockExplorers?.default.url}address/${tx.origin}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="hover:text-[#FFCD4D] flex items-center gap-0.5 sm:gap-1"

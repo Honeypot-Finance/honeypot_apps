@@ -12,7 +12,11 @@
     "module": "esnext",
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true
+    "skipDefaultLibCheck": true,
+    "paths": {
+      "mobx": ["node_modules/mobx"],
+      "mobx-react-lite": ["node_modules/mobx-react-lite"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

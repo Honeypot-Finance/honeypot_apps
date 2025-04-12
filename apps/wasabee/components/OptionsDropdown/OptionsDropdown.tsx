@@ -133,7 +133,7 @@ export const optionsPresets = {
       display: displayText ?? 'View on explorer',
       onClick: () => {
         window.open(
-          `${wallet.currentChain.chain.blockExplorers?.default.url}/address/${address}`,
+          `${wallet.currentChain.chain.blockExplorers?.default.url}address/${address}`,
           '_blank'
         );
       },

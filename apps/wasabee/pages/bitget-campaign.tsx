@@ -39,6 +39,14 @@ export const BitgetCampaign = observer(() => {
   return (
     <div className="flex flex-col gap-4 w-full justify-center items-center">
       <HoneyContainer className="w-full px-4 sm:px-6 max-w-[1200px]">
+        Event Ended
+      </HoneyContainer>
+    </div>
+  );
+
+  return (
+    <div className="flex flex-col gap-4 w-full justify-center items-center">
+      <HoneyContainer className="w-full px-4 sm:px-6 max-w-[1200px]">
         {bitgetEventsData ? (
           <div className="flex flex-col gap-6 sm:gap-8 p-0 sm:p-8">
             {/* Header Section */}
@@ -68,7 +76,7 @@ export const BitgetCampaign = observer(() => {
                   })}
                 </p>
                 <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-black">
-                  Total Participants
+                  Total Participate Count
                 </h2>
                 <p className="text-3xl sm:text-4xl font-bold text-honey-gold">
                   {DynamicFormatAmount({

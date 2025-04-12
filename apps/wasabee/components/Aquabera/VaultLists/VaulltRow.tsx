@@ -73,20 +73,17 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
           vaultContract?.getBalanceOf(wallet.account),
         ]);
 
-        vaultContract?.token0?.init(true, {
+        vaultContract?.token0?.init(false, {
           loadIndexerTokenData: true,
         });
 
-        vaultContract?.token1?.init(true, {
+        vaultContract?.token1?.init(false, {
           loadIndexerTokenData: true,
         });
 
         return vaultContract;
       }
     }
-
-    tokenA.init();
-    tokenB.init();
 
     getVaultsContracts().then((vaultContract) => {
       setVaultContract(vaultContract);

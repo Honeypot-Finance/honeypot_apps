@@ -14,6 +14,7 @@ import { trpcClient } from '@/lib/trpc';
 import NetworkManager from '../network';
 import { getSingleTokenData } from '@/lib/algebra/graphql/clients/token';
 import { when } from 'mobx';
+import { Token as IndexerToken } from '@/lib/algebra/graphql/generated/graphql';
 export class Token implements BaseContract {
   static tokensMap: Record<string, Token> = {};
   static getToken({
@@ -477,9 +478,6 @@ export class Token implements BaseContract {
   }
 
   get balance() {
-    if (!wallet.isInit || !wallet.walletClient) {
-      return new BigNumber(0);
-    }
     // console.log('this.balanceWithoutDecimals', this.balanceWithoutDecimals)
     return this.balanceWithoutDecimals.div(
       new BigNumber(10).pow(this.decimals)
@@ -519,9 +517,6 @@ export class Token implements BaseContract {
   }
 
   async getIndexerTokenData(option?: { force?: boolean }) {
-    if (this.isNative) {
-      return;
-    }
     if (this.indexerDataLoaded && !option?.force) {
       return;
     }
@@ -540,24 +535,29 @@ export class Token implements BaseContract {
     const indexerTokenData = await getSingleTokenData(
       this.address.toLowerCase()
     );
+    console.log('indexerTokenData', indexerTokenData);
 
     if (!indexerTokenData) {
       return;
     }
 
-    console.log(indexerTokenData.token);
-
-    if (indexerTokenData.token) {
-      //exclude marketCap,
-      const { marketCap, ...rest } = indexerTokenData.token;
-
-      Object.assign(this, {
-        ...rest,
-        address: indexerTokenData.token?.id,
-        decimals: indexerTokenData.token?.decimals.toString(),
-        derivedETH: indexerTokenData.token?.derivedMatic,
-      });
+    if (indexerTokenData) {
+      this.assignIndexerTokenData(indexerTokenData);
     }
+
+    this.indexerDataLoaded = true;
+  }
+
+  assignIndexerTokenData(tokenData: IndexerToken) {
+    //exclude marketCap, name, symbol,
+    const { marketCap, name, symbol, ...rest } = tokenData;
+
+    Object.assign(this, {
+      ...rest,
+      address: tokenData.id,
+      decimals: Number(tokenData.decimals),
+      derivedETH: tokenData.derivedMatic,
+    });
 
     this.indexerDataLoaded = true;
   }

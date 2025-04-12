@@ -1,22 +1,22 @@
-import { useUSDCValue } from "@/lib/algebra/hooks/common/useUSDCValue";
+import { useUSDCValue } from '@/lib/algebra/hooks/common/useUSDCValue';
 import {
   Currency,
   CurrencyAmount,
   maxAmountSpend,
   tryParseAmount,
-} from "@cryptoalgebra/sdk";
-import { useCallback, useMemo } from "react";
-import TokenCard from "../TokenCard";
-import { ChevronsUpDownIcon } from "lucide-react";
+} from '@cryptoalgebra/sdk';
+import { useCallback, useMemo } from 'react';
+import TokenCard from '../TokenCard';
+import { ChevronsUpDownIcon } from 'lucide-react';
 import useWrapCallback, {
   WrapType,
-} from "@/lib/algebra/hooks/swap/useWrapCallback";
+} from '@/lib/algebra/hooks/swap/useWrapCallback';
 import {
   useDerivedSwapInfo,
   useSwapState,
   useSwapActionHandlers,
-} from "@/lib/algebra/state/swapStore";
-import { SwapField, SwapFieldType } from "@/types/algebra/types/swap-field";
+} from '@/lib/algebra/state/swapStore';
+import { SwapField, SwapFieldType } from '@/types/algebra/types/swap-field';
 
 const SwapPair = () => {
   const {
@@ -106,7 +106,7 @@ const SwapPair = () => {
   const fiatValueInputFormatted = useUSDCValue(
     tryParseAmount(
       parsedAmounts[SwapField.INPUT]?.toSignificant(
-        (parsedAmounts[SwapField.INPUT]?.currency.decimals || 6) / 2
+        Math.floor((parsedAmounts[SwapField.INPUT]?.currency.decimals || 6) / 2)
       ),
       baseCurrency
     )
@@ -114,7 +114,9 @@ const SwapPair = () => {
   const fiatValueOutputFormatted = useUSDCValue(
     tryParseAmount(
       parsedAmounts[SwapField.OUTPUT]?.toSignificant(
-        (parsedAmounts[SwapField.OUTPUT]?.currency.decimals || 6) / 2
+        Math.floor(
+          (parsedAmounts[SwapField.OUTPUT]?.currency.decimals || 6) / 2
+        )
       ),
       quoteCurrency
     )
@@ -123,19 +125,21 @@ const SwapPair = () => {
   const formattedAmounts = {
     [independentField]: typedValue,
     [dependentField]: showWrap
-      ? (parsedAmounts[
+      ? parsedAmounts[
           independentField as keyof typeof parsedAmounts
-        ]?.toExact() ?? "")
-      : (parsedAmounts[dependentField as keyof typeof parsedAmounts]?.toFixed(
-          (parsedAmounts[dependentField as keyof typeof parsedAmounts]?.currency
-            .decimals || 6) / 2
-        ) ?? ""),
+        ]?.toExact() ?? ''
+      : parsedAmounts[dependentField as keyof typeof parsedAmounts]?.toFixed(
+          Math.floor(
+            (parsedAmounts[dependentField as keyof typeof parsedAmounts]
+              ?.currency.decimals || 6) / 2
+          )
+        ) ?? '',
   };
 
   return (
     <div className="flex flex-col gap-1 relative">
       <TokenCard
-        value={formattedAmounts[SwapField.INPUT] || ""}
+        value={formattedAmounts[SwapField.INPUT] || ''}
         currency={baseCurrency}
         otherCurrency={quoteCurrency}
         handleTokenSelection={handleInputSelect}
@@ -152,7 +156,7 @@ const SwapPair = () => {
         <ChevronsUpDownIcon size={16} />
       </button>
       <TokenCard
-        value={formattedAmounts[SwapField.OUTPUT] || ""}
+        value={formattedAmounts[SwapField.OUTPUT] || ''}
         currency={quoteCurrency}
         otherCurrency={baseCurrency}
         handleTokenSelection={handleOutputSelect}

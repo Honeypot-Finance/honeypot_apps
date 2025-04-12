@@ -85,6 +85,53 @@ export const POOL_FRAGMENT = gql`
   }
 `;
 
+export const MULTIPLE_VAULT_DETAILS = gql`
+  query MultipleVaultDetails($vaultIds: [ID!]!) {
+    ichiVaults(where: { id_in: $vaultIds }) {
+      ...VaultField
+      vaultShares {
+        id
+        vaultShareBalance
+      }
+      vaultDeposits(
+        orderBy: createdAtTimestamp
+        orderDirection: desc
+        first: 100
+      ) {
+        id
+        createdAtTimestamp
+        amount0
+        amount1
+        shares
+        to
+      }
+      vaultWithdraws(
+        orderBy: createdAtTimestamp
+        orderDirection: desc
+        first: 100
+      ) {
+        id
+        createdAtTimestamp
+        amount0
+        amount1
+        shares
+        to
+      }
+      vaultCollectFees(
+        orderBy: createdAtTimestamp
+        orderDirection: desc
+        first: 100
+      ) {
+        id
+        createdAtTimestamp
+        feeAmount0
+        feeAmount1
+        sender
+      }
+    }
+  }
+`;
+
 export const SINGLE_VAULT_DETAILS = gql`
   query SingleVaultDetails($vaultId: ID!) {
     ichiVault(id: $vaultId) {

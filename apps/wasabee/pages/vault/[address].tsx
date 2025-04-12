@@ -428,7 +428,7 @@ export const VaultDetail = observer(() => {
                       {address}
                     </p>
                     <Link
-                      href={`${wallet.currentChain.chain.blockExplorers?.default.url}/address/${address}`}
+                      href={`${wallet.currentChain.chain.blockExplorers?.default.url}address/${address}`}
                       target="_blank"
                       className="text-[#202020] hover:text-[#202020]/80 flex-shrink-0"
                     >
@@ -446,7 +446,7 @@ export const VaultDetail = observer(() => {
                       {vault?.token0?.address}
                     </p>
                     <Link
-                      href={`${wallet.currentChain.chain.blockExplorers?.default.url}/address/${vault?.token0?.address}`}
+                      href={`${wallet.currentChain.chain.blockExplorers?.default.url}address/${vault?.token0?.address}`}
                       target="_blank"
                       className="text-[#202020] hover:text-[#202020]/80 flex-shrink-0"
                     >
@@ -461,7 +461,7 @@ export const VaultDetail = observer(() => {
                       {vault?.token1?.address}
                     </p>
                     <Link
-                      href={`${wallet.currentChain.chain.blockExplorers?.default.url}/address/${vault?.token1?.address}`}
+                      href={`${wallet.currentChain.chain.blockExplorers?.default.url}address/${vault?.token1?.address}`}
                       target="_blank"
                       className="text-[#202020] hover:text-[#202020]/80 flex-shrink-0"
                     >
@@ -659,7 +659,9 @@ export const VaultDetail = observer(() => {
                     <div>
                       <Link
                         target="_blank"
-                        href={`https://berascan.com/tx/${tx.id.split('-')[0]}`}
+                        href={`${
+                          wallet.currentChain.chain.blockExplorers?.default.url
+                        }tx/${tx.id.split('-')[0]}`}
                         className="text-gray-500 text-sm underline hover:text-gray-500/80"
                       >
                         {tx.id.split('-')[0].substring(0, 6)}...

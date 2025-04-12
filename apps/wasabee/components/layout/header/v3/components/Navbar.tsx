@@ -135,23 +135,6 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
               >
                 Pot2Pump
               </DropdownItem>
-              <DropdownItem
-                href={'/bitget-campaign'}
-                onPress={() => window.open('/bitget-campaign', '_self')}
-                className="font-bold data-[hover=true]:bg-[#202020] data-[hover=true]:text-white p-2"
-                startContent={
-                  <Image
-                    src="/images/bera/smoking_bera.png"
-                    alt="bitget"
-                    width={16}
-                    height={16}
-                    className="w-4 h-4 bg-white rounded-full"
-                  />
-                }
-                key="bitget-campaign"
-              >
-                Bitget Campaign
-              </DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </div>

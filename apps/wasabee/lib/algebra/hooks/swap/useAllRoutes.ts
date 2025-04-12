@@ -56,33 +56,16 @@ function computeAllRoutes(
     const { liquidity, price, tick, fee } = pool.pool;
     if (price === '0' || liquidity === '0') continue;
 
-    console.log('newPool args', {
+    const newPool = new Pool(
       tokenA,
       tokenB,
-      fee,
-      price,
+      Number(fee),
+      String(price),
       ADDRESS_ZERO,
-      liquidity,
-      tick,
-      DEFAULT_TICK_SPACING,
-    });
-
-    let newPool: Pool | undefined;
-    try {
-      newPool = new Pool(
-        tokenA,
-        tokenB,
-        Number(fee),
-        String(price),
-        ADDRESS_ZERO,
-        String(liquidity),
-        Number(tick),
-        DEFAULT_TICK_SPACING
-      );
-    } catch (error) {
-      console.log('error', error);
-    }
-    console.log('newPool', newPool);
+      String(liquidity),
+      Number(tick),
+      Number(DEFAULT_TICK_SPACING)
+    );
 
     if (
       !newPool ||
