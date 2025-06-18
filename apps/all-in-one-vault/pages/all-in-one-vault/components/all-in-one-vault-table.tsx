@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   handleCooldownComplete,
   updateClaimedReceipt,
-} from '../helper-function';
+} from '../../../utils/helper-function';
 import {
   ApolloClient,
   InMemoryCache,
@@ -15,7 +15,7 @@ import { RECEIPTS_LIST } from '@/lib/algebra/graphql/queries/receipts-list';
 import { useAccount } from 'wagmi';
 import { LoadingDisplay } from '@/components/loading-display/loading-display';
 import ErrorIcon from '@/components/svg/ErrorIcon';
-import { transformReceiptData } from './utils/helper';
+import { transformReceiptData } from '../../../utils/helper';
 
 interface AllInOneVaultTableProps {
   onRefetchExpose?: (refetchFn: () => void) => void;

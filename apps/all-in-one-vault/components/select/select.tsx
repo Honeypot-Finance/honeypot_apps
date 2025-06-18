@@ -7,8 +7,8 @@ import {
   ApolloClient,
 } from '@apollo/client';
 import { TOKEN_SUPPORT_QUERY } from '@/lib/algebra/graphql/queries/token-support';
-import { calculateSummaryData } from '@/pages/all-in-one-vault/helper-function';
 import useGetSupportTokenInfo from '@/hooks/useGetSupportTokenInfo';
+import { calculateSummaryData } from '../../utils/helper-function';
 
 interface InputSectionProps {
   onTokenChange?: (value: string) => void;
