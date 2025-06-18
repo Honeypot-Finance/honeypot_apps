@@ -12,7 +12,11 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { NextUIProvider } from '@nextui-org/react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { createWagmiConfig } from '@honeypot/shared';
+import { createWagmiConfig } from '@honeypot/shared';  // {
+  //   path: `/leaderboard`,
+  //   title: 'Leaderboard',
+  //   routePath: '/leaderboard',
+  // },
 import { useEffect, useState } from 'react';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { DM_Sans, Inter } from 'next/font/google';
