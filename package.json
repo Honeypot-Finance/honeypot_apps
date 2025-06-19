@@ -9,7 +9,9 @@
     "wb": "nx build wasabee",
     "wasabee": "nx dev wasabee --port 9002",
     "bgt-market": "nx dev bgt-market --port 9003",
-    "dreampad": "nx dev dreampad --port 9004"
+    "dreampad": "nx dev dreampad --port 9004",
+    "leaderboard": "nx dev leaderboard --port 9005",
+    "all-in-one-vault": "nx dev all-in-one-vault --port 9006"
   },
   "private": true,
   "dependencies": {

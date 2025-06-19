@@ -1,0 +1,117 @@
+import { zeroAddress } from "viem";
+import { Address } from "viem";
+
+/** 
+interpol_locker: 0x495A885EE5F317bD250C3C885cA31c484DCF4985
+## claimFeesOfLP and withdrawERC20
+wbera: 0x6969696969696969696969696969696969696969
+hpot: 0x9b37d542114070518a44e200fdcd8e4be737297f
+
+integral-v1.2 bera mainnet
+pool_init_code_hash: 0xb3fc09be5eb433d99b1ec89fd8435aaf5ffea75c1879e19028aa2414a14b3c85
+AlgebraPoolDeployer to: 0x598f320907c2FFDBC715D591ffEcC3082bA14660
+AlgebraFactory deployed to: 0x7d53327D78EFD0b463bd8d7dc938C52402323b95
+AlgebraCommunityVault deployed to: 0x59F26B7332f8b45bDf2D17544fEE03b32c6806fD
+AlgebraVaultFactoryStub deployed to: 0xde615767c422428ABB2BfFb737E3591f1C24Ce01
+PluginFactory to: 0x2158B835620683e2c02a0cb915d0B818b8FBE34b
+SecurityRegistry to: 0xE84F134baE34237df2fe7Fd62E2c9A00CEA61916
+EntryPoint deployed to: 0xA1a607797893e290281e997484E8A93F3Ea8CE0B
+TickLens deployed to: 0x6fB8eCB54B9b3e3e1668d12d3287439E37BBfD38
+Quoter deployed to: 0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73
+QuoterV2 deployed to: 0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2
+SwapRouter deployed to: 0xFff605964840a5511f595EB970011EcBffa46b39
+NonfungibleTokenPositionDescriptor deployed to: 0x49719f4e6305a38685ab97bf79D4243467ea1A5d
+Proxy deployed to: 0xa93C35A721Ec12d7a4e5701D630340c947c9104F
+NonfungiblePositionManager deployed to: 0xBB203aADbE36C125028a54584f5d48C1764317D0
+AlgebraInterfaceMulticall deployed to: 0xbBCcF56F3D3F5B81E37861e25F73205c2598fcB5
+AlgebraEternalFarming deployed to: 0x8554797BaE76Afe81dD5375111A2f3b0414D3B02
+FarmingCenter deployed to: 0xD8399d82eb577F223f55e81EfB96942Ce560f51f
+
+
+ichivault factory: 0x1bf5e51eCacdfEA65ae9276fd228bB8719ffcA7E
+ichivault deposit guard: 0x05043eE22e5E64677D42A632D42a5cb15187947B
+
+
+Pot2PumpFactory [ 0xa347d3cC801dd793c8dcf94c90508a7BdEC08C5D ]
+Factory Proxy [ 0xC38eF79A6cA9b3EfBe20F3dD3b99B3e25d09F52B ]
+Pot2PumpFacade [0x80051Ca8C6E2e04E12de5d5Cb1313C086C867737]
+
+*/
+
+export const NATIVE_TOKEN_WRAPPED: Address =
+  "0x6969696969696969696969696969696969696969";
+
+export const POOL_INIT_CODE_HASH: Address =
+  "0xb3fc09be5eb433d99b1ec89fd8435aaf5ffea75c1879e19028aa2414a14b3c85";
+
+export const ALGEBRA_FACTORY: Address =
+  "0x7d53327D78EFD0b463bd8d7dc938C52402323b95";
+
+export const ALGEBRA_POOL_DEPLOYER: Address =
+  "0x598f320907c2FFDBC715D591ffEcC3082bA14660";
+
+export const ALGEBRA_POSITION_MANAGER: Address =
+  "0xBB203aADbE36C125028a54584f5d48C1764317D0";
+
+export const ALGEBRA_NONFUNGIBLE_POSITION_DESCRIPTOR: Address =
+  "0x49719f4e6305a38685ab97bf79D4243467ea1A5d";
+
+export const ALGEBRA_ENTRY_POINT: Address =
+  "0xA1a607797893e290281e997484E8A93F3Ea8CE0B";
+
+export const ALGEBRA_TICK_LENS: Address =
+  "0x6fB8eCB54B9b3e3e1668d12d3287439E37BBfD38";
+
+export const ALGEBRA_QUOTER: Address =
+  "0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73";
+
+export const ALGEBRA_QUOTER_V2: Address =
+  "0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2";
+
+export const ALGEBRA_ROUTER: Address =
+  "0xFff605964840a5511f595EB970011EcBffa46b39";
+
+export const ALGEBRA_ETERNAL_FARMING: Address =
+  "0x8554797BaE76Afe81dD5375111A2f3b0414D3B02";
+
+export const FARMING_CENTER: Address =
+  "0xD8399d82eb577F223f55e81EfB96942Ce560f51f";
+
+export const ALGEBRA_COMMUNITY_VAULT_FACTORY: Address =
+  "0x59F26B7332f8b45bDf2D17544fEE03b32c6806fD";
+
+export const ALGEBRA_VAULT_FACTORY_STUB: Address =
+  "0xde615767c422428ABB2BfFb737E3591f1C24Ce01";
+
+export const ALGEBRA_PLUGIN_FACTORY: Address =
+  "0x2158B835620683e2c02a0cb915d0B818b8FBE34b";
+
+export const ALGEBRA_PROXY: Address =
+  "0xa93C35A721Ec12d7a4e5701D630340c947c9104F";
+
+export const ALGEBRA_INTERFACE_MULTICALL: Address =
+  "0xbBCcF56F3D3F5B81E37861e25F73205c2598fcB5";
+
+// Custom pools
+export const CUSTOM_POOL_DEPLOYER: Address =
+  "0xc9cf812513d9983585eb40fcfe6fd49fbb6a45815663ec33b30a6c6c7de3683b";
+
+export const CUSTOM_POOL_DEPLOYER_FEE_CHANGER: Address =
+  "0x7e3387e0595552e992ede4476417704703866e5a"; // placeholder
+
+export const CUSTOM_POOL_DEPLOYER_BLANK: Address =
+  "0xbb75acad36f08201a49a6dd077229d95f4e7bd50"; // placeholder
+
+export const CUSTOM_POOL_BASE: Address = zeroAddress;
+
+export const ALL_IN_ONE_VAULT: Address =
+    "0x5bA6c951F8AbCE6d507a922682690988E83ffbE0";
+
+export const ALL_IN_ONE_VAULT_PROXY: Address =
+    "0x9c52cD80455a9ee50610aC90e846e46E04014f6d";
+
+export const STAKING_TOKEN: Address = 
+    "0xa2b0519F1D7F61eaB95D486301ED924b58E97022";
+
+export const REWARD_VAULT: Address =
+    "0x234fc7Fde4C622E0bb973D21970c8F10cAa7B87B"
