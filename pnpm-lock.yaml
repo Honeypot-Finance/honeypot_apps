@@ -491,9 +491,6 @@ importers:
       '@eslint/js':
         specifier: ^9.21.0
         version: 9.27.0
-      '@graphql-codegen/schema-ast':
-        specifier: ^4.1.0
-        version: 4.1.0(graphql@16.11.0)
       '@locator/babel-jsx':
         specifier: ^0.4.4
         version: 0.4.4(@babel/core@7.27.1)(ts-node@10.9.1(@swc/core@1.5.29(@swc/helpers@0.5.17))(@types/node@20.17.48)(typescript@5.8.3))
