@@ -23,10 +23,10 @@ import { MaxUint256 } from 'ethers';
 import { AllInOneVaultABI } from '@/lib/abis';
 
 interface SelectionSectionProps {
-  onRefetchReceipts?: (() => void) | null;
+  onRefetchReceipts?: () => void;
 }
 
-export default function SelectionSection({ onRefetchReceipts }: SelectionSectionProps = {}) {
+export default function SelectionSection({ onRefetchReceipts }: SelectionSectionProps) {
   const { address } = useAccount();
   const [selectedToken, setSelectedToken] = useState<string>('');
   const [tokenName, setTokenName] = useState<string>('');
@@ -95,12 +95,21 @@ export default function SelectionSection({ onRefetchReceipts }: SelectionSection
   const parseAmount = parseUnits(amount || '0', decimals || 18).toString();
 
   const handleBurnSuccess = () => {
-    console.log('Burn successful!');
+    console.log('🔥 Burn successful!');
+    // Refetch receipts if the function is available
     if (onRefetchReceipts) {
-      onRefetchReceipts();
+      try {
+        console.log('🔄 Calling refetch receipts...');
+        onRefetchReceipts();
+      } catch (error) {
+        console.error('❌ Error calling refetch receipts:', error);
+      }
+    } else {
+      console.warn('⚠️ onRefetchReceipts function not available');
     }
     // Refetch the token balance to update the summary card
     if (refetchBalance) {
+      console.log('💰 Refetching token balance...');
       refetchBalance();
     }
   };

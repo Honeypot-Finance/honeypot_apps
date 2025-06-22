@@ -62,7 +62,8 @@ export default function AllInOneVaultTable({ onRefetchExpose }: AllInOneVaultTab
     setIsManualRefreshing(true);
     try {
       console.log('🔄 Manual refresh triggered');
-      await refetchReceipts();
+      const result = await refetchReceipts();
+      console.log('📊 Refetch data:', result.data);
     } catch (error) {
       console.error('❌ Manual refresh failed:', error);
     } finally {
@@ -75,7 +76,11 @@ export default function AllInOneVaultTable({ onRefetchExpose }: AllInOneVaultTab
 
   useEffect(() => {
     if (onRefetchExpose) {
-      onRefetchExpose(() => refetchReceipts());
+      console.log('🔗 Exposing refetch function to parent component');
+      onRefetchExpose(() => {
+        console.log('🔄 Refetch called from parent');
+        return refetchReceipts();
+      });
     }
   }, [onRefetchExpose, refetchReceipts]);
 
