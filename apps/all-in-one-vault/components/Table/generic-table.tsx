@@ -13,7 +13,7 @@ import {
   type ColumnFiltersState,
   type FilterFn,
 } from '@tanstack/react-table';
-import { ChevronUp, ChevronDown, Search } from 'lucide-react';
+import { ChevronUp, ChevronDown, Search, RefreshCw } from 'lucide-react';
 import { Input } from '../input';
 import { Button } from '../button';
 
@@ -76,6 +76,8 @@ interface GenericTanstackTableProps<T> {
   pageSize?: number;
   searchPlaceholder?: string;
   emptyMessage?: string;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
 }
 
 export default function GenericTanstackTable<T>({
@@ -88,6 +90,8 @@ export default function GenericTanstackTable<T>({
   pageSize = 10,
   searchPlaceholder = 'Search...',
   emptyMessage = 'No data available',
+  onRefresh,
+  isRefreshing = false,
 }: GenericTanstackTableProps<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -242,13 +246,26 @@ export default function GenericTanstackTable<T>({
       {/* Pagination */}
       {enablePagination && table.getPageCount() > 1 && (
         <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-700">
-              Page {pagination.pageIndex + 1} of {table.getPageCount()}
-            </span>
-            <span className="text-sm text-gray-500">
-              ({table.getFilteredRowModel().rows.length} total rows)
-            </span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-700">
+                Page {pagination.pageIndex + 1} of {table.getPageCount()}
+              </span>
+              <span className="text-sm text-gray-500">
+                ({table.getFilteredRowModel().rows.length} total rows)
+              </span>
+            </div>
+            {onRefresh && (
+              <Button
+                size="sm"
+                onClick={onRefresh}
+                disabled={isRefreshing}
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                {isRefreshing ? 'Refreshing...' : 'Refresh'}
+              </Button>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <Button

@@ -67,7 +67,6 @@ export default function SelectionSection({ onRefetchReceipts }: SelectionSection
       enabled: !!selectedToken && !!address,
     },
   });
-  console.log('🔍', tokenBalance);
 
   const onTokenChange = (token: string) => {
     setSelectedToken(token);
@@ -86,8 +85,6 @@ export default function SelectionSection({ onRefetchReceipts }: SelectionSection
       onRefetchReceipts();
     }
   };
-
-  console.log(summaryData);
 
   return (
     <>

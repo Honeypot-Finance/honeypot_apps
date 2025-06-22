@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import InputSection from '@/components/select/select';
 import SummaryCard from '@/components/summary/summary';
 import { ApproveAndBurnButton } from '@/components/button/button-approve-and-burn';
@@ -58,7 +58,7 @@ export default function SelectionSection({ onRefetchReceipts }: SelectionSection
     []
   );
 
-  const { data: tokenBalance } = useReadContract({
+  const { data: tokenBalance, refetch: refetchBalance } = useReadContract({
     address: selectedToken as `0x${string}`,
     abi: erc20Abi,
     functionName: 'balanceOf',
@@ -67,7 +67,6 @@ export default function SelectionSection({ onRefetchReceipts }: SelectionSection
       enabled: !!selectedToken && !!address,
     },
   });
-  console.log('🔍', tokenBalance);
 
   const onTokenChange = (token: string) => {
     setSelectedToken(token);
@@ -78,6 +77,21 @@ export default function SelectionSection({ onRefetchReceipts }: SelectionSection
     setAmount(newAmount);
     setInsufficientBalance(false);
   };
+  
+  // Update summary data when token balance changes (e.g., after burn)
+  useEffect(() => {
+    if (selectedToken && weightPerCurrentToken && tokenBalance) {
+      const weightValue = parseFloat(weightPerCurrentToken);
+      if (!isNaN(weightValue)) {
+        const balance = Number(tokenBalance) / 1e18;
+        setSummaryData(prev => ({
+          ...prev,
+          balance: balance.toString(),
+        }));
+      }
+    }
+  }, [tokenBalance, selectedToken, weightPerCurrentToken]);
+  
   const parseAmount = parseUnits(amount || '0', decimals || 18).toString();
 
   const handleBurnSuccess = () => {
@@ -85,9 +99,11 @@ export default function SelectionSection({ onRefetchReceipts }: SelectionSection
     if (onRefetchReceipts) {
       onRefetchReceipts();
     }
+    // Refetch the token balance to update the summary card
+    if (refetchBalance) {
+      refetchBalance();
+    }
   };
-
-  console.log(summaryData);
 
   return (
     <>
