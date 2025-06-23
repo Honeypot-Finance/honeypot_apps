@@ -60,7 +60,7 @@ const SummaryCard = memo(function SummaryCard({
   const totalWeightClient = useMemo(
     () =>
       new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/948b257a-20a9-442f-b38f-70fec580a732',
+        uri: 'https://api.ghostlogs.xyz/gg/pub/10550f11-33a0-421c-b25d-6aff7cceca11',
         cache: new InMemoryCache(),
         defaultOptions: {
           query: {

@@ -26,7 +26,9 @@ interface SelectionSectionProps {
   onRefetchReceipts?: (() => void) | null;
 }
 
-export default function SelectionSection({ onRefetchReceipts }: SelectionSectionProps = {}) {
+export default function SelectionSection({
+  onRefetchReceipts,
+}: SelectionSectionProps = {}) {
   const { address } = useAccount();
   const [selectedToken, setSelectedToken] = useState<string>('');
   const [tokenName, setTokenName] = useState<string>('');
@@ -47,7 +49,7 @@ export default function SelectionSection({ onRefetchReceipts }: SelectionSection
   const tokenSupportClient = useMemo(
     () =>
       new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/96ff5ab9-9c87-47cb-ab46-73a276d93c8b',
+        uri: 'https://api.ghostlogs.xyz/gg/pub/10550f11-33a0-421c-b25d-6aff7cceca11',
         cache: new InMemoryCache(),
         defaultOptions: {
           query: {

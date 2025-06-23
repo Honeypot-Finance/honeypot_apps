@@ -21,15 +21,18 @@ interface AllInOneVaultTableProps {
   onRefetchExpose?: (refetchFn: () => void) => void;
 }
 
-export default function AllInOneVaultTable({ onRefetchExpose }: AllInOneVaultTableProps = {}) {
-  const [currentTableData, setCurrentTableData] =
-    useState<ReceiptTableData[]>([]);
+export default function AllInOneVaultTable({
+  onRefetchExpose,
+}: AllInOneVaultTableProps = {}) {
+  const [currentTableData, setCurrentTableData] = useState<ReceiptTableData[]>(
+    []
+  );
   const [refreshKey, setRefreshKey] = useState(0);
   const { address } = useAccount();
   const allInOneVaultClient = useMemo(
     () =>
       new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/96ff5ab9-9c87-47cb-ab46-73a276d93c8b',
+        uri: 'https://api.ghostlogs.xyz/gg/pub/10550f11-33a0-421c-b25d-6aff7cceca11',
         cache: new InMemoryCache(),
         defaultOptions: {
           query: {
@@ -69,33 +72,54 @@ export default function AllInOneVaultTable({ onRefetchExpose }: AllInOneVaultTab
     if (listReceipts) {
       const transformedData = transformReceiptData(listReceipts);
       setCurrentTableData(transformedData);
-      
+
       // Only refetch if we have new receipts (count increased)
-      if (listReceipts.length > previousReceiptCount && previousReceiptCount > 0) {
+      if (
+        listReceipts.length > previousReceiptCount &&
+        previousReceiptCount > 0
+      ) {
         console.log('🔄 New receipts detected, refetching data...');
         refetchReceipts();
       }
-      
+
       setPreviousReceiptCount(listReceipts.length);
     }
-  }, [receiptsData, refreshKey, refetchReceipts, listReceipts.length, previousReceiptCount]);
+  }, [
+    receiptsData,
+    refreshKey,
+    refetchReceipts,
+    listReceipts.length,
+    previousReceiptCount,
+  ]);
 
   // Handle successful query completion and auto-refetch for new data
   useEffect(() => {
-    if (!receiptsLoading && !receiptsError && receiptsData && networkStatus === 7) {
+    if (
+      !receiptsLoading &&
+      !receiptsError &&
+      receiptsData &&
+      networkStatus === 7
+    ) {
       // NetworkStatus 7 means query completed successfully
       console.log('✅ Query completed successfully, checking for updates...');
-      
+
       // Set a timeout to refetch after a short delay to check for new data
       const timeout = setTimeout(() => {
         if (listReceipts.length > 0) {
           refetchReceipts();
         }
       }, 2000); // Wait 2 seconds before refetching
-      
+
       return () => clearTimeout(timeout);
     }
-  }, [receiptsData, receiptsLoading, receiptsError, networkStatus, refetchReceipts, listReceipts.length]);
+  }, [
+    receiptsData,
+    receiptsLoading,
+    receiptsError,
+    networkStatus,
+    refetchReceipts,
+    listReceipts.length,
+  ]);
 
   useEffect(() => {
     const interval = setInterval(() => {

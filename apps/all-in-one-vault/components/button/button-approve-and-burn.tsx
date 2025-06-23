@@ -43,7 +43,7 @@ export function ApproveAndBurnButton({
   }, [userAmount, tokenAddress, tokenDecimals, tokenSymbol]);
   const { approvalState, approvalCallback } = useApprove(
     currencyAmount,
-    `0x20F4b92054F745c19ea3f3053B77372e73332945`
+    `0x9c52cD80455a9ee50610aC90e846e46E04014f6d`
   );
   const { writeContractAsync: executeGetReceipt } = useWriteContract();
   const handleApprove = async () => {
@@ -59,28 +59,28 @@ export function ApproveAndBurnButton({
   };
 
   const handleBurnToVault = async () => {
-  if (!userAmount) {
-    onError?.('Invalid amount');
-    return;
-  }
+    if (!userAmount) {
+      onError?.('Invalid amount');
+      return;
+    }
 
-  try {
-    setIsProcessing(true);
-    const hash = await executeGetReceipt({
-      address: `0x20F4b92054F745c19ea3f3053B77372e73332945`,
-      abi: AllInOneVaultABI,
-      functionName: 'getReceipt',
-      args: [tokenAddress, userAmount],
-    });
-    const receipt = await waitForTransactionReceipt(config, { hash });
-    onSuccess?.();
-  } catch (error) {
-    console.error('Burn to vault failed:', error);
-    onError?.('Burn to vault failed');
-  } finally {
-    setIsProcessing(false);
-  }
-};
+    try {
+      setIsProcessing(true);
+      const hash = await executeGetReceipt({
+        address: `0x9c52cD80455a9ee50610aC90e846e46E04014f6d`,
+        abi: AllInOneVaultABI,
+        functionName: 'getReceipt',
+        args: [tokenAddress, userAmount],
+      });
+      const receipt = await waitForTransactionReceipt(config, { hash });
+      onSuccess?.();
+    } catch (error) {
+      console.error('Burn to vault failed:', error);
+      onError?.('Burn to vault failed');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const getButtonConfig = () => {
     if (!userAddress) {
