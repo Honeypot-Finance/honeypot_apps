@@ -28,8 +28,7 @@ interface SelectionSectionProps {
 
 export default function SelectionSection({
   onRefetchReceipts,
-}: SelectionSectionProps = {}) {
-export default function SelectionSection({ onRefetchReceipts }: SelectionSectionProps) {
+}: SelectionSectionProps) {
   const { address } = useAccount();
   const [selectedToken, setSelectedToken] = useState<string>('');
   const [tokenName, setTokenName] = useState<string>('');
@@ -80,21 +79,21 @@ export default function SelectionSection({ onRefetchReceipts }: SelectionSection
     setAmount(newAmount);
     setInsufficientBalance(false);
   };
-  
+
   // Update summary data when token balance changes (e.g., after burn)
   useEffect(() => {
     if (selectedToken && weightPerCurrentToken && tokenBalance) {
       const weightValue = parseFloat(weightPerCurrentToken);
       if (!isNaN(weightValue)) {
         const balance = Number(tokenBalance) / 1e18;
-        setSummaryData(prev => ({
+        setSummaryData((prev) => ({
           ...prev,
           balance: balance.toString(),
         }));
       }
     }
   }, [tokenBalance, selectedToken, weightPerCurrentToken]);
-  
+
   const parseAmount = parseUnits(amount || '0', decimals || 18).toString();
 
   const handleBurnSuccess = () => {
