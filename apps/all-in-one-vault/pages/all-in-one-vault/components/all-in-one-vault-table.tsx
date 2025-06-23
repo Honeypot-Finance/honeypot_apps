@@ -28,6 +28,7 @@ export default function AllInOneVaultTable({
     []
   );
   const [refreshKey, setRefreshKey] = useState(0);
+  const [isManualRefreshing, setIsManualRefreshing] = useState(false);
   const { address } = useAccount();
   const allInOneVaultClient = useMemo(
     () =>
@@ -59,12 +60,30 @@ export default function AllInOneVaultTable({
   });
   const listReceipts = receiptsData?.receipts?.items || [];
 
+  // Manual refresh handler
+  const handleManualRefresh = async () => {
+    setIsManualRefreshing(true);
+    try {
+      console.log('🔄 Manual refresh triggered');
+      const result = await refetchReceipts();
+      console.log('📊 Refetch data:', result.data);
+    } catch (error) {
+      console.error('❌ Manual refresh failed:', error);
+    } finally {
+      setIsManualRefreshing(false);
+    }
+  };
+
   // Track previous receipt count to detect new data
   const [previousReceiptCount, setPreviousReceiptCount] = useState(0);
 
   useEffect(() => {
     if (onRefetchExpose) {
-      onRefetchExpose(() => refetchReceipts());
+      console.log('🔗 Exposing refetch function to parent component');
+      onRefetchExpose(() => {
+        console.log('🔄 Refetch called from parent');
+        return refetchReceipts();
+      });
     }
   }, [onRefetchExpose, refetchReceipts]);
 
@@ -194,6 +213,8 @@ export default function AllInOneVaultTable({
       enableFiltering={true}
       enablePagination={true}
       searchPlaceholder="Search receipts..."
+      onRefresh={handleManualRefresh}
+      isRefreshing={isManualRefreshing}
     />
   );
 }

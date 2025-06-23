@@ -9,6 +9,8 @@ import {
 import { TOKEN_SUPPORT_QUERY } from '@/lib/algebra/graphql/queries/token-support';
 import useGetSupportTokenInfo from '@/hooks/useGetSupportTokenInfo';
 import { calculateSummaryData } from '../../utils/helper-function';
+import { useAccount, useReadContract } from 'wagmi';
+import { erc20Abi } from 'viem';
 
 interface InputSectionProps {
   onTokenChange?: (value: string) => void;
@@ -69,6 +71,17 @@ export default function InputSection({
     isLoading: tokenInfoLoading,
     error: tokenInfoError,
   } = useGetSupportTokenInfo({ tokens: isDisabled ? [] : tokenAddresses });
+  const { address } = useAccount();
+  
+  const { data: newTokenBalance } = useReadContract({
+      address: selectedToken as `0x${string}`,
+      abi: erc20Abi,
+      functionName: 'balanceOf',
+      args: address ? [address] : undefined,
+      query: {
+        enabled: !!selectedToken && !!address,
+      },
+  });
 
   useEffect(() => {
     if (!isDisabled) {
@@ -83,45 +96,37 @@ export default function InputSection({
 
   useEffect(() => {
     if (!setSummaryData || isDisabled) return;
-    if (!amount || amount.trim() === '') {
+    
+    if (!selectedToken) {
       setSummaryData({
-        weightPerToken:
-          selectedToken && tokenSupportList.length > 0
-            ? tokenSupportList.find(
-                (token: { id: string; weight: string }) =>
-                  token.id === selectedToken
-              )?.weight || '-'
-            : '-',
+        weightPerToken: '-',
         balance: '-',
         receiptWeight: '-',
       });
-      if (setInsufficientBalance) {
-        setInsufficientBalance(false);
-      }
       return;
     }
 
-    if (amount && selectedToken) {
-      const selectedTokenData = tokenSupportList.find(
-        (token: { id: string; weight: string }) => token.id === selectedToken
-      );
-      if (selectedTokenData) {
-        const weightValue = parseFloat(selectedTokenData.weight);
-        const newSummaryData = calculateSummaryData(
-          selectedToken,
-          amount,
-          weightValue,
-          totalWeight,
-          tokenBalance
-        );
-        if (newSummaryData) {
-          setSummaryData(newSummaryData);
+    // Find the selected token data
+    const selectedTokenData = tokenSupportList.find(
+      (token: { id: string; weight: string }) => token.id === selectedToken
+    );
 
-          if (setInsufficientBalance) {
-            const amountValue = parseFloat(amount);
-            const balanceValue = parseFloat(newSummaryData.balance);
-            setInsufficientBalance(amountValue > balanceValue);
-          }
+    if (selectedTokenData) {
+      const weightValue = parseFloat(selectedTokenData.weight);
+      const newSummaryData = calculateSummaryData(
+        selectedToken,
+        amount || '',
+        weightValue,
+        totalWeight,
+        newTokenBalance || tokenBalance
+      );
+      if (newSummaryData) {
+        setSummaryData(newSummaryData);
+
+        if (setInsufficientBalance && amount && amount.trim() !== '') {
+          const amountValue = parseFloat(amount);
+          const balanceValue = parseFloat(newSummaryData.balance);
+          setInsufficientBalance(!isNaN(amountValue) && amountValue > 0 && amountValue > balanceValue);
         }
       }
     }
@@ -130,8 +135,11 @@ export default function InputSection({
     selectedToken,
     tokenSupportList,
     totalWeight,
+    newTokenBalance,
     tokenBalance,
     isDisabled,
+    setSummaryData,
+    setInsufficientBalance,
   ]);
 
   const handleTokenChange = (keys: any) => {
@@ -155,23 +163,19 @@ export default function InputSection({
       if (setWeightPerCurrentToken) {
         setWeightPerCurrentToken(selectedTokenData.weight);
       }
-      if (setSummaryData && amount && amount.trim() !== '') {
+      
+      // Always calculate summary data when token changes
+      if (setSummaryData) {
         const newSummaryData = calculateSummaryData(
           selectedKey,
-          amount,
+          amount || '',
           weightValue,
           totalWeight,
-          tokenBalance
+          newTokenBalance || tokenBalance
         );
         if (newSummaryData) {
           setSummaryData(newSummaryData);
         }
-      } else if (setSummaryData) {
-        setSummaryData({
-          weightPerToken: selectedTokenData.weight,
-          balance: '-',
-          receiptWeight: '-',
-        });
       }
     }
   };

@@ -13,7 +13,7 @@ import {
   type ColumnFiltersState,
   type FilterFn,
 } from '@tanstack/react-table';
-import { ChevronUp, ChevronDown, Search } from 'lucide-react';
+import { ChevronUp, ChevronDown, Search, RefreshCw } from 'lucide-react';
 import { Input } from '../input';
 import { Button } from '../button';
 
@@ -76,6 +76,8 @@ interface GenericTanstackTableProps<T> {
   pageSize?: number;
   searchPlaceholder?: string;
   emptyMessage?: string;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
 }
 
 export default function GenericTanstackTable<T>({
@@ -88,11 +90,15 @@ export default function GenericTanstackTable<T>({
   pageSize = 10,
   searchPlaceholder = 'Search...',
   emptyMessage = 'No data available',
+  onRefresh,
+  isRefreshing = false,
 }: GenericTanstackTableProps<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
   const [globalFilter, setGlobalFilter] = React.useState('');
-  
+
   // Manual pagination state to maintain current page
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -112,19 +118,24 @@ export default function GenericTanstackTable<T>({
     }
 
     const currentDataLength = data.length;
-    const lengthDifference = Math.abs(currentDataLength - previousDataLength.current);
-    
+    const lengthDifference = Math.abs(
+      currentDataLength - previousDataLength.current
+    );
+
     // Only reset if data length changed significantly (not just status updates)
     if (lengthDifference > 1 || currentDataLength === 0) {
-      const maxPage = Math.max(0, Math.ceil(currentDataLength / pagination.pageSize) - 1);
+      const maxPage = Math.max(
+        0,
+        Math.ceil(currentDataLength / pagination.pageSize) - 1
+      );
       if (pagination.pageIndex > maxPage) {
-        setPagination(prev => ({
+        setPagination((prev) => ({
           ...prev,
-          pageIndex: Math.max(0, maxPage)
+          pageIndex: Math.max(0, maxPage),
         }));
       }
     }
-    
+
     previousDataLength.current = currentDataLength;
   }, [data.length, pagination.pageSize, pagination.pageIndex]);
 
@@ -134,7 +145,9 @@ export default function GenericTanstackTable<T>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: enableSorting ? getSortedRowModel() : undefined,
     getFilteredRowModel: enableFiltering ? getFilteredRowModel() : undefined,
-    getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
+    getPaginationRowModel: enablePagination
+      ? getPaginationRowModel()
+      : undefined,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -152,14 +165,17 @@ export default function GenericTanstackTable<T>({
   });
 
   // Safe navigation functions with bounds checking
-  const goToPage = React.useCallback((pageIndex: number) => {
-    const maxPage = Math.max(0, table.getPageCount() - 1);
-    const targetPage = Math.max(0, Math.min(pageIndex, maxPage));
-    setPagination(prev => ({
-      ...prev,
-      pageIndex: targetPage
-    }));
-  }, [table]);
+  const goToPage = React.useCallback(
+    (pageIndex: number) => {
+      const maxPage = Math.max(0, table.getPageCount() - 1);
+      const targetPage = Math.max(0, Math.min(pageIndex, maxPage));
+      setPagination((prev) => ({
+        ...prev,
+        pageIndex: targetPage,
+      }));
+    },
+    [table]
+  );
 
   const nextPage = React.useCallback(() => {
     if (table.getCanNextPage()) {
@@ -249,6 +265,24 @@ export default function GenericTanstackTable<T>({
             <span className="text-sm text-gray-500">
               ({table.getFilteredRowModel().rows.length} total rows)
             </span>
+            {onRefresh && (
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50/50">
+                <h3 className="text-sm font-medium text-gray-900">
+                  Receipts Table
+                </h3>
+                <Button
+                  size="sm"
+                  onClick={onRefresh}
+                  disabled={isRefreshing}
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCw
+                    className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`}
+                  />
+                  {isRefreshing ? 'Refreshing...' : 'Refresh'}
+                </Button>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <Button

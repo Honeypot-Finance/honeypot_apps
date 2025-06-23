@@ -271,7 +271,7 @@ const XSwapParams = ({
     <div className="flex justify-center mb-1 bg-card-dark py-3 px-3 rounded-lg">
       <Loader size={17} className="text-black" color="black" />
     </div>
-  ) : routeNotFound ? (
+  ) : Number(typedValue) !== 0 && routeNotFound ?  (
     <div className="text-sm mb-1 text-center text-black bg-card-dark py-2 px-3 rounded-lg">
       Insufficient liquidity for this trade.
     </div>
