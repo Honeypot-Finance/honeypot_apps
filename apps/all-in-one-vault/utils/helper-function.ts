@@ -8,15 +8,31 @@ export const calculateSummaryData = (
   totalWeight?: bigint | null,
   tokenBalance?: bigint | null
 ) => {
-  if (!token || !amountStr || amountStr.trim() === '' || !weightPerToken) return;
+  if (!token || !weightPerToken) return;
+
+  const balance = Number(tokenBalance || 0) / 1e18;
+  
+  // If no amount is provided, return basic data with balance
+  if (!amountStr || amountStr.trim() === '') {
+    return {
+      weightPerToken: weightPerToken.toString(),
+      balance: balance.toString(),
+      receiptWeight: '-',
+    };
+  }
 
   const amountValue = parseFloat(amountStr);
   
-  // Return undefined for invalid amounts
-  if (isNaN(amountValue) || amountValue <= 0) return;
+  // Return basic data with balance for invalid amounts
+  if (isNaN(amountValue) || amountValue <= 0) {
+    return {
+      weightPerToken: weightPerToken.toString(),
+      balance: balance.toString(),
+      receiptWeight: '-',
+    };
+  }
 
   const receiptWeight = (weightPerToken * amountValue).toFixed(1);
-  const balance = Number(tokenBalance) / 1e18;
 
   return {
     weightPerToken: weightPerToken.toString(),
@@ -38,7 +54,7 @@ export const handleTokenChange = (
   setSelectedToken(token);
   setInsufficientBalance(false);
 
-  if (token && amount && weightPerToken) {
+  if (token && weightPerToken) {
     const newSummaryData = calculateSummaryData(
       token,
       amount,
@@ -49,11 +65,14 @@ export const handleTokenChange = (
     if (newSummaryData) {
       setSummaryData(newSummaryData);
 
-      const amountValue = parseFloat(amount);
-      const balanceValue = parseFloat(newSummaryData.balance);
+      // Check balance only if amount is provided
+      if (amount && amount.trim() !== '') {
+        const amountValue = parseFloat(amount);
+        const balanceValue = parseFloat(newSummaryData.balance);
 
-      if (amountValue > balanceValue) {
-        setInsufficientBalance(true);
+        if (amountValue > balanceValue) {
+          setInsufficientBalance(true);
+        }
       }
     }
   }
@@ -71,7 +90,7 @@ export const handleAmountChange = (
 ) => {
   setAmount(newAmount);
 
-  if (selectedToken && newAmount && weightPerToken) {
+  if (selectedToken && weightPerToken) {
     const newSummaryData = calculateSummaryData(
       selectedToken,
       newAmount,
@@ -82,22 +101,27 @@ export const handleAmountChange = (
     if (newSummaryData) {
       setSummaryData(newSummaryData);
 
-      const amountValue = parseFloat(newAmount);
-      const balanceValue = parseFloat(newSummaryData.balance);
+      // Check balance only if amount is provided and valid
+      if (newAmount && newAmount.trim() !== '') {
+        const amountValue = parseFloat(newAmount);
+        const balanceValue = parseFloat(newSummaryData.balance);
 
-      if (amountValue > balanceValue) {
-        setInsufficientBalance(true);
-        toast.error(
-          `Insufficient balance! You only have ${balanceValue} ${selectedToken} tokens available.`,
-          {
-            position: 'top-right',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-          }
-        );
+        if (!isNaN(amountValue) && amountValue > 0 && amountValue > balanceValue) {
+          setInsufficientBalance(true);
+          toast.error(
+            `Insufficient balance! You only have ${balanceValue} ${selectedToken} tokens available.`,
+            {
+              position: 'top-right',
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            }
+          );
+        } else {
+          setInsufficientBalance(false);
+        }
       } else {
         setInsufficientBalance(false);
       }
@@ -170,5 +194,6 @@ export const resetFormState = (
     weightPerToken: '-',
     balance: '-',
     receiptWeight: '-',
+    estimatedRewards: '-',
   });
 };

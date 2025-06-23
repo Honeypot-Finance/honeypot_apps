@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import InputSection from '@/components/select/select';
 import SummaryCard from '@/components/summary/summary';
 import { ApproveAndBurnButton } from '@/components/button/button-approve-and-burn';
@@ -23,10 +23,10 @@ import { MaxUint256 } from 'ethers';
 import { AllInOneVaultABI } from '@/lib/abis';
 
 interface SelectionSectionProps {
-  onRefetchReceipts?: (() => void) | null;
+  onRefetchReceipts?: () => void;
 }
 
-export default function SelectionSection({ onRefetchReceipts }: SelectionSectionProps = {}) {
+export default function SelectionSection({ onRefetchReceipts }: SelectionSectionProps) {
   const { address } = useAccount();
   const [selectedToken, setSelectedToken] = useState<string>('');
   const [tokenName, setTokenName] = useState<string>('');
@@ -58,7 +58,7 @@ export default function SelectionSection({ onRefetchReceipts }: SelectionSection
     []
   );
 
-  const { data: tokenBalance } = useReadContract({
+  const { data: tokenBalance, refetch: refetchBalance } = useReadContract({
     address: selectedToken as `0x${string}`,
     abi: erc20Abi,
     functionName: 'balanceOf',
@@ -67,7 +67,6 @@ export default function SelectionSection({ onRefetchReceipts }: SelectionSection
       enabled: !!selectedToken && !!address,
     },
   });
-  console.log('🔍', tokenBalance);
 
   const onTokenChange = (token: string) => {
     setSelectedToken(token);
@@ -78,16 +77,42 @@ export default function SelectionSection({ onRefetchReceipts }: SelectionSection
     setAmount(newAmount);
     setInsufficientBalance(false);
   };
+  
+  // Update summary data when token balance changes (e.g., after burn)
+  useEffect(() => {
+    if (selectedToken && weightPerCurrentToken && tokenBalance) {
+      const weightValue = parseFloat(weightPerCurrentToken);
+      if (!isNaN(weightValue)) {
+        const balance = Number(tokenBalance) / 1e18;
+        setSummaryData(prev => ({
+          ...prev,
+          balance: balance.toString(),
+        }));
+      }
+    }
+  }, [tokenBalance, selectedToken, weightPerCurrentToken]);
+  
   const parseAmount = parseUnits(amount || '0', decimals || 18).toString();
 
   const handleBurnSuccess = () => {
-    console.log('Burn successful!');
+    console.log('🔥 Burn successful!');
+    // Refetch receipts if the function is available
     if (onRefetchReceipts) {
-      onRefetchReceipts();
+      try {
+        console.log('🔄 Calling refetch receipts...');
+        onRefetchReceipts();
+      } catch (error) {
+        console.error('❌ Error calling refetch receipts:', error);
+      }
+    } else {
+      console.warn('⚠️ onRefetchReceipts function not available');
+    }
+    // Refetch the token balance to update the summary card
+    if (refetchBalance) {
+      console.log('💰 Refetching token balance...');
+      refetchBalance();
     }
   };
-
-  console.log(summaryData);
 
   return (
     <>

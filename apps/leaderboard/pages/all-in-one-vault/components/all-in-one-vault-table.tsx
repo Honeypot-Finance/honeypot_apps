@@ -25,6 +25,7 @@ export default function AllInOneVaultTable({ onRefetchExpose }: AllInOneVaultTab
   const [currentTableData, setCurrentTableData] =
     useState<ReceiptTableData[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [isManualRefreshing, setIsManualRefreshing] = useState(false);
   const { address } = useAccount();
   const allInOneVaultClient = useMemo(
     () =>
@@ -55,6 +56,18 @@ export default function AllInOneVaultTable({ onRefetchExpose }: AllInOneVaultTab
     notifyOnNetworkStatusChange: true,
   });
   const listReceipts = receiptsData?.receipts?.items || [];
+
+  const handleManualRefresh = async () => {
+    setIsManualRefreshing(true);
+    try {
+      console.log('🔄 Manual refresh triggered');
+      await refetchReceipts();
+    } catch (error) {
+      console.error('❌ Manual refresh failed:', error);
+    } finally {
+      setIsManualRefreshing(false);
+    }
+  };
 
   // Track previous receipt count to detect new data
   const [previousReceiptCount, setPreviousReceiptCount] = useState(0);
@@ -151,12 +164,10 @@ export default function AllInOneVaultTable({ onRefetchExpose }: AllInOneVaultTab
     );
   }
 
-  if (receiptsLoading && !receiptsData) {
+  if (receiptsLoading && !isManualRefreshing) {
     return (
       <div className="mb-6 w-full shadow-[4px_4px_0px_0px_rgba(255,255,255,0.8)] bg-white rounded-xl p-6">
-        <div className="flex flex-col items-center justify-center py-8">
-          <LoadingDisplay size={100} text="Loading receipts..." />
-        </div>
+        <LoadingDisplay />
       </div>
     );
   }
@@ -170,6 +181,8 @@ export default function AllInOneVaultTable({ onRefetchExpose }: AllInOneVaultTab
       enableFiltering={true}
       enablePagination={true}
       searchPlaceholder="Search receipts..."
+      onRefresh={handleManualRefresh}
+      isRefreshing={isManualRefreshing || receiptsLoading}
     />
   );
 }

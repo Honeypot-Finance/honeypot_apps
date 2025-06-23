@@ -157,6 +157,13 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
             'px-3 py-1 rounded-md text-black cursor-pointer hover:opacity-80 transition-opacity',
           style: { background: 'rgba(255, 169, 49, 1)' },
           onClick: async () => {
+            const payload = {
+              address: `0x20F4b92054F745c19ea3f3053B77372e73332945`,
+              abi: AllInOneVaultABI,
+              functionName: 'claim',
+              args: [BigInt(data.id)],
+            }
+            console.log(payload)
             const hash = await claimReceipt({
               address: `0x20F4b92054F745c19ea3f3053B77372e73332945`,
               abi: AllInOneVaultABI,
