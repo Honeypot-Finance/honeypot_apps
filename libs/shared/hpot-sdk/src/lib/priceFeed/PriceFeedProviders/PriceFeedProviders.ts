@@ -189,7 +189,6 @@ export class DefinedPriceFeed implements PriceFeedProvider {
           from: ${input.from}
           to: ${input.to}
           resolution: "${input.resolution}"
-          quoteToken: token${input.tokenNumber ?? 0}
         ) {
           o
           h
