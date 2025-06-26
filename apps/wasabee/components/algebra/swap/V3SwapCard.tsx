@@ -34,6 +34,7 @@ export function V3SwapCard({
   isOutputNative,
   disableFromSelection,
   disableToSelection,
+  onSwapSuccess,
 }: V3SwapCardProps) {
   return (
     <CardContainer bordered={bordered}>
@@ -50,7 +51,7 @@ export function V3SwapCard({
         disableToSelection={disableToSelection}
       />
       <SwapParamsV3 />
-      <SwapButtonV3 />
+      <SwapButtonV3 onSwapSuccess={onSwapSuccess} />
       <PoweredByAlgebra />
     </CardContainer>
   );
