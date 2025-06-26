@@ -73,6 +73,17 @@ const SwapPairV3 = ({
   const handleInputSelect = useCallback(
     (inputCurrency: Currency) => {
       onCurrencySelection(SwapField.INPUT, inputCurrency);
+      // Save input token address to localStorage
+      if (typeof window !== 'undefined' && inputCurrency) {
+
+        if(inputCurrency?.wrapped?.address){
+        localStorage.setItem('swapInputToken', inputCurrency?.wrapped?.address);
+      }
+        else
+        {
+          localStorage.removeItem('swapInputToken')
+        }
+      }
     },
     [onCurrencySelection]
   );
@@ -80,6 +91,16 @@ const SwapPairV3 = ({
   const handleOutputSelect = useCallback(
     (outputCurrency: Currency) => {
       onCurrencySelection(SwapField.OUTPUT, outputCurrency);
+      // Save output token address to localStorage
+      if (typeof window !== 'undefined' && outputCurrency) {
+
+        if(outputCurrency?.wrapped?.address){
+          localStorage.setItem('swapOutputToken', outputCurrency?.wrapped?.address)
+        }else
+        {
+          localStorage.removeItem('swapOutputToken')
+        }
+      }
     },
     [onCurrencySelection]
   );
