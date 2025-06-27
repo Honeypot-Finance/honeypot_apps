@@ -64,10 +64,11 @@ export const ParticipatedLaunches = observer(() => {
                     {
                       gas: BigInt(10000000),
                     }
-                  );
-                  setCanClaimPot2PumpList([]);
-                  canClaimPot2PumpList.forEach((pair) => {
-                    pair.canClaimLP = false;
+                  ).then(() => {
+                    setCanClaimPot2PumpList([]);
+                    canClaimPot2PumpList.forEach((pair) => {
+                      pair.canClaimLP = false;
+                    });
                   });
                 } catch (err: any) {
                   console.error(err);
@@ -96,10 +97,11 @@ export const ParticipatedLaunches = observer(() => {
                     {
                       gas: BigInt(10000000),
                     }
-                  );
-                  setCanRefundPot2PumpList([]);
-                  canRefundPot2PumpList.forEach((pair) => {
-                    pair.canRefund = false;
+                  ).then(() => {
+                    setCanRefundPot2PumpList([]);
+                    canRefundPot2PumpList.forEach((pair) => {
+                      pair.canRefund = false;
+                    });
                   });
               
                 } catch (err: any) {
