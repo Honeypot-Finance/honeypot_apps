@@ -21,6 +21,9 @@ export const ParticipatedLaunches = observer(() => {
   const [canRefundPot2PumpList, setCanRefundPot2PumpList] = useState<
     MemePairContract[]
   >([]);
+  const [claimAllLoading, setClaimAllLoading] = useState(false);
+  const [refundAllLoading, setRefundAllLoading] = useState(false);
+
 
   useEffect(() => {
     if (!wallet.isInit) {
@@ -48,9 +51,10 @@ export const ParticipatedLaunches = observer(() => {
         <div className="flex gap-4 text-sm z-10">
           {canClaimPot2PumpList.length > 0 && (
             <Button
-              onClick={() => {
-                wallet.contracts.memeFacade.claimAllUserLP
-                  .call(
+              onClick={async () => {
+                setClaimAllLoading(true);
+                try {
+                  await wallet.contracts.memeFacade.claimAllUserLP.call(
                     [
                       wallet.account as Address,
                       canClaimPot2PumpList.map(
@@ -60,22 +64,29 @@ export const ParticipatedLaunches = observer(() => {
                     {
                       gas: BigInt(10000000),
                     }
-                  )
-                  .then(() => {
-                    initPot2Pumps();
+                  );
+                  setCanClaimPot2PumpList([]);
+                  canClaimPot2PumpList.forEach((pair) => {
+                    pair.canClaimLP = false;
                   });
+                } catch (err: any) {
+                  console.error(err);
+                } finally {
+                  setClaimAllLoading(false);
+                }
               }}
-              disabled={!wallet.account}
+              disabled={!wallet.account || claimAllLoading}
               className="ml-[-1px] rounded-[8px] border border-black bg-[#FFCD4D] p-2 text-[#202020] shadow-[2px_2px_0px_0px_#000] hover:translate-y-[2px] hover:shadow-[2px_1px_0px_0px_#000] active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Claim All
+              {claimAllLoading ? "Claiming..." : "Claim All"}
             </Button>
           )}
           {canRefundPot2PumpList.length > 0 && (
             <Button
-              onClick={() => {
-                wallet.contracts.memeFacade.refundAllUserToken
-                  .call(
+              onClick={async () => {
+                setRefundAllLoading(true);
+                try {
+                  await wallet.contracts.memeFacade.refundAllUserToken.call(
                     [
                       wallet.account as Address,
                       canRefundPot2PumpList.map(
@@ -85,15 +96,22 @@ export const ParticipatedLaunches = observer(() => {
                     {
                       gas: BigInt(10000000),
                     }
-                  )
-                  .then(() => {
-                    initPot2Pumps();
+                  );
+                  setCanRefundPot2PumpList([]);
+                  canRefundPot2PumpList.forEach((pair) => {
+                    pair.canRefund = false;
                   });
+              
+                } catch (err: any) {
+                  console.error(err);
+                } finally {
+                  setRefundAllLoading(false);
+                }
               }}
-              disabled={!wallet.account}
+              disabled={!wallet.account || refundAllLoading}
               className="ml-[-1px] rounded-[8px] border border-black bg-[#FFCD4D] p-2 text-[#202020] shadow-[2px_2px_0px_0px_#000] hover:translate-y-[2px] hover:shadow-[2px_1px_0px_0px_#000] active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Refund All
+              {refundAllLoading ? "Refunding..." : "Refund All"}
             </Button>
           )}
         </div>
