@@ -55,6 +55,7 @@ const SwapPage = observer(() => {
       }
     }
   }, [urlInputCurrency, urlOutputCurrency]);
+  const [klineRefreshKey, setKlineRefreshKey] = useState(0);
 
   if (!wallet.currentChain?.supportDEX) {
     return (
@@ -82,7 +83,7 @@ const SwapPage = observer(() => {
             className="w-full col-span-2 lg:col-span-1"
           >
             <DarkContainer>
-              <KlineChart height={479} />
+              <KlineChart height={479} refreshKey={klineRefreshKey} />
             </DarkContainer>
           </motion.div>
         )}
@@ -122,6 +123,7 @@ const SwapPage = observer(() => {
                 isInputNative={!inputCurrency}
                 isOutputNative={!outputCurrency}
                 isUpdatingPriceChart={true}
+                onSwapSuccess={() => setKlineRefreshKey(k => k + 1)}
               />
             </Tab>
             <Tab key="universal" title="Universal Account">
