@@ -87,11 +87,50 @@ const SummaryCard = memo(function SummaryCard({
     functionName: 'balanceOf',
     args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
   });
-  const totalWeightItems = totalWeight?.globals?.items[0].totalWeight || {};
-  const estimatedRewards =
-    poolReward && data.receiptWeight && totalWeightItems
-      ? Number((BigInt(data.receiptWeight) * poolReward) / totalWeightItems)
-      : 0;
+  const totalWeightValue = totalWeight?.globals?.items?.[0]?.totalWeight;
+
+  // Debug logging
+  console.log('🔍 Estimated Rewards Debug:', {
+    poolReward: poolReward?.toString(),
+    receiptWeight: data.receiptWeight,
+    totalWeight: totalWeightValue?.toString(),
+    totalWeightError,
+    totalWeightLoading,
+  });
+
+  const estimatedRewards = useMemo(() => {
+    if (!poolReward || !data.receiptWeight || !totalWeightValue) {
+      console.log('❌ Missing data for rewards calculation:', {
+        hasPoolReward: !!poolReward,
+        hasReceiptWeight: !!data.receiptWeight,
+        hasTotalWeight: !!totalWeightValue,
+      });
+      return 0;
+    }
+
+    try {
+      // Convert receiptWeight back to original scale for calculation
+      const originalReceiptWeight =
+        parseFloat(data.receiptWeight.toString()) * 10000;
+      const calculation =
+        (BigInt(Math.floor(originalReceiptWeight)) * poolReward) /
+        BigInt(totalWeightValue);
+      const result = Number(calculation) / 1e18; // Convert from wei to BGT
+
+      console.log('💰 Rewards calculation:', {
+        originalReceiptWeight,
+        poolReward: poolReward.toString(),
+        totalWeight: totalWeightValue.toString(),
+        calculationRaw: calculation.toString(),
+        finalResult: result,
+      });
+
+      return result;
+    } catch (error) {
+      console.error('❌ Error calculating rewards:', error);
+      return 0;
+    }
+  }, [poolReward, data.receiptWeight, totalWeightValue]);
 
   const summaryItems = useMemo(
     () => [

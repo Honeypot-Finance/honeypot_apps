@@ -1,7 +1,35 @@
 import { ReceiptTableData } from '@/components/Table/table.config';
 
-export const transformReceiptData = (receipts: any[]): ReceiptTableData[] => {
-  return receipts.map((receipt: any) => {
+// Function to calculate estimated rewards for a receipt
+const calculateEstimatedRewards = (
+  receiptWeight: string,
+  poolReward?: bigint,
+  totalWeight?: bigint
+): string => {
+  if (!poolReward || !totalWeight || !receiptWeight) {
+    return '0.00 BGT';
+  }
+
+  try {
+    // Convert receiptWeight back to original scale for calculation
+    const originalReceiptWeight = parseFloat(receiptWeight) * 10000;
+    const calculation =
+      (BigInt(Math.floor(originalReceiptWeight)) * poolReward) / totalWeight;
+    const result = Number(calculation) / 1e18; // Convert from wei to BGT
+
+    return `${result.toFixed(6)} BGT`;
+  } catch (error) {
+    console.error('Error calculating table rewards:', error);
+    return '0.00 BGT';
+  }
+};
+
+export const transformReceiptData = (
+  receipts: any[],
+  poolReward?: bigint,
+  totalWeight?: bigint
+): ReceiptTableData[] => {
+  const transformedData = receipts.map((receipt: any) => {
     const claimableAt = parseInt(receipt.claimableAt);
     const now = Math.floor(Date.now() / 1000);
     const remainingSeconds = Math.max(0, claimableAt - now);
@@ -49,16 +77,36 @@ export const transformReceiptData = (receipts: any[]): ReceiptTableData[] => {
       };
     }
 
+    const displayWeight = (
+      parseFloat(receipt.receiptWeight) / 10000
+    ).toString();
+
     return {
       id: receipt.id,
       receiptId: receipt.receiptId,
       cooldown: cooldownDisplay,
-      weight: (parseFloat(receipt.receiptWeight) / 10000).toString(),
-      rewards: '0.00 BGT', // TODO: Calculate actual rewards
+      weight: displayWeight,
+      rewards: calculateEstimatedRewards(
+        displayWeight,
+        poolReward,
+        totalWeight
+      ),
       claimableAt: receipt.claimableAt,
       isClaimed: receipt.isClaimed,
       isCooldownActive: !isClaimable,
       action: actionConfig,
     };
+  });
+
+  // Sort: Active receipts (not claimed) first, then claimed receipts
+  // Within each group, sort by receiptId ascending
+  return transformedData.sort((a, b) => {
+    // If one is claimed and the other is not, put claimed ones last
+    if (a.isClaimed !== b.isClaimed) {
+      return a.isClaimed ? 1 : -1;
+    }
+
+    // If both have same claim status, sort by receiptId
+    return parseInt(a.receiptId) - parseInt(b.receiptId);
   });
 };

@@ -13,10 +13,17 @@ import {
   useQuery as useApolloQuery,
 } from '@apollo/client';
 import { RECEIPTS_LIST } from '@/lib/algebra/graphql/queries/receipts-list';
-import { useAccount } from 'wagmi';
+import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
+import { useAccount, useReadContract } from 'wagmi';
 import { LoadingDisplay } from '@/components/loading-display/loading-display';
 import ErrorIcon from '@/components/svg/ErrorIcon';
 import { transformReceiptData } from '../../../utils/helper';
+import {
+  ALL_IN_ONE_VAULT,
+  ALL_IN_ONE_VAULT_PROXY,
+} from '@/config/algebra/addresses';
+import { erc20Abi } from 'viem';
+import { AllInOneVaultABI } from '@/lib/abis';
 
 interface AllInOneVaultTableProps {
   onRefetchExpose?: (refetchFn: () => void) => void;
@@ -64,6 +71,33 @@ function AllInOneVaultTableClient({
   });
   const listReceipts = receiptsData?.receipts?.items || [];
 
+  // Query total weight for rewards calculation
+  const { data: totalWeight } = useApolloQuery(TOTAL_WEIGHT, {
+    client: allInOneVaultClient,
+    errorPolicy: 'all',
+    notifyOnNetworkStatusChange: true,
+  });
+
+  // Get reward token address from contract
+  const { data: rewardTokenAddress } = useReadContract({
+    address: ALL_IN_ONE_VAULT_PROXY as `0x${string}`,
+    abi: AllInOneVaultABI,
+    functionName: 'beraPawAddress',
+  });
+
+  // Query pool reward for rewards calculation using the fetched reward token address
+  const { data: poolReward } = useReadContract({
+    address: rewardTokenAddress as `0x${string}`,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
+    query: {
+      enabled: !!rewardTokenAddress, // Only run when we have the reward token address
+    },
+  });
+
+  const totalWeightValue = totalWeight?.globals?.items?.[0]?.totalWeight;
+
   // Set mounted state after component mounts
   useEffect(() => {
     setIsMounted(true);
@@ -95,7 +129,18 @@ function AllInOneVaultTableClient({
 
   useEffect(() => {
     if (listReceipts) {
-      const transformedData = transformReceiptData(listReceipts);
+      // Debug: Log reward calculation values
+      console.log('===== Debug: Pool Reward Data =====');
+      console.log('Reward token address:', rewardTokenAddress);
+      console.log('Pool reward balance:', poolReward);
+      console.log('Total weight:', totalWeightValue);
+      console.log('=====================================');
+
+      const transformedData = transformReceiptData(
+        listReceipts,
+        poolReward,
+        totalWeightValue
+      );
       setCurrentTableData(transformedData);
 
       // Only refetch if we have new receipts (count increased)
@@ -115,6 +160,9 @@ function AllInOneVaultTableClient({
     refetchReceipts,
     listReceipts.length,
     previousReceiptCount,
+    poolReward,
+    totalWeightValue,
+    rewardTokenAddress,
   ]);
 
   // Handle successful query completion and auto-refetch for new data
