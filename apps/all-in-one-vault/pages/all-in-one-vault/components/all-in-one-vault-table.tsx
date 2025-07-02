@@ -2,6 +2,7 @@ import GenericTanstackTable from '@/components/Table/generic-table';
 import { columns, ReceiptTableData } from '@/components/Table/table.config';
 import { useClaimReceipt } from '@/hooks/useClaimReceipt';
 import React, { useEffect, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 import {
   handleCooldownComplete,
   updateClaimedReceipt,
@@ -21,7 +22,7 @@ interface AllInOneVaultTableProps {
   onRefetchExpose?: (refetchFn: () => void) => void;
 }
 
-export default function AllInOneVaultTable({
+function AllInOneVaultTableClient({
   onRefetchExpose,
 }: AllInOneVaultTableProps = {}) {
   const [currentTableData, setCurrentTableData] = useState<ReceiptTableData[]>(
@@ -29,7 +30,10 @@ export default function AllInOneVaultTable({
   );
   const [refreshKey, setRefreshKey] = useState(0);
   const [isManualRefreshing, setIsManualRefreshing] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [previousReceiptCount, setPreviousReceiptCount] = useState(0);
   const { address } = useAccount();
+
   const allInOneVaultClient = useMemo(
     () =>
       new ApolloClient({
@@ -54,11 +58,16 @@ export default function AllInOneVaultTable({
   } = useApolloQuery(RECEIPTS_LIST, {
     client: allInOneVaultClient,
     variables: { user: address || '' },
-    skip: !address,
+    skip: !address || !isMounted,
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
   });
   const listReceipts = receiptsData?.receipts?.items || [];
+
+  // Set mounted state after component mounts
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Manual refresh handler
   const handleManualRefresh = async () => {
@@ -73,9 +82,6 @@ export default function AllInOneVaultTable({
       setIsManualRefreshing(false);
     }
   };
-
-  // Track previous receipt count to detect new data
-  const [previousReceiptCount, setPreviousReceiptCount] = useState(0);
 
   useEffect(() => {
     if (onRefetchExpose) {
@@ -171,6 +177,17 @@ export default function AllInOneVaultTable({
     }
   }, [isConfirmed, claimingReceiptId, refetchReceipts]);
 
+  // Show loading state until component is mounted to prevent hydration issues
+  if (!isMounted) {
+    return (
+      <div className="mb-6 w-full shadow-[4px_4px_0px_0px_rgba(255,255,255,0.8)] bg-white rounded-xl p-6">
+        <div className="flex flex-col items-center justify-center py-8">
+          <LoadingDisplay size={100} text="Loading..." />
+        </div>
+      </div>
+    );
+  }
+
   if (receiptsError) {
     console.error('Error loading receipts:', receiptsError);
     return (
@@ -218,3 +235,20 @@ export default function AllInOneVaultTable({
     />
   );
 }
+
+// Create a client-only component to prevent hydration issues
+const AllInOneVaultTable = dynamic(
+  () => Promise.resolve(AllInOneVaultTableClient),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="mb-6 w-full shadow-[4px_4px_0px_0px_rgba(255,255,255,0.8)] bg-white rounded-xl p-6">
+        <div className="flex flex-col items-center justify-center py-8">
+          <LoadingDisplay size={100} text="Loading..." />
+        </div>
+      </div>
+    ),
+  }
+);
+
+export default AllInOneVaultTable;

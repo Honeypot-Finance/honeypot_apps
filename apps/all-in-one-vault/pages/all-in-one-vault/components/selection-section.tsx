@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import InputSection from '@/components/select/select';
 import SummaryCard from '@/components/summary/summary';
 import { ApproveAndBurnButton } from '@/components/button/button-approve-and-burn';
@@ -21,14 +22,13 @@ import Insufficient from '@/components/insufficient/insufficient';
 import { Address, erc20Abi, parseUnits } from 'viem';
 import { MaxUint256 } from 'ethers';
 import { AllInOneVaultABI } from '@/lib/abis';
+import { LoadingDisplay } from '@/components/loading-display/loading-display';
 
 interface SelectionSectionProps {
   onRefetchReceipts?: () => void;
 }
 
-export default function SelectionSection({
-  onRefetchReceipts,
-}: SelectionSectionProps) {
+function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
   const { address } = useAccount();
   const [selectedToken, setSelectedToken] = useState<string>('');
   const [tokenName, setTokenName] = useState<string>('');
@@ -38,6 +38,7 @@ export default function SelectionSection({
   const [amount, setAmount] = useState<string>('');
   const [insufficientBalance, setInsufficientBalance] =
     useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
   const [summaryData, setSummaryData] = useState({
     weightPerToken: '-',
     balance: '-',
@@ -45,6 +46,10 @@ export default function SelectionSection({
     estimatedRewards: '-',
   });
   const { writeContractAsync: executeGetReceipt } = useWriteContract();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const tokenSupportClient = useMemo(
     () =>
@@ -116,6 +121,14 @@ export default function SelectionSection({
     }
   };
 
+  if (!isMounted) {
+    return (
+      <div className="w-full flex flex-col justify-center items-center py-8">
+        <LoadingDisplay size={100} text="Loading..." />
+      </div>
+    );
+  }
+
   return (
     <>
       <InputSection
@@ -160,3 +173,18 @@ export default function SelectionSection({
     </>
   );
 }
+
+// Create a client-only component to prevent hydration issues
+const SelectionSection = dynamic(
+  () => Promise.resolve(SelectionSectionClient),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full flex flex-col justify-center items-center py-8">
+        <LoadingDisplay size={100} text="Loading..." />
+      </div>
+    ),
+  }
+);
+
+export default SelectionSection;
