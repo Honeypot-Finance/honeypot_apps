@@ -35,7 +35,8 @@ export const calculateSummaryData = (
     };
   }
 
-  const receiptWeight = (weightPerToken * amountValue).toFixed(1);
+  // Calculate receipt weight and divide by 10000 for display consistency
+  const receiptWeight = ((weightPerToken * amountValue) / 10000).toFixed(1);
 
   return {
     weightPerToken: displayWeightPerToken,
