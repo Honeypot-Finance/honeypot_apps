@@ -77,16 +77,12 @@ const baseConfig = {
         ],
       },
       {
-        // Apply security headers to all routes to prevent clickjacking
+        // Apply security headers to all routes to prevent clickjacking, but allow Safe
         source: '/(.*)',
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'none'",
+            value: "frame-ancestors 'self' https://app.safe.global https://safe.global;"
           },
           {
             key: 'X-Content-Type-Options',
@@ -96,6 +92,14 @@ const baseConfig = {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
           },
+        ]
+      },
+      {
+        source: '/manifest.json',
+        headers: [
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Access-Control-Allow-Methods', value: 'GET' },
+          { key: 'Access-Control-Allow-Headers', value: 'X-Requested-With, content-type, Authorization' },
         ],
       },
     ];
