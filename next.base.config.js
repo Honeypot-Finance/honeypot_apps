@@ -82,7 +82,7 @@ const baseConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: 'frame-ancestors https://app.safe.global https://safe.global;'
+            value: "frame-ancestors 'self' https://app.safe.global https://safe.global;"
           },
           {
             key: 'X-Content-Type-Options',
