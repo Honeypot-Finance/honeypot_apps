@@ -3,8 +3,11 @@ import {
   Position_OrderBy,
   OrderDirection,
   Position,
+  useSinglePoolQuery,
+  usePoolFeeDataQuery,
+  useNativePriceQuery,
 } from '@/lib/algebra/graphql/generated/graphql';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Button, Link } from '@nextui-org/react';
 import { LoadingContainer } from '@/components/LoadingDisplay/LoadingDisplay';
 import { DynamicFormatAmount } from '@honeypot/shared';
@@ -15,6 +18,8 @@ import BigNumber from 'bignumber.js';
 import { usePosition } from '@/lib/algebra/hooks/positions/usePositions';
 import { Position as PositionEntity } from '@cryptoalgebra/sdk';
 import { Pool } from '@cryptoalgebra/sdk';
+import { getPositionAPR } from '@/lib/algebra/utils/positions/getPositionAPR';
+import { Address } from 'viem';
 
 export default function TopPoolPositions({
   poolId,
@@ -29,6 +34,9 @@ export default function TopPoolPositions({
     Position_OrderBy.Liquidity
   );
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [positionsAPRs, setPositionsAPRs] = useState<(number | undefined)[]>(
+    []
+  );
 
   // Convert sort state to GraphQL variables
   const orderBy = sortField;
@@ -53,9 +61,75 @@ export default function TopPoolPositions({
     },
   });
 
+  // Add data fetching for APR calculations
+  const { data: poolInfo } = useSinglePoolQuery({
+    variables: {
+      poolId: poolId.toLowerCase(),
+    },
+  });
+
+  const { data: poolFeeData } = usePoolFeeDataQuery({
+    variables: {
+      poolId: poolId.toLowerCase(),
+    },
+  });
+
+  const { data: bundles } = useNativePriceQuery();
+  const nativePrice = bundles?.bundles[0]?.maticPriceUSD;
+
   const positions = data?.positions || [];
   const totalPositions = countData?.positions?.length || 0;
   const totalPages = Math.max(1, Math.ceil(totalPositions / pageSize));
+
+  // Calculate APRs for all positions
+  useEffect(() => {
+    if (
+      !poolInfo?.pool ||
+      !poolFeeData?.poolDayDatas ||
+      !nativePrice ||
+      !positions.length
+    ) {
+      return;
+    }
+
+    const calculateAPRs = async () => {
+      const aprs = await Promise.all(
+        positions.map(async (position) => {
+          try {
+            // Create position entity
+            const positionEntity = new PositionEntity({
+              pool: poolEntity,
+              liquidity: position.liquidity.toString(),
+              tickLower: Number(position.tickLower.tickIdx),
+              tickUpper: Number(position.tickUpper.tickIdx),
+            });
+
+            const apr = await getPositionAPR(
+              poolId.toLowerCase() as Address,
+              positionEntity,
+              poolInfo.pool,
+              poolFeeData.poolDayDatas,
+              nativePrice
+            );
+
+            // Ensure we return a number or undefined
+            return typeof apr === 'number' ? apr : undefined;
+          } catch (error) {
+            console.error(
+              'Error calculating APR for position:',
+              position.id,
+              error
+            );
+            return 0;
+          }
+        })
+      );
+
+      setPositionsAPRs(aprs);
+    };
+
+    calculateAPRs();
+  }, [positions, poolInfo, poolFeeData, nativePrice, poolId, poolEntity]);
 
   const handleSort = (field: Position_OrderBy) => {
     if (sortField === field) {
@@ -128,6 +202,11 @@ export default function TopPoolPositions({
                 </th>
                 <th className="py-4 px-6 text-center text-[#4D4D4D]">
                   <div className="flex items-center gap-2 justify-center">
+                    <span>APR</span>
+                  </div>
+                </th>
+                <th className="py-4 px-6 text-center text-[#4D4D4D]">
+                  <div className="flex items-center gap-2 justify-center">
                     <span>COPY POSITION</span>
                   </div>
                 </th>
@@ -141,12 +220,13 @@ export default function TopPoolPositions({
                   </td>
                 </tr>
               ) : (
-                positions.map((position) => (
+                positions.map((position, index) => (
                   <PositionRow
                     key={position.id}
                     position={position as Position}
                     poolEntity={poolEntity}
                     isMobile={false}
+                    apr={positionsAPRs[index]}
                   />
                 ))
               )}
@@ -213,7 +293,7 @@ export default function TopPoolPositions({
             </div>
           ) : (
             <div className="space-y-4">
-              {positions.map((position) => (
+              {positions.map((position, index) => (
                 <div
                   key={position.id}
                   className="border border-[#ECECEC] rounded-xl p-4 shadow-sm"
@@ -223,6 +303,7 @@ export default function TopPoolPositions({
                     position={position as Position}
                     poolEntity={poolEntity}
                     isMobile={true}
+                    apr={positionsAPRs[index]}
                   />
                 </div>
               ))}
@@ -230,33 +311,26 @@ export default function TopPoolPositions({
           )}
         </div>
 
+        {/* Pagination */}
         {totalPages > 1 && (
-          <div className="py-4 mt-4">
-            <div className="flex flex-row justify-between items-center gap-4">
-              <span className="text-black text-xs sm:text-sm">
-                Page {page} of {totalPages}
-              </span>
-              <div className="flex gap-x-2">
-                <Button
-                  className="border border-[#2D2D2D] bg-white hover:bg-gray-50 text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-2 sm:px-4 py-1 sm:py-2 text-xs"
-                  disabled={page === 1}
-                  onPress={() => {
-                    setPage(page - 1);
-                  }}
-                >
-                  Previous
-                </Button>
-                <Button
-                  className="border border-[#2D2D2D] bg-white hover:bg-gray-50 text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-2 sm:px-4 py-1 sm:py-2 text-xs"
-                  disabled={page === totalPages}
-                  onPress={() => {
-                    setPage(page + 1);
-                  }}
-                >
-                  Next
-                </Button>
-              </div>
-            </div>
+          <div className="flex items-center justify-center gap-2 mt-6">
+            <Button
+              disabled={page === 1}
+              onClick={() => setPage(Math.max(1, page - 1))}
+              className="px-3 py-1 text-sm"
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-[#4D4D4D]">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              disabled={page === totalPages}
+              onClick={() => setPage(Math.min(totalPages, page + 1))}
+              className="px-3 py-1 text-sm"
+            >
+              Next
+            </Button>
           </div>
         )}
       </div>
@@ -268,10 +342,12 @@ export const PositionRow = ({
   position,
   poolEntity,
   isMobile = false,
+  apr,
 }: {
   position: Position;
   poolEntity: Pool;
   isMobile?: boolean;
+  apr?: number | undefined;
 }) => {
   const { position: positionData, loading } = usePosition(position.id);
   const positionEntity = useMemo(() => {
@@ -336,6 +412,15 @@ export const PositionRow = ({
           </p>
         </div>
 
+        <div>
+          <p className="text-sm font-medium text-[#4D4D4D] mb-1 uppercase">
+            APR
+          </p>
+          <p className="text-black font-medium text-[#F7931A]">
+            {apr ? `${apr.toFixed(2)}%` : 'Loading...'}
+          </p>
+        </div>
+
         <div className="mt-4 flex justify-center">
           <Button
             className="w-full border border-[#2D2D2D] bg-[#FFCD4D] hover:bg-[#FFD56A] text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-3 py-2 text-sm font-medium"
@@ -388,6 +473,11 @@ export const PositionRow = ({
           decimals: 3,
           endWith: position.token1.symbol,
         })}
+      </td>
+      <td className="py-4 px-6 text-black text-center">
+        <span className="text-[#F7931A] font-medium">
+          {apr ? `${apr.toFixed(2)}%` : 'Loading...'}
+        </span>
       </td>
       <td className="py-4 px-6 text-black text-center">
         <Button
