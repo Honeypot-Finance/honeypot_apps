@@ -148,6 +148,11 @@ export default function TopPoolPositions({
           <table className="w-full">
             <thead>
               <tr>
+                <th className="py-4 px-6 text-[#4D4D4D]">
+                  <div className="flex items-center gap-2">
+                    <span>OWNER</span>
+                  </div>
+                </th>
                 <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
                   <div
                     className="flex items-center gap-2"
@@ -215,7 +220,7 @@ export default function TopPoolPositions({
             <tbody className="divide-y divide-[#4D4D4D]">
               {!positions.length ? (
                 <tr className="hover:bg-white border-white h-full">
-                  <td colSpan={4} className="h-24 text-center text-black">
+                  <td colSpan={5} className="h-24 text-center text-black">
                     No results.
                   </td>
                 </tr>
@@ -361,9 +366,50 @@ export const PositionRow = ({
     });
   }, [positionData, poolEntity]);
 
+  // Get pool info and native price for USD calculation
+  const { data: poolInfo } = useSinglePoolQuery({
+    variables: {
+      poolId: position.pool.id.toLowerCase(),
+    },
+  });
+
+  const { data: bundles } = useNativePriceQuery();
+  const nativePrice = bundles?.bundles[0]?.maticPriceUSD;
+
+  // Calculate USD value of liquidity
+  const liquidityUSD = useMemo(() => {
+    if (!poolInfo?.pool || !nativePrice) return null;
+
+    const amount0USD =
+      Number(position.depositedToken0) *
+      Number(poolInfo.pool.token0.derivedMatic) *
+      Number(nativePrice);
+
+    const amount1USD =
+      Number(position.depositedToken1) *
+      Number(poolInfo.pool.token1.derivedMatic) *
+      Number(nativePrice);
+
+    return amount0USD + amount1USD;
+  }, [
+    position.depositedToken0,
+    position.depositedToken1,
+    poolInfo?.pool,
+    nativePrice,
+  ]);
+
   if (isMobile) {
     return (
       <div className="flex flex-col gap-3">
+        <div>
+          <p className="text-sm font-medium text-[#4D4D4D] mb-1 uppercase">
+            Owner
+          </p>
+          <p className="text-black font-medium">
+            {truncate(position.owner, 6)}
+          </p>
+        </div>
+
         <div>
           <p className="text-sm font-medium text-[#4D4D4D] mb-1 uppercase">
             Range
@@ -396,19 +442,44 @@ export const PositionRow = ({
             Liquidity
           </p>
           <p className="text-black font-medium">
-            {DynamicFormatAmount({
-              amount: position.depositedToken0,
-              decimals: 3,
-              endWith: '',
-            })}
-            <span className="text-[#6F6F6F]"> {position.token0.symbol}</span>
-            <br />
-            {DynamicFormatAmount({
-              amount: position.depositedToken1,
-              decimals: 3,
-              endWith: '',
-            })}
-            <span className="text-[#6F6F6F]"> {position.token1.symbol}</span>
+            {liquidityUSD !== null ? (
+              <span
+                className="text-[#479FFF] cursor-help relative group"
+                title={`${DynamicFormatAmount({
+                  amount: position.depositedToken0,
+                  decimals: 3,
+                  endWith: '',
+                })} ${position.token0.symbol} + ${DynamicFormatAmount({
+                  amount: position.depositedToken1,
+                  decimals: 3,
+                  endWith: '',
+                })} ${position.token1.symbol}`}
+              >
+                $
+                {DynamicFormatAmount({
+                  amount: liquidityUSD.toString(),
+                  decimals: 2,
+                  endWith: '',
+                })}
+                {/* Tooltip */}
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+                  {DynamicFormatAmount({
+                    amount: position.depositedToken0,
+                    decimals: 3,
+                    endWith: '',
+                  })}{' '}
+                  {position.token0.symbol} +{' '}
+                  {DynamicFormatAmount({
+                    amount: position.depositedToken1,
+                    decimals: 3,
+                    endWith: '',
+                  })}{' '}
+                  {position.token1.symbol}
+                </div>
+              </span>
+            ) : (
+              'Loading...'
+            )}
           </p>
         </div>
 
@@ -442,6 +513,7 @@ export const PositionRow = ({
 
   return (
     <tr className="hover:bg-gray-50">
+      <td className="py-4 px-6 text-black">{truncate(position.owner, 6)}</td>
       <td className="py-4 px-6 text-black">
         {Number(position.tickUpper.price0) > Number.MAX_SAFE_INTEGER ? (
           'FULL RANGE'
@@ -462,17 +534,45 @@ export const PositionRow = ({
         {position.token0.symbol}/{position.token1.symbol}
       </td>
       <td className="py-4 px-6 text-black">
-        {DynamicFormatAmount({
-          amount: position.depositedToken0,
-          decimals: 3,
-          endWith: position.token0.symbol,
-        })}
-        <br />
-        {DynamicFormatAmount({
-          amount: position.depositedToken1,
-          decimals: 3,
-          endWith: position.token1.symbol,
-        })}
+        {liquidityUSD !== null ? (
+          <span
+            className="text-[#479FFF] font-medium cursor-help relative group"
+            title={`${DynamicFormatAmount({
+              amount: position.depositedToken0,
+              decimals: 3,
+              endWith: '',
+            })} ${position.token0.symbol} + ${DynamicFormatAmount({
+              amount: position.depositedToken1,
+              decimals: 3,
+              endWith: '',
+            })} ${position.token1.symbol}`}
+          >
+            $
+            {DynamicFormatAmount({
+              amount: liquidityUSD.toString(),
+              decimals: 2,
+              endWith: '',
+            })}
+            {/* Tooltip */}
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+              {DynamicFormatAmount({
+                amount: position.depositedToken0,
+                decimals: 3,
+                endWith: '',
+              })}{' '}
+              {position.token0.symbol}
+              <br />
+              {DynamicFormatAmount({
+                amount: position.depositedToken1,
+                decimals: 3,
+                endWith: '',
+              })}{' '}
+              {position.token1.symbol}
+            </div>
+          </span>
+        ) : (
+          'Loading...'
+        )}
       </td>
       <td className="py-4 px-6 text-black text-center">
         <span className="text-[#F7931A] font-medium">
