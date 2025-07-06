@@ -106,25 +106,27 @@ export default function App({
           >
             <RainbowKitProvider avatar={CustomAvatar}>
               <NextUIProvider>
-                <ToastContainer />
-                <Provider>
-                  {' '}
-                  <Inspector
-                    keys={['Ctrl', 'Shift', 'Z']}
-                    onClickElement={({ codeInfo }: InspectParams) => {
-                      if (!codeInfo) {
-                        return;
-                      }
-                      window.open(
-                        `cursor://file/${codeInfo.absolutePath}:${codeInfo.lineNumber}:${codeInfo.columnNumber}`,
-                        '_blank'
-                      );
-                    }}
-                  ></Inspector>
-                  <ComponentLayout className={`${dmSans.className}`}>
-                    <Component {...pageProps} />
-                  </ComponentLayout>
-                </Provider>
+                <ApolloProvider client={infoClient}>
+                  <ToastContainer />
+                  <Provider>
+                    {' '}
+                    <Inspector
+                      keys={['Ctrl', 'Shift', 'Z']}
+                      onClickElement={({ codeInfo }: InspectParams) => {
+                        if (!codeInfo) {
+                          return;
+                        }
+                        window.open(
+                          `cursor://file/${codeInfo.absolutePath}:${codeInfo.lineNumber}:${codeInfo.columnNumber}`,
+                          '_blank'
+                        );
+                      }}
+                    ></Inspector>
+                    <ComponentLayout className={`${dmSans.className}`}>
+                      <Component {...pageProps} />
+                    </ComponentLayout>
+                  </Provider>
+                </ApolloProvider>
               </NextUIProvider>
             </RainbowKitProvider>
           </PersistQueryClientProvider>
