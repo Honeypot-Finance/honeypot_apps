@@ -222,12 +222,7 @@ export const DepositToVaultModal = observer(
                   <Button
                     className="w-full bg-[#FFCD4D] hover:bg-[#ffd666] text-black font-medium rounded-[16px] py-[18px] shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)]"
                     onPress={handleDeposit}
-                   isDisabled={
-                      (!amountA && !amountB) ||
-                      !wallet.account ||
-                      !isTokenAAllowed.data ||
-                      !isTokenBAllowed.data
-                    }
+                    isDisabled={(!amountA && !amountB) || !wallet.account}
                   >
                     Deposit
                   </Button>
