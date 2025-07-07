@@ -165,7 +165,7 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
             }
             console.log(payload)
             const hash = await claimReceipt({
-              address: `0x20F4b92054F745c19ea3f3053B77372e73332945`,
+              address: `0x9c52cD80455a9ee50610aC90e846e46E04014f6d`,
               abi: AllInOneVaultABI,
               functionName: 'claim',
               args: [BigInt(data.id)],

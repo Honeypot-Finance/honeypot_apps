@@ -11,31 +11,35 @@ export const calculateSummaryData = (
   if (!token || !weightPerToken) return;
 
   const balance = Number(tokenBalance || 0) / 1e18;
-  
+
+  // Divide weightPerToken by 10000 for display
+  const displayWeightPerToken = (weightPerToken / 10000).toString();
+
   // If no amount is provided, return basic data with balance
   if (!amountStr || amountStr.trim() === '') {
     return {
-      weightPerToken: weightPerToken.toString(),
+      weightPerToken: displayWeightPerToken,
       balance: balance.toString(),
       receiptWeight: '0',
     };
   }
 
   const amountValue = parseFloat(amountStr);
-  
+
   // Return basic data with balance for invalid amounts
   if (isNaN(amountValue) || amountValue <= 0) {
     return {
-      weightPerToken: weightPerToken.toString(),
+      weightPerToken: displayWeightPerToken,
       balance: balance.toString(),
       receiptWeight: '0',
     };
   }
 
-  const receiptWeight = (weightPerToken * amountValue).toFixed(1);
+  // Calculate receipt weight and divide by 10000 for display consistency
+  const receiptWeight = ((weightPerToken * amountValue) / 10000).toFixed(1);
 
   return {
-    weightPerToken: weightPerToken.toString(),
+    weightPerToken: displayWeightPerToken,
     balance: balance.toString(),
     receiptWeight: receiptWeight,
   };
@@ -106,7 +110,11 @@ export const handleAmountChange = (
         const amountValue = parseFloat(newAmount);
         const balanceValue = parseFloat(newSummaryData.balance);
 
-        if (!isNaN(amountValue) && amountValue > 0 && amountValue > balanceValue) {
+        if (
+          !isNaN(amountValue) &&
+          amountValue > 0 &&
+          amountValue > balanceValue
+        ) {
           setInsufficientBalance(true);
           toast.error(
             `Insufficient balance! You only have ${balanceValue} ${selectedToken} tokens available.`,

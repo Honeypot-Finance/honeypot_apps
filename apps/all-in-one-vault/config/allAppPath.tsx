@@ -58,12 +58,12 @@ export const appPathsList: Menu[] = [
   //   title: "Navigation",
   // },
 
-  // {
-  //   path: `/leaderboard`,
-  //   title: 'Leaderboard',
-  //   routePath: '/leaderboard',
-  // },
-    {
+  {
+    path: `/leaderboard`,
+    title: 'Leaderboard',
+    routePath: '/leaderboard',
+  },
+  {
     path: `/all-in-one-vault`,
     title: 'All-in-One Vault',
     routePath: '/all-in-one-vault',

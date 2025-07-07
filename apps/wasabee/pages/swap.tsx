@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { observe } from 'mobx';
-import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { chart } from '@honeypot/shared/services';
 import { observer } from 'mobx-react-lite';
@@ -17,10 +16,46 @@ import { cn } from '@/lib/tailwindcss';
 import { UniversalAccountBuyTokenModal } from '@honeypot/shared';
 
 const SwapPage = observer(() => {
-  const inputCurrency = useSearchParams()?.get('inputCurrency');
-  const outputCurrency = useSearchParams()?.get('outputCurrency');
+  const searchParams = useSearchParams();
+  const urlInputCurrency = searchParams?.get('inputCurrency');
+  const urlOutputCurrency = searchParams?.get('outputCurrency');
+  
+  const [inputCurrency, setInputCurrency] = useState<string | undefined>(urlInputCurrency ?? undefined);
+  const [outputCurrency, setOutputCurrency] = useState<string | undefined>(urlOutputCurrency ?? undefined);
 
   const isInit = wallet.isInit;
+
+  // Check localStorage for token addresses if not provided in URL
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // If no input currency from URL, check localStorage
+   const storedInputToken = localStorage.getItem('swapInputToken');
+    const storedOutputToken = localStorage.getItem('swapOutputToken');
+      if (!urlInputCurrency) {
+       
+        if (storedInputToken) {
+          setInputCurrency(storedInputToken);
+        }
+      }
+
+      // If no output currency from URL, check localStorage
+      if (!urlOutputCurrency) {
+       
+        if (storedOutputToken) {
+          setOutputCurrency(storedOutputToken);
+        }
+        else{
+          if(!storedInputToken){
+           
+            setOutputCurrency(defaultOutputToken);
+          }
+        }
+
+
+      }
+    }
+  }, [urlInputCurrency, urlOutputCurrency]);
+  const [klineRefreshKey, setKlineRefreshKey] = useState(0);
 
   if (!wallet.currentChain?.supportDEX) {
     return (
@@ -48,7 +83,7 @@ const SwapPage = observer(() => {
             className="w-full col-span-2 lg:col-span-1"
           >
             <DarkContainer>
-              <KlineChart height={479} />
+              <KlineChart height={479} refreshKey={klineRefreshKey} />
             </DarkContainer>
           </motion.div>
         )}
@@ -84,8 +119,11 @@ const SwapPage = observer(() => {
               <V3SwapCard
                 bordered={false}
                 fromTokenAddress={inputCurrency ?? undefined}
-                toTokenAddress={outputCurrency ?? defaultOutputToken}
+                toTokenAddress={outputCurrency ?? undefined}
+                isInputNative={!inputCurrency}
+                isOutputNative={!outputCurrency}
                 isUpdatingPriceChart={true}
+                onSwapSuccess={() => setKlineRefreshKey(k => k + 1)}
               />
             </Tab>
             <Tab key="universal" title="Universal Account">

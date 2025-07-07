@@ -56,9 +56,7 @@ export const useSwapState = create<SwapState>((set, get) => ({
     currencyId: ADDRESS_ZERO,
   },
   [SwapField.OUTPUT]: {
-    currencyId: wallet.currentChain?.validatedTokens.filter(
-      (token) => token.isStableCoin
-    )[0].address as Address,
+    currencyId: ADDRESS_ZERO,
   },
   wasInverted: false,
   lastFocusedField: SwapField.INPUT,
@@ -68,6 +66,44 @@ export const useSwapState = create<SwapState>((set, get) => ({
         field === SwapField.INPUT ? SwapField.OUTPUT : SwapField.INPUT;
 
       if (currencyId && currencyId === get()[otherField].currencyId) {
+        // Auto-switching tokens - update localStorage for both fields
+        if (typeof window !== 'undefined') {
+          // Update the field being selected
+          if (currencyId === ADDRESS_ZERO) {
+            // Native token - remove from localStorage
+            if (field === SwapField.INPUT) {
+              localStorage.removeItem('swapInputToken');
+            } else {
+              localStorage.removeItem('swapOutputToken');
+            }
+          } else {
+            // Regular token - set in localStorage
+            if (field === SwapField.INPUT) {
+              localStorage.setItem('swapInputToken', currencyId);
+            } else {
+              localStorage.setItem('swapOutputToken', currencyId);
+            }
+          }
+
+          // Update the other field (the one being swapped)
+          const otherCurrencyId = get()[field].currencyId;
+          if (otherCurrencyId === ADDRESS_ZERO) {
+            // Native token - remove from localStorage
+            if (otherField === SwapField.INPUT) {
+              localStorage.removeItem('swapInputToken');
+            } else {
+              localStorage.removeItem('swapOutputToken');
+            }
+          } else if (otherCurrencyId && otherCurrencyId !== ADDRESS_ZERO) {
+            // Regular token - set in localStorage
+            if (otherField === SwapField.INPUT) {
+              localStorage.setItem('swapInputToken', otherCurrencyId);
+            } else {
+              localStorage.setItem('swapOutputToken', otherCurrencyId);
+            }
+          }
+        }
+
         set({
           independentField:
             get().independentField === SwapField.INPUT
@@ -81,6 +117,25 @@ export const useSwapState = create<SwapState>((set, get) => ({
           [otherField]: { currencyId: get()[field].currencyId },
         });
       } else {
+        // Regular selection - update localStorage for the selected field only
+        if (typeof window !== 'undefined' && currencyId) {
+          if (currencyId === ADDRESS_ZERO) {
+            // Native token - remove from localStorage
+            if (field === SwapField.INPUT) {
+              localStorage.removeItem('swapInputToken');
+            } else {
+              localStorage.removeItem('swapOutputToken');
+            }
+          } else {
+            // Regular token - set in localStorage
+            if (field === SwapField.INPUT) {
+              localStorage.setItem('swapInputToken', currencyId);
+            } else {
+              localStorage.setItem('swapOutputToken', currencyId);
+            }
+          }
+        }
+
         set({
           [field]: { currencyId },
         });
@@ -492,3 +547,4 @@ export function useDerivedSwapInfoWithoutSwapState({
     poolAddress,
   };
 }
+

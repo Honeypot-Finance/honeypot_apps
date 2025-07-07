@@ -60,6 +60,7 @@ const formatNumber = (number: number) => {
 interface KlineChartProps {
   height?: number | string;
   onReady?: () => void;
+  refreshKey?: any;
 }
 
 // 添加图表类型定义
@@ -80,7 +81,7 @@ const KlineChart = dynamic(() => Promise.resolve(KlineChartComponent), {
 });
 
 const KlineChartComponent = observer(
-  ({ height = 400, onReady }: KlineChartProps) => {
+  ({ height = 400, onReady, refreshKey }: KlineChartProps) => {
     // 获取时区信息，但仅在客户端执行
     const [timeZone, setTimeZone] = useState<string>('UTC');
     const [currentInterval, setCurrentInterval] = useState('60');
@@ -515,7 +516,7 @@ const KlineChartComponent = observer(
 
     useEffect(() => {
       initOnReady();
-    }, [initOnReady, currentInterval]);
+    }, [initOnReady, currentInterval, refreshKey]);
 
     const handleIndicatorsClick = () => {
       if (window.tvWidget) {

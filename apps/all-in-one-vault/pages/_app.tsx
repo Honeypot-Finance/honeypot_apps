@@ -12,7 +12,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { NextUIProvider } from '@nextui-org/react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { createWagmiConfig } from '@honeypot/shared';
+import { config } from '@/config/wagmi';
 import { useEffect, useState } from 'react';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { DM_Sans, Inter } from 'next/font/google';
@@ -26,8 +26,6 @@ import * as Sentry from '@sentry/nextjs';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { deserialize, serialize } from 'wagmi';
 import { useSubgraphClient } from '@honeypot/shared';
-
-const config = createWagmiConfig();
 
 // enableStaticRendering(true)
 const queryClient = new QueryClient({
@@ -106,8 +104,9 @@ export default function App({
             client={queryClient}
             persistOptions={{ persister }}
           >
-              <RainbowKitProvider avatar={CustomAvatar}>
-                <NextUIProvider>
+            <RainbowKitProvider avatar={CustomAvatar}>
+              <NextUIProvider>
+                <ApolloProvider client={infoClient}>
                   <ToastContainer />
                   <Provider>
                     {' '}
@@ -127,8 +126,9 @@ export default function App({
                       <Component {...pageProps} />
                     </ComponentLayout>
                   </Provider>
-                </NextUIProvider>
-              </RainbowKitProvider>
+                </ApolloProvider>
+              </NextUIProvider>
+            </RainbowKitProvider>
           </PersistQueryClientProvider>
         </QueryClientProvider>
       </WagmiProvider>

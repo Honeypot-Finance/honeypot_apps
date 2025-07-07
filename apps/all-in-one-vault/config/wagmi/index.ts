@@ -38,25 +38,33 @@ let customWallets = [
 
 // Create Capsule wallet connector
 
-const connectors = [
-  safe({
-    allowedDomains: [/app.safe.global$/],
-    debug: true,
-  }),
-  injected(),
-  ...connectorsForWallets(
-    [
-      {
-        groupName: 'Recommended',
-        wallets: customWallets,
-      },
-    ],
-    {
-      appName: 'Honypot Finance',
-      projectId: pId,
-    }
-  ),
-];
+// Singleton pattern to prevent multiple connector initializations
+let _connectors: any[] | null = null;
+
+const getConnectors = () => {
+  if (_connectors === null) {
+    _connectors = [
+      safe({
+        allowedDomains: [/app.safe.global$/],
+        debug: true,
+      }),
+      injected(),
+      ...connectorsForWallets(
+        [
+          {
+            groupName: 'Recommended',
+            wallets: customWallets,
+          },
+        ],
+        {
+          appName: 'Honypot Finance',
+          projectId: pId,
+        }
+      ),
+    ];
+  }
+  return _connectors;
+};
 
 // if (process.env.NODE_ENV === "development") {
 //   connectors.push(
@@ -66,14 +74,24 @@ const connectors = [
 //   );
 // }
 
-export const config = getDefaultConfig({
-  connectors,
-  appName: 'Honypot Finance',
-  projectId: '1d1c8b5204bfbd57502685fc0934a57d',
-  // @ts-ignore
-  chains: networks.map((network) => network.chain),
-  ssr: true, // If your dApp uses server side rendering (SSR)
-  storage: createStorage({
-    storage: cookieStorage,
-  }),
-});
+// Singleton pattern for the entire config to prevent multiple initializations
+let _config: any = null;
+
+const createWagmiConfig = () => {
+  if (_config === null) {
+    _config = getDefaultConfig({
+      connectors: getConnectors(),
+      appName: 'Honypot Finance',
+      projectId: '1d1c8b5204bfbd57502685fc0934a57d',
+      // @ts-ignore
+      chains: networks.map((network) => network.chain),
+      ssr: false, // Using client-only rendering to prevent hydration issues
+      storage: createStorage({
+        storage: cookieStorage,
+      }),
+    });
+  }
+  return _config;
+};
+
+export const config = createWagmiConfig();
