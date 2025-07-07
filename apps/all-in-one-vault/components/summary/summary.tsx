@@ -28,7 +28,7 @@ interface SummaryCardProps {
 const DEFAULT_DATA: SummaryData = {
   weightPerToken: '-',
   balance: '-',
-  receiptWeight: '-',
+  receiptWeight: '0',
   estimatedRewards: '-',
 };
 
@@ -87,11 +87,39 @@ const SummaryCard = memo(function SummaryCard({
     functionName: 'balanceOf',
     args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
   });
-  const totalWeightItems = totalWeight?.globals?.items[0].totalWeight || {};
-  const estimatedRewards =
-    poolReward && data.receiptWeight && totalWeightItems
-      ? Number((BigInt(data.receiptWeight) * poolReward) / totalWeightItems)
-      : 0;
+  const totalWeightItems = totalWeight?.globals?.items[0]?.totalWeight;
+  console.log(poolReward);
+  console.log("Data Receipt Weight", data.receiptWeight);
+  console.log("Total Weight", totalWeightItems);
+  const estimatedRewards = useMemo(() => {
+    if (!data.receiptWeight || !totalWeightItems || !poolReward) return 0;
+    
+    // Skip calculation if receiptWeight is '-', '0', or any non-numeric string
+    if (data.receiptWeight === '-' || data.receiptWeight === '0' || data.receiptWeight === 0) return 0;
+    
+    try {
+      // Additional validation to ensure we can convert to BigInt
+      const receiptWeightStr = String(data.receiptWeight);
+      if (!/^\d+$/.test(receiptWeightStr)) {
+        console.warn('Invalid receiptWeight format:', data.receiptWeight);
+        return 0;
+      }
+      
+      const receiptWeightBigInt = BigInt(receiptWeightStr);
+      const totalWeightBigInt = BigInt(totalWeightItems);
+      const poolRewardBigInt = BigInt(poolReward);
+      
+      if (totalWeightBigInt === BigInt(0)) {
+        console.warn('Total weight is zero, cannot calculate rewards');
+        return 0;
+      }
+      
+      return Number((receiptWeightBigInt * poolRewardBigInt) / totalWeightBigInt);
+    } catch (error) {
+      console.error('Error calculating estimated rewards:', error);
+      return 0;
+    }
+  }, [data.receiptWeight, totalWeightItems, poolReward]);
 
   const summaryItems = useMemo(
     () => [

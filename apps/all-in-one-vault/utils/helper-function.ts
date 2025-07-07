@@ -17,7 +17,7 @@ export const calculateSummaryData = (
     return {
       weightPerToken: weightPerToken.toString(),
       balance: balance.toString(),
-      receiptWeight: '-',
+      receiptWeight: '0',
     };
   }
 
@@ -28,7 +28,7 @@ export const calculateSummaryData = (
     return {
       weightPerToken: weightPerToken.toString(),
       balance: balance.toString(),
-      receiptWeight: '-',
+      receiptWeight: '0',
     };
   }
 
@@ -193,7 +193,7 @@ export const resetFormState = (
   setSummaryData({
     weightPerToken: '-',
     balance: '-',
-    receiptWeight: '-',
+    receiptWeight: '0',
     estimatedRewards: '-',
   });
 };

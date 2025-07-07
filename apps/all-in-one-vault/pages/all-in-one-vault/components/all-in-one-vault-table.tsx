@@ -12,7 +12,10 @@ import {
   useQuery as useApolloQuery,
 } from '@apollo/client';
 import { RECEIPTS_LIST } from '@/lib/algebra/graphql/queries/receipts-list';
-import { useAccount } from 'wagmi';
+import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
+import { ALL_IN_ONE_VAULT } from '@/config/algebra/addresses';
+import { useAccount, useReadContract } from 'wagmi';
+import { erc20Abi } from 'viem';
 import { LoadingDisplay } from '@/components/loading-display/loading-display';
 import ErrorIcon from '@/components/svg/ErrorIcon';
 import { transformReceiptData } from '../../../utils/helper';
@@ -40,7 +43,39 @@ export default function AllInOneVaultTable({ onRefetchExpose }: AllInOneVaultTab
       }),
     []
   );
+
+  const totalWeightClient = useMemo(
+    () =>
+      new ApolloClient({
+        uri: 'https://api.ghostlogs.xyz/gg/pub/948b257a-20a9-442f-b38f-70fec580a732',
+        cache: new InMemoryCache(),
+        defaultOptions: {
+          query: {
+            errorPolicy: 'all',
+          },
+        },
+      }),
+    []
+  );
+
   const { claimingReceiptId, isConfirmed } = useClaimReceipt();
+
+  const {
+    data: totalWeightData,
+    loading: totalWeightLoading,
+    error: totalWeightError,
+  } = useApolloQuery(TOTAL_WEIGHT, {
+    client: totalWeightClient,
+    errorPolicy: 'all',
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const { data: poolReward } = useReadContract({
+    address: `0xbaadcc2962417c01af99fb2b7c75706b9bd6babe`,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
+  });
 
   const {
     data: receiptsData,
@@ -56,6 +91,7 @@ export default function AllInOneVaultTable({ onRefetchExpose }: AllInOneVaultTab
     notifyOnNetworkStatusChange: true,
   });
   const listReceipts = receiptsData?.receipts?.items || [];
+  const totalWeightItems = totalWeightData?.globals?.items[0]?.totalWeight;
 
   // Manual refresh handler
   const handleManualRefresh = async () => {
@@ -86,7 +122,11 @@ export default function AllInOneVaultTable({ onRefetchExpose }: AllInOneVaultTab
 
   useEffect(() => {
     if (listReceipts) {
-      const transformedData = transformReceiptData(listReceipts);
+      const transformedData = transformReceiptData(
+        listReceipts, 
+        totalWeightItems ? String(totalWeightItems) : undefined, 
+        poolReward ? String(poolReward) : undefined
+      );
       setCurrentTableData(transformedData);
       
       // Only refetch if we have new receipts (count increased)
@@ -97,7 +137,7 @@ export default function AllInOneVaultTable({ onRefetchExpose }: AllInOneVaultTab
       
       setPreviousReceiptCount(listReceipts.length);
     }
-  }, [receiptsData, refreshKey, refetchReceipts, listReceipts.length, previousReceiptCount]);
+  }, [receiptsData, refreshKey, refetchReceipts, listReceipts.length, previousReceiptCount, totalWeightItems, poolReward]);
 
   // Handle successful query completion and auto-refetch for new data
   useEffect(() => {

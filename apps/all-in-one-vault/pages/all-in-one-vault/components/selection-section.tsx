@@ -39,7 +39,7 @@ export default function SelectionSection({ onRefetchReceipts }: SelectionSection
   const [summaryData, setSummaryData] = useState({
     weightPerToken: '-',
     balance: '-',
-    receiptWeight: '-',
+    receiptWeight: '0',
     estimatedRewards: '-',
   });
   const { writeContractAsync: executeGetReceipt } = useWriteContract();

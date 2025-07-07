@@ -161,7 +161,7 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
               address: `0x20F4b92054F745c19ea3f3053B77372e73332945`,
               abi: AllInOneVaultABI,
               functionName: 'claim',
-              args: [BigInt(data.id)],
+              args: [(data.id)],
             }
             console.log(payload)
             const hash = await claimReceipt({
@@ -170,6 +170,7 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
               functionName: 'claim',
               args: [BigInt(data.id)],
             });
+            console.log(hash);
           },
         };
       } else {

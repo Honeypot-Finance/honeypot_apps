@@ -93,7 +93,7 @@ export default function InputSection({
               )?.weight || '-'
             : '-',
         balance: '-',
-        receiptWeight: '-',
+        receiptWeight: '0',
       });
       if (setInsufficientBalance) {
         setInsufficientBalance(false);
@@ -170,7 +170,7 @@ export default function InputSection({
         setSummaryData({
           weightPerToken: selectedTokenData.weight,
           balance: '-',
-          receiptWeight: '-',
+          receiptWeight: '0',
         });
       }
     }

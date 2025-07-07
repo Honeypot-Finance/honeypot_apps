@@ -101,7 +101,7 @@ export default function InputSection({
       setSummaryData({
         weightPerToken: '-',
         balance: '-',
-        receiptWeight: '-',
+        receiptWeight: '0',
       });
       return;
     }
