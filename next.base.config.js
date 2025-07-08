@@ -37,74 +37,89 @@ const baseConfig = {
       'node_modules', // fallback to local
     ];
 
-    // Production optimizations
+    // AGGRESSIVE Production optimizations for Vercel
     if (isProd) {
-      // Limit cache size in production
-      config.cache = {
-        type: 'filesystem',
-        maxMemoryGenerations: 1,
-        cacheDirectory: path.resolve(__dirname, '.next/cache'),
-        buildDependencies: {
-          config: [__filename],
-        },
-      };
+      // DISABLE webpack cache completely in production to prevent OOM
+      config.cache = false;
 
-      // Memory optimization
+      // Aggressive memory optimization
       config.optimization = {
         ...config.optimization,
-        // Split chunks to reduce memory usage
+        // More aggressive chunk splitting
         splitChunks: {
           chunks: 'all',
+          minSize: 20000,
+          maxSize: 150000, // Smaller max size: 150KB instead of 244KB
           cacheGroups: {
             default: {
               minChunks: 2,
               priority: -20,
               reuseExistingChunk: true,
+              maxSize: 100000, // 100KB max
             },
             vendor: {
               test: /[\\/]node_modules[\\/]/,
               name: 'vendors',
               priority: -10,
               chunks: 'all',
-              maxSize: 244000, // 244KB max chunk size
+              maxSize: 150000, // 150KB max chunk size
+              minSize: 20000,
             },
-            // Separate large libraries
+            // Separate large libraries into smaller chunks
             charts: {
               test: /[\\/]node_modules[\\/](lightweight-charts|apexcharts|recharts|echarts)[\\/]/,
               name: 'charts',
               chunks: 'all',
-              priority: 10,
+              priority: 15,
+              maxSize: 200000, // 200KB for chart libraries
             },
             web3: {
-              test: /[\\/]node_modules[\\/](@rainbow-me|wagmi|viem|ethers)[\\/]/,
+              test: /[\\/]node_modules[\\/](@rainbow-me|wagmi|viem|ethers|@web3modal)[\\/]/,
               name: 'web3',
               chunks: 'all',
+              priority: 15,
+              maxSize: 200000, // 200KB for web3 libraries
+            },
+            ui: {
+              test: /[\\/]node_modules[\\/](@nextui-org|@radix-ui|framer-motion)[\\/]/,
+              name: 'ui',
+              chunks: 'all',
+              priority: 12,
+              maxSize: 150000,
+            },
+            utils: {
+              test: /[\\/]node_modules[\\/](lodash|date-fns|dayjs|clsx)[\\/]/,
+              name: 'utils',
+              chunks: 'all',
               priority: 10,
+              maxSize: 100000,
             },
           },
         },
         // Minimize memory usage
         moduleIds: 'deterministic',
         mangleExports: 'deterministic',
+        // Reduce memory pressure
+        minimize: true,
+        usedExports: true,
+        sideEffects: false,
       };
 
-      // Minimize bundle size
-      config.module.rules.push({
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['next/babel'],
-            plugins: [
-              ['transform-remove-console', { exclude: ['error', 'warn'] }],
-            ],
-          },
-        },
-      });
+      // More aggressive performance settings
+      config.performance = {
+        hints: false, // Disable performance hints
+        maxAssetSize: 250000, // 250KB
+        maxEntrypointSize: 250000, // 250KB
+      };
+
+      // Reduce parallelism to save memory
+      config.parallelism = 1;
+
+      // Limit stats output to save memory
+      config.stats = 'errors-warnings';
     }
 
-    // Development optimizations
+    // Development optimizations - minimal caching
     if (dev) {
       config.cache = {
         type: 'filesystem',
@@ -267,11 +282,8 @@ const sentryConfig = {
   // Automatically tree-shake Sentry logger statements to reduce bundle size
   disableLogger: true,
 
-  // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
-  // See the following for more information:
-  // https://docs.sentry.io/product/crons/
-  // https://vercel.com/docs/cron-jobs
-  automaticVercelMonitors: true,
+  // Disable all Sentry features during build to save memory
+  automaticVercelMonitors: false,
   /**
    * Automatically instrument Next.js data fetching methods and Next.js API routes with error and performance monitoring.
    * Defaults to `true`.
@@ -287,6 +299,10 @@ const sentryConfig = {
   autoInstrumentAppDirectory: false,
   // Disable debug logging in production
   debug: false,
+  // Disable telemetry to save memory
+  telemetry: false,
+  // Skip source map upload to save memory and time
+  skipSourceMapUpload: true,
 };
 
 module.exports = (customConfig = {}) =>

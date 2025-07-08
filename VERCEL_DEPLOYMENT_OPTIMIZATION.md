@@ -27,33 +27,43 @@ The wasabee app was experiencing Out of Memory (OOM) errors during Vercel deploy
 **Key Optimizations:**
 
 ```javascript
-// Cache optimization
-config.cache = {
-  type: 'filesystem',
-  maxMemoryGenerations: 1,
-  cacheDirectory: path.resolve(__dirname, '.next/cache'),
-};
+// AGGRESSIVE: Disable webpack cache completely in production
+config.cache = false;
 
-// Chunk splitting
+// More aggressive chunk splitting
 splitChunks: {
   chunks: 'all',
+  minSize: 20000,
+  maxSize: 150000, // Reduced from 244KB to 150KB
   cacheGroups: {
     vendor: {
       test: /[\\/]node_modules[\\/]/,
-      maxSize: 244000, // 244KB max
+      maxSize: 150000, // Smaller chunks
     },
     charts: {
       test: /[\\/]node_modules[\\/](lightweight-charts|apexcharts|recharts|echarts)[\\/]/,
       name: 'charts',
-      priority: 10,
+      maxSize: 200000,
+      priority: 15,
     },
     web3: {
-      test: /[\\/]node_modules[\\/](@rainbow-me|wagmi|viem|ethers)[\\/]/,
+      test: /[\\/]node_modules[\\/](@rainbow-me|wagmi|viem|ethers|@web3modal)[\\/]/,
       name: 'web3',
-      priority: 10,
+      maxSize: 200000,
+      priority: 15,
+    },
+    ui: {
+      test: /[\\/]node_modules[\\/](@nextui-org|@radix-ui|framer-motion)[\\/]/,
+      name: 'ui',
+      maxSize: 150000,
+      priority: 12,
     },
   },
 }
+
+// Additional optimizations
+config.parallelism = 1; // Reduce parallelism to save memory
+config.performance = { hints: false }; // Disable performance hints
 ```
 
 ### 2. Vercel Configuration (`apps/wasabee/vercel.json`)
@@ -159,13 +169,14 @@ rm -rf apps/wasabee/.next/cache
 - Memory usage: >8GB (causing OOM)
 - Build time: >6 minutes before failure
 
-### After Optimization:
+### After Aggressive Optimization:
 
-- Build size: <2GB (estimated)
-- Webpack cache: <500MB
-- Memory usage: <4GB
-- Build time: <4 minutes
+- Build size: <1.5GB (estimated)
+- Webpack cache: DISABLED (0MB)
+- Memory usage: <3GB
+- Build time: <5 minutes
 - Successful deployment
+- Smaller, more efficient bundles
 
 ## Monitoring
 

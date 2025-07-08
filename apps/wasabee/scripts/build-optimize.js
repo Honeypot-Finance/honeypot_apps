@@ -15,21 +15,36 @@ const cacheDirectories = [
   path.join(__dirname, '../../../.next/cache'),
 ];
 
-// Clean cache function
+// Clean cache function with aggressive cleanup
 function cleanCache() {
-  console.log('🧹 Cleaning cache directories...');
+  console.log('🧹 Running aggressive cache cleanup...');
 
-  cacheDirectories.forEach((dir) => {
-    try {
-      if (fs.existsSync(dir)) {
-        console.log(`Cleaning ${dir}...`);
-        fs.rmSync(dir, { recursive: true, force: true });
-        console.log(`✅ Cleaned ${dir}`);
-      }
-    } catch (error) {
-      console.warn(`⚠️ Could not clean ${dir}:`, error.message);
+  try {
+    // Use the aggressive cleanup script
+    const cleanupScript = path.join(__dirname, 'clean-aggressive.js');
+    if (fs.existsSync(cleanupScript)) {
+      execSync(`node "${cleanupScript}"`, { stdio: 'inherit' });
+    } else {
+      // Fallback to basic cleanup
+      console.log('🔄 Using fallback cleanup...');
+      cacheDirectories.forEach((dir) => {
+        try {
+          if (fs.existsSync(dir)) {
+            console.log(`Cleaning ${dir}...`);
+            fs.rmSync(dir, { recursive: true, force: true });
+            console.log(`✅ Cleaned ${dir}`);
+          }
+        } catch (error) {
+          console.warn(`⚠️ Could not clean ${dir}:`, error.message);
+        }
+      });
     }
-  });
+  } catch (error) {
+    console.warn(
+      '⚠️ Aggressive cleanup failed, continuing with build...',
+      error.message
+    );
+  }
 }
 
 // Memory optimization function
@@ -75,9 +90,23 @@ optimize();
 if (require.main === module) {
   try {
     console.log('🏗️ Starting Next.js build...');
-    execSync('npx next build', {
+
+    // Use nx build with NODE_OPTIONS set directly
+    const buildCommand = 'npx nx build wasabee --prod';
+    const nodeOptions = '--max-old-space-size=2048 --max-semi-space-size=128';
+
+    execSync(buildCommand, {
       stdio: 'inherit',
-      env: { ...process.env },
+      env: {
+        ...process.env,
+        NODE_OPTIONS: nodeOptions,
+        // Disable all Sentry operations during build
+        DISABLE_SENTRY: 'true',
+        SENTRY_UPLOAD_SOURCE_MAPS: 'false',
+        NEXT_TELEMETRY_DISABLED: '1',
+        // Additional memory optimizations
+        UV_THREADPOOL_SIZE: '4', // Limit thread pool
+      },
     });
     console.log('✅ Build completed successfully!');
   } catch (error) {
