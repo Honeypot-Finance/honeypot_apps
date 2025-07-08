@@ -1,5 +1,7 @@
 // @ts-check
 const withBaseConfig = require('../../next.base.config');
+const TerserPlugin = require('terser-webpack-plugin');
+const path = require('path');
 
 module.exports = withBaseConfig({
   // Add cache optimization
@@ -25,29 +27,71 @@ module.exports = withBaseConfig({
 
     // Additional optimizations for wasabee
     if (!options.dev) {
-      // Use limited filesystem cache with memory constraints instead of disabling completely
-      config.cache = {
-        type: 'filesystem',
-        maxMemoryGenerations: 1,
-        maxAge: 1000 * 60 * 60 * 2, // 2 hours
-        compression: 'gzip',
+      // DISABLE webpack cache completely in production to prevent OOM
+      config.cache = false;
+
+      // Add webpack optimizations to speed up build despite no caching
+      config.resolve = {
+        ...config.resolve,
+        // Reduce module resolution time
+        modules: ['node_modules'],
+        // Prioritize extensions
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+        // Use aliases to speed up resolution
+        alias: {
+          ...config.resolve.alias,
+          // Add common aliases to speed up resolution
+          '@': path.resolve(__dirname, './'),
+          components: path.resolve(__dirname, './components'),
+        },
       };
 
-      // Optimize chunks
+      // Optimize chunks for faster builds
       config.optimization = {
         ...config.optimization,
         minimize: true,
+        // Faster minification
+        minimizer: [
+          new TerserPlugin({
+            parallel: true,
+            terserOptions: {
+              compress: {
+                drop_console: true,
+                drop_debugger: true,
+              },
+            },
+          }),
+        ],
         splitChunks: {
           chunks: 'all',
+          minSize: 20000,
+          maxSize: 200000, // Larger chunks for fewer files
           cacheGroups: {
             vendor: {
               test: /[\\/]node_modules[\\/]/,
               name: 'vendors',
               chunks: 'all',
+              priority: 10,
+            },
+            // Group large libraries
+            charts: {
+              test: /[\\/]node_modules[\\/](lightweight-charts|apexcharts|recharts|echarts)[\\/]/,
+              name: 'charts',
+              chunks: 'all',
+              priority: 20,
+            },
+            web3: {
+              test: /[\\/]node_modules[\\/](@rainbow-me|wagmi|viem|ethers|@web3modal)[\\/]/,
+              name: 'web3',
+              chunks: 'all',
+              priority: 20,
             },
           },
         },
       };
+
+      // Reduce module concatenation for faster builds
+      config.optimization.concatenateModules = false;
 
       // Minimize memory usage
       config.stats = 'errors-warnings';

@@ -37,21 +37,11 @@ const baseConfig = {
       'node_modules', // fallback to local
     ];
 
-    // PRODUCTION OPTIMIZATIONS - MEMORY EFFICIENT
+    // PRODUCTION OPTIMIZATIONS - DISABLE CACHE TO PREVENT OOM
     if (isProd) {
-      // Use limited filesystem cache with memory constraints
-      // This is much faster than no cache but uses less memory than full cache
-      config.cache = {
-        type: 'filesystem',
-        maxMemoryGenerations: 1,
-        maxAge: 1000 * 60 * 60 * 2, // 2 hours
-        store: 'pack',
-        buildDependencies: {
-          config: [__filename, ...(process.env.CI ? [] : ['package.json'])],
-        },
-        // Compress cache to save space
-        compression: 'gzip',
-      };
+      // COMPLETELY DISABLE webpack cache in production to prevent OOM
+      // The cache files are created DURING build and cause memory issues
+      config.cache = false;
 
       // Aggressive memory optimization
       config.optimization = {
