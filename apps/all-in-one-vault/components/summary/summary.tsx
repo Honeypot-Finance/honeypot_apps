@@ -28,7 +28,7 @@ interface SummaryCardProps {
 const DEFAULT_DATA: SummaryData = {
   weightPerToken: '-',
   balance: '-',
-  receiptWeight: '-',
+  receiptWeight: '0',
   estimatedRewards: '-',
 };
 
@@ -60,7 +60,7 @@ const SummaryCard = memo(function SummaryCard({
   const totalWeightClient = useMemo(
     () =>
       new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/10550f11-33a0-421c-b25d-6aff7cceca11',
+        uri: 'https://api.ghostlogs.xyz/gg/pub/948b257a-20a9-442f-b38f-70fec580a732',
         cache: new InMemoryCache(),
         defaultOptions: {
           query: {
@@ -87,50 +87,39 @@ const SummaryCard = memo(function SummaryCard({
     functionName: 'balanceOf',
     args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
   });
-  const totalWeightValue = totalWeight?.globals?.items?.[0]?.totalWeight;
-
-  // Debug logging
-  console.log('🔍 Estimated Rewards Debug:', {
-    poolReward: poolReward?.toString(),
-    receiptWeight: data.receiptWeight,
-    totalWeight: totalWeightValue?.toString(),
-    totalWeightError,
-    totalWeightLoading,
-  });
-
+  const totalWeightItems = totalWeight?.globals?.items[0]?.totalWeight;
+  console.log(poolReward);
+  console.log("Data Receipt Weight", data.receiptWeight);
+  console.log("Total Weight", totalWeightItems);
   const estimatedRewards = useMemo(() => {
-    if (!poolReward || !data.receiptWeight || !totalWeightValue) {
-      console.log('❌ Missing data for rewards calculation:', {
-        hasPoolReward: !!poolReward,
-        hasReceiptWeight: !!data.receiptWeight,
-        hasTotalWeight: !!totalWeightValue,
-      });
-      return 0;
-    }
-
+    if (!data.receiptWeight || !totalWeightItems || !poolReward) return 0;
+    
+    // Skip calculation if receiptWeight is '-', '0', or any non-numeric string
+    if (data.receiptWeight === '-' || data.receiptWeight === '0' || data.receiptWeight === 0) return 0;
+    
     try {
-      // Convert receiptWeight back to original scale for calculation
-      const originalReceiptWeight =
-        parseFloat(data.receiptWeight.toString()) * 10000;
-      const calculation =
-        (BigInt(Math.floor(originalReceiptWeight)) * poolReward) /
-        BigInt(totalWeightValue);
-      const result = Number(calculation) / 1e18; // Convert from wei to BGT
-
-      console.log('💰 Rewards calculation:', {
-        originalReceiptWeight,
-        poolReward: poolReward.toString(),
-        totalWeight: totalWeightValue.toString(),
-        calculationRaw: calculation.toString(),
-        finalResult: result,
-      });
-
-      return result;
+      // Additional validation to ensure we can convert to BigInt
+      const receiptWeightStr = String(data.receiptWeight);
+      if (!/^\d+$/.test(receiptWeightStr)) {
+        console.warn('Invalid receiptWeight format:', data.receiptWeight);
+        return 0;
+      }
+      
+      const receiptWeightBigInt = BigInt(receiptWeightStr);
+      const totalWeightBigInt = BigInt(totalWeightItems);
+      const poolRewardBigInt = BigInt(poolReward);
+      
+      if (totalWeightBigInt === BigInt(0)) {
+        console.warn('Total weight is zero, cannot calculate rewards');
+        return 0;
+      }
+      
+      return Number((receiptWeightBigInt * poolRewardBigInt) / totalWeightBigInt);
     } catch (error) {
-      console.error('❌ Error calculating rewards:', error);
+      console.error('Error calculating estimated rewards:', error);
       return 0;
     }
-  }, [poolReward, data.receiptWeight, totalWeightValue]);
+  }, [data.receiptWeight, totalWeightItems, poolReward]);
 
   const summaryItems = useMemo(
     () => [

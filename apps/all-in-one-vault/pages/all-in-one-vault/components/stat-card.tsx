@@ -1,15 +1,153 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Card } from '@nextui-org/react';
-
+import { useAccount, useReadContract } from 'wagmi';
+import { RECEIPTS_LIST } from '@/lib/algebra/graphql/queries/receipts-list';
+import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
+import { ALL_IN_ONE_VAULT } from '@/config/algebra/addresses';
+import { erc20Abi } from 'viem';
+import {
+  ApolloClient,
+  InMemoryCache,
+  useQuery as useApolloQuery,
+} from '@apollo/client';
 export default function StatCard() {
+  const { address } = useAccount();
+  const allInOneVaultClient = useMemo(
+    () =>
+      new ApolloClient({
+        uri: 'https://api.ghostlogs.xyz/gg/pub/5018d16a-abf4-432d-b8a9-760dc08bcb8d',
+        cache: new InMemoryCache(),
+        defaultOptions: {
+          query: {
+            errorPolicy: 'all',
+          },
+        },
+      }),
+    []
+  );
+
+  const totalWeightClient = useMemo(
+    () =>
+      new ApolloClient({
+        uri: 'https://api.ghostlogs.xyz/gg/pub/948b257a-20a9-442f-b38f-70fec580a732',
+        cache: new InMemoryCache(),
+        defaultOptions: {
+          query: {
+            errorPolicy: 'all',
+          },
+        },
+      }),
+    []
+  );
+
+  const {
+    data: totalWeightData,
+    loading: totalWeightLoading,
+    error: totalWeightError,
+  } = useApolloQuery(TOTAL_WEIGHT, {
+    client: totalWeightClient,
+    errorPolicy: 'all',
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const { data: poolReward } = useReadContract({
+    address: `0xbaadcc2962417c01af99fb2b7c75706b9bd6babe`,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
+  });
+
+  const {
+    data: receiptsData,
+    loading: receiptsLoading,
+    error: receiptsError,
+    refetch: refetchReceipts,
+    networkStatus,
+  } = useApolloQuery(RECEIPTS_LIST, {
+    client: allInOneVaultClient,
+    variables: { user: address || '' },
+    skip: !address,
+    errorPolicy: 'all',
+    notifyOnNetworkStatusChange: true,
+  });
+  
+  const listReceipts = receiptsData?.receipts?.items || [];
+  const totalWeightItems = totalWeightData?.globals?.items[0]?.totalWeight;
+
+  // Calculate estimated rewards for each receipt
+  const calculateEstimatedRewards = useCallback((receiptWeight: string): number => {
+    if (!receiptWeight || !totalWeightItems || !poolReward) return 0;
+    
+    if (receiptWeight === '-' || receiptWeight === '0' || String(receiptWeight) === '0') return 0;
+    
+    try {
+      const receiptWeightStr = String(receiptWeight);
+      if (!/^\d+(\.\d+)?$/.test(receiptWeightStr)) {
+        return 0;
+      }
+      
+      const receiptWeightBigInt = BigInt(Math.floor(parseFloat(receiptWeightStr)));
+      const totalWeightBigInt = BigInt(totalWeightItems);
+      const poolRewardBigInt = BigInt(poolReward);
+      
+      if (totalWeightBigInt === BigInt(0)) {
+        return 0;
+      }
+      
+      return Number((receiptWeightBigInt * poolRewardBigInt) / totalWeightBigInt);
+    } catch (error) {
+      console.error('Error calculating estimated rewards:', error);
+      return 0;
+    }
+  }, [totalWeightItems, poolReward]);
+
+  // Calculate totals
+  const { totalBalance, totalLifetime, totalWeight } = useMemo(() => {
+    let balance = 0;
+    let lifetime = 0;
+    let weight = 0;
+
+    listReceipts.forEach((receipt: any) => {
+      const estimatedRewards = calculateEstimatedRewards(receipt.receiptWeight);
+      balance += estimatedRewards;
+      weight += parseFloat(receipt.receiptWeight || '0');
+      
+      // Add to lifetime if receipt is claimed
+      if (receipt.isClaimed) {
+        lifetime += estimatedRewards;
+      }
+    });
+
+    return {
+      totalBalance: balance,
+      totalLifetime: lifetime,
+      totalWeight: weight,
+    };
+  }, [listReceipts, totalWeightItems, poolReward, calculateEstimatedRewards]);
+
+  console.log('📊 receiptsData', receiptsData);
+  console.log('📊 totalBalance', totalBalance);
+  console.log('📊 totalLifetime', totalLifetime);
+  
+  const formatRewards = (value: number) => {
+    return (value / 1e18).toFixed(1); // Convert from wei to tokens with 6 decimal places
+  };
+
   const statsData = [
     {
       label: 'Total Weight',
-      value: '30',
+      value: totalWeight?.toFixed(1) || '0.0',
     },
-    { label: 'LBGT Balance', value: '7.0' },
-    { label: 'LBGT Lifetime', value: '10.5' },
+    { 
+      label: 'LBGT Balance', 
+      value: formatRewards(totalBalance),
+    },
+    { 
+      label: 'LBGT Lifetime', 
+      value: formatRewards(totalLifetime),
+    },
   ];
+
   return (
     <div className="flex flex-col justify-center w-full rounded-2xl gap-y-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -19,7 +157,9 @@ export default function StatCard() {
             className="border-2 border-dashed border-black bg-white/90 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.8)]"
           >
             <div className="p-4 text-center">
-              <div className="text-sm text-gray-600 mb-1 font-theader">{stat.label}</div>
+              <div className="text-sm text-gray-600 mb-1 font-theader">
+                {stat.label}
+              </div>
               <div className="text-2xl font-bold text-gray-800">
                 {stat.value}
               </div>

@@ -42,7 +42,7 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
   const [summaryData, setSummaryData] = useState({
     weightPerToken: '-',
     balance: '-',
-    receiptWeight: '-',
+    receiptWeight: '0',
     estimatedRewards: '-',
   });
   const { writeContractAsync: executeGetReceipt } = useWriteContract();
@@ -54,7 +54,7 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
   const tokenSupportClient = useMemo(
     () =>
       new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/10550f11-33a0-421c-b25d-6aff7cceca11',
+        uri: 'https://api.ghostlogs.xyz/gg/pub/5018d16a-abf4-432d-b8a9-760dc08bcb8d',
         cache: new InMemoryCache(),
         defaultOptions: {
           query: {
