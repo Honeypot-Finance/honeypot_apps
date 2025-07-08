@@ -9,6 +9,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   // enabled: !isProd,
   enabled: false,
 });
+
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
@@ -16,16 +17,17 @@ const baseConfig = {
   nx: {
     // Set this to true if you would like to use SVGR
     // See: https://github.com/gregberge/svgr
-
     svgr: false,
   },
   reactStrictMode: true,
   output: 'standalone',
-  productionBrowserSourceMaps: true,
+  productionBrowserSourceMaps: false, // Disable source maps in production to save space
   experimental: {
     optimizeCss: true,
   },
-  webpack: (config, { isServer }) => {
+  // Add webpack optimizations
+  webpack: (config, { isServer, dev }) => {
+    // Memory and cache optimizations
     config.resolve.alias = {
       ...config.resolve.alias,
       '@honeypot/shared': path.resolve(__dirname, 'libs/shared/hpot-sdk/src'),
@@ -35,8 +37,84 @@ const baseConfig = {
       'node_modules', // fallback to local
     ];
 
+    // Production optimizations
+    if (isProd) {
+      // Limit cache size in production
+      config.cache = {
+        type: 'filesystem',
+        maxMemoryGenerations: 1,
+        cacheDirectory: path.resolve(__dirname, '.next/cache'),
+        buildDependencies: {
+          config: [__filename],
+        },
+      };
+
+      // Memory optimization
+      config.optimization = {
+        ...config.optimization,
+        // Split chunks to reduce memory usage
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            default: {
+              minChunks: 2,
+              priority: -20,
+              reuseExistingChunk: true,
+            },
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              priority: -10,
+              chunks: 'all',
+              maxSize: 244000, // 244KB max chunk size
+            },
+            // Separate large libraries
+            charts: {
+              test: /[\\/]node_modules[\\/](lightweight-charts|apexcharts|recharts|echarts)[\\/]/,
+              name: 'charts',
+              chunks: 'all',
+              priority: 10,
+            },
+            web3: {
+              test: /[\\/]node_modules[\\/](@rainbow-me|wagmi|viem|ethers)[\\/]/,
+              name: 'web3',
+              chunks: 'all',
+              priority: 10,
+            },
+          },
+        },
+        // Minimize memory usage
+        moduleIds: 'deterministic',
+        mangleExports: 'deterministic',
+      };
+
+      // Minimize bundle size
+      config.module.rules.push({
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['next/babel'],
+            plugins: [
+              ['transform-remove-console', { exclude: ['error', 'warn'] }],
+            ],
+          },
+        },
+      });
+    }
+
+    // Development optimizations
+    if (dev) {
+      config.cache = {
+        type: 'filesystem',
+        maxMemoryGenerations: 1,
+      };
+    }
+
     return config;
   },
+  // Optimize images
   images: {
     remotePatterns: [
       {
@@ -44,6 +122,9 @@ const baseConfig = {
         hostname: '**',
       },
     ],
+    // Add image optimization
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 86400,
   },
   async headers() {
     return [
@@ -82,7 +163,8 @@ const baseConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://app.safe.global https://safe.global;"
+            value:
+              "frame-ancestors 'self' https://app.safe.global https://safe.global;",
           },
           {
             key: 'X-Content-Type-Options',
@@ -92,18 +174,22 @@ const baseConfig = {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
           },
-        ]
+        ],
       },
       {
         source: '/manifest.json',
         headers: [
           { key: 'Access-Control-Allow-Origin', value: '*' },
           { key: 'Access-Control-Allow-Methods', value: 'GET' },
-          { key: 'Access-Control-Allow-Headers', value: 'X-Requested-With, content-type, Authorization' },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'X-Requested-With, content-type, Authorization',
+          },
         ],
       },
     ];
   },
+  // Optimize transpilation
   transpilePackages: isProd
     ? [
         '@nextui-org/react',
@@ -136,6 +222,18 @@ const baseConfig = {
         '@honeypot/shared',
       ]
     : [],
+  // Add compiler optimizations
+  compiler: {
+    // Remove console.log in production
+    removeConsole: isProd ? { exclude: ['error', 'warn'] } : false,
+  },
+  // Add SWC optimizations
+  swcMinify: true,
+  // Add build optimizations
+  generateBuildId: async () => {
+    // Use a shorter build ID to reduce cache size
+    return 'build-' + Date.now().toString(36);
+  },
 };
 
 const plugins = [
@@ -157,8 +255,8 @@ const sentryConfig = {
   // For all available options, see:
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
-  // Upload a larger set of source maps for prettier stack traces (increases build time)
-  widenClientFileUpload: true,
+  // Disable source maps upload in production to save space and time
+  widenClientFileUpload: false,
 
   // Uncomment to route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
   // This can increase your server load as well as your hosting bill.
@@ -187,6 +285,8 @@ const sentryConfig = {
    * Automatically instrument components in the `app` directory with error monitoring. Defaults to `true`.
    */
   autoInstrumentAppDirectory: false,
+  // Disable debug logging in production
+  debug: false,
 };
 
 module.exports = (customConfig = {}) =>
