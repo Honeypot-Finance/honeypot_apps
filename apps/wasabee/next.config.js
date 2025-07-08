@@ -24,21 +24,30 @@ module.exports = withBaseConfig({
     }
 
     // Additional optimizations for wasabee
-    if (options.isServer) {
-      // Server-side optimizations
-      config.externals = config.externals || [];
-      config.externals.push({
-        'node:crypto': 'crypto',
-        'node:stream': 'stream',
-        'node:buffer': 'buffer',
-      });
-    }
-
-    // Optimize for production builds
     if (!options.dev) {
-      // Additional production optimizations
-      config.optimization.usedExports = true;
-      config.optimization.sideEffects = false;
+      // Use limited filesystem cache with memory constraints instead of disabling completely
+      config.cache = {
+        type: 'filesystem',
+        maxMemoryGenerations: 1,
+        maxAge: 1000 * 60 * 60 * 2, // 2 hours
+        compression: 'gzip',
+      };
+
+      // Optimize chunks
+      config.optimization = {
+        ...config.optimization,
+        minimize: true,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+            },
+          },
+        },
+      };
 
       // Minimize memory usage
       config.stats = 'errors-warnings';

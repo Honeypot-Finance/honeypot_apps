@@ -1,35 +1,24 @@
 {
-  "buildCommand": "node apps/wasabee/scripts/build-optimize.js",
-  "outputDirectory": "apps/wasabee/.next",
+  "version": 2,
+  "buildCommand": "node scripts/build-optimize.js",
+  "outputDirectory": ".next",
+  "installCommand": "pnpm install",
   "framework": "nextjs",
-  "functions": {
-    "api/**/*.ts": {
-      "maxDuration": 60,
-      "memory": 1024,
-      "ulimits": {
-        "nofile": 65535
-      }
-    }
-  },
   "build": {
     "env": {
+      "NODE_ENV": "production",
       "NEXT_TELEMETRY_DISABLED": "1",
-      "DISABLE_SENTRY": "true",
-      "SENTRY_UPLOAD_SOURCE_MAPS": "false",
-      "SENTRY_ORG": "",
-      "SENTRY_PROJECT": "",
-      "NODE_OPTIONS": "--max-old-space-size=2048 --max-semi-space-size=128"
+      "SENTRY_UPLOAD_SOURCEMAPS": "false",
+      "SENTRY_DISABLE_TELEMETRY": "true",
+      "NEXT_BUILD_CACHE_DISABLED": "0"
     }
   },
-  "github": {
-    "enabled": false
-  },
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
+  "functions": {
+    "app/api/**": {
+      "maxDuration": 30,
+      "memory": 512
     }
-  ],
+  },
   "headers": [
     {
       "source": "/(.*)",
@@ -37,15 +26,6 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate"
         }
       ]
     }

@@ -37,10 +37,21 @@ const baseConfig = {
       'node_modules', // fallback to local
     ];
 
-    // AGGRESSIVE Production optimizations for Vercel
+    // PRODUCTION OPTIMIZATIONS - MEMORY EFFICIENT
     if (isProd) {
-      // DISABLE webpack cache completely in production to prevent OOM
-      config.cache = false;
+      // Use limited filesystem cache with memory constraints
+      // This is much faster than no cache but uses less memory than full cache
+      config.cache = {
+        type: 'filesystem',
+        maxMemoryGenerations: 1,
+        maxAge: 1000 * 60 * 60 * 2, // 2 hours
+        store: 'pack',
+        buildDependencies: {
+          config: [__filename, ...(process.env.CI ? [] : ['package.json'])],
+        },
+        // Compress cache to save space
+        compression: 'gzip',
+      };
 
       // Aggressive memory optimization
       config.optimization = {

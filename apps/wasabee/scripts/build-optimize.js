@@ -1,116 +1,92 @@
 #!/usr/bin/env node
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
-const isVercel = process.env.VERCEL === '1';
-const isProduction = process.env.NODE_ENV === 'production';
+// Cleanup function
+function cleanup() {
+  console.log('🧹 Cleaning up before build...');
 
-console.log('🚀 Starting build optimization...');
+  const cleanupPaths = [
+    '.next/cache',
+    '.next/server',
+    '.next/static',
+    '.next/standalone',
+    '.next/build-manifest.json',
+    '.next/export-marker.json',
+    '.next/required-server-files.json',
+    '.next/routes-manifest.json',
+    '.next/trace',
+    '.next/react-loadable-manifest.json',
+    '.next/export-marker.json',
+    'node_modules/.cache',
+    '.swc',
+    'tsconfig.tsbuildinfo',
+  ];
 
-// Define cache directories
-const cacheDirectories = [
-  path.join(__dirname, '../.next/cache'),
-  path.join(__dirname, '../node_modules/.cache'),
-  path.join(__dirname, '../../../.next/cache'),
-];
-
-// Clean cache function with aggressive cleanup
-function cleanCache() {
-  console.log('🧹 Running aggressive cache cleanup...');
-
-  try {
-    // Use the aggressive cleanup script
-    const cleanupScript = path.join(__dirname, 'clean-aggressive.js');
-    if (fs.existsSync(cleanupScript)) {
-      execSync(`node "${cleanupScript}"`, { stdio: 'inherit' });
-    } else {
-      // Fallback to basic cleanup
-      console.log('🔄 Using fallback cleanup...');
-      cacheDirectories.forEach((dir) => {
-        try {
-          if (fs.existsSync(dir)) {
-            console.log(`Cleaning ${dir}...`);
-            fs.rmSync(dir, { recursive: true, force: true });
-            console.log(`✅ Cleaned ${dir}`);
-          }
-        } catch (error) {
-          console.warn(`⚠️ Could not clean ${dir}:`, error.message);
-        }
-      });
+  cleanupPaths.forEach((path) => {
+    if (fs.existsSync(path)) {
+      fs.rmSync(path, { recursive: true, force: true });
     }
-  } catch (error) {
-    console.warn(
-      '⚠️ Aggressive cleanup failed, continuing with build...',
-      error.message
-    );
-  }
+  });
+
+  console.log('✨ Cleanup completed');
 }
 
-// Memory optimization function
-function optimizeMemory() {
-  console.log('🎯 Setting memory optimization flags...');
+// Main build function
+function build() {
+  console.log('🚀 Starting optimized build...');
 
-  // Set Node.js memory flags
+  // Set optimized environment variables
+  process.env.NODE_ENV = 'production';
+  process.env.NEXT_TELEMETRY_DISABLED = '1';
+  process.env.SENTRY_UPLOAD_SOURCEMAPS = 'false';
+  process.env.SENTRY_DISABLE_TELEMETRY = 'true';
+  process.env.NEXT_BUILD_CACHE_DISABLED = '0'; // Enable limited caching
+
+  // Optimized Node.js settings for better performance with limited memory
   const nodeOptions = [
-    '--max-old-space-size=2048',
-    '--max-semi-space-size=128',
+    '--max-old-space-size=3072', // 3GB limit (increased from 2GB for better performance)
+    '--max-semi-space-size=512', // 512MB for new generation
+    '--optimize-for-size', // Optimize for smaller memory footprint
+    '--use-compressed-oozmap', // Use compressed memory maps
+    '--trace-warnings', // Enable tracing for debugging
   ].join(' ');
 
-  process.env.NODE_OPTIONS = nodeOptions;
-  console.log('📊 Node.js memory flags set:', nodeOptions);
-}
+  // Run build with optimized settings
+  const buildCommand = `cross-env NODE_OPTIONS="${nodeOptions}" pnpm exec nx build wasabee --prod`;
 
-// Main optimization function
-function optimize() {
-  if (isVercel && isProduction) {
-    console.log('🔧 Running Vercel production optimizations...');
+  console.log('🔧 Build command:', buildCommand);
 
-    // Clean cache first
-    cleanCache();
-
-    // Set memory optimizations
-    optimizeMemory();
-
-    // Set environment variables for build optimization
-    process.env.NEXT_TELEMETRY_DISABLED = '1';
-    process.env.DISABLE_SENTRY = 'true';
-
-    console.log('✅ Optimizations complete!');
-  } else {
-    console.log('🏠 Running local development optimizations...');
-    optimizeMemory();
-  }
-}
-
-// Run optimization
-optimize();
-
-// If this script is run directly, execute the build
-if (require.main === module) {
   try {
-    console.log('🏗️ Starting Next.js build...');
-
-    // Use nx build with NODE_OPTIONS set directly
-    const buildCommand = 'npx nx build wasabee --prod';
-    const nodeOptions = '--max-old-space-size=2048 --max-semi-space-size=128';
-
     execSync(buildCommand, {
       stdio: 'inherit',
-      env: {
-        ...process.env,
-        NODE_OPTIONS: nodeOptions,
-        // Disable all Sentry operations during build
-        DISABLE_SENTRY: 'true',
-        SENTRY_UPLOAD_SOURCE_MAPS: 'false',
-        NEXT_TELEMETRY_DISABLED: '1',
-        // Additional memory optimizations
-        UV_THREADPOOL_SIZE: '4', // Limit thread pool
-      },
+      cwd: process.cwd(),
+      maxBuffer: 1024 * 1024 * 10, // 10MB buffer
     });
+
     console.log('✅ Build completed successfully!');
+
+    // Clean up large files after successful build
+    setTimeout(() => {
+      const postBuildCleanup = [
+        '.next/cache',
+        '.next/trace',
+        'node_modules/.cache',
+      ];
+
+      postBuildCleanup.forEach((path) => {
+        if (fs.existsSync(path)) {
+          fs.rmSync(path, { recursive: true, force: true });
+        }
+      });
+    }, 1000);
   } catch (error) {
     console.error('❌ Build failed:', error.message);
     process.exit(1);
   }
 }
+
+// Run the build
+cleanup();
+build();
