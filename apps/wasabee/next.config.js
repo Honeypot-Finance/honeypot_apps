@@ -17,8 +17,11 @@ module.exports = withBaseConfig({
   },
   // Custom webpack config for wasabee
   webpack: (config, options) => {
-    // Apply base config first
-    config = require('../../next.base.config.js')().webpack(config, options);
+    // Apply base webpack config first
+    const baseConfig = require('../../next.base.config.js')();
+    if (baseConfig.webpack) {
+      config = baseConfig.webpack(config, options);
+    }
 
     // Additional optimizations for wasabee
     if (options.isServer) {
