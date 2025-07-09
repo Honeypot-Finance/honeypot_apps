@@ -69,6 +69,7 @@ const PoolsTable = observer(
     const walletClient = useObserver(() => {
       return wallet.walletClient;
     });
+    const disConnectedWalletAdress="0x0000000000000000000000000000000000000000";
     const [selectedFilter, setSelectedFilter] = useState<string>(defaultFilter);
     const [search, setSearch] = useState('');
     const [sortField, setSortField] = useState<SortField>('tvl');
@@ -264,7 +265,7 @@ const PoolsTable = observer(
                         shouldCloseOnInteractOutside: false,
                       });
                     }}
-                    disabled={!walletClient}
+                    disabled={wallet.account===disConnectedWalletAdress}
                   >
                     Create Pool
                   </Button>
@@ -338,7 +339,7 @@ const PoolsTable = observer(
                       shouldCloseOnInteractOutside: false,
                     })
                   }
-                  disabled={!walletClient}
+                  disabled={wallet.account===disConnectedWalletAdress}
                 >
                   <Plus className="text-black" />
                   <span className="text-black">Create Pool</span>
