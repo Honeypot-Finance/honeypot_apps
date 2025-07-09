@@ -16,7 +16,7 @@ import { formatAmountWithAlphabetSymbol } from '@/lib/algebra/utils/common/forma
 import { Position, ZERO } from '@cryptoalgebra/sdk';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useDeferredValue, startTransition, useCallback } from 'react';
 import { useAccount } from 'wagmi';
 import JSBI from 'jsbi';
 import {
@@ -35,10 +35,20 @@ import { useRouter } from 'next/router';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { observer } from 'mobx-react-lite';
 import { LoadingContainer } from '@/components/LoadingDisplay/LoadingDisplay';
-import PoolChart from '@/components/algebra/pool/PoolChart';
 import { Tab, Tabs } from '@nextui-org/react';
-import TopPoolPositions from '@/components/algebra/pool/TopPoolPositions';
 import PoolStatsCard from '@/components/algebra/pool/PoolStatsCard';
+import dynamic from 'next/dynamic';
+
+// Lazy load heavy components to reduce initial bundle size
+const PoolChart = dynamic(() => import('@/components/algebra/pool/PoolChart'), {
+  loading: () => <div className="w-full h-[400px] bg-gray-100 rounded-xl animate-pulse" />,
+  ssr: false
+});
+
+const TopPoolPositions = dynamic(() => import('@/components/algebra/pool/TopPoolPositions'), {
+  loading: () => <div className="w-full h-[300px] bg-gray-100 rounded-xl animate-pulse" />,
+  ssr: false
+});
 
 const PoolPage = observer(() => {
   const { address: account } = useAccount();
@@ -67,29 +77,37 @@ const PoolPage = observer(() => {
   const { data: bundles } = useNativePriceQuery();
   const nativePrice = bundles?.bundles[0].maticPriceUSD;
 
+  // Defer heavy calculations to avoid blocking
+  const deferredPoolInfo = useDeferredValue(poolInfo);
+  const deferredNativePrice = useDeferredValue(nativePrice);
+
   useEffect(() => {
     if (!wallet.isInit) return;
     if (poolInfo?.pool?.token0.id) {
-      setToken0(
-        Token.getToken({
-          address: poolInfo.pool.token0.id,
-          force: true,
-          chainId: wallet.currentChainId.toString(),
-        })
-      );
+      startTransition(() => {
+        setToken0(
+          Token.getToken({
+            address: poolInfo.pool!.token0.id,
+            force: true,
+            chainId: wallet.currentChainId.toString(),
+          })
+        );
+      });
     }
   }, [poolInfo?.pool?.token0.id, wallet.isInit]);
 
   useEffect(() => {
     if (!wallet.isInit) return;
     if (poolInfo?.pool?.token1.id) {
-      setToken1(
-        Token.getToken({
-          address: poolInfo.pool.token1.id,
-          force: true,
-          chainId: wallet.currentChainId.toString(),
-        })
-      );
+      startTransition(() => {
+        setToken1(
+          Token.getToken({
+            address: poolInfo.pool!.token1.id,
+            force: true,
+            chainId: wallet.currentChainId.toString(),
+          })
+        );
+      });
     }
   }, [poolInfo?.pool?.token1.id, wallet.isInit]);
 
@@ -109,6 +127,7 @@ const PoolPage = observer(() => {
 
   const { positions, loading: positionsLoading } = usePositions();
 
+  // Memoize filtered positions separately
   const filteredPositions = useMemo(() => {
     if (!positions || !poolEntity || !poolId) return [];
 
@@ -127,86 +146,106 @@ const PoolPage = observer(() => {
       }));
   }, [positions, poolEntity, poolId]);
 
+  // Debounce expensive fee calculations
   useEffect(() => {
-    async function getPositionsFees() {
-      const fees = await Promise.all(
-        filteredPositions.map(({ positionId, position }) =>
-          getPositionFees(position.pool, positionId)
-        )
-      );
-      setPositionsFees(fees);
-    }
+    if (!filteredPositions.length) return;
+    
+    const timeoutId = setTimeout(() => {
+      async function getPositionsFees() {
+        const fees = await Promise.all(
+          filteredPositions.map(({ positionId, position }) =>
+            getPositionFees(position.pool, positionId)
+          )
+        );
+        startTransition(() => {
+          setPositionsFees(fees);
+        });
+      }
+      getPositionsFees();
+    }, 100); // Small delay to batch operations
 
-    if (filteredPositions) getPositionsFees();
+    return () => clearTimeout(timeoutId);
   }, [filteredPositions]);
 
+  // Debounce expensive APR calculations
   useEffect(() => {
-    if (!poolId) return;
-    async function getPositionsAPRs() {
-      const aprs = await Promise.all(
-        filteredPositions.map(({ position }) =>
-          getPositionAPR(
-            poolId?.toLowerCase() as Address,
-            position,
-            poolInfo?.pool,
-            poolFeeData?.poolDayDatas,
-            nativePrice
+    if (!poolId || !filteredPositions.length) return;
+    
+    const timeoutId = setTimeout(() => {
+      async function getPositionsAPRs() {
+        const aprs = await Promise.all(
+          filteredPositions.map(({ position }) =>
+            getPositionAPR(
+              poolId?.toLowerCase() as Address,
+              position,
+              deferredPoolInfo?.pool,
+              poolFeeData?.poolDayDatas,
+              deferredNativePrice
+            )
           )
-        )
-      );
-      setPositionsAPRs(aprs);
-    }
+        );
+        startTransition(() => {
+          setPositionsAPRs(aprs);
+        });
+      }
 
-    if (
-      filteredPositions &&
-      poolInfo?.pool &&
-      poolFeeData?.poolDayDatas &&
-      bundles?.bundles &&
-      poolId.toLowerCase()
-    )
-      getPositionsAPRs();
-  }, [filteredPositions, poolInfo, poolId, poolFeeData, bundles]);
+      if (
+        filteredPositions &&
+        deferredPoolInfo?.pool &&
+        poolFeeData?.poolDayDatas &&
+        bundles?.bundles &&
+        poolId.toLowerCase()
+      )
+        getPositionsAPRs();
+    }, 150); // Slightly longer delay for heavier calculation
 
-  const formatLiquidityUSD = (position: Position) => {
-    if (!poolInfo?.pool) return 0;
+    return () => clearTimeout(timeoutId);
+  }, [filteredPositions, deferredPoolInfo, poolId, poolFeeData, bundles, deferredNativePrice]);
+
+  // Memoize expensive formatting functions
+  const formatLiquidityUSD = useCallback((position: Position) => {
+    if (!deferredPoolInfo?.pool || !deferredNativePrice) return 0;
 
     const amount0USD =
       Number(position.amount0.toSignificant()) *
-      (Number(poolInfo.pool.token0.derivedMatic) * (Number(nativePrice) || 0));
+      (Number(deferredPoolInfo.pool.token0.derivedMatic) * Number(deferredNativePrice));
     const amount1USD =
       Number(position.amount1.toSignificant()) *
-      (Number(poolInfo.pool.token1.derivedMatic) * (Number(nativePrice) || 0));
+      (Number(deferredPoolInfo.pool.token1.derivedMatic) * Number(deferredNativePrice));
 
     return amount0USD + amount1USD;
-  };
+  }, [deferredPoolInfo?.pool, deferredNativePrice]);
 
-  const formatFeesUSD = (idx: number) => {
-    if (!positionsFees || !positionsFees[idx] || !poolInfo?.pool) return 0;
+  const formatFeesUSD = useCallback((idx: number) => {
+    if (!positionsFees || !positionsFees[idx] || !deferredPoolInfo?.pool || !deferredNativePrice) return 0;
 
     const fees0USD = positionsFees[idx][0]
       ? Number(positionsFees[idx][0].toSignificant()) *
-        (Number(poolInfo.pool.token0.derivedMatic) * Number(nativePrice))
+        (Number(deferredPoolInfo.pool.token0.derivedMatic) * Number(deferredNativePrice))
       : 0;
     const fees1USD = positionsFees[idx][1]
       ? Number(positionsFees[idx][1].toSignificant()) *
-        (Number(poolInfo.pool.token1.derivedMatic) * Number(nativePrice))
+        (Number(deferredPoolInfo.pool.token1.derivedMatic) * Number(deferredNativePrice))
       : 0;
 
     return fees0USD + fees1USD;
-  };
+  }, [positionsFees, deferredPoolInfo?.pool, deferredNativePrice]);
 
-  const formatAPR = (idx: number) => {
+  const formatAPR = useCallback((idx: number) => {
     if (!positionsAPRs || !positionsAPRs[idx]) return 0;
     return positionsAPRs[idx];
-  };
+  }, [positionsAPRs]);
 
+  // Break down heavy positions data calculation
   const positionsData = useMemo(() => {
     if (!filteredPositions || !poolEntity || !deposits) return [];
 
+    // Process in smaller chunks to avoid blocking
     return filteredPositions.map(({ positionId, position }, idx) => {
       const currentPosition = deposits.deposits.find(
         (deposit) => Number(deposit.id) === Number(positionId)
       );
+      
       return {
         id: positionId,
         isClosed: JSBI.EQ(position.liquidity, ZERO),
@@ -229,10 +268,10 @@ const PoolPage = observer(() => {
   }, [
     filteredPositions,
     poolEntity,
-    poolInfo,
-    positionsFees,
-    positionsAPRs,
     deposits,
+    formatLiquidityUSD,
+    formatFeesUSD,
+    formatAPR,
   ]);
 
   const selectedPosition = useMemo(() => {
