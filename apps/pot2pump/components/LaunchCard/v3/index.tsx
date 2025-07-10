@@ -747,14 +747,12 @@ const FeaturedLaunchCard = observer(({ pair }: { pair: LaunchContract }) => {
 
               <div className="flex mt-4 sm:mt-6">
                 <div className="flex w-full rounded-lg bg-white border border-[#202020] p-0.5 sm:p-1">
-                  <Link
-                    className="flex-1"
+                    <Link
+                    className="flex-1 w-full bg-[#FFCD4D] text-[#202020] rounded-lg border-none font-bold text-sm sm:text-base flex items-center justify-center hover:opacity-85"
                     href={`/launch-detail/${pair?.launchedToken?.address}`}
-                  >
-                    <Button className="w-full bg-[#FFCD4D] text-[#202020] rounded-lg border-none font-bold text-sm sm:text-base">
-                      Token Details
-                    </Button>
-                  </Link>
+                    >
+                    Token Details
+                    </Link>
                   {pair.state === 0 ? (
                     <PumpingModalButton
                       pair={pair as MemePairContract}
