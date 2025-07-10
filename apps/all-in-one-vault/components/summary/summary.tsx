@@ -1,4 +1,5 @@
-import { ALL_IN_ONE_VAULT } from '@/config/algebra/addresses';
+import { ALL_IN_ONE_VAULT, REWARD_VAULT } from '@/config/algebra/addresses';
+import { rewardAbi } from '@/lib/abis/reward';
 import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
 import {
   useQuery as useApolloQuery,
@@ -8,7 +9,7 @@ import {
 import { Card } from '@nextui-org/react';
 import { memo, useMemo } from 'react';
 import { erc20Abi } from 'viem';
-import { useReadContract } from 'wagmi';
+import { useAccount, useReadContract } from 'wagmi';
 
 interface SummaryData {
   weightPerToken: string | number;
@@ -72,6 +73,7 @@ const SummaryCard = memo(function SummaryCard({
   );
 
   // estimated reward = (receipt.receiptWeight * poolReward) / totalWeight
+  const { address } = useAccount();
   const {
     data: totalWeight,
     loading: totalWeightLoading,
@@ -87,16 +89,15 @@ const SummaryCard = memo(function SummaryCard({
     functionName: 'balanceOf',
     args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
   });
+  const { data: reward } = useReadContract({
+    address: `0x938f83738ccd5b4217862fa4b521b015f3355eb4`,
+    abi: rewardAbi,
+    functionName: "previewLbgtMint",
+    args: address && REWARD_VAULT ? [address, REWARD_VAULT] : undefined,
+  });
   const totalWeightItems = totalWeight?.globals?.items[0]?.totalWeight;
-  console.log(poolReward);
-  console.log("Data Receipt Weight", data.receiptWeight);
-  console.log("Total Weight", totalWeightItems);
   const estimatedRewards = useMemo(() => {
-    if (!data.receiptWeight || !totalWeightItems || !poolReward) return 0;
-    
-    // Skip calculation if receiptWeight is '-', '0', or any non-numeric string
-    if (data.receiptWeight === '-' || data.receiptWeight === '0' || data.receiptWeight === 0) return 0;
-    
+    console.log('Calculating estimated rewards with data:', data);
     try {
       // Additional validation to ensure we can convert to BigInt
       const receiptWeightStr = String(data.receiptWeight);
@@ -104,17 +105,24 @@ const SummaryCard = memo(function SummaryCard({
         console.warn('Invalid receiptWeight format:', data.receiptWeight);
         return 0;
       }
-      
       const receiptWeightBigInt = BigInt(receiptWeightStr);
       const totalWeightBigInt = BigInt(totalWeightItems);
-      const poolRewardBigInt = BigInt(poolReward);
+      const poolRewardBigInt = reward ? reward : BigInt(0);
+
+
+    if (!data.receiptWeight || !totalWeightItems || !poolReward) return 0;
+    
+    // Skip calculation if receiptWeight is '-', '0', or any non-numeric string
+    if (data.receiptWeight === '-' || data.receiptWeight === '0' || data.receiptWeight === 0) return 0;
       
       if (totalWeightBigInt === BigInt(0)) {
         console.warn('Total weight is zero, cannot calculate rewards');
         return 0;
       }
-      
-      return Number((receiptWeightBigInt * poolRewardBigInt) / totalWeightBigInt);
+      const estimated = Number(receiptWeightBigInt / totalWeightBigInt) * Number(poolRewardBigInt);
+      console.log('Estimated rewards:', estimated);
+      return estimated;
+      // return Number((receiptWeightBigInt * poolRewardBigInt) / totalWeightBigInt);
     } catch (error) {
       console.error('Error calculating estimated rewards:', error);
       return 0;

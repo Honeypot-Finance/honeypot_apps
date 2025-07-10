@@ -1,7 +1,7 @@
 import { Input } from '../input';
 import { WarppedNextSelect } from '../wrappedNextUI/Select/Select';
 import { SelectItem } from '@nextui-org/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   useQuery as useApolloQuery,
   ApolloClient,
@@ -14,7 +14,7 @@ import { erc20Abi } from 'viem';
 
 interface InputSectionProps {
   onTokenChange?: (value: string) => void;
-  onAmountChange?: (value: string) => void;
+  onAmountChange?: (value: string, insufficient?: boolean) => void;
   setDecimals?: (decimals: number) => void;
   selectedToken?: string;
   setSummaryData?: (data: any) => void;
@@ -45,9 +45,9 @@ export default function InputSection({
   tokenBalance,
   userAddress,
 }: InputSectionProps) {
-  const [internalSelectedToken, setInternalSelectedToken] = useState<string>(
-    selectedToken || ''
-  );
+  const [internalSelectedToken, setInternalSelectedToken] = useState<string>(selectedToken || '');
+  // Use ref for amount to avoid re-render on each keystroke
+  const amountInputRef = useRef<HTMLInputElement>(null);
 
   const isDisabled = !userAddress;
 
@@ -94,9 +94,9 @@ export default function InputSection({
     setDecimals?.(tokenInfoData?.[internalSelectedToken]?.decimals || 18);
   }, [tokenInfoData, internalSelectedToken, setDecimals, isDisabled]);
 
+  // Only update summary and insufficientBalance when token or balance changes, not on every keystroke
   useEffect(() => {
     if (!setSummaryData || isDisabled) return;
-    
     if (!selectedToken) {
       setSummaryData({
         weightPerToken: '-',
@@ -105,12 +105,9 @@ export default function InputSection({
       });
       return;
     }
-
-    // Find the selected token data
     const selectedTokenData = tokenSupportList.find(
       (token: { id: string; weight: string }) => token.id === selectedToken
     );
-
     if (selectedTokenData) {
       const weightValue = parseFloat(selectedTokenData.weight);
       const newSummaryData = calculateSummaryData(
@@ -122,7 +119,7 @@ export default function InputSection({
       );
       if (newSummaryData) {
         setSummaryData(newSummaryData);
-
+        // Only update insufficientBalance if amount is not empty and valid
         if (setInsufficientBalance && amount && amount.trim() !== '') {
           const amountValue = parseFloat(amount);
           const balanceValue = parseFloat(newSummaryData.balance);
@@ -131,7 +128,6 @@ export default function InputSection({
       }
     }
   }, [
-    amount,
     selectedToken,
     tokenSupportList,
     totalWeight,
@@ -140,6 +136,7 @@ export default function InputSection({
     isDisabled,
     setSummaryData,
     setInsufficientBalance,
+    amount,
   ]);
 
   const handleTokenChange = (keys: any) => {
@@ -180,10 +177,32 @@ export default function InputSection({
     }
   };
 
-  const handleAmountChange = (value: string) => {
+  // Memoized handler to avoid re-render on each keystroke
+  const handleAmountChange = useCallback((value: string) => {
     if (isDisabled) return;
-    onAmountChange?.(value);
-  };
+    // Find the selected token data for balance check
+    const selectedTokenData = tokenSupportList.find(
+      (token: { id: string; weight: string }) => token.id === internalSelectedToken
+    );
+    let insufficient = false;
+    if (selectedTokenData) {
+      const weightValue = parseFloat(selectedTokenData.weight);
+      const newSummaryData = calculateSummaryData(
+        internalSelectedToken,
+        value || '',
+        weightValue,
+        totalWeight,
+        newTokenBalance || tokenBalance
+      );
+      if (newSummaryData && value && value.trim() !== '') {
+        const amountValue = parseFloat(value);
+        const balanceValue = parseFloat(newSummaryData.balance);
+        insufficient = !isNaN(amountValue) && amountValue > 0 && amountValue > balanceValue;
+      }
+    }
+    // Pass insufficient to parent so it can update state only if needed
+    onAmountChange?.(value, insufficient);
+  }, [isDisabled, tokenSupportList, internalSelectedToken, totalWeight, newTokenBalance, tokenBalance, onAmountChange]);
 
   return (
     <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 ${className} ${isDisabled ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -238,6 +257,7 @@ export default function InputSection({
           Enter amount
         </label>
         <Input
+          ref={amountInputRef}
           placeholder={isDisabled ? "Connect wallet to enter amount" : "Enter amount"}
           value={isDisabled ? '' : amount}
           onChange={(e) => handleAmountChange(e.target.value)}
@@ -251,7 +271,7 @@ export default function InputSection({
           min="0"
           step="0.001"
           isClearable={!isDisabled}
-          onClear={() => !isDisabled && onAmountChange?.('')}
+          onClear={() => !isDisabled && handleAmountChange('')}
         />
       </div>
     </div>

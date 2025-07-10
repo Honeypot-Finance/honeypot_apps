@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import InputSection from '@/components/select/select';
 import SummaryCard from '@/components/summary/summary';
@@ -35,9 +35,11 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
   const [decimals, setDecimals] = useState<number>(18);
   const [weightPerCurrentToken, setWeightPerCurrentToken] =
     useState<string>('');
-  const [amount, setAmount] = useState<string>('');
-  const [insufficientBalance, setInsufficientBalance] =
-    useState<boolean>(false);
+  // Use ref for amount to avoid re-render on each keystroke
+  const [amount, setAmountState] = useState<string>('');
+  const amountRef = useRef<string>('');
+  // Use state for insufficientBalance, but only update when needed
+  const [insufficientBalance, setInsufficientBalance] = useState<boolean>(false);
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const [summaryData, setSummaryData] = useState({
     weightPerToken: '-',
@@ -80,10 +82,18 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
     setInsufficientBalance(false);
   };
 
-  const onAmountChange = (newAmount: string) => {
-    setAmount(newAmount);
-    setInsufficientBalance(false);
-  };
+
+  // Memoized callback to avoid re-render on each input change
+  const onAmountChange = useCallback((newAmount: string, insufficient?: boolean) => {
+    amountRef.current = newAmount;
+    setAmountState(newAmount);
+    // Only update insufficientBalance if value changes
+    if (typeof insufficient === 'boolean' && insufficient !== insufficientBalance) {
+      setInsufficientBalance(insufficient);
+    } else if (typeof insufficient !== 'boolean') {
+      setInsufficientBalance(false);
+    }
+  }, [insufficientBalance]);
 
   // Update summary data when token balance changes (e.g., after burn)
   useEffect(() => {
@@ -136,7 +146,6 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
         setSummaryData={setSummaryData}
         setDecimals={setDecimals}
         setWeightPerCurrentToken={setWeightPerCurrentToken}
-        setInsufficientBalance={setInsufficientBalance}
         setTokenName={setTokenName}
         amount={amount}
         onTokenChange={onTokenChange}
