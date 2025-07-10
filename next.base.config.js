@@ -174,6 +174,16 @@ const baseConfig = {
         ],
       },
       {
+        // Cache static assets (images, fonts) for 30 days
+        source: '/(.*\\.(?:png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|eot|otf))',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=2592000, immutable',
+          },
+        ],
+      },
+      {
         // Apply security headers to all routes to prevent clickjacking, but allow Safe
         source: '/(.*)',
         headers: [
