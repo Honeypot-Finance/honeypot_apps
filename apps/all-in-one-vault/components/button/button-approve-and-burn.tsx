@@ -24,6 +24,7 @@ interface ApproveAndBurnButtonProps {
   userAmount: bigint | undefined;
   onSuccess?: () => void;
   onError?: (error: string) => void;
+  insufficientBalance?: boolean;
 }
 
 export function ApproveAndBurnButton({
@@ -33,6 +34,7 @@ export function ApproveAndBurnButton({
   userAmount,
   onSuccess,
   onError,
+  insufficientBalance = false,
 }: ApproveAndBurnButtonProps) {
   const { address: userAddress } = useAccount();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -83,6 +85,14 @@ export function ApproveAndBurnButton({
   };
 
   const getButtonConfig = () => {
+    if (insufficientBalance) {
+      return {
+        text: 'Insufficient Balance',
+        disabled: true,
+        onClick: () => {},
+      };
+    }
+    
     if (!userAddress) {
       return { text: 'Connect Wallet', disabled: true, onClick: () => {} };
     }

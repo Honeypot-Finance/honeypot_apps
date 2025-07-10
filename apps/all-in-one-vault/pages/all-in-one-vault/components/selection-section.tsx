@@ -178,6 +178,7 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
         userAmount={BigInt(parseAmount)}
         onSuccess={handleBurnSuccess}
         onError={(error) => console.error(error)}
+        insufficientBalance={insufficientBalance}
       />
     </>
   );
