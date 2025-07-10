@@ -1,3 +1,81 @@
+# Cache directories
 **/node_modules/.cache
 **/.next/cache
 **/.turbo
+**/.nx
+
+# Development files
+**/.git
+**/.github
+**/.vscode
+**/.idea
+**/*.log
+**/*.tmp
+**/*.temp
+
+# Test files
+**/*.test.js
+**/*.test.ts
+**/*.test.jsx
+**/*.test.tsx
+**/*.spec.js
+**/*.spec.ts
+**/*.spec.jsx
+**/*.spec.tsx
+**/test/**
+**/tests/**
+**/__tests__/**
+**/__mocks__/**
+**/coverage/**
+
+# Documentation
+**/README.md
+**/CHANGELOG.md
+**/docs/**
+**/documentation/**
+**/*.md
+
+# Source maps
+**/*.map
+
+# Environment files
+**/.env.local
+**/.env.development
+**/.env.test
+
+# Build artifacts
+**/dist/**
+**/build/**
+**/out/**
+
+# Large assets that can be optimized
+**/public/images/**/*.png
+**/public/images/**/*.jpg
+**/public/images/**/*.jpeg
+**/public/images/**/*.gif
+**/public/images/**/*.webp
+
+# Fonts (will be loaded from CDN)
+**/public/fonts/**
+
+# Other apps (if building only wasabee)
+apps/bgt-market/**
+apps/dreampad/**
+apps/leaderboard/**
+apps/pot2pump/**
+apps/all-in-one-vault/**
+apps/claim-token/**
+
+# Patches
+patches/**
+
+# Scripts
+**/scripts/**
+
+# Configs not needed for build
+**/.eslintrc.*
+**/jest.config.*
+**/tailwind.config.js
+**/postcss.config.js
+**/tsconfig.json
+**/project.json

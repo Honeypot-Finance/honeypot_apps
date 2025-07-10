@@ -1,4 +1,8 @@
 {
+  "buildCommand": "node --max-old-space-size=4096 --gc-interval=100 ./node_modules/.bin/nx build pot2pump --prod",
+  "outputDirectory": "dist/apps/pot2pump",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "framework": "nextjs",
   "functions": {
     "api/**/*.ts": {
       "maxDuration": 60,
@@ -6,6 +10,13 @@
       "ulimits": {
         "nofile": 65535
       }
+    }
+  },
+  "build": {
+    "env": {
+      "NEXT_TELEMETRY_DISABLED": "1",
+      "VERCEL_ENV": "production",
+      "NODE_OPTIONS": "--max-old-space-size=4096 --gc-interval=100"
     }
   }
 }

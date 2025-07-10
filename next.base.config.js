@@ -9,6 +9,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   // enabled: !isProd,
   enabled: false,
 });
+
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
@@ -16,16 +17,17 @@ const baseConfig = {
   nx: {
     // Set this to true if you would like to use SVGR
     // See: https://github.com/gregberge/svgr
-
     svgr: false,
   },
   reactStrictMode: true,
   output: 'standalone',
-  productionBrowserSourceMaps: true,
+  productionBrowserSourceMaps: false, // Disable source maps in production to save space
   experimental: {
     optimizeCss: true,
   },
-  webpack: (config, { isServer }) => {
+  // Add webpack optimizations
+  webpack: (config, { isServer, dev }) => {
+    // Memory and cache optimizations
     config.resolve.alias = {
       ...config.resolve.alias,
       '@honeypot/shared': path.resolve(__dirname, 'libs/shared/hpot-sdk/src'),
@@ -35,8 +37,100 @@ const baseConfig = {
       'node_modules', // fallback to local
     ];
 
+    // PRODUCTION OPTIMIZATIONS - DISABLE CACHE TO PREVENT OOM
+    if (isProd) {
+      // COMPLETELY DISABLE webpack cache in production to prevent OOM
+      // The cache files are created DURING build and cause memory issues
+      config.cache = false;
+
+      // Aggressive memory optimization
+      config.optimization = {
+        ...config.optimization,
+        // More aggressive chunk splitting
+        splitChunks: {
+          chunks: 'all',
+          minSize: 20000,
+          maxSize: 150000, // Smaller max size: 150KB instead of 244KB
+          cacheGroups: {
+            default: {
+              minChunks: 2,
+              priority: -20,
+              reuseExistingChunk: true,
+              maxSize: 100000, // 100KB max
+            },
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              priority: -10,
+              chunks: 'all',
+              maxSize: 150000, // 150KB max chunk size
+              minSize: 20000,
+            },
+            // Separate large libraries into smaller chunks
+            charts: {
+              test: /[\\/]node_modules[\\/](lightweight-charts|apexcharts|recharts|echarts)[\\/]/,
+              name: 'charts',
+              chunks: 'all',
+              priority: 15,
+              maxSize: 200000, // 200KB for chart libraries
+            },
+            web3: {
+              test: /[\\/]node_modules[\\/](@rainbow-me|wagmi|viem|ethers|@web3modal)[\\/]/,
+              name: 'web3',
+              chunks: 'all',
+              priority: 15,
+              maxSize: 200000, // 200KB for web3 libraries
+            },
+            ui: {
+              test: /[\\/]node_modules[\\/](@nextui-org|@radix-ui|framer-motion)[\\/]/,
+              name: 'ui',
+              chunks: 'all',
+              priority: 12,
+              maxSize: 150000,
+            },
+            utils: {
+              test: /[\\/]node_modules[\\/](lodash|date-fns|dayjs|clsx)[\\/]/,
+              name: 'utils',
+              chunks: 'all',
+              priority: 10,
+              maxSize: 100000,
+            },
+          },
+        },
+        // Minimize memory usage
+        moduleIds: 'deterministic',
+        mangleExports: 'deterministic',
+        // Reduce memory pressure
+        minimize: true,
+        usedExports: true,
+        sideEffects: false,
+      };
+
+      // More aggressive performance settings
+      config.performance = {
+        hints: false, // Disable performance hints
+        maxAssetSize: 250000, // 250KB
+        maxEntrypointSize: 250000, // 250KB
+      };
+
+      // Reduce parallelism to save memory
+      config.parallelism = 1;
+
+      // Limit stats output to save memory
+      config.stats = 'errors-warnings';
+    }
+
+    // Development optimizations - minimal caching
+    if (dev) {
+      config.cache = {
+        type: 'filesystem',
+        maxMemoryGenerations: 1,
+      };
+    }
+
     return config;
   },
+  // Optimize images
   images: {
     remotePatterns: [
       {
@@ -44,6 +138,9 @@ const baseConfig = {
         hostname: '**',
       },
     ],
+    // Add image optimization
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 86400,
   },
   async headers() {
     return [
@@ -82,7 +179,8 @@ const baseConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://app.safe.global https://safe.global;"
+            value:
+              "frame-ancestors 'self' https://app.safe.global https://safe.global;",
           },
           {
             key: 'X-Content-Type-Options',
@@ -92,18 +190,22 @@ const baseConfig = {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
           },
-        ]
+        ],
       },
       {
         source: '/manifest.json',
         headers: [
           { key: 'Access-Control-Allow-Origin', value: '*' },
           { key: 'Access-Control-Allow-Methods', value: 'GET' },
-          { key: 'Access-Control-Allow-Headers', value: 'X-Requested-With, content-type, Authorization' },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'X-Requested-With, content-type, Authorization',
+          },
         ],
       },
     ];
   },
+  // Optimize transpilation
   transpilePackages: isProd
     ? [
         '@nextui-org/react',
@@ -136,6 +238,18 @@ const baseConfig = {
         '@honeypot/shared',
       ]
     : [],
+  // Add compiler optimizations
+  compiler: {
+    // Remove console.log in production
+    removeConsole: isProd ? { exclude: ['error', 'warn'] } : false,
+  },
+  // Add SWC optimizations
+  swcMinify: true,
+  // Add build optimizations
+  generateBuildId: async () => {
+    // Use a shorter build ID to reduce cache size
+    return 'build-' + Date.now().toString(36);
+  },
 };
 
 const plugins = [
@@ -157,8 +271,8 @@ const sentryConfig = {
   // For all available options, see:
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
-  // Upload a larger set of source maps for prettier stack traces (increases build time)
-  widenClientFileUpload: true,
+  // Disable source maps upload in production to save space and time
+  widenClientFileUpload: false,
 
   // Uncomment to route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
   // This can increase your server load as well as your hosting bill.
@@ -169,11 +283,8 @@ const sentryConfig = {
   // Automatically tree-shake Sentry logger statements to reduce bundle size
   disableLogger: true,
 
-  // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
-  // See the following for more information:
-  // https://docs.sentry.io/product/crons/
-  // https://vercel.com/docs/cron-jobs
-  automaticVercelMonitors: true,
+  // Disable all Sentry features during build to save memory
+  automaticVercelMonitors: false,
   /**
    * Automatically instrument Next.js data fetching methods and Next.js API routes with error and performance monitoring.
    * Defaults to `true`.
@@ -187,6 +298,12 @@ const sentryConfig = {
    * Automatically instrument components in the `app` directory with error monitoring. Defaults to `true`.
    */
   autoInstrumentAppDirectory: false,
+  // Disable debug logging in production
+  debug: false,
+  // Disable telemetry to save memory
+  telemetry: false,
+  // Skip source map upload to save memory and time
+  skipSourceMapUpload: true,
 };
 
 module.exports = (customConfig = {}) =>
