@@ -3,7 +3,11 @@ import { Card } from '@nextui-org/react';
 import { useAccount, useReadContract } from 'wagmi';
 import { RECEIPTS_LIST } from '@/lib/algebra/graphql/queries/receipts-list';
 import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
-import { ALL_IN_ONE_VAULT } from '@/config/algebra/addresses';
+import {
+  ALL_IN_ONE_VAULT,
+  BURN_TO_VAULT,
+  ESTIMATED_REWARDS,
+} from '@/config/algebra/addresses';
 import { erc20Abi } from 'viem';
 import {
   ApolloClient,
@@ -42,8 +46,6 @@ export default function StatCard() {
 
   const {
     data: totalWeightData,
-    loading: totalWeightLoading,
-    error: totalWeightError,
   } = useApolloQuery(TOTAL_WEIGHT, {
     client: totalWeightClient,
     errorPolicy: 'all',
@@ -57,12 +59,23 @@ export default function StatCard() {
     args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
   });
 
+  // decimals
+  const { data: decimals } = useReadContract({
+    address: ESTIMATED_REWARDS,
+    abi: erc20Abi,
+    functionName: `decimals`,
+  });
+
+  // estimated rewards
+  const { data: estimatedRewards } = useReadContract({
+    address: ESTIMATED_REWARDS,
+    abi: erc20Abi,
+    functionName: `balanceOf`,
+    args: BURN_TO_VAULT ? [BURN_TO_VAULT as `0x${string}`] : undefined,
+  });
+
   const {
     data: receiptsData,
-    loading: receiptsLoading,
-    error: receiptsError,
-    refetch: refetchReceipts,
-    networkStatus,
   } = useApolloQuery(RECEIPTS_LIST, {
     client: allInOneVaultClient,
     variables: { user: address || '' },
@@ -70,36 +83,48 @@ export default function StatCard() {
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
   });
-  
+
   const listReceipts = receiptsData?.receipts?.items || [];
   const totalWeightItems = totalWeightData?.globals?.items[0]?.totalWeight;
 
   // Calculate estimated rewards for each receipt
-  const calculateEstimatedRewards = useCallback((receiptWeight: string): number => {
-    if (!receiptWeight || !totalWeightItems || !poolReward) return 0;
-    
-    if (receiptWeight === '-' || receiptWeight === '0' || String(receiptWeight) === '0') return 0;
-    
-    try {
-      const receiptWeightStr = String(receiptWeight);
-      if (!/^\d+(\.\d+)?$/.test(receiptWeightStr)) {
+  const calculateEstimatedRewards = useCallback(
+    (receiptWeight: string): number => {
+      if (!receiptWeight || !totalWeightItems || !poolReward) return 0;
+
+      if (
+        receiptWeight === '-' ||
+        receiptWeight === '0' ||
+        String(receiptWeight) === '0'
+      )
+        return 0;
+
+      try {
+        const receiptWeightStr = String(receiptWeight);
+        if (!/^\d+(\.\d+)?$/.test(receiptWeightStr)) {
+          return 0;
+        }
+
+        const receiptWeightBigInt = BigInt(
+          Math.floor(parseFloat(receiptWeightStr))
+        );
+        const totalWeightBigInt = BigInt(totalWeightItems);
+        const poolRewardBigInt = BigInt(poolReward);
+
+        if (totalWeightBigInt === BigInt(0)) {
+          return 0;
+        }
+
+        return Number(
+          (receiptWeightBigInt * poolRewardBigInt) / totalWeightBigInt
+        );
+      } catch (error) {
+        console.error('Error calculating estimated rewards:', error);
         return 0;
       }
-      
-      const receiptWeightBigInt = BigInt(Math.floor(parseFloat(receiptWeightStr)));
-      const totalWeightBigInt = BigInt(totalWeightItems);
-      const poolRewardBigInt = BigInt(poolReward);
-      
-      if (totalWeightBigInt === BigInt(0)) {
-        return 0;
-      }
-      
-      return Number((receiptWeightBigInt * poolRewardBigInt) / totalWeightBigInt);
-    } catch (error) {
-      console.error('Error calculating estimated rewards:', error);
-      return 0;
-    }
-  }, [totalWeightItems, poolReward]);
+    },
+    [totalWeightItems, poolReward]
+  );
 
   // Calculate totals
   const { totalBalance, totalLifetime, totalWeight } = useMemo(() => {
@@ -111,7 +136,7 @@ export default function StatCard() {
       const estimatedRewards = calculateEstimatedRewards(receipt.receiptWeight);
       balance += estimatedRewards;
       weight += parseFloat(receipt.receiptWeight || '0');
-      
+
       // Add to lifetime if receipt is claimed
       if (receipt.isClaimed) {
         lifetime += estimatedRewards;
@@ -128,9 +153,10 @@ export default function StatCard() {
   console.log('📊 receiptsData', receiptsData);
   console.log('📊 totalBalance', totalBalance);
   console.log('📊 totalLifetime', totalLifetime);
-  
+
   const formatRewards = (value: number) => {
-    return (value / 1e18).toFixed(1); // Convert from wei to tokens with 6 decimal places
+    if (decimals === undefined) return '-';
+    return (value / Math.pow(10, decimals)).toFixed(1);
   };
 
   const statsData = [
@@ -138,12 +164,14 @@ export default function StatCard() {
       label: 'Total Weight',
       value: totalWeight?.toFixed(1) || '0.0',
     },
-    { 
-      label: 'LBGT Balance', 
-      value: formatRewards(totalBalance),
+    {
+      label: 'LBGT Balance',
+      value: estimatedRewards !== undefined && decimals !== undefined
+        ? (Number(estimatedRewards) / Math.pow(10, decimals)).toFixed(1)
+        : '-',
     },
-    { 
-      label: 'LBGT Lifetime', 
+    {
+      label: 'LBGT Lifetime',
       value: formatRewards(totalLifetime),
     },
   ];

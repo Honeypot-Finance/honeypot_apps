@@ -1,15 +1,12 @@
 import { useState, useMemo } from 'react';
-import { Address, formatUnits, parseUnits } from 'viem';
+import { Address } from 'viem';
 import {
   useAccount,
-  useReadContract,
-  useWaitForTransactionReceipt,
   useWriteContract,
 } from 'wagmi';
 import { useApprove } from '@/lib/algebra/hooks/common/useApprove';
 import {
-  ALL_IN_ONE_VAULT,
-  ALL_IN_ONE_VAULT_PROXY,
+  BURN_TO_VAULT,
 } from '@/config/algebra/addresses';
 import { CurrencyAmount, Token } from '@cryptoalgebra/sdk';
 import { ApprovalState } from '@/types/algebra/types/approve-state';
@@ -45,7 +42,7 @@ export function ApproveAndBurnButton({
   }, [userAmount, tokenAddress, tokenDecimals, tokenSymbol]);
   const { approvalState, approvalCallback } = useApprove(
     currencyAmount,
-    `0x9c52cD80455a9ee50610aC90e846e46E04014f6d`
+    BURN_TO_VAULT as Address,
   );
   const { writeContractAsync: executeGetReceipt } = useWriteContract();
   const handleApprove = async () => {
@@ -75,6 +72,7 @@ export function ApproveAndBurnButton({
         args: [tokenAddress, userAmount],
       });
       const receipt = await waitForTransactionReceipt(config, { hash });
+      console.log(receipt);
       onSuccess?.();
     } catch (error) {
       console.error('Burn to vault failed:', error);
@@ -92,7 +90,7 @@ export function ApproveAndBurnButton({
         onClick: () => {},
       };
     }
-    
+
     if (!userAddress) {
       return { text: 'Connect Wallet', disabled: true, onClick: () => {} };
     }
