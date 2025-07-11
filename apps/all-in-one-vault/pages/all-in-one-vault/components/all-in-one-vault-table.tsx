@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   handleCooldownComplete,
   updateClaimedReceipt,
-} from '@/utils/helper-function';
+} from '../../../utils/helper-function';
 import {
   ApolloClient,
   InMemoryCache,
@@ -18,7 +18,7 @@ import { useAccount, useReadContract } from 'wagmi';
 import { erc20Abi } from 'viem';
 import { LoadingDisplay } from '@/components/loading-display/loading-display';
 import ErrorIcon from '@/components/svg/ErrorIcon';
-import { transformReceiptData } from '@/utils/helper';
+import { transformReceiptData } from '../../../utils/helper';
 
 interface AllInOneVaultTableProps {
   onRefetchExpose?: (refetchFn: () => void) => void;
