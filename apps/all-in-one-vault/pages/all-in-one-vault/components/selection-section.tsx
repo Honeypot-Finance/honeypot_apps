@@ -35,7 +35,6 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
   const [decimals, setDecimals] = useState<number>(18);
   const [weightPerCurrentToken, setWeightPerCurrentToken] =
     useState<string>('');
-  console.log("Weight per current token:", weightPerCurrentToken);
   // Use ref for amount to avoid re-render on each keystroke
   const [amount, setAmountState] = useState<string>('');
   const amountRef = useRef<string>('');
@@ -57,7 +56,7 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
   const tokenSupportClient = useMemo(
     () =>
       new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/96ff5ab9-9c87-47cb-ab46-73a276d93c8b',
+        uri: 'https://api.ghostlogs.xyz/gg/pub/5018d16a-abf4-432d-b8a9-760dc08bcb8d',
         cache: new InMemoryCache(),
         defaultOptions: {
           query: {
