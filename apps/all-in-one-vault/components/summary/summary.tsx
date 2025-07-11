@@ -1,11 +1,8 @@
 import {
-  ALL_IN_ONE_VAULT,
   BURN_TO_VAULT,
   ESTIMATED_REWARDS,
-  REWARD_VAULT,
 } from '@/config/algebra/addresses';
-import { rewardAbi } from '@/lib/abis/reward';
-import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
+// import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
 import {
   useQuery as useApolloQuery,
   ApolloClient,
@@ -49,13 +46,13 @@ const SummaryCard = memo(function SummaryCard({
       if (typeof value === 'number') {
         return value.toLocaleString('en-US', {
           minimumFractionDigits: 0,
-          maximumFractionDigits: 6,
+          maximumFractionDigits: 4,
         });
       }
       if (typeof value === 'bigint') {
         return Number(value).toLocaleString('en-US', {
           minimumFractionDigits: 0,
-          maximumFractionDigits: 6,
+          maximumFractionDigits: 4,
         });
       }
       return value || '-';
@@ -78,14 +75,14 @@ const SummaryCard = memo(function SummaryCard({
   );
 
   // estimated reward = (receipt.receiptWeight * poolReward) / totalWeight
-  const { address } = useAccount();
-  const {
-    data: totalWeight,
-  } = useApolloQuery(TOTAL_WEIGHT, {
-    client: totalWeightClient,
-    errorPolicy: 'all',
-    notifyOnNetworkStatusChange: true,
-  });
+  // const { address } = useAccount();
+  // const {
+  //   data: totalWeight,
+  // } = useApolloQuery(TOTAL_WEIGHT, {
+  //   client: totalWeightClient,
+  //   errorPolicy: 'all',
+  //   notifyOnNetworkStatusChange: true,
+  // });
   // const { data: poolReward } = useReadContract({
   //   address: `0xbaadcc2962417c01af99fb2b7c75706b9bd6babe`,
   //   abi: erc20Abi,
