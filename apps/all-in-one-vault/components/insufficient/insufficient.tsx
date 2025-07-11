@@ -11,6 +11,7 @@ export default function Insufficient({
   selectedToken,
   tokenName,
 }: InsufficientProps) {
+  console.log(balance);
   return (
     <div className="w-full mb-4 p-3 bg-red-50 border-l-4 border-red-400 rounded-r-md">
       <div className="flex items-center">

@@ -121,3 +121,4 @@ export const BURN_TO_VAULT: Address =
 
 export const ESTIMATED_REWARDS: Address =
   '0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe';
+

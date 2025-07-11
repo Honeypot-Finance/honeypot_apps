@@ -20,7 +20,7 @@ export default function StatCard() {
   const allInOneVaultClient = useMemo(
     () =>
       new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/5018d16a-abf4-432d-b8a9-760dc08bcb8d',
+        uri: 'https://api.ghostlogs.xyz/gg/pub/96ff5ab9-9c87-47cb-ab46-73a276d93c8b',
         cache: new InMemoryCache(),
         defaultOptions: {
           query: {
@@ -45,7 +45,7 @@ export default function StatCard() {
     []
   );
 
-  const totalClaimedClient = useMemo( 
+  const totalClaimedClient = useMemo(
     () =>
       new ApolloClient({
         uri: 'https://api.ghostlogs.xyz/gg/pub/61cc9625-9597-4c20-98e3-6b43e5d99b5f',
@@ -62,25 +62,25 @@ export default function StatCard() {
   // Total Weight
   const {
     data: totalWeightData,
+    // loading: totalWeightLoading,
+    // error: totalWeightError,
   } = useApolloQuery(TOTAL_WEIGHT, {
     client: totalWeightClient,
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
   });
+  const totalWeightItems = totalWeightData?.globals?.items[0]?.totalWeight;
 
   // LBGT Balance
-  // const { data: lbgtBalanceData } = useReadContract({
-  //   address: ,
-  //   abi: erc20Abi,
-  //   functionName: 'balanceOf',
-  //   args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
-  // });
-  // console.log('📊 lbgtBalanceData', lbgtBalanceData);
+  const { data: lbgtBalanceData } = useReadContract({
+    address: ESTIMATED_REWARDS,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
+  });
 
   // LBGT Lifetime
-  const {
-    data: totalClaimedData,
-  } = useApolloQuery(TOTAL_CLAIMED, {
+  const { data: totalClaimedData } = useApolloQuery(TOTAL_CLAIMED, {
     client: totalClaimedClient,
     skip: !address,
     errorPolicy: 'all',
@@ -110,9 +110,7 @@ export default function StatCard() {
     args: BURN_TO_VAULT ? [BURN_TO_VAULT as `0x${string}`] : undefined,
   });
 
-  const {
-    data: receiptsData,
-  } = useApolloQuery(RECEIPTS_LIST, {
+  const { data: receiptsData } = useApolloQuery(RECEIPTS_LIST, {
     client: allInOneVaultClient,
     variables: { user: address || '' },
     skip: !address,
@@ -121,7 +119,6 @@ export default function StatCard() {
   });
 
   const listReceipts = receiptsData?.receipts?.items || [];
-  const totalWeightItems = totalWeightData?.globals?.items[0]?.totalWeight;
 
   // Calculate estimated rewards for each receipt
   const calculateEstimatedRewards = useCallback(
@@ -194,13 +191,17 @@ export default function StatCard() {
   const statsData = [
     {
       label: 'Total Weight',
-      value: totalWeight?.toFixed(1) || '0.0',
+      value:
+        totalWeightItems !== undefined
+          ? Number(totalWeightItems).toFixed(1)
+          : '0.0',
     },
     {
       label: 'LBGT Balance',
-      value: estimatedRewards !== undefined && decimals !== undefined
-        ? (Number(estimatedRewards) / Math.pow(10, decimals)).toFixed(1)
-        : '-',
+      value:
+        lbgtBalanceData !== undefined && decimals !== undefined
+          ? (Number(lbgtBalanceData) / Math.pow(10, decimals)).toFixed(1)
+          : '-',
     },
     {
       label: 'LBGT Lifetime',

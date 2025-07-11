@@ -124,7 +124,7 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
       <span className="font-medium">{row.getValue('rewards')}</span>
     ),
   },
-  {
+ {
     accessorKey: 'action',
     header: 'Action',
     cell: ({ row }) => {
@@ -193,6 +193,26 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
         </button>
       );
     },
-    enableSorting: false,
+    enableSorting: true, // Enable sorting for this column
+    sortingFn: (rowA, rowB, columnId) => {
+      // Priority: Cooldown/Claim (0), Claimed (1)
+      const getPriority = (label: string) => {
+        if (label === 'Claimed') return 1;
+        return 0; // Cooldown or Claim
+      };
+      const labelA = rowA.original.action.label;
+      const labelB = rowB.original.action.label;
+      const priorityA = getPriority(labelA);
+      const priorityB = getPriority(labelB);
+
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+      }
+
+      // If same priority, sort by receiptId
+      const receiptIdA = parseInt(rowA.original.receiptId, 10);
+      const receiptIdB = parseInt(rowB.original.receiptId, 10);
+      return receiptIdA - receiptIdB;
+    },
   },
 ];
