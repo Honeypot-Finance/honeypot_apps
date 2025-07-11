@@ -14,6 +14,7 @@ import {
   InMemoryCache,
   useQuery as useApolloQuery,
 } from '@apollo/client';
+import { TOTAL_CLAIMED } from '@/lib/algebra/graphql/queries/total-claimed';
 export default function StatCard() {
   const { address } = useAccount();
   const allInOneVaultClient = useMemo(
@@ -44,6 +45,21 @@ export default function StatCard() {
     []
   );
 
+  const totalClaimedClient = useMemo( 
+    () =>
+      new ApolloClient({
+        uri: 'https://api.ghostlogs.xyz/gg/pub/61cc9625-9597-4c20-98e3-6b43e5d99b5f',
+        cache: new InMemoryCache(),
+        defaultOptions: {
+          query: {
+            errorPolicy: 'all',
+          },
+        },
+      }),
+    []
+  );
+
+  // Total Weight
   const {
     data: totalWeightData,
   } = useApolloQuery(TOTAL_WEIGHT, {
@@ -51,6 +67,26 @@ export default function StatCard() {
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
   });
+
+  // LBGT Balance
+  // const { data: lbgtBalanceData } = useReadContract({
+  //   address: ,
+  //   abi: erc20Abi,
+  //   functionName: 'balanceOf',
+  //   args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
+  // });
+  // console.log('📊 lbgtBalanceData', lbgtBalanceData);
+
+  // LBGT Lifetime
+  const {
+    data: totalClaimedData,
+  } = useApolloQuery(TOTAL_CLAIMED, {
+    client: totalClaimedClient,
+    skip: !address,
+    errorPolicy: 'all',
+    notifyOnNetworkStatusChange: true,
+  });
+  const lbgtLifetime = totalClaimedData?.globals?.items[0]?.totalClaimed || 0;
 
   const { data: poolReward } = useReadContract({
     address: `0xbaadcc2962417c01af99fb2b7c75706b9bd6babe`,
@@ -150,10 +186,6 @@ export default function StatCard() {
     };
   }, [listReceipts, totalWeightItems, poolReward, calculateEstimatedRewards]);
 
-  console.log('📊 receiptsData', receiptsData);
-  console.log('📊 totalBalance', totalBalance);
-  console.log('📊 totalLifetime', totalLifetime);
-
   const formatRewards = (value: number) => {
     if (decimals === undefined) return '-';
     return (value / Math.pow(10, decimals)).toFixed(1);
@@ -172,7 +204,7 @@ export default function StatCard() {
     },
     {
       label: 'LBGT Lifetime',
-      value: formatRewards(totalLifetime),
+      value: formatRewards(lbgtLifetime),
     },
   ];
 

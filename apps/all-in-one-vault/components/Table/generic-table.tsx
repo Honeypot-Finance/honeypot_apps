@@ -107,6 +107,25 @@ export default function GenericTanstackTable<T>({
   const previousDataLength = React.useRef(data.length);
   const isFirstRender = React.useRef(true);
 
+  // Sort data to move claimed records to the bottom
+  const sortedData = React.useMemo(() => {
+    if (!data || data.length === 0) return data;
+    
+    // Check if data has 'isClaimed' property (for ReceiptTableData)
+    const hasClaimedProperty = data.some((item: any) => 'isClaimed' in item);
+    
+    if (!hasClaimedProperty) return data;
+    
+    return [...data].sort((a: any, b: any) => {
+      // Sort claimed items to the bottom
+      if (a.isClaimed && !b.isClaimed) return 1;
+      if (!a.isClaimed && b.isClaimed) return -1;
+      
+      // For items with same claim status, maintain original order
+      return 0;
+    });
+  }, [data]);
+
   // Only reset pagination if data length changes significantly
   React.useEffect(() => {
     if (isFirstRender.current) {
@@ -133,7 +152,7 @@ export default function GenericTanstackTable<T>({
   }, [data.length, pagination.pageSize, pagination.pageIndex]);
 
   const table = useReactTable({
-    data,
+    data: sortedData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: enableSorting ? getSortedRowModel() : undefined,

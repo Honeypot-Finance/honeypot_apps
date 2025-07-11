@@ -40,6 +40,7 @@ const SummaryCard = memo(function SummaryCard({
   className = '',
   isLoading = false,
 }: SummaryCardProps) {
+  console.log('SummaryCard data:', data);
   const formatValue = useMemo(
     () => (value: string | number | bigint) => {
       if (isLoading) return '...';
