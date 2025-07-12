@@ -52,17 +52,19 @@ export default function StatCard() {
   // Total Weight
   const {
     data: totalWeightData,
+    previousData: previousTotalWeightData,
     // loading: totalWeightLoading,
     // error: totalWeightError,
   } = useApolloQuery(TOTAL_WEIGHT, {
     client: statsClient,
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
-    fetchPolicy: 'cache-and-network',
-    nextFetchPolicy: 'cache-first',
-    pollInterval: 10000,
+    pollInterval: 60000, // 60 seconds
+    fetchPolicy: 'cache-and-network', // Always keep old data until new arrives
+    nextFetchPolicy: 'cache-and-network',
   });
-  const totalWeightItems = totalWeightData?.globals?.items[0]?.totalWeight;
+  const stableTotalWeightData = totalWeightData || previousTotalWeightData;
+  const totalWeightItems = stableTotalWeightData?.globals?.items[0]?.totalWeight;
 
   const queryClient = useQueryClient();
   if (totalWeightData) {

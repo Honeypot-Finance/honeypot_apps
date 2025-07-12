@@ -162,10 +162,10 @@ export default function AllInOneVaultTable({
     ) {
       console.log('✅ Query completed successfully, checking for updates...');
       const timeout = setTimeout(() => {
-        if (listReceipts.length > 0) {
+        if (listReceipts.length >= 0) {
           refetchReceipts();
         }
-      }, 2000);
+      }, 5000);
 
       return () => clearTimeout(timeout);
     }
