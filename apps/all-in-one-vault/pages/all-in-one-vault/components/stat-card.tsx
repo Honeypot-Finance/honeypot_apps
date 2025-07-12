@@ -182,7 +182,7 @@ export default function StatCard() {
           label: 'Total Weight',
           value:
             totalWeightItems !== undefined
-              ? formatNumber(totalWeightItems)
+              ? formatNumber(totalWeightItems / 1e4)
               : '0.0',
         },
         {
