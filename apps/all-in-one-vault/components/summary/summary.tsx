@@ -78,9 +78,7 @@ const SummaryCard = memo(function SummaryCard({
 
   // estimated reward = (receipt.receiptWeight * poolReward) / totalWeight
   const { address } = useAccount();
-  const {
-    data: totalWeight,
-  } = useApolloQuery(TOTAL_WEIGHT, {
+  const { data: totalWeight } = useApolloQuery(TOTAL_WEIGHT, {
     client: totalWeightClient,
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
@@ -108,10 +106,13 @@ const SummaryCard = memo(function SummaryCard({
     args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
   });
   const totalWeightItems = totalWeight?.globals?.items[0]?.totalWeight;
-  console.log('📊 lbgtBalanceData', lbgtBalanceData);
-  console.log('📊 totalWeightItems', totalWeightItems);
-  console.log('📊 estimatedRewards', )
-
+  // estimated reward = (receipt.receiptWeight * poolReward) / totalWeight
+  console.log(
+    '📊 estimate reward',
+    (Number(data.receiptWeight) * Number(lbgtBalanceData)) /
+      Number(totalWeightItems) /
+      Math.pow(10, decimals ?? 18)
+  );
   const summaryItems = useMemo(
     () => [
       {
@@ -132,13 +133,18 @@ const SummaryCard = memo(function SummaryCard({
       {
         label: 'Estimated Rewards',
         value:
-          lbgtBalanceData !== undefined && decimals !== undefined
-            ? Number(lbgtBalanceData) / Math.pow(10, decimals)
+          data.receiptWeight !== undefined &&
+          lbgtBalanceData !== undefined &&
+          totalWeightItems !== undefined &&
+          decimals !== undefined
+            ? (Number(data.receiptWeight) * Number(lbgtBalanceData)) /
+              Number(totalWeightItems) /
+              Math.pow(10, decimals)
             : '-',
         key: 'estimatedRewards',
       },
     ],
-    [data, lbgtBalanceData, decimals]
+    [data, lbgtBalanceData, totalWeightItems, decimals]
   );
 
   return (

@@ -36,7 +36,7 @@ export default function AllInOneVaultTable({
   const allInOneVaultClient = useMemo(
     () =>
       new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/96ff5ab9-9c87-47cb-ab46-73a276d93c8b',
+        uri: 'https://api.ghostlogs.xyz/gg/pub/5018d16a-abf4-432d-b8a9-760dc08bcb8d',
         cache: new InMemoryCache(),
         defaultOptions: {
           query: {
