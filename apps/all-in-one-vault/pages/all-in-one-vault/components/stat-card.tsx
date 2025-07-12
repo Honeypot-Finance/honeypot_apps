@@ -58,16 +58,19 @@ export default function StatCard() {
     client: statsClient,
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
-    pollInterval: 60000,
+    pollInterval: 60000, // 60 seconds
+    fetchPolicy: 'cache-first', // Use cache if available
+    nextFetchPolicy: 'cache-first',
   });
   const totalWeightItems = totalWeightData?.globals?.items[0]?.totalWeight;
 
   const queryClient = useQueryClient();
+  // Only set cache if data is new or changed, and keep it always available
   useEffect(() => {
     if (totalWeightData) {
-      queryClient.setQueryData(['totalWeightData'], totalWeightData);
+      queryClient.setQueryData(['totalWeightData'], totalWeightData, { updatedAt: Date.now() });
     }
-  }, [totalWeightData]);
+  }, [totalWeightData, queryClient]);
 
   const { data: lbgtBalanceData } = useReadContract({
     address: ESTIMATED_REWARDS,
