@@ -118,7 +118,7 @@ const SummaryCard = memo(function SummaryCard({
     totalWeightItems,
     (Number(data.receiptWeight) *
       formatRewards(Number(lbgtBalanceData), decimals)) /
-      Number(totalWeightItems)
+      Number(totalWeightItems) * 10_000
   );
   const formatNumber = (
     value: number | string,
@@ -159,7 +159,7 @@ const SummaryCard = memo(function SummaryCard({
                 const estimated =
                   (Number(data.receiptWeight) *
                     formatRewards(Number(lbgtBalanceData), decimals)) /
-                  Number(totalWeightItems);
+                  Number(totalWeightItems) * 1e4;
                 return formatSmallScientific(estimated);
               })()
             : '-',

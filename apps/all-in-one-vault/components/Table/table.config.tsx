@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { TableAction } from './generic-table';
-import {
-  formatDistanceToNow,
-  format,
-  differenceInSeconds,
-  differenceInDays,
-  formatDuration,
-  intervalToDuration,
-} from 'date-fns';
-import { useWriteContract } from 'wagmi';
+import { intervalToDuration } from 'date-fns';
+import { useReadContract, useWriteContract } from 'wagmi';
 import { AllInOneVaultABI } from '@/lib/abis';
+import {
+  formatRewards,
+  formatSmallScientific,
+} from '../../utils/helper-function';
+import {
+  ALL_IN_ONE_VAULT_PROXY,
+  ESTIMATED_REWARDS,
+} from '@/config/algebra/addresses';
+import { erc20Abi } from 'viem';
+import {
+  useQuery as useApolloQuery,
+  ApolloClient,
+  InMemoryCache,
+} from '@apollo/client';
+import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
 
 export interface StakingData {
   id: string;
@@ -115,16 +123,80 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
   {
     accessorKey: 'weight',
     header: 'Weight',
-    cell: ({ row }) => <span>{row.getValue('weight')}</span>,
+    cell: ({ row }) => {
+      const weight = Number(row.getValue('weight'));
+      return <span>{weight / 1e4}</span>;
+    },
   },
   {
     accessorKey: 'rewards',
     header: 'Estimated Rewards',
-    cell: ({ row }) => (
-      <span className="font-medium">{row.getValue('rewards')}</span>
-    ),
+    cell: ({ row }) => {
+      const totalWeightClient = useMemo(
+        () =>
+          new ApolloClient({
+            uri: 'https://api.ghostlogs.xyz/gg/pub/4d9fda23-4a22-4b3a-9c0f-37077d3edf84',
+            cache: new InMemoryCache(),
+            defaultOptions: {
+              query: {
+                errorPolicy: 'all',
+              },
+            },
+          }),
+        []
+      );
+      const weight = Number(row.getValue('weight'));
+      const { data: totalWeight } = useApolloQuery(TOTAL_WEIGHT, {
+        client: totalWeightClient,
+        errorPolicy: 'all',
+        notifyOnNetworkStatusChange: true,
+      });
+      const { data: lbgtBalanceData } = useReadContract({
+        address: ESTIMATED_REWARDS,
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        args: ALL_IN_ONE_VAULT_PROXY
+          ? [ALL_IN_ONE_VAULT_PROXY as `0x${string}`]
+          : undefined,
+      });
+      const { data: decimals } = useReadContract({
+        address: ESTIMATED_REWARDS,
+        abi: erc20Abi,
+        functionName: `decimals`,
+      });
+      const totalWeightItems = totalWeight?.globals?.items[0]?.totalWeight;
+
+      let estimated: string | number | bigint = '-';
+      if (
+        weight !== undefined &&
+        lbgtBalanceData !== undefined &&
+        totalWeight !== undefined &&
+        decimals !== undefined
+      ) {
+        const est =
+          (Number(weight) * formatRewards(Number(lbgtBalanceData), decimals)) /
+          Number(totalWeightItems);
+        estimated = formatSmallScientific(est);
+      }
+
+      return (
+        <span className="font-medium">
+          {typeof estimated === 'number'
+            ? estimated.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 4,
+              })
+            : typeof estimated === 'bigint'
+            ? Number(estimated).toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 4,
+              })
+            : estimated || '-'}
+        </span>
+      );
+    },
   },
- {
+  {
     accessorKey: 'action',
     header: 'Action',
     cell: ({ row }) => {
@@ -161,9 +233,9 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
               address: `0x20F4b92054F745c19ea3f3053B77372e73332945`,
               abi: AllInOneVaultABI,
               functionName: 'claim',
-              args: [(data.id)],
-            }
-            console.log(payload)
+              args: [data.id],
+            };
+            console.log(payload);
             const hash = await claimReceipt({
               address: `0x9c52cD80455a9ee50610aC90e846e46E04014f6d`,
               abi: AllInOneVaultABI,
