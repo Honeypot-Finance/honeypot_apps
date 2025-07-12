@@ -64,13 +64,14 @@ export default function StatCard() {
     address: ESTIMATED_REWARDS,
     abi: erc20Abi,
     functionName: 'balanceOf',
-    args: ALL_IN_ONE_VAULT_PROXY ? [ALL_IN_ONE_VAULT_PROXY as `0x${string}`] : undefined,
+    args: ALL_IN_ONE_VAULT_PROXY
+      ? [ALL_IN_ONE_VAULT_PROXY as `0x${string}`]
+      : undefined,
   });
 
   // LBGT Lifetime
   const { data: totalClaimedData } = useApolloQuery(TOTAL_CLAIMED, {
     client: statsClient,
-    skip: !address,
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
   });
@@ -176,35 +177,29 @@ export default function StatCard() {
     return (value / Math.pow(10, decimals)).toFixed(1);
   };
 
-  const statsData = address
-    ? [
-        {
-          label: 'Total Weight',
-          value:
-            totalWeightItems !== undefined
-              ? formatNumber(totalWeightItems / 1e4)
-              : '0.0',
-        },
-        {
-          label: 'LBGT Balance',
-          value:
-            lbgtBalanceData !== undefined && decimals !== undefined
-              ? formatNumber(Number(lbgtBalanceData) / Math.pow(10, decimals))
-              : '0.0',
-        },
-        {
-          label: 'LBGT Lifetime',
-          value:
-            decimals !== undefined
-              ? formatNumber(lbgtLifetime / Math.pow(10, decimals))
-              : '0.0',
-        },
-      ]
-    : [
-        { label: 'Total Weight', value: '0.0' },
-        { label: 'LBGT Balance', value: '0.0' },
-        { label: 'LBGT Lifetime', value: '0.0' },
-      ];
+  const statsData = [
+    {
+      label: 'Total Weight',
+      value:
+        totalWeightItems !== undefined
+          ? formatNumber(totalWeightItems / 1e4)
+          : '0.0',
+    },
+    {
+      label: 'LBGT Balance',
+      value:
+        lbgtBalanceData !== undefined && decimals !== undefined
+          ? formatNumber(Number(lbgtBalanceData) / Math.pow(10, decimals))
+          : '0.0',
+    },
+    {
+      label: 'LBGT Lifetime',
+      value:
+        decimals !== undefined
+          ? formatNumber(lbgtLifetime / Math.pow(10, decimals))
+          : '0.0',
+    },
+  ];
 
   return (
     <div className="flex flex-col justify-center w-full rounded-2xl gap-y-4">
