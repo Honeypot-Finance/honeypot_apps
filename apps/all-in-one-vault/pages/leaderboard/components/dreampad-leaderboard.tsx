@@ -59,10 +59,8 @@ const DreampadLeaderboard = () => {
     // Filter by search if needed
     let filteredData = lbpData;
     if (searchAddress) {
-      filteredData = lbpData.filter(
-        (item) =>
-          item.address?.toLowerCase().includes(searchAddress.toLowerCase()) ||
-          item.owner?.toLowerCase().includes(searchAddress.toLowerCase())
+      filteredData = lbpData.filter((item) =>
+        item.address?.toLowerCase().includes(searchAddress.toLowerCase())
       );
     }
 
@@ -75,7 +73,7 @@ const DreampadLeaderboard = () => {
 
     return sortedData.map((item, index) => ({
       rank: index + 1,
-      walletAddress: item.owner,
+      contractAddress: item.address,
       projectName: item.shareToken?.name || 'Unknown',
       tokenSymbol: item.shareToken?.symbol || 'N/A',
       totalRaised: item.fundsRaised?.toNumber() || 0,
@@ -170,7 +168,7 @@ const DreampadLeaderboard = () => {
             type="text"
             value={searchInput}
             onChange={(e) => handleSearchChange(e.target.value)}
-            placeholder="Search by project address or owner address..."
+            placeholder="Search by contract address..."
             className="w-full bg-[#1a1b1f] border border-gray-700 rounded-lg px-4 py-2 text-white"
           />
           {searchInput && (
@@ -210,7 +208,7 @@ const DreampadLeaderboard = () => {
                     </div>
                   </th>
                   <th className="py-4 px-6 text-left text-base font-medium whitespace-nowrap">
-                    Owner
+                    Contract Address
                   </th>
                   <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
                     Status
@@ -259,7 +257,7 @@ const DreampadLeaderboard = () => {
                         <Tooltip
                           content={
                             <div className="text-center">
-                              <div>{item.walletAddress}</div>
+                              <div>{item.contractAddress}</div>
                               <div className="text-xs mt-1 opacity-75">
                                 Click to search
                               </div>
@@ -275,14 +273,17 @@ const DreampadLeaderboard = () => {
                           <div className="flex gap-2">
                             <span
                               onClick={(e) =>
-                                handleAddressClick(item.walletAddress, e)
+                                handleAddressClick(
+                                  item.contractAddress || '',
+                                  e
+                                )
                               }
                               className="text-blue-400 cursor-pointer hover:text-blue-300 transition-colors"
                             >
-                              {truncateHash(item.walletAddress)}
+                              {truncateHash(item.contractAddress || '0x')}
                             </span>
                             <Link
-                              href={`https://berascan.com/address/${item.walletAddress}`}
+                              href={`https://berascan.com/address/${item.contractAddress}`}
                               target="_blank"
                               className="text-gray-400 hover:text-white transition-colors"
                               title="Open in Berascan"
