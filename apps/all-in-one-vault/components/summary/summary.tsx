@@ -109,9 +109,9 @@ const SummaryCard = memo(function SummaryCard({
   // estimated reward = (receipt.receiptWeight * poolReward) / totalWeight
   console.log(
     '📊 estimate reward',
-    (Number(data.receiptWeight) * Number(lbgtBalanceData)) /
-      Number(totalWeightItems) /
-      Math.pow(10, decimals ?? 18)
+    Number(data.receiptWeight), Number(lbgtBalanceData),
+    totalWeightItems,
+    Math.pow(10, decimals ?? 18)
   );
   const summaryItems = useMemo(
     () => [
@@ -138,7 +138,7 @@ const SummaryCard = memo(function SummaryCard({
           totalWeightItems !== undefined &&
           decimals !== undefined
             ? (Number(data.receiptWeight) * Number(lbgtBalanceData)) /
-              Number(totalWeightItems) /
+              totalWeightItems /
               Math.pow(10, decimals)
             : '-',
         key: 'estimatedRewards',
