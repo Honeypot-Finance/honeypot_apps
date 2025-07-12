@@ -77,17 +77,14 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
     },
   });
 
-  const onTokenChange = (token: string) => {
+  const onTokenChange = useCallback((token: string) => {
     setSelectedToken(token);
     setInsufficientBalance(false);
-  };
+  }, []);
 
-
-  // Memoized callback to avoid re-render on each input change
   const onAmountChange = useCallback((newAmount: string, insufficient?: boolean) => {
     amountRef.current = newAmount;
     setAmountState(newAmount);
-    // Only update insufficientBalance if value changes
     if (typeof insufficient === 'boolean' && insufficient !== insufficientBalance) {
       setInsufficientBalance(insufficient);
     } else if (typeof insufficient !== 'boolean') {

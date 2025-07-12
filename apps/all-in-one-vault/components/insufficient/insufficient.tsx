@@ -6,7 +6,7 @@ interface InsufficientProps {
   tokenName: string;
 }
 
-export default function Insufficient({
+function Insufficient({
   balance,
   selectedToken,
   tokenName,
@@ -39,3 +39,5 @@ export default function Insufficient({
     </div>
   );
 }
+
+export default React.memo(Insufficient);

@@ -1,9 +1,11 @@
 import {
   ALL_IN_ONE_VAULT,
+  ALL_IN_ONE_VAULT_PROXY,
   BURN_TO_VAULT,
   ESTIMATED_REWARDS,
 } from '@/config/algebra/addresses';
 import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
+import { formatRewards, formatSmallScientific } from '../../utils/helper-function';
 // import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
 import {
   useQuery as useApolloQuery,
@@ -103,27 +105,37 @@ const SummaryCard = memo(function SummaryCard({
     address: ESTIMATED_REWARDS,
     abi: erc20Abi,
     functionName: 'balanceOf',
-    args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
+    args: ALL_IN_ONE_VAULT_PROXY
+      ? [ALL_IN_ONE_VAULT_PROXY as `0x${string}`]
+      : undefined,
   });
   const totalWeightItems = totalWeight?.globals?.items[0]?.totalWeight;
   // estimated reward = (receipt.receiptWeight * poolReward) / totalWeight
   console.log(
     '📊 estimate reward',
-    Number(data.receiptWeight), Number(lbgtBalanceData),
+    Number(data.receiptWeight),
+    Number(lbgtBalanceData),
     totalWeightItems,
+    (Number(data.receiptWeight) *
+      formatRewards(Number(lbgtBalanceData), decimals)) /
+      Number(totalWeightItems)
   );
-  const formatNumber = (value: number | string) => {
-  if (isNaN(Number(value))) return '0';
-  return Number(value).toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  });
-};
+  const formatNumber = (
+    value: number | string,
+    minFraction?: number,
+    maxFraction?: number
+  ) => {
+    if (isNaN(Number(value))) return '0';
+    return Number(value).toLocaleString('en-US', {
+      minimumFractionDigits: minFraction ?? 0,
+      maximumFractionDigits: maxFraction ?? 0,
+    });
+  };
   const summaryItems = useMemo(
     () => [
       {
         label: 'Weight/Token',
-        value: formatNumber(data.weightPerToken),
+        value: formatNumber(data.weightPerToken, 0, 5),
         key: 'weightPerToken',
       },
       {
@@ -143,8 +155,13 @@ const SummaryCard = memo(function SummaryCard({
           lbgtBalanceData !== undefined &&
           totalWeightItems !== undefined &&
           decimals !== undefined
-            ? (Number(data.receiptWeight) * Number(lbgtBalanceData)) /
-              totalWeightItems
+            ? (() => {
+                const estimated =
+                  (Number(data.receiptWeight) *
+                    formatRewards(Number(lbgtBalanceData), decimals)) /
+                  Number(totalWeightItems);
+                return formatSmallScientific(estimated);
+              })()
             : '-',
         key: 'estimatedRewards',
       },
