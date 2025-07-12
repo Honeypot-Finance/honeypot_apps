@@ -67,7 +67,7 @@ export default function StatCard() {
     if (totalWeightData) {
       queryClient.setQueryData(['totalWeightData'], totalWeightData);
     }
-  }, [totalWeightData, queryClient]);
+  }, [totalWeightData]);
 
   const { data: lbgtBalanceData } = useReadContract({
     address: ESTIMATED_REWARDS,
