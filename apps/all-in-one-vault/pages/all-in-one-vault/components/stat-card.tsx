@@ -173,6 +173,13 @@ export default function StatCard() {
     if (decimals === undefined) return '-';
     return (value / Math.pow(10, decimals)).toFixed(1);
   };
+  const formatNumber = (value: number | string) => {
+    if (isNaN(Number(value))) return '0.0';
+    return Number(value).toLocaleString('en-US', {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    });
+  };
 
   const statsData = address
     ? [
@@ -180,19 +187,22 @@ export default function StatCard() {
           label: 'Total Weight',
           value:
             totalWeightItems !== undefined
-              ? Number(totalWeightItems).toFixed(1)
+              ? formatNumber(totalWeightItems)
               : '0.0',
         },
         {
           label: 'LBGT Balance',
           value:
             lbgtBalanceData !== undefined && decimals !== undefined
-              ? (Number(lbgtBalanceData) / Math.pow(10, decimals)).toFixed(1)
-              : '-',
+              ? formatNumber(Number(lbgtBalanceData) / Math.pow(10, decimals))
+              : '0.0',
         },
         {
           label: 'LBGT Lifetime',
-          value: formatRewards(lbgtLifetime),
+          value:
+            decimals !== undefined
+              ? formatNumber(lbgtLifetime / Math.pow(10, decimals))
+              : '0.0',
         },
       ]
     : [

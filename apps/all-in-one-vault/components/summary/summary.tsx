@@ -112,11 +112,18 @@ const SummaryCard = memo(function SummaryCard({
     Number(data.receiptWeight), Number(lbgtBalanceData),
     totalWeightItems,
   );
+  const formatNumber = (value: number | string) => {
+  if (isNaN(Number(value))) return '0';
+  return Number(value).toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+};
   const summaryItems = useMemo(
     () => [
       {
         label: 'Weight/Token',
-        value: data.weightPerToken,
+        value: formatNumber(data.weightPerToken),
         key: 'weightPerToken',
       },
       {
