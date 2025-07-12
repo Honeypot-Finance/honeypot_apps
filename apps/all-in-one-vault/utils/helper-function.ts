@@ -219,3 +219,12 @@ export const formatRewards = (
   if (decimals === undefined) return 0;
   return Number(value) / Math.pow(10, decimals);
 };
+
+export function formatSmallScientific(num: number): string | number {
+  if (num < 1e-6 && num > 0) {
+    const [mantissa, exponent] = num.toExponential(2).split('e');
+    const roundedMantissa = Number(mantissa).toFixed(2);
+    return `${roundedMantissa}e${exponent}`;
+  }
+  return num;
+}

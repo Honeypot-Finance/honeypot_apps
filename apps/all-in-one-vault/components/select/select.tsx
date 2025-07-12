@@ -1,7 +1,7 @@
 import { Input } from '../input';
 import { WarppedNextSelect } from '../wrappedNextUI/Select/Select';
 import { SelectItem } from '@nextui-org/react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   useQuery as useApolloQuery,
   ApolloClient,
@@ -29,7 +29,7 @@ interface InputSectionProps {
   userAddress?: string;
 }
 
-export default function InputSection({
+export function InputSectionComponent({
   onTokenChange,
   onAmountChange,
   selectedToken,
@@ -258,3 +258,7 @@ export default function InputSection({
     </div>
   );
 }
+
+const InputSection = React.memo(InputSectionComponent);
+
+export default InputSection;

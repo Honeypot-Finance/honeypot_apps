@@ -5,7 +5,7 @@ import {
   ESTIMATED_REWARDS,
 } from '@/config/algebra/addresses';
 import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
-import { formatRewards } from '../../utils/helper-function';
+import { formatRewards, formatSmallScientific } from '../../utils/helper-function';
 // import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
 import {
   useQuery as useApolloQuery,
@@ -115,7 +115,10 @@ const SummaryCard = memo(function SummaryCard({
     '📊 estimate reward',
     Number(data.receiptWeight),
     Number(lbgtBalanceData),
-    totalWeightItems
+    totalWeightItems,
+    (Number(data.receiptWeight) *
+      formatRewards(Number(lbgtBalanceData), decimals)) /
+      Number(totalWeightItems)
   );
   const formatNumber = (
     value: number | string,
@@ -152,9 +155,13 @@ const SummaryCard = memo(function SummaryCard({
           lbgtBalanceData !== undefined &&
           totalWeightItems !== undefined &&
           decimals !== undefined
-            ? (Number(data.receiptWeight) *
-                formatRewards(Number(lbgtBalanceData), decimals)) /
-              Number(totalWeightItems)
+            ? (() => {
+                const estimated =
+                  (Number(data.receiptWeight) *
+                    formatRewards(Number(lbgtBalanceData), decimals)) /
+                  Number(totalWeightItems);
+                return formatSmallScientific(estimated);
+              })()
             : '-',
         key: 'estimatedRewards',
       },
