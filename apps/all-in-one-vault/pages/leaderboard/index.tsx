@@ -3,6 +3,7 @@ import { Tabs, Tab } from '@nextui-org/react';
 import CardContainer from '@/components/card-contianer/v3';
 import Pot2PumpLeaderboard from './components/pot2pump-leaderboard';
 import WasabeeLeaderboard from './components/wasabee-leaderboard';
+import DreampadLeaderboard from './components/dreampad-leaderboard';
 
 export default function Leaderboard() {
   const [selectedTab, setSelectedTab] = useState<string>('pot2pump');
@@ -16,7 +17,7 @@ export default function Leaderboard() {
               All-in-One Leaderboard
             </h1>
             <p className="text-gray-400">
-              Combined leaderboard from Pot2Pump and Wasabee
+              Combined leaderboard from Pot2Pump, Wasabee, and Dreampad
             </p>
           </div>
 
@@ -36,6 +37,9 @@ export default function Leaderboard() {
             </Tab>
             <Tab key="wasabee" title="Wasabee">
               <WasabeeLeaderboard />
+            </Tab>
+            <Tab key="dreampad" title="Dreampad">
+              <DreampadLeaderboard />
             </Tab>
           </Tabs>
         </div>

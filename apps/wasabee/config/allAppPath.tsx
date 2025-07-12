@@ -77,12 +77,6 @@ export const appPathsList: Menu[] = [
     title: 'Bridge',
     routePath: '/bridge',
   },
-
-  {
-    path: `/leaderboard`,
-    title: 'Leaderboard',
-    routePath: '/leaderboard',
-  },
   // {
   //   path: `https://pot2pump.honeypotfinance.xyz/`,
   //   title: "Pot2Pump",

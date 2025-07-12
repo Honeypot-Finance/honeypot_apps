@@ -55,6 +55,7 @@ const shouldSetAllWalletsDisconnectedInStorage = () => {
   localStorage.setItem('wagmi.bitget.disconnected', 'true');
   localStorage.setItem('wagmi.com.okex.wallet.disconnected', 'true');
   localStorage.setItem('wagmi.app.phantom.disconnected', 'true');
+  localStorage.setItem('wagmi.io.metamask.disconnected','true');
 };
 
 let customWallets = () => {
