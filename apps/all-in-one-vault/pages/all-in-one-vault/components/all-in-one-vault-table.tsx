@@ -50,7 +50,7 @@ export default function AllInOneVaultTable({
   const totalWeightClient = useMemo(
     () =>
       new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/948b257a-20a9-442f-b38f-70fec580a732',
+        uri: 'https://api.ghostlogs.xyz/gg/pub/4d9fda23-4a22-4b3a-9c0f-37077d3edf84',
         cache: new InMemoryCache(),
         defaultOptions: {
           query: {
