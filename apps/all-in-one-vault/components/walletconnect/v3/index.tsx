@@ -23,6 +23,7 @@ const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
 export const WalletConnect = () => {
   const { connect } = useConnect();
   const currentChain = useObserver(() => wallet.currentChain);
+  console.log(currentChain);
 
   return (
     <div className="flex flex-col items-center">

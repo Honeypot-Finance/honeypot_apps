@@ -66,7 +66,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
     const newProjects = new Pot2PumpPottingService();
     setPottingProjects(newProjects);
     newProjects.projectsPage.reloadPage();
-  }, []);
+  }, [wallet.isInit]);
 
   useEffect(() => {
     console.log('pottingProjects', pottingProjects);

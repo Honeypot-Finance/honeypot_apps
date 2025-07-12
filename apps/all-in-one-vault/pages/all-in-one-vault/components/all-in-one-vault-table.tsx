@@ -2,7 +2,6 @@ import GenericTanstackTable from '@/components/Table/generic-table';
 import { columns, ReceiptTableData } from '@/components/Table/table.config';
 import { useClaimReceipt } from '@/hooks/useClaimReceipt';
 import React, { useEffect, useMemo, useState } from 'react';
-import dynamic from 'next/dynamic';
 import {
   handleCooldownComplete,
   updateClaimedReceipt,
@@ -14,37 +13,27 @@ import {
 } from '@apollo/client';
 import { RECEIPTS_LIST } from '@/lib/algebra/graphql/queries/receipts-list';
 import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
+import { ALL_IN_ONE_VAULT } from '@/config/algebra/addresses';
 import { useAccount, useReadContract } from 'wagmi';
+import { erc20Abi } from 'viem';
 import { LoadingDisplay } from '@/components/loading-display/loading-display';
 import ErrorIcon from '@/components/svg/ErrorIcon';
 import { transformReceiptData } from '../../../utils/helper';
-import {
-  ALL_IN_ONE_VAULT,
-  ALL_IN_ONE_VAULT_PROXY,
-} from '@/config/algebra/addresses';
-import { erc20Abi } from 'viem';
-import { AllInOneVaultABI } from '@/lib/abis';
 
 interface AllInOneVaultTableProps {
   onRefetchExpose?: (refetchFn: () => void) => void;
 }
 
-function AllInOneVaultTableClient({
-  onRefetchExpose,
-}: AllInOneVaultTableProps = {}) {
-  const [currentTableData, setCurrentTableData] = useState<ReceiptTableData[]>(
-    []
-  );
+export default function AllInOneVaultTable({ onRefetchExpose }: AllInOneVaultTableProps = {}) {
+  const [currentTableData, setCurrentTableData] =
+    useState<ReceiptTableData[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
   const [isManualRefreshing, setIsManualRefreshing] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-  const [previousReceiptCount, setPreviousReceiptCount] = useState(0);
   const { address } = useAccount();
-
   const allInOneVaultClient = useMemo(
     () =>
       new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/10550f11-33a0-421c-b25d-6aff7cceca11',
+        uri: 'https://api.ghostlogs.xyz/gg/pub/5018d16a-abf4-432d-b8a9-760dc08bcb8d',
         cache: new InMemoryCache(),
         defaultOptions: {
           query: {
@@ -54,7 +43,39 @@ function AllInOneVaultTableClient({
       }),
     []
   );
+
+  const totalWeightClient = useMemo(
+    () =>
+      new ApolloClient({
+        uri: 'https://api.ghostlogs.xyz/gg/pub/948b257a-20a9-442f-b38f-70fec580a732',
+        cache: new InMemoryCache(),
+        defaultOptions: {
+          query: {
+            errorPolicy: 'all',
+          },
+        },
+      }),
+    []
+  );
+
   const { claimingReceiptId, isConfirmed } = useClaimReceipt();
+
+  const {
+    data: totalWeightData,
+    loading: totalWeightLoading,
+    error: totalWeightError,
+  } = useApolloQuery(TOTAL_WEIGHT, {
+    client: totalWeightClient,
+    errorPolicy: 'all',
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const { data: poolReward } = useReadContract({
+    address: `0xbaadcc2962417c01af99fb2b7c75706b9bd6babe`,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
+  });
 
   const {
     data: receiptsData,
@@ -65,43 +86,12 @@ function AllInOneVaultTableClient({
   } = useApolloQuery(RECEIPTS_LIST, {
     client: allInOneVaultClient,
     variables: { user: address || '' },
-    skip: !address || !isMounted,
+    skip: !address,
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
   });
   const listReceipts = receiptsData?.receipts?.items || [];
-
-  // Query total weight for rewards calculation
-  const { data: totalWeight } = useApolloQuery(TOTAL_WEIGHT, {
-    client: allInOneVaultClient,
-    errorPolicy: 'all',
-    notifyOnNetworkStatusChange: true,
-  });
-
-  // Get reward token address from contract
-  const { data: rewardTokenAddress } = useReadContract({
-    address: ALL_IN_ONE_VAULT_PROXY as `0x${string}`,
-    abi: AllInOneVaultABI,
-    functionName: 'beraPawAddress',
-  });
-
-  // Query pool reward for rewards calculation using the fetched reward token address
-  const { data: poolReward } = useReadContract({
-    address: rewardTokenAddress as `0x${string}`,
-    abi: erc20Abi,
-    functionName: 'balanceOf',
-    args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
-    query: {
-      enabled: !!rewardTokenAddress, // Only run when we have the reward token address
-    },
-  });
-
-  const totalWeightValue = totalWeight?.globals?.items?.[0]?.totalWeight;
-
-  // Set mounted state after component mounts
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const totalWeightItems = totalWeightData?.globals?.items[0]?.totalWeight;
 
   // Manual refresh handler
   const handleManualRefresh = async () => {
@@ -117,6 +107,9 @@ function AllInOneVaultTableClient({
     }
   };
 
+  // Track previous receipt count to detect new data
+  const [previousReceiptCount, setPreviousReceiptCount] = useState(0);
+
   useEffect(() => {
     if (onRefetchExpose) {
       console.log('🔗 Exposing refetch function to parent component');
@@ -129,70 +122,39 @@ function AllInOneVaultTableClient({
 
   useEffect(() => {
     if (listReceipts) {
-      // Debug: Log reward calculation values
-      console.log('===== Debug: Pool Reward Data =====');
-      console.log('Reward token address:', rewardTokenAddress);
-      console.log('Pool reward balance:', poolReward);
-      console.log('Total weight:', totalWeightValue);
-      console.log('=====================================');
-
       const transformedData = transformReceiptData(
-        listReceipts,
-        poolReward,
-        totalWeightValue
+        listReceipts, 
+        totalWeightItems ? String(totalWeightItems) : undefined, 
+        poolReward ? String(poolReward) : undefined
       );
       setCurrentTableData(transformedData);
-
+      
       // Only refetch if we have new receipts (count increased)
-      if (
-        listReceipts.length > previousReceiptCount &&
-        previousReceiptCount > 0
-      ) {
+      if (listReceipts.length > previousReceiptCount && previousReceiptCount > 0) {
         console.log('🔄 New receipts detected, refetching data...');
         refetchReceipts();
       }
-
+      
       setPreviousReceiptCount(listReceipts.length);
     }
-  }, [
-    receiptsData,
-    refreshKey,
-    refetchReceipts,
-    listReceipts.length,
-    previousReceiptCount,
-    poolReward,
-    totalWeightValue,
-    rewardTokenAddress,
-  ]);
+  }, [receiptsData, refreshKey, refetchReceipts, listReceipts.length, previousReceiptCount, totalWeightItems, poolReward]);
 
   // Handle successful query completion and auto-refetch for new data
   useEffect(() => {
-    if (
-      !receiptsLoading &&
-      !receiptsError &&
-      receiptsData &&
-      networkStatus === 7
-    ) {
+    if (!receiptsLoading && !receiptsError && receiptsData && networkStatus === 7) {
       // NetworkStatus 7 means query completed successfully
       console.log('✅ Query completed successfully, checking for updates...');
-
+      
       // Set a timeout to refetch after a short delay to check for new data
       const timeout = setTimeout(() => {
         if (listReceipts.length > 0) {
           refetchReceipts();
         }
       }, 2000); // Wait 2 seconds before refetching
-
+      
       return () => clearTimeout(timeout);
     }
-  }, [
-    receiptsData,
-    receiptsLoading,
-    receiptsError,
-    networkStatus,
-    refetchReceipts,
-    listReceipts.length,
-  ]);
+  }, [receiptsData, receiptsLoading, receiptsError, networkStatus, refetchReceipts, listReceipts.length]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -224,17 +186,6 @@ function AllInOneVaultTableClient({
       refetchReceipts();
     }
   }, [isConfirmed, claimingReceiptId, refetchReceipts]);
-
-  // Show loading state until component is mounted to prevent hydration issues
-  if (!isMounted) {
-    return (
-      <div className="mb-6 w-full shadow-[4px_4px_0px_0px_rgba(255,255,255,0.8)] bg-white rounded-xl p-6">
-        <div className="flex flex-col items-center justify-center py-8">
-          <LoadingDisplay size={100} text="Loading..." />
-        </div>
-      </div>
-    );
-  }
 
   if (receiptsError) {
     console.error('Error loading receipts:', receiptsError);
@@ -283,20 +234,3 @@ function AllInOneVaultTableClient({
     />
   );
 }
-
-// Create a client-only component to prevent hydration issues
-const AllInOneVaultTable = dynamic(
-  () => Promise.resolve(AllInOneVaultTableClient),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="mb-6 w-full shadow-[4px_4px_0px_0px_rgba(255,255,255,0.8)] bg-white rounded-xl p-6">
-        <div className="flex flex-col items-center justify-center py-8">
-          <LoadingDisplay size={100} text="Loading..." />
-        </div>
-      </div>
-    ),
-  }
-);
-
-export default AllInOneVaultTable;
