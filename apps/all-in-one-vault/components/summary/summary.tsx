@@ -111,7 +111,6 @@ const SummaryCard = memo(function SummaryCard({
     '📊 estimate reward',
     Number(data.receiptWeight), Number(lbgtBalanceData),
     totalWeightItems,
-    Math.pow(10, decimals ?? 18)
   );
   const summaryItems = useMemo(
     () => [
@@ -138,8 +137,7 @@ const SummaryCard = memo(function SummaryCard({
           totalWeightItems !== undefined &&
           decimals !== undefined
             ? (Number(data.receiptWeight) * Number(lbgtBalanceData)) /
-              totalWeightItems /
-              Math.pow(10, decimals)
+              totalWeightItems
             : '-',
         key: 'estimatedRewards',
       },
