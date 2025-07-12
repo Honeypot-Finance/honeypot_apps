@@ -59,7 +59,7 @@ export default function StatCard() {
     client: statsClient,
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
-    pollInterval: 60000,
+    pollInterval: 5000,
     fetchPolicy: 'cache-and-network',
     nextFetchPolicy: 'cache-and-network',
   });
