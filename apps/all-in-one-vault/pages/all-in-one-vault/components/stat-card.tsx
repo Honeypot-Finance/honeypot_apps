@@ -5,6 +5,7 @@ import { RECEIPTS_LIST } from '@/lib/algebra/graphql/queries/receipts-list';
 import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
 import {
   ALL_IN_ONE_VAULT,
+  ALL_IN_ONE_VAULT_PROXY,
   BURN_TO_VAULT,
   ESTIMATED_REWARDS,
 } from '@/config/algebra/addresses';
@@ -15,6 +16,7 @@ import {
   useQuery as useApolloQuery,
 } from '@apollo/client';
 import { TOTAL_CLAIMED } from '@/lib/algebra/graphql/queries/total-claimed';
+import { formatNumber } from '../../../utils/helper-function';
 export default function StatCard() {
   const { address } = useAccount();
   const allInOneVaultClient = useMemo(
@@ -62,7 +64,7 @@ export default function StatCard() {
     address: ESTIMATED_REWARDS,
     abi: erc20Abi,
     functionName: 'balanceOf',
-    args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
+    args: ALL_IN_ONE_VAULT_PROXY ? [ALL_IN_ONE_VAULT_PROXY as `0x${string}`] : undefined,
   });
 
   // LBGT Lifetime
@@ -172,13 +174,6 @@ export default function StatCard() {
   const formatRewards = (value: number) => {
     if (decimals === undefined) return '-';
     return (value / Math.pow(10, decimals)).toFixed(1);
-  };
-  const formatNumber = (value: number | string) => {
-    if (isNaN(Number(value))) return '0.0';
-    return Number(value).toLocaleString('en-US', {
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1,
-    });
   };
 
   const statsData = address

@@ -112,7 +112,7 @@ export default function InputSection({
     );
 
     if (selectedTokenData) {
-      const weightValue = parseFloat(selectedTokenData.weight);
+      const weightValue = parseFloat(selectedTokenData.weight) / 1e4;
       const newSummaryData = calculateSummaryData(
         selectedToken,
         amount || '',
@@ -159,9 +159,10 @@ export default function InputSection({
     }
 
     if (selectedTokenData) {
-      const weightValue = parseFloat(selectedTokenData.weight);
+      const weightValue = parseFloat(selectedTokenData.weight) / 1e4;
+      console.log(weightValue, 'weightValue');
       if (setWeightPerCurrentToken) {
-        setWeightPerCurrentToken(selectedTokenData.weight);
+        setWeightPerCurrentToken(weightValue.toString());
       }
       
       // Always calculate summary data when token changes

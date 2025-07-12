@@ -11,7 +11,7 @@ export const calculateSummaryData = (
   if (!token || !weightPerToken) return;
 
   const balance = Number(tokenBalance || 0) / 1e18;
-
+  console.log(weightPerToken, 'weightPerToken');
   const displayWeightPerToken = (weightPerToken).toString();
 
   // If no amount is provided, return basic data with balance
@@ -202,4 +202,20 @@ export const resetFormState = (
     receiptWeight: '0',
     estimatedRewards: '-',
   });
+};
+
+export const formatNumber = (value: number | string) => {
+    if (isNaN(Number(value))) return '0.0';
+    return Number(value).toLocaleString('en-US', {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    });
+  };
+
+export const formatRewards = (
+  value: number | bigint,
+  decimals: number | undefined
+): number => {
+  if (decimals === undefined) return 0;
+  return Number(value) / Math.pow(10, decimals);
 };
