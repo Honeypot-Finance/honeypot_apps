@@ -110,7 +110,6 @@ export default function AllInOneVaultTable({
     }
   };
 
-  // Track previous receipt count to detect new data
   const [previousReceiptCount, setPreviousReceiptCount] = useState(0);
 
   useEffect(() => {
@@ -154,7 +153,6 @@ export default function AllInOneVaultTable({
     listReceipts,
   ]);
 
-  // Handle successful query completion and auto-refetch for new data
   useEffect(() => {
     if (
       !receiptsLoading &&
@@ -162,9 +160,7 @@ export default function AllInOneVaultTable({
       receiptsData &&
       networkStatus === 7
     ) {
-      // NetworkStatus 7 means query completed successfully
       console.log('✅ Query completed successfully, checking for updates...');
-      // Set a timeout to refetch after a short delay to check for new data
       const timeout = setTimeout(() => {
         if (listReceipts.length > 0) {
           refetchReceipts();
