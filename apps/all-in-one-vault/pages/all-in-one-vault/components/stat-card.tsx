@@ -59,8 +59,8 @@ export default function StatCard() {
     client: statsClient,
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
-    pollInterval: 60000, // 60 seconds
-    fetchPolicy: 'cache-and-network', // Always keep old data until new arrives
+    pollInterval: 60000,
+    fetchPolicy: 'cache-and-network',
     nextFetchPolicy: 'cache-and-network',
   });
   const stableTotalWeightData = totalWeightData || previousTotalWeightData;
