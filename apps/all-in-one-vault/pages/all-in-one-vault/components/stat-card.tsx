@@ -1,4 +1,6 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useEffect } from 'react';
+// ...existing code...
+import { useQueryClient } from '@tanstack/react-query';
 import { Card } from '@nextui-org/react';
 import { useAccount, useReadContract } from 'wagmi';
 import { RECEIPTS_LIST } from '@/lib/algebra/graphql/queries/receipts-list';
@@ -56,10 +58,17 @@ export default function StatCard() {
     client: statsClient,
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-first',
+    pollInterval: 10000,
   });
   const totalWeightItems = totalWeightData?.globals?.items[0]?.totalWeight;
 
-  // LBGT Balance
+  const queryClient = useQueryClient();
+  if (totalWeightData) {
+    queryClient.setQueryData(['totalWeightData'], totalWeightData);
+  }
+
   const { data: lbgtBalanceData } = useReadContract({
     address: ESTIMATED_REWARDS,
     abi: erc20Abi,
