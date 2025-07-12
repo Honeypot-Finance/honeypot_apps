@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { TableAction } from './generic-table';
 import { intervalToDuration } from 'date-fns';
@@ -132,25 +133,12 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
     accessorKey: 'rewards',
     header: 'Estimated Rewards',
     cell: ({ row }) => {
-      const totalWeightClient = useMemo(
-        () =>
-          new ApolloClient({
-            uri: 'https://api.ghostlogs.xyz/gg/pub/4d9fda23-4a22-4b3a-9c0f-37077d3edf84',
-            cache: new InMemoryCache(),
-            defaultOptions: {
-              query: {
-                errorPolicy: 'all',
-              },
-            },
-          }),
-        []
-      );
+      const queryClient = useQueryClient();
+      const totalWeightData = queryClient.getQueryData(['totalWeightData']) as any;
+      const totalWeightItems = totalWeightData && totalWeightData.globals && totalWeightData.globals.items && totalWeightData.globals.items[0]
+        ? totalWeightData.globals.items[0].totalWeight
+        : undefined;
       const weight = Number(row.getValue('weight'));
-      const { data: totalWeight } = useApolloQuery(TOTAL_WEIGHT, {
-        client: totalWeightClient,
-        errorPolicy: 'all',
-        notifyOnNetworkStatusChange: true,
-      });
       const { data: lbgtBalanceData } = useReadContract({
         address: ESTIMATED_REWARDS,
         abi: erc20Abi,
@@ -164,13 +152,12 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
         abi: erc20Abi,
         functionName: `decimals`,
       });
-      const totalWeightItems = totalWeight?.globals?.items[0]?.totalWeight;
 
       let estimated: string | number | bigint = '-';
       if (
         weight !== undefined &&
         lbgtBalanceData !== undefined &&
-        totalWeight !== undefined &&
+        totalWeightItems !== undefined &&
         decimals !== undefined
       ) {
         const est =

@@ -7,11 +7,7 @@ import {
 import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
 import { formatRewards, formatSmallScientific } from '../../utils/helper-function';
 // import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
-import {
-  useQuery as useApolloQuery,
-  ApolloClient,
-  InMemoryCache,
-} from '@apollo/client';
+import { useQueryClient } from '@tanstack/react-query';
 import { Card } from '@nextui-org/react';
 import { memo, useMemo } from 'react';
 import { erc20Abi } from 'viem';
@@ -64,27 +60,13 @@ const SummaryCard = memo(function SummaryCard({
     [isLoading]
   );
 
-  const totalWeightClient = useMemo(
-    () =>
-      new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/4d9fda23-4a22-4b3a-9c0f-37077d3edf84',
-        cache: new InMemoryCache(),
-        defaultOptions: {
-          query: {
-            errorPolicy: 'all',
-          },
-        },
-      }),
-    []
-  );
-
   // estimated reward = (receipt.receiptWeight * poolReward) / totalWeight
   const { address } = useAccount();
-  const { data: totalWeight } = useApolloQuery(TOTAL_WEIGHT, {
-    client: totalWeightClient,
-    errorPolicy: 'all',
-    notifyOnNetworkStatusChange: true,
-  });
+  // Read totalWeightData from Tanstack Query cache (written by StatCard)
+  const queryClient = useQueryClient();
+  const totalWeightData = queryClient.getQueryData(['totalWeightData']) as any;
+  console.log('📊 totalWeightData', totalWeightData);
+  const totalWeight = totalWeightData;
 
   // const { data: reward } = useReadContract({
   //   address: `0x938f83738ccd5b4217862fa4b521b015f3355eb4`,
@@ -109,7 +91,9 @@ const SummaryCard = memo(function SummaryCard({
       ? [ALL_IN_ONE_VAULT_PROXY as `0x${string}`]
       : undefined,
   });
-  const totalWeightItems = totalWeight?.globals?.items[0]?.totalWeight;
+  const totalWeightItems = totalWeight && totalWeight.globals && totalWeight.globals.items && totalWeight.globals.items[0]
+    ? totalWeight.globals.items[0].totalWeight
+    : undefined;
   // estimated reward = (receipt.receiptWeight * poolReward) / totalWeight
   console.log(
     '📊 estimate reward',
