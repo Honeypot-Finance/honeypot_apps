@@ -122,7 +122,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
               </Button>
             )
           )}
-          {/* <Dropdown>
+          <Dropdown>
             <DropdownTrigger
               className={cn(
                 'min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020]/70 hover:text-white rounded-full'
@@ -138,6 +138,26 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 startContent={
                   <Image
                     src="/images/wasabee_pot.webp"
+                    alt="wasabee"
+                    width={16}
+                    height={16}
+                    className="w-4 h-4"
+                  />
+                }
+                key="wasabee"
+                onPress={() => {
+                  router.push(DOMAIN_MAP.WASABEE_DEX);
+                }}
+              >
+                Wasabee DEX
+              </DropdownItem>
+              <DropdownItem
+                href={DOMAIN_MAP.POT2PUMP}
+                onPress={() => window.open(DOMAIN_MAP.POT2PUMP, '_self')}
+                className="font-bold data-[hover=true]:bg-[#202020] data-[hover=true]:text-white p-2"
+                startContent={
+                  <Image
+                    src="/images/blueAstro.8533943d.svg"
                     alt="pot2pump"
                     width={16}
                     height={16}
@@ -145,14 +165,11 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                   />
                 }
                 key="pot2pump"
-                onPress={() => {
-                  router.push(DOMAIN_MAP.WASABEE_DEX);
-                }}
               >
-                Wasabee DEX
+                Pot2Pump
               </DropdownItem>
             </DropdownMenu>
-          </Dropdown> */}
+          </Dropdown>
         </div>
       </div>
     </div>

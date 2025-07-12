@@ -8,7 +8,8 @@ import {
   DropdownMenu,
   DropdownItem,
 } from '@nextui-org/react';
-import { DOMAIN_MAP, Menu } from '@/config/allAppPath';
+import { DOMAIN_MAP } from '@honeypot/shared';
+import { Menu } from '@/config/allAppPath';
 import Image from 'next/image';
 import { Key } from 'react';
 import { FaPlusCircle } from 'react-icons/fa';
@@ -134,6 +135,24 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 key="pot2pump"
               >
                 Pot2Pump
+              </DropdownItem>
+
+              <DropdownItem
+                href={DOMAIN_MAP.ALL_IN_ONE}
+                onPress={() => window.open(DOMAIN_MAP.ALL_IN_ONE, '_self')}
+                className="font-bold data-[hover=true]:bg-[#202020] data-[hover=true]:text-white p-2"
+                startContent={
+                  <Image
+                    src="/images/honey.png"
+                    alt="all-in-one"
+                    width={16}
+                    height={16}
+                    className="w-4 h-4"
+                  />
+                }
+                key="all-in-one"
+              >
+                All In One
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>

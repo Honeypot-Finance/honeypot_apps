@@ -7,6 +7,7 @@ export const DOMAIN_MAP = {
   POT2PUMP: 'https://pot2pump.honeypotfinance.xyz',
   DREAMPAD: 'https://dreampad.honeypotfinance.xyz',
   WASABEE: 'https://wasabee.honeypotfinance.xyz',
+  ALL_IN_ONE: 'https://leaderboard.honeypotfinance.xyz/',
 } as const;
 
 export type PathChatConfig = {
