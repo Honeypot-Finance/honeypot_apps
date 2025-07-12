@@ -263,7 +263,7 @@ export default function GenericTanstackTable<T>({
       </div>
 
       {/* Pagination */}
-      {enablePagination && table.getPageCount() > 1 && (
+      {enablePagination && table.getPageCount() >= 1 && (
         <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
@@ -286,12 +286,13 @@ export default function GenericTanstackTable<T>({
               </Button>
             )}
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              onClick={previousPage}
-              disabled={!table.getCanPreviousPage()}
-            >
+          {enablePagination && table.getPageCount() > 1 && (
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                onClick={previousPage}
+                disabled={!table.getCanPreviousPage()}
+              >
               Previous
             </Button>
 
@@ -303,6 +304,7 @@ export default function GenericTanstackTable<T>({
               Next
             </Button>
           </div>
+          )}
         </div>
       )}
     </div>
