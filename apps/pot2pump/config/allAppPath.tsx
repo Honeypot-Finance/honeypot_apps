@@ -1,6 +1,6 @@
-import { StaticImageData } from "next/image";
-import { ReactNode } from "react";
-import Image from "next/image";
+import { StaticImageData } from 'next/image';
+import { ReactNode } from 'react';
+import Image from 'next/image';
 
 export type PathChatConfig = {
   autoPopUpQuestion: ReactNode;
@@ -47,29 +47,24 @@ export const footerData: Record<string, ReactNode> = {
 
 export const appPathsList: Menu[] = [
   {
-    path: "/",
-    title: "Overview",
-    routePath: "/",
+    path: '/',
+    title: 'Overview',
+    routePath: '/',
   },
   {
-    path: "/potting",
-    title: "Potting",
-    routePath: "/potting",
+    path: '/potting',
+    title: 'Potting',
+    routePath: '/potting',
   },
   {
-    path: "/pumping",
-    title: "Pumping",
-    routePath: "/pumping",
+    path: '/pumping',
+    title: 'Pumping',
+    routePath: '/pumping',
   },
   {
-    path: "/leaderboard",
-    title: "Leaderboard",
-    routePath: "/leaderboard",
-  },
-  {
-    title: "Dex",
-    path: "https://wasabee.honeypotfinance.xyz/swap",
-    routePath: "https://wasabee.honeypotfinance.xyz/swap",
+    title: 'Dex',
+    path: 'https://wasabee.honeypotfinance.xyz/swap',
+    routePath: 'https://wasabee.honeypotfinance.xyz/swap',
   },
 ];
 
@@ -77,7 +72,7 @@ const getFlatPaths = (paths: Menu[]): flatMenu[] => {
   let flatPaths: flatMenu[] = [];
 
   paths.forEach((path) => {
-    if (typeof path.path === "string") {
+    if (typeof path.path === 'string') {
       flatPaths.push({
         path: path.path,
         title: path.title,
