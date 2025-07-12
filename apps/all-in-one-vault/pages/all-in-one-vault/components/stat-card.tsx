@@ -60,6 +60,7 @@ export default function StatCard() {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'cache-and-network',
     nextFetchPolicy: 'cache-first',
+    pollInterval: 10000,
   });
   const totalWeightItems = totalWeightData?.globals?.items[0]?.totalWeight;
 
