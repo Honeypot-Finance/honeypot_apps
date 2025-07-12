@@ -1,5 +1,10 @@
-import { ALL_IN_ONE_VAULT } from '@/config/algebra/addresses';
+import {
+  ALL_IN_ONE_VAULT,
+  BURN_TO_VAULT,
+  ESTIMATED_REWARDS,
+} from '@/config/algebra/addresses';
 import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
+// import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
 import {
   useQuery as useApolloQuery,
   ApolloClient,
@@ -8,7 +13,7 @@ import {
 import { Card } from '@nextui-org/react';
 import { memo, useMemo } from 'react';
 import { erc20Abi } from 'viem';
-import { useReadContract } from 'wagmi';
+import { useAccount, useReadContract } from 'wagmi';
 
 interface SummaryData {
   weightPerToken: string | number;
@@ -43,13 +48,13 @@ const SummaryCard = memo(function SummaryCard({
       if (typeof value === 'number') {
         return value.toLocaleString('en-US', {
           minimumFractionDigits: 0,
-          maximumFractionDigits: 6,
+          maximumFractionDigits: 4,
         });
       }
       if (typeof value === 'bigint') {
         return Number(value).toLocaleString('en-US', {
           minimumFractionDigits: 0,
-          maximumFractionDigits: 6,
+          maximumFractionDigits: 4,
         });
       }
       return value || '-';
@@ -60,7 +65,7 @@ const SummaryCard = memo(function SummaryCard({
   const totalWeightClient = useMemo(
     () =>
       new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/948b257a-20a9-442f-b38f-70fec580a732',
+        uri: 'https://api.ghostlogs.xyz/gg/pub/4d9fda23-4a22-4b3a-9c0f-37077d3edf84',
         cache: new InMemoryCache(),
         defaultOptions: {
           query: {
@@ -72,60 +77,53 @@ const SummaryCard = memo(function SummaryCard({
   );
 
   // estimated reward = (receipt.receiptWeight * poolReward) / totalWeight
-  const {
-    data: totalWeight,
-    loading: totalWeightLoading,
-    error: totalWeightError,
-  } = useApolloQuery(TOTAL_WEIGHT, {
+  const { address } = useAccount();
+  const { data: totalWeight } = useApolloQuery(TOTAL_WEIGHT, {
     client: totalWeightClient,
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
   });
-  const { data: poolReward } = useReadContract({
-    address: `0xbaadcc2962417c01af99fb2b7c75706b9bd6babe`,
+
+  // const { data: reward } = useReadContract({
+  //   address: `0x938f83738ccd5b4217862fa4b521b015f3355eb4`,
+  //   abi: rewardAbi,
+  //   functionName: 'previewLbgtMint',
+  //   args: address && REWARD_VAULT ? [address, REWARD_VAULT] : undefined,
+  // });
+
+  // decimals
+  const { data: decimals } = useReadContract({
+    address: ESTIMATED_REWARDS,
+    abi: erc20Abi,
+    functionName: `decimals`,
+  });
+
+  // LBGT Balance
+  const { data: lbgtBalanceData } = useReadContract({
+    address: ESTIMATED_REWARDS,
     abi: erc20Abi,
     functionName: 'balanceOf',
     args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
   });
   const totalWeightItems = totalWeight?.globals?.items[0]?.totalWeight;
-  console.log(poolReward);
-  console.log("Data Receipt Weight", data.receiptWeight);
-  console.log("Total Weight", totalWeightItems);
-  const estimatedRewards = useMemo(() => {
-    if (!data.receiptWeight || !totalWeightItems || !poolReward) return 0;
-    
-    // Skip calculation if receiptWeight is '-', '0', or any non-numeric string
-    if (data.receiptWeight === '-' || data.receiptWeight === '0' || data.receiptWeight === 0) return 0;
-    
-    try {
-      // Additional validation to ensure we can convert to BigInt
-      const receiptWeightStr = String(data.receiptWeight);
-      if (!/^\d+$/.test(receiptWeightStr)) {
-        console.warn('Invalid receiptWeight format:', data.receiptWeight);
-        return 0;
-      }
-      
-      const receiptWeightBigInt = BigInt(receiptWeightStr);
-      const totalWeightBigInt = BigInt(totalWeightItems);
-      const poolRewardBigInt = BigInt(poolReward);
-      
-      if (totalWeightBigInt === BigInt(0)) {
-        console.warn('Total weight is zero, cannot calculate rewards');
-        return 0;
-      }
-      
-      return Number((receiptWeightBigInt * poolRewardBigInt) / totalWeightBigInt);
-    } catch (error) {
-      console.error('Error calculating estimated rewards:', error);
-      return 0;
-    }
-  }, [data.receiptWeight, totalWeightItems, poolReward]);
-
+  // estimated reward = (receipt.receiptWeight * poolReward) / totalWeight
+  console.log(
+    '📊 estimate reward',
+    Number(data.receiptWeight), Number(lbgtBalanceData),
+    totalWeightItems,
+  );
+  const formatNumber = (value: number | string) => {
+  if (isNaN(Number(value))) return '0';
+  return Number(value).toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+};
   const summaryItems = useMemo(
     () => [
       {
         label: 'Weight/Token',
-        value: data.weightPerToken,
+        value: formatNumber(data.weightPerToken),
         key: 'weightPerToken',
       },
       {
@@ -140,11 +138,18 @@ const SummaryCard = memo(function SummaryCard({
       },
       {
         label: 'Estimated Rewards',
-        value: estimatedRewards,
+        value:
+          data.receiptWeight !== undefined &&
+          lbgtBalanceData !== undefined &&
+          totalWeightItems !== undefined &&
+          decimals !== undefined
+            ? (Number(data.receiptWeight) * Number(lbgtBalanceData)) /
+              totalWeightItems
+            : '-',
         key: 'estimatedRewards',
       },
     ],
-    [data, estimatedRewards]
+    [data, lbgtBalanceData, totalWeightItems, decimals]
   );
 
   return (
@@ -162,9 +167,9 @@ const SummaryCard = memo(function SummaryCard({
                 className={`text-lg font-semibold text-gray-900 ${
                   isLoading ? 'animate-pulse bg-gray-200 rounded h-6' : ''
                 }`}
-                aria-label={`${item.label}: ${formatValue(item.value)}`}
+                aria-label={`${item.label}: ${formatValue(item.value ?? '-')}`}
               >
-                {!isLoading && formatValue(item.value)}
+                {!isLoading && formatValue(item.value ?? '-')}
               </div>
             </div>
           ))}

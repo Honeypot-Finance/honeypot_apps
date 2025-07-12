@@ -12,8 +12,7 @@ export const calculateSummaryData = (
 
   const balance = Number(tokenBalance || 0) / 1e18;
 
-  // Divide weightPerToken by 10000 for display
-  const displayWeightPerToken = (weightPerToken / 10000).toString();
+  const displayWeightPerToken = (weightPerToken).toString();
 
   // If no amount is provided, return basic data with balance
   if (!amountStr || amountStr.trim() === '') {
@@ -35,8 +34,7 @@ export const calculateSummaryData = (
     };
   }
 
-  // Calculate receipt weight and divide by 10000 for display consistency
-  const receiptWeight = ((weightPerToken * amountValue) / 10000).toFixed(1);
+  const receiptWeight = ((weightPerToken * amountValue));
 
   return {
     weightPerToken: displayWeightPerToken,
