@@ -31,24 +31,10 @@ export default function StatCard() {
     []
   );
 
-  const totalWeightClient = useMemo(
+  const statsClient = useMemo(
     () =>
       new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/948b257a-20a9-442f-b38f-70fec580a732',
-        cache: new InMemoryCache(),
-        defaultOptions: {
-          query: {
-            errorPolicy: 'all',
-          },
-        },
-      }),
-    []
-  );
-
-  const totalClaimedClient = useMemo(
-    () =>
-      new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/61cc9625-9597-4c20-98e3-6b43e5d99b5f',
+        uri: 'https://api.ghostlogs.xyz/gg/pub/4d9fda23-4a22-4b3a-9c0f-37077d3edf84',
         cache: new InMemoryCache(),
         defaultOptions: {
           query: {
@@ -65,7 +51,7 @@ export default function StatCard() {
     // loading: totalWeightLoading,
     // error: totalWeightError,
   } = useApolloQuery(TOTAL_WEIGHT, {
-    client: totalWeightClient,
+    client: statsClient,
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
   });
@@ -81,7 +67,7 @@ export default function StatCard() {
 
   // LBGT Lifetime
   const { data: totalClaimedData } = useApolloQuery(TOTAL_CLAIMED, {
-    client: totalClaimedClient,
+    client: statsClient,
     skip: !address,
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
@@ -188,26 +174,32 @@ export default function StatCard() {
     return (value / Math.pow(10, decimals)).toFixed(1);
   };
 
-  const statsData = [
-    {
-      label: 'Total Weight',
-      value:
-        totalWeightItems !== undefined
-          ? Number(totalWeightItems).toFixed(1)
-          : '0.0',
-    },
-    {
-      label: 'LBGT Balance',
-      value:
-        lbgtBalanceData !== undefined && decimals !== undefined
-          ? (Number(lbgtBalanceData) / Math.pow(10, decimals)).toFixed(1)
-          : '-',
-    },
-    {
-      label: 'LBGT Lifetime',
-      value: formatRewards(lbgtLifetime),
-    },
-  ];
+  const statsData = address
+    ? [
+        {
+          label: 'Total Weight',
+          value:
+            totalWeightItems !== undefined
+              ? Number(totalWeightItems).toFixed(1)
+              : '0.0',
+        },
+        {
+          label: 'LBGT Balance',
+          value:
+            lbgtBalanceData !== undefined && decimals !== undefined
+              ? (Number(lbgtBalanceData) / Math.pow(10, decimals)).toFixed(1)
+              : '-',
+        },
+        {
+          label: 'LBGT Lifetime',
+          value: formatRewards(lbgtLifetime),
+        },
+      ]
+    : [
+        { label: 'Total Weight', value: '0.0' },
+        { label: 'LBGT Balance', value: '0.0' },
+        { label: 'LBGT Lifetime', value: '0.0' },
+      ];
 
   return (
     <div className="flex flex-col justify-center w-full rounded-2xl gap-y-4">
