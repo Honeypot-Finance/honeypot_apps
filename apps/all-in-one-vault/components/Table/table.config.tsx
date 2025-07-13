@@ -126,7 +126,15 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
     header: 'Weight',
     cell: ({ row }) => {
       const weight = Number(row.getValue('weight'));
-      return <span>{weight / 1e4}</span>;
+      const formattedWeight = weight / 1e4;
+
+      const formatWeight = (value: number) => {
+        if (isNaN(value) || value === 0) return '0';
+        if (value < 0.01) return '<0.01';
+        return value.toFixed(2);
+      };
+
+      return <span>{formatWeight(formattedWeight)}</span>;
     },
   },
   {
@@ -134,10 +142,16 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
     header: 'Estimated Rewards',
     cell: ({ row }) => {
       const queryClient = useQueryClient();
-      const totalWeightData = queryClient.getQueryData(['totalWeightData']) as any;
-      const totalWeightItems = totalWeightData && totalWeightData.globals && totalWeightData.globals.items && totalWeightData.globals.items[0]
-        ? totalWeightData.globals.items[0].totalWeight
-        : undefined;
+      const totalWeightData = queryClient.getQueryData([
+        'totalWeightData',
+      ]) as any;
+      const totalWeightItems =
+        totalWeightData &&
+        totalWeightData.globals &&
+        totalWeightData.globals.items &&
+        totalWeightData.globals.items[0]
+          ? totalWeightData.globals.items[0].totalWeight
+          : undefined;
       const weight = Number(row.getValue('weight'));
       const { data: lbgtBalanceData } = useReadContract({
         address: ESTIMATED_REWARDS,

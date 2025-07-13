@@ -5,7 +5,10 @@ import {
   ESTIMATED_REWARDS,
 } from '@/config/algebra/addresses';
 import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
-import { formatRewards, formatSmallScientific } from '../../utils/helper-function';
+import {
+  formatRewards,
+  formatSmallScientific,
+} from '../../utils/helper-function';
 // import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
 import { useQueryClient } from '@tanstack/react-query';
 import { Card } from '@nextui-org/react';
@@ -91,18 +94,24 @@ const SummaryCard = memo(function SummaryCard({
       ? [ALL_IN_ONE_VAULT_PROXY as `0x${string}`]
       : undefined,
   });
-  const totalWeightItems = totalWeight && totalWeight.globals && totalWeight.globals.items && totalWeight.globals.items[0]
-    ? totalWeight.globals.items[0].totalWeight
-    : undefined;
+  const totalWeightItems =
+    totalWeight &&
+    totalWeight.globals &&
+    totalWeight.globals.items &&
+    totalWeight.globals.items[0]
+      ? totalWeight.globals.items[0].totalWeight
+      : undefined;
   // estimated reward = (receipt.receiptWeight * poolReward) / totalWeight
   console.log(
     '📊 estimate reward',
+    'receiptWeight:',
     Number(data.receiptWeight),
+    'lbgtBalanceData:',
     Number(lbgtBalanceData),
+    'totalWeightItems:',
     totalWeightItems,
-    (Number(data.receiptWeight) *
-      formatRewards(Number(lbgtBalanceData), decimals)) /
-      Number(totalWeightItems) * 10_000
+    'decimals:',
+    decimals
   );
   const formatNumber = (
     value: number | string,
@@ -115,6 +124,20 @@ const SummaryCard = memo(function SummaryCard({
       maximumFractionDigits: maxFraction ?? 0,
     });
   };
+  const formatReceiptWeight = (value: string | number) => {
+    const numValue = Number(value);
+    if (isNaN(numValue) || numValue === 0) return '0';
+    if (numValue < 0.01) return '<0.01';
+    return numValue.toFixed(2);
+  };
+
+  const formatBalance = (value: string | number) => {
+    const numValue = Number(value);
+    if (isNaN(numValue) || numValue === 0) return '0';
+    if (numValue < 0.01) return '<0.01';
+    return numValue.toFixed(2);
+  };
+
   const summaryItems = useMemo(
     () => [
       {
@@ -124,12 +147,12 @@ const SummaryCard = memo(function SummaryCard({
       },
       {
         label: 'Balance',
-        value: data.balance,
+        value: formatBalance(data.balance),
         key: 'balance',
       },
       {
         label: 'Receipt-weight',
-        value: data.receiptWeight,
+        value: formatReceiptWeight(data.receiptWeight),
         key: 'receiptWeight',
       },
       {
@@ -140,10 +163,32 @@ const SummaryCard = memo(function SummaryCard({
           totalWeightItems !== undefined &&
           decimals !== undefined
             ? (() => {
-                const estimated =
-                  (Number(data.receiptWeight) *
-                    formatRewards(Number(lbgtBalanceData), decimals)) /
-                  Number(totalWeightItems) * 1e4;
+                const receiptWeight = Number(data.receiptWeight);
+                const poolReward = Number(lbgtBalanceData);
+                const totalWeight = Number(totalWeightItems);
+
+                if (
+                  receiptWeight === 0 ||
+                  poolReward === 0 ||
+                  totalWeight === 0
+                ) {
+                  return '0';
+                }
+
+                // Standard formula: (receiptWeight * poolReward) / totalWeight
+                // Then convert from wei to decimal representation
+                const estimatedWei = (receiptWeight * poolReward) / totalWeight;
+                const estimated = estimatedWei / Math.pow(10, decimals);
+
+                console.log('Calculation:', {
+                  receiptWeight,
+                  poolReward,
+                  totalWeight,
+                  estimatedWei,
+                  estimated,
+                  decimals,
+                });
+
                 return formatSmallScientific(estimated);
               })()
             : '-',
@@ -168,9 +213,12 @@ const SummaryCard = memo(function SummaryCard({
                 className={`text-lg font-semibold text-gray-900 ${
                   isLoading ? 'animate-pulse bg-gray-200 rounded h-6' : ''
                 }`}
-                aria-label={`${item.label}: ${formatValue(item.value ?? '-')}`}
+                aria-label={`${item.label}: ${item.value ?? '-'}`}
               >
-                {!isLoading && formatValue(item.value ?? '-')}
+                {!isLoading &&
+                  (item.key === 'balance' || item.key === 'receiptWeight'
+                    ? item.value
+                    : formatValue(item.value ?? '-'))}
               </div>
             </div>
           ))}

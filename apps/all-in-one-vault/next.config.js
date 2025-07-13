@@ -13,7 +13,15 @@ const nextConfig = {
     svgr: false,
   },
   images: {
-    domains: ['cdn.prod.website-files.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+    // Add image optimization
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 86400,
   },
 };
 
