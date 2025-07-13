@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400;600&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -33,6 +31,16 @@
   font-weight: 400;
   font-family: "Gliker";
   src: url("/fonts/v3-ui/Gliker-Regular.ttf") format("truetype");
+}
+
+/* Bebas Neue CSS variable for use with Tailwind */
+.bebas-neue {
+  font-family: var(--bebas-neue);
+}
+
+/* Inter CSS variable for use with Tailwind */
+.inter {
+  font-family: var(--inter);
 }
 
 html,

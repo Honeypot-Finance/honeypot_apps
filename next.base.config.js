@@ -2,6 +2,7 @@
 
 const { composePlugins, withNx } = require('@nx/next');
 const { withSentryConfig } = require('@sentry/nextjs');
+const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path');
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -23,7 +24,26 @@ const baseConfig = {
   output: 'standalone',
   productionBrowserSourceMaps: false, // Disable source maps in production to save space
   experimental: {
+    // CSS optimization
     optimizeCss: true,
+    // Optimize large package imports for better tree shaking
+    optimizePackageImports: [
+      '@nextui-org/react',
+      '@nextui-org/system',
+      '@nextui-org/theme',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-popover',
+      '@radix-ui/react-scroll-area',
+      '@rainbow-me/rainbowkit',
+      'framer-motion',
+      'lucide-react',
+    ],
+    // Enable turbo for faster builds
+    turbo: {
+      loaders: {
+        '.svg': ['@svgr/webpack'],
+      },
+    },
   },
   // Add webpack optimizations
   webpack: (config, { isServer, dev }) => {
@@ -43,65 +63,115 @@ const baseConfig = {
       // The cache files are created DURING build and cause memory issues
       config.cache = false;
 
-      // Aggressive memory optimization
+      // Enhanced webpack optimization
       config.optimization = {
         ...config.optimization,
+        // Enable module concatenation for better performance
+        concatenateModules: true,
+        // Use deterministic module IDs
+        moduleIds: 'deterministic',
+        mangleExports: 'deterministic',
         // More aggressive chunk splitting
         splitChunks: {
           chunks: 'all',
-          minSize: 20000,
-          maxSize: 150000, // Smaller max size: 150KB instead of 244KB
+          minSize: 10000, // Reduced from 20000
+          maxSize: 150000, // Reduced from 244000
+          minChunks: 2,
+          enforceSizeThreshold: 50000,
           cacheGroups: {
-            default: {
-              minChunks: 2,
-              priority: -20,
-              reuseExistingChunk: true,
-              maxSize: 100000, // 100KB max
-            },
-            vendor: {
-              test: /[\\/]node_modules[\\/]/,
-              name: 'vendors',
-              priority: -10,
+            default: false,
+            vendors: false,
+            // Framework chunk
+            framework: {
+              name: 'framework',
               chunks: 'all',
-              maxSize: 150000, // 150KB max chunk size
-              minSize: 20000,
+              test: /(?<!node_modules.*)[\\/]node_modules[\\/](react|react-dom|scheduler|prop-types|next|@next)[\\/]/,
+              priority: 40,
+              enforce: true,
             },
-            // Separate large libraries into smaller chunks
+            // Next.js UI components
+            nextui: {
+              name: 'nextui',
+              chunks: 'all',
+              test: /[\\/]node_modules[\\/]@nextui-org[\\/]/,
+              priority: 35,
+              enforce: true,
+            },
+            // Radix UI components
+            radix: {
+              name: 'radix',
+              chunks: 'all',
+              test: /[\\/]node_modules[\\/]@radix-ui[\\/]/,
+              priority: 34,
+              enforce: true,
+            },
+            // Chart libraries
             charts: {
-              test: /[\\/]node_modules[\\/](lightweight-charts|apexcharts|recharts|echarts)[\\/]/,
               name: 'charts',
               chunks: 'all',
-              priority: 15,
-              maxSize: 200000, // 200KB for chart libraries
+              test: /[\\/]node_modules[\\/](lightweight-charts|apexcharts|recharts|echarts)[\\/]/,
+              priority: 33,
+              enforce: true,
             },
+            // Web3 libraries
             web3: {
-              test: /[\\/]node_modules[\\/](@rainbow-me|wagmi|viem|ethers|@web3modal)[\\/]/,
               name: 'web3',
               chunks: 'all',
-              priority: 15,
-              maxSize: 200000, // 200KB for web3 libraries
+              test: /[\\/]node_modules[\\/](@rainbow-me|wagmi|viem|ethers|@web3modal)[\\/]/,
+              priority: 32,
+              enforce: true,
             },
-            ui: {
-              test: /[\\/]node_modules[\\/](@nextui-org|@radix-ui|framer-motion)[\\/]/,
-              name: 'ui',
-              chunks: 'all',
-              priority: 12,
-              maxSize: 150000,
-            },
+            // Utils and small modules
             utils: {
-              test: /[\\/]node_modules[\\/](lodash|date-fns|dayjs|clsx)[\\/]/,
               name: 'utils',
               chunks: 'all',
-              priority: 10,
-              maxSize: 100000,
+              test: /[\\/]node_modules[\\/](lodash|date-fns|dayjs|clsx)[\\/]/,
+              minSize: 5000,
+              priority: 30,
+              reuseExistingChunk: true,
+            },
+            // Shared modules between pages
+            commons: {
+              name: 'commons',
+              minChunks: 3,
+              chunks: 'all',
+              priority: 20,
+              reuseExistingChunk: true,
+              enforce: true,
+            },
+            // Default vendor chunk
+            vendor: {
+              name: (module) => {
+                const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)?.[1] || 'vendor';
+                return `vendor.${packageName.replace('@', '')}`;
+              },
+              test: /[\\/]node_modules[\\/]/,
+              chunks: 'all',
+              priority: 15,
+              reuseExistingChunk: true,
             },
           },
         },
-        // Minimize memory usage
-        moduleIds: 'deterministic',
-        mangleExports: 'deterministic',
-        // Reduce memory pressure
+        // Enhanced Terser configuration
         minimize: true,
+        minimizer: [
+          new TerserPlugin({
+            terserOptions: {
+              compress: {
+                drop_console: true,
+                drop_debugger: true,
+                pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
+                passes: 2,
+              },
+              mangle: true,
+              format: {
+                comments: false,
+              },
+            },
+            extractComments: false,
+          }),
+        ],
+        // Reduce memory pressure
         usedExports: true,
         sideEffects: false,
       };
@@ -144,6 +214,7 @@ const baseConfig = {
   },
   async headers() {
     return [
+
       {
         // matching all API routes
         source: '/api/:path*',
