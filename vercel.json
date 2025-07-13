@@ -1,7 +1,10 @@
 {
   "github": {
-    "enabled": false,
-    "silent": true
+    "enabled": true,
+    "silent": false,
+    "autoDeployment": {
+      "branches": ["staging"]
+    }
   },
   "build": {
     "env": {
