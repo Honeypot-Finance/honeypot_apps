@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import {
   Button,
@@ -9,26 +9,80 @@ import {
 } from '@nextui-org/react';
 import { Menu } from '@/config/allAppPath';
 import Image from 'next/image';
-import { Key } from 'react';
 import { FaPlusCircle } from 'react-icons/fa';
 import { DOMAIN_MAP } from 'honeypot-sdk';
-import { cn } from '@/lib/tailwindcss';
+import { cn } from '@/lib/utils';
 
 interface NavbarProps {
   menuList: Menu[];
 }
 
-interface SubMenu {
-  path: string;
-  title: string;
-  routePath: string;
-  icon?: {
-    src: string;
-  };
-}
-
 export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
   const router = useRouter();
+
+  // Force dropdown styles via JavaScript as fallback
+  const forceDropdownStyles = (element: HTMLElement | null) => {
+    if (element) {
+      // Find all dropdown content elements
+      setTimeout(() => {
+        const dropdownContent = document.querySelectorAll(
+          '[data-slot="content"]'
+        );
+        dropdownContent.forEach((el) => {
+          const htmlEl = el as HTMLElement;
+          // Check if this dropdown contains our plus button items
+          if (
+            htmlEl.textContent?.includes('Wasabee DEX') ||
+            htmlEl.textContent?.includes('Pot2Pump')
+          ) {
+            htmlEl.style.setProperty(
+              'background-color',
+              '#202020',
+              'important'
+            );
+            htmlEl.style.setProperty(
+              'border',
+              '1px solid #5C5C5C',
+              'important'
+            );
+            htmlEl.style.setProperty('color', 'white', 'important');
+
+            // Force styles on menu items
+            const menuItems = htmlEl.querySelectorAll('[role="menuitem"]');
+            menuItems.forEach((item) => {
+              const itemEl = item as HTMLElement;
+              itemEl.style.setProperty(
+                'background-color',
+                '#202020',
+                'important'
+              );
+              itemEl.style.setProperty('color', 'white', 'important');
+
+              // Add hover event listeners
+              itemEl.addEventListener('mouseenter', () => {
+                itemEl.style.setProperty(
+                  'background-color',
+                  '#3a3a3a',
+                  'important'
+                );
+              });
+              itemEl.addEventListener('mouseleave', () => {
+                itemEl.style.setProperty(
+                  'background-color',
+                  '#202020',
+                  'important'
+                );
+              });
+            });
+          }
+        });
+      }, 100);
+    }
+  };
+
+  useEffect(() => {
+    forceDropdownStyles(null);
+  }, []);
 
   return (
     <div className="flex flex-col items-center font-gliker">
@@ -41,109 +95,61 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
       />
       <div className="bg-[#FFCD4D] rounded-xl flex flex-col py-2 px-1.5 lg:py-4 lg:px-3 border-[1.5px] border-[#010101] shadow-[2px_4px_0px_0px_#FFF]">
         <div className="flex gap-1 lg:gap-2 lg:py-1 flex-wrap max-w-[280px] lg:max-w-none lg:flex-nowrap">
-          {menuList.map((menu) =>
-            Array.isArray(menu.path) ? (
-              <Dropdown
-                key={menu.title}
-                placement="bottom-start"
-                classNames={{
-                  content:
-                    'bg-[#202020] p-0 border border-[#5C5C5C] !important',
-                }}
-                portalContainer={undefined}
-              >
-                <DropdownTrigger>
-                  <Button
-                    className={cn(
-                      'min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020] hover:text-white',
-                      (menu.path as SubMenu[]).some(
-                        (item) => item.routePath === router.pathname
-                      )
-                        ? 'bg-[#202020] text-white'
-                        : ''
-                    )}
-                  >
-                    {menu.title}
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  aria-label={menu.title}
-                  className="bg-[#202020] rounded-lg p-2 !important"
-                  classNames={{
-                    base: 'bg-[#202020] !important',
-                    list: 'bg-[#202020] !important',
-                  }}
-                  itemClasses={{
-                    base: 'bg-[#202020] text-white data-[hover=true]:bg-[#3a3a3a] data-[hover=true]:text-white',
-                  }}
-                  onAction={(key: Key) => {
-                    const subMenu = (menu.path as SubMenu[]).find(
-                      (item: SubMenu) => item.routePath === key
-                    );
-                    if (subMenu) {
-                      router.push(subMenu.path);
-                    }
-                  }}
-                >
-                  {(menu.path as SubMenu[]).map((subMenu: SubMenu) => (
-                    <DropdownItem
-                      key={subMenu.routePath}
-                      className={cn(
-                        'font-bold data-[hover=true]:bg-[#3a3a3a] data-[hover=true]:text-white p-2 !bg-[#202020] !text-white',
-                        router.pathname === subMenu.routePath
-                          ? 'bg-[#3a3a3a] text-white'
-                          : 'text-white'
-                      )}
-                      startContent={
-                        subMenu.icon && (
-                          <Image
-                            src={subMenu.icon.src}
-                            alt={subMenu.title}
-                            width={16}
-                            height={16}
-                            className="w-4 h-4"
-                          />
-                        )
-                      }
-                    >
-                      {subMenu.title}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-            ) : (
-              <Button
-                key={menu.title}
-                className={cn(
-                  'h-8 py-0 font-bold bg-transparent text-sm lg:text-base text-black hover:bg-[#202020]/80 hover:text-white',
-                  menu.title === 'Dex' && 'hidden',
-                  menu.routePath === router.pathname
-                    ? 'bg-[#202020] text-white'
-                    : ''
-                )}
-                onPress={() => {
-                  if (typeof menu.path === 'string') {
-                    router.push(menu.path);
-                  }
-                }}
-              >
-                {menu.title}
-              </Button>
-            )
-          )}
-          <Dropdown>
+          {menuList.map((menu) => (
+            <Button
+              key={menu.title}
+              className={cn(
+                'h-8 py-0 font-bold bg-transparent text-sm lg:text-base text-black hover:bg-[#202020]/80 hover:text-white',
+                menu.title === 'Dex' && 'hidden',
+                (menu.routePath || menu.path) === router.pathname
+                  ? 'bg-[#202020] text-white'
+                  : ''
+              )}
+              onPress={() => {
+                if (typeof menu.path === 'string') {
+                  router.push(menu.path);
+                }
+              }}
+            >
+              {menu.title}
+            </Button>
+          ))}
+          <Dropdown className="plus-dropdown">
             <DropdownTrigger
               className={cn(
                 'min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020]/70 hover:text-white rounded-full'
               )}
             >
-              <Button isIconOnly variant="light" className="p-0 w-8 h-8">
+              <Button
+                isIconOnly
+                variant="light"
+                className="p-0 w-8 h-8"
+                ref={forceDropdownStyles}
+                onPress={() => {
+                  // Force styles when dropdown opens
+                  setTimeout(() => forceDropdownStyles(null), 100);
+                }}
+              >
                 <FaPlusCircle className="w-6 h-6" />
               </Button>
             </DropdownTrigger>
-            <DropdownMenu>
+            <DropdownMenu
+              style={{
+                backgroundColor: '#202020',
+                color: 'white',
+              }}
+              classNames={{
+                base: 'bg-[#202020] text-white',
+                list: 'bg-[#202020]',
+              }}
+            >
               <DropdownItem
                 href={DOMAIN_MAP.WASABEE_DEX}
+                style={{
+                  backgroundColor: '#202020',
+                  color: 'white',
+                }}
+                className="text-white hover:bg-[#3a3a3a] data-[hover=true]:bg-[#3a3a3a] data-[hover=true]:text-white"
                 startContent={
                   <Image
                     src="/images/wasabee_pot.webp"
@@ -162,8 +168,12 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
               </DropdownItem>
               <DropdownItem
                 href={DOMAIN_MAP.POT2PUMP}
+                style={{
+                  backgroundColor: '#202020',
+                  color: 'white',
+                }}
+                className="text-white hover:bg-[#3a3a3a] data-[hover=true]:bg-[#3a3a3a] data-[hover=true]:text-white"
                 onPress={() => window.open(DOMAIN_MAP.POT2PUMP, '_self')}
-                className="font-bold data-[hover=true]:bg-[#202020] data-[hover=true]:text-white p-2"
                 startContent={
                   <Image
                     src="/images/blueAstro.8533943d.svg"

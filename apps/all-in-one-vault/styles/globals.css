@@ -17,92 +17,71 @@
   }
 }
 
-/* NextUI Dropdown Overrides */
-/* Target all possible dropdown and popover structures */
-[data-slot="content"],
-[data-slot="popover"],
-.nextui-popover-content,
-.nextui-dropdown-content {
+/* Plus button dropdown styling */
+.plus-dropdown [data-slot="content"] {
   background-color: #202020 !important;
   border: 1px solid #5C5C5C !important;
+  color: white !important;
 }
 
-/* Target dropdown menu containers */
-[data-slot="content"] > [role="menu"],
-[data-slot="content"] .nextui-dropdown-menu,
-[role="menu"] {
-  background-color: #202020 !important;
-}
-
-/* Target dropdown list containers */
-[data-slot="content"] ul,
-[data-slot="content"] > div,
-[role="menu"] ul,
-.nextui-dropdown-menu ul {
-  background-color: #202020 !important;
-}
-
-/* Target dropdown items */
-[data-slot="content"] li,
-[data-slot="content"] [role="menuitem"],
-[role="menu"] li,
-[role="menu"] [role="menuitem"],
-.nextui-dropdown-item {
+.plus-dropdown [data-slot="content"] li {
   background-color: #202020 !important;
   color: white !important;
 }
 
-/* Target dropdown item hover states */
-[data-slot="content"] li:hover,
-[data-slot="content"] li[data-hover="true"],
-[data-slot="content"] [role="menuitem"]:hover,
-[data-slot="content"] [role="menuitem"][data-hover="true"],
-[role="menu"] li:hover,
-[role="menu"] li[data-hover="true"],
-[role="menu"] [role="menuitem"]:hover,
-[role="menu"] [role="menuitem"][data-hover="true"] {
+.plus-dropdown [data-slot="content"] li:hover {
   background-color: #3a3a3a !important;
   color: white !important;
 }
 
-/* More specific NextUI selectors */
-.nextui-dropdown-trigger + [data-slot="content"],
-.nextui-dropdown-trigger + div[data-slot="content"] {
-  background-color: #202020 !important;
-  border: 1px solid #5C5C5C !important;
-}
-
-/* Popover content overrides */
-[aria-expanded="true"] + [data-slot="content"],
-[data-open="true"] [data-slot="content"] {
-  background-color: #202020 !important;
-  border: 1px solid #5C5C5C !important;
-}
-
-/* Extremely aggressive overrides - target any white background */
-div[style*="background-color: white"],
-div[style*="background-color: #fff"],
-div[style*="background-color: #ffffff"],
-div[style*="background: white"],
-div[style*="background: #fff"],
-div[style*="background: #ffffff"] {
+/* More specific targeting for the plus dropdown */
+.plus-dropdown [data-slot="content"] [role="menuitem"] {
   background-color: #202020 !important;
   color: white !important;
 }
 
-/* Target all possible NextUI component backgrounds */
-*[class*="nextui"] div,
-*[data-nextui] div,
-*[data-slot] div {
-  background: transparent !important;
+.plus-dropdown [data-slot="content"] [role="menuitem"]:hover {
+  background-color: #3a3a3a !important;
+  color: white !important;
 }
 
-/* Force dark background on any dropdown-like element */
-[role="menu"],
-[role="listbox"],
-[aria-labelledby*="dropdown"],
-.dropdown-menu,
-.popover-content {
+/* Very aggressive targeting for plus button dropdown - catch it even in portals */
+[data-slot="content"]:has([data-key="wasabee"]) {
+  background-color: #202020 !important;
+  border: 1px solid #5C5C5C !important;
+  color: white !important;
+}
+
+[data-slot="content"]:has([data-key="wasabee"]) [role="menuitem"] {
+  background-color: #202020 !important;
+  color: white !important;
+}
+
+[data-slot="content"]:has([data-key="wasabee"]) [role="menuitem"]:hover {
+  background-color: #3a3a3a !important;
+  color: white !important;
+}
+
+/* Alternative targeting by content */
+[data-slot="content"] [role="menuitem"]:has([alt="wasabee"]) {
+  background-color: #202020 !important;
+  color: white !important;
+}
+
+/* Global override for dropdowns containing Wasabee DEX */
+[role="menu"]:has([role="menuitem"]:contains("Wasabee DEX")) {
+  background-color: #202020 !important;
+  border: 1px solid #5C5C5C !important;
+}
+
+/* Target by dropdown position near the plus button */
+[data-slot="content"][style*="right"] {
+  background-color: #202020 !important;
+  border: 1px solid #5C5C5C !important;
+  color: white !important;
+}
+
+[data-slot="content"][style*="right"] [role="menuitem"] {
   background-color: #202020 !important;
   color: white !important;
 }
