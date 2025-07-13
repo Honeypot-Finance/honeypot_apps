@@ -47,8 +47,10 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 key={menu.title}
                 placement="bottom-start"
                 classNames={{
-                  content: 'bg-transparent p-0',
+                  content:
+                    'bg-[#202020] p-0 border border-[#5C5C5C] !important',
                 }}
+                portalContainer={undefined}
               >
                 <DropdownTrigger>
                   <Button
@@ -66,7 +68,14 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 </DropdownTrigger>
                 <DropdownMenu
                   aria-label={menu.title}
-                  className="bg-[#FFCD4D] rounded-lg p-2"
+                  className="bg-[#202020] rounded-lg p-2 !important"
+                  classNames={{
+                    base: 'bg-[#202020] !important',
+                    list: 'bg-[#202020] !important',
+                  }}
+                  itemClasses={{
+                    base: 'bg-[#202020] text-white data-[hover=true]:bg-[#3a3a3a] data-[hover=true]:text-white',
+                  }}
                   onAction={(key: Key) => {
                     const subMenu = (menu.path as SubMenu[]).find(
                       (item: SubMenu) => item.routePath === key
@@ -80,10 +89,10 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                     <DropdownItem
                       key={subMenu.routePath}
                       className={cn(
-                        'font-bold data-[hover=true]:bg-[#202020] data-[hover=true]:text-white p-2',
+                        'font-bold data-[hover=true]:bg-[#3a3a3a] data-[hover=true]:text-white p-2 !bg-[#202020] !text-white',
                         router.pathname === subMenu.routePath
-                          ? 'bg-[#202020] text-white'
-                          : 'text-[#202020]'
+                          ? 'bg-[#3a3a3a] text-white'
+                          : 'text-white'
                       )}
                       startContent={
                         subMenu.icon && (

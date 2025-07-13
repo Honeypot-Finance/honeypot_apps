@@ -17,6 +17,96 @@
   }
 }
 
+/* NextUI Dropdown Overrides */
+/* Target all possible dropdown and popover structures */
+[data-slot="content"],
+[data-slot="popover"],
+.nextui-popover-content,
+.nextui-dropdown-content {
+  background-color: #202020 !important;
+  border: 1px solid #5C5C5C !important;
+}
+
+/* Target dropdown menu containers */
+[data-slot="content"] > [role="menu"],
+[data-slot="content"] .nextui-dropdown-menu,
+[role="menu"] {
+  background-color: #202020 !important;
+}
+
+/* Target dropdown list containers */
+[data-slot="content"] ul,
+[data-slot="content"] > div,
+[role="menu"] ul,
+.nextui-dropdown-menu ul {
+  background-color: #202020 !important;
+}
+
+/* Target dropdown items */
+[data-slot="content"] li,
+[data-slot="content"] [role="menuitem"],
+[role="menu"] li,
+[role="menu"] [role="menuitem"],
+.nextui-dropdown-item {
+  background-color: #202020 !important;
+  color: white !important;
+}
+
+/* Target dropdown item hover states */
+[data-slot="content"] li:hover,
+[data-slot="content"] li[data-hover="true"],
+[data-slot="content"] [role="menuitem"]:hover,
+[data-slot="content"] [role="menuitem"][data-hover="true"],
+[role="menu"] li:hover,
+[role="menu"] li[data-hover="true"],
+[role="menu"] [role="menuitem"]:hover,
+[role="menu"] [role="menuitem"][data-hover="true"] {
+  background-color: #3a3a3a !important;
+  color: white !important;
+}
+
+/* More specific NextUI selectors */
+.nextui-dropdown-trigger + [data-slot="content"],
+.nextui-dropdown-trigger + div[data-slot="content"] {
+  background-color: #202020 !important;
+  border: 1px solid #5C5C5C !important;
+}
+
+/* Popover content overrides */
+[aria-expanded="true"] + [data-slot="content"],
+[data-open="true"] [data-slot="content"] {
+  background-color: #202020 !important;
+  border: 1px solid #5C5C5C !important;
+}
+
+/* Extremely aggressive overrides - target any white background */
+div[style*="background-color: white"],
+div[style*="background-color: #fff"],
+div[style*="background-color: #ffffff"],
+div[style*="background: white"],
+div[style*="background: #fff"],
+div[style*="background: #ffffff"] {
+  background-color: #202020 !important;
+  color: white !important;
+}
+
+/* Target all possible NextUI component backgrounds */
+*[class*="nextui"] div,
+*[data-nextui] div,
+*[data-slot] div {
+  background: transparent !important;
+}
+
+/* Force dark background on any dropdown-like element */
+[role="menu"],
+[role="listbox"],
+[aria-labelledby*="dropdown"],
+.dropdown-menu,
+.popover-content {
+  background-color: #202020 !important;
+  color: white !important;
+}
+
 @font-face {
   font-family: "MEMEH";
   font-style: normal;
