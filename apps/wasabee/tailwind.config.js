@@ -70,6 +70,8 @@ const config = {
       fontFamily: {
         display: 'Oswald, ui-serif',
         gliker: ['Gliker', 'sans-serif'],
+        'bebas-neue': ['var(--bebas-neue)', 'sans-serif'],
+        inter: ['var(--inter)', 'sans-serif'],
       },
       backgroundColor: {
         default: 'var(--bg,#140E06)',
