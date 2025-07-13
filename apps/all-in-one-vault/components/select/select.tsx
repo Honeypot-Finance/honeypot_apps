@@ -12,6 +12,8 @@ import { erc20Abi } from 'viem';
 import { Token, TokenLogo } from '@honeypot/shared';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { observer } from 'mobx-react-lite';
+import { cn } from '@nextui-org/react';
+import Image from 'next/image';
 
 interface InputSectionProps {
   onTokenChange?: (value: string) => void;
@@ -58,6 +60,33 @@ export function InputSectionComponent({
       address,
       chainId: wallet.currentChainId.toString(),
     });
+  };
+
+  // Custom TokenIcon component without Link behavior
+  const TokenIcon = ({ token, size = 24 }: { token: Token; size?: number }) => {
+    useEffect(() => {
+      token.init(true, {
+        loadLogoURI: true,
+        loadName: true,
+        loadSymbol: true,
+      });
+    }, [token]);
+
+    return (
+      <Image
+        className={cn(
+          'border border-[color:var(--card-stroke,#F7931A)] rounded-[50%] aspect-square bg-white'
+        )}
+        src={
+          !!token.logoURI
+            ? token.logoURI
+            : '/images/icons/tokens/unknown-token-icon.png'
+        }
+        alt={`${token.symbol} token`}
+        width={size}
+        height={size}
+      />
+    );
   };
 
   const isDisabled = !userAddress;
@@ -306,12 +335,7 @@ export function InputSectionComponent({
               return (
                 <div className="flex items-center gap-2">
                   {tokenInstance && (
-                    <TokenLogo
-                      token={tokenInstance}
-                      size={24}
-                      disableLink={true}
-                      disableTooltip={true}
-                    />
+                    <TokenIcon token={tokenInstance} size={24} />
                   )}
                   <span>
                     {tokenInfo
@@ -347,11 +371,9 @@ export function InputSectionComponent({
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <TokenLogo
+                      <TokenIcon
                         token={getTokenInstance(token.id)!}
                         size={24}
-                        disableLink={true}
-                        disableTooltip={true}
                       />
                       <span className="font-medium text-gray-900 group-hover/item:text-white group-focus/item:text-white transition-colors duration-150">
                         {tokenInfo
