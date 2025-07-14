@@ -16,7 +16,7 @@ export default function Leaderboard() {
             <h1 className="text-3xl font-bold text-white mb-2">
               All-in-One Leaderboard
             </h1>
-            <p className="text-gray-400">
+            <p className="text-white">
               Combined leaderboard from Pot2Pump, Wasabee, and Dreampad
             </p>
           </div>
