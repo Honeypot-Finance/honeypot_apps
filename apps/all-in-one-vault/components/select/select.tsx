@@ -55,37 +55,54 @@ export function InputSectionComponent({
 
   // Helper function to get Token instance from address
   const getTokenInstance = (address: string) => {
-    if (!address) return null;
-    return Token.getToken({
+    console.log('getTokenInstance called with address:', address);
+    console.log('wallet.currentChainId:', wallet.currentChainId);
+
+    if (!address) {
+      console.log('getTokenInstance - no address provided');
+      return null;
+    }
+
+    const tokenInstance = Token.getToken({
       address,
       chainId: wallet.currentChainId.toString(),
     });
+
+    console.log('getTokenInstance - created token instance:', tokenInstance);
+    return tokenInstance;
   };
 
-  // Custom TokenIcon component without Link behavior
+  // Wrapper for TokenLogo to disable link behavior
   const TokenIcon = ({ token, size = 24 }: { token: Token; size?: number }) => {
-    useEffect(() => {
-      token.init(true, {
-        loadLogoURI: true,
-        loadName: true,
-        loadSymbol: true,
-      });
-    }, [token]);
+    console.log('TokenIcon - received token:', token?.address, token?.symbol);
+
+    if (!token) {
+      console.log('TokenIcon - no token provided');
+      return (
+        <div
+          className="border border-[color:var(--card-stroke,#F7931A)] rounded-[50%] aspect-square bg-gray-200 flex items-center justify-center"
+          style={{ width: size, height: size }}
+        >
+          <span className="text-xs text-gray-500">?</span>
+        </div>
+      );
+    }
 
     return (
-      <Image
-        className={cn(
-          'border border-[color:var(--card-stroke,#F7931A)] rounded-[50%] aspect-square bg-white'
-        )}
-        src={
-          !!token.logoURI
-            ? token.logoURI
-            : '/images/icons/tokens/unknown-token-icon.png'
-        }
-        alt={`${token.symbol} token`}
-        width={size}
-        height={size}
-      />
+      <div
+        className="pointer-events-none"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
+        <TokenLogo
+          token={token}
+          size={size}
+          disableLink={true}
+          disableTooltip={true}
+        />
+      </div>
     );
   };
 
@@ -103,10 +120,25 @@ export function InputSectionComponent({
   });
   const tokenSupportList = tokenSupportData?.supportReceipts?.items || [];
 
+  console.log('=== DEBUGGING TOKEN DATA ===');
+  console.log('tokenSupportClient:', tokenSupportClient);
+  console.log('tokenSupportLoading:', tokenSupportLoading);
+  console.log('tokenSupportError:', tokenSupportError);
+  console.log('tokenSupportData:', tokenSupportData);
+  console.log('tokenSupportList:', tokenSupportList);
+  console.log('tokenSupportList length:', tokenSupportList.length);
+  console.log('isDisabled:', isDisabled);
+  console.log('userAddress:', userAddress);
+
   // Initialize token logos
   useEffect(() => {
+    console.log(
+      'TokenLogo init useEffect triggered, tokenSupportList.length:',
+      tokenSupportList.length
+    );
     if (tokenSupportList.length > 0) {
       tokenSupportList.forEach((token: { id: string; weight: string }) => {
+        console.log('Initializing token:', token.id);
         const tokenInstance = getTokenInstance(token.id);
         if (tokenInstance) {
           tokenInstance.init(false, {
@@ -124,11 +156,19 @@ export function InputSectionComponent({
   const tokenAddresses = tokenSupportList.map(
     (token: { id: string }) => token.id
   );
+
+  console.log('=== DEBUGGING MULTICALL DATA ===');
+  console.log('tokenAddresses:', tokenAddresses);
+
   const {
     data: tokenInfoData,
     isLoading: tokenInfoLoading,
     error: tokenInfoError,
   } = useGetSupportTokenInfo({ tokens: isDisabled ? [] : tokenAddresses });
+
+  console.log('tokenInfoData:', tokenInfoData);
+  console.log('tokenInfoLoading:', tokenInfoLoading);
+  console.log('tokenInfoError:', tokenInfoError);
   const { address } = useAccount();
 
   const { data: newTokenBalance } = useReadContract({
@@ -323,14 +363,26 @@ export function InputSectionComponent({
             isDisabled={isDisabled}
             className="w-full border-1 rounded-[12px] solid border-black"
             renderValue={(items) => {
+              console.log('=== RENDER VALUE DEBUG ===');
+              console.log('renderValue items:', items);
+              console.log('items.length:', items.length);
+              console.log('isDisabled:', isDisabled);
+
               if (items.length === 0 || isDisabled) {
+                console.log('Returning select token placeholder');
                 return <span className="text-gray-500">Select a token</span>;
               }
+
               const selectedTokenAddress = items[0]?.key;
+              console.log('selectedTokenAddress:', selectedTokenAddress);
+
               const tokenInstance = getTokenInstance(
                 selectedTokenAddress as string
               );
+              console.log('tokenInstance from renderValue:', tokenInstance);
+
               const tokenInfo = tokenInfoData?.[selectedTokenAddress as string];
+              console.log('tokenInfo from renderValue:', tokenInfo);
 
               return (
                 <div className="flex items-center gap-2">
@@ -358,7 +410,15 @@ export function InputSectionComponent({
           >
             {!isDisabled &&
               tokenSupportList.map((token: { id: string; weight: string }) => {
+                console.log('=== DROPDOWN ITEM DEBUG ===');
+                console.log('Rendering dropdown item for token:', token.id);
+
                 const tokenInfo = tokenInfoData?.[token.id];
+                console.log('tokenInfo for dropdown item:', tokenInfo);
+
+                const tokenInstance = getTokenInstance(token.id);
+                console.log('tokenInstance for dropdown item:', tokenInstance);
+
                 return (
                   <SelectItem
                     key={token.id}
@@ -371,10 +431,13 @@ export function InputSectionComponent({
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <TokenIcon
-                        token={getTokenInstance(token.id)!}
-                        size={24}
-                      />
+                      {tokenInstance ? (
+                        <TokenIcon token={tokenInstance} size={24} />
+                      ) : (
+                        <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs">!</span>
+                        </div>
+                      )}
                       <span className="font-medium text-gray-900 group-hover/item:text-white group-focus/item:text-white transition-colors duration-150">
                         {tokenInfo
                           ? `${tokenInfo.symbol} (${tokenInfo.name})`
