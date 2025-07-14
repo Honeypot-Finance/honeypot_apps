@@ -40,18 +40,19 @@ const nextConfig = {
     '@nextui-org/react',
     '@nextui-org/system',
     '@nextui-org/theme',
+    '@apollo/client',
+    '@tanstack/react-query',
+    '@tanstack/query-sync-storage-persister',
+    '@wagmi/core',
+    '@wagmi/connectors',
+    '@ethersproject/providers',
+    '@ethersproject/contracts',
   ],
   // Add webpack optimizations
   webpack: (config, { dev, isServer }) => {
     // Fix module resolution issues
     config.resolve = {
       ...config.resolve,
-      alias: {
-        ...config.resolve.alias,
-        // Fix viem import issues
-        'viem/index.js': require.resolve('viem'),
-        viem: require.resolve('viem'),
-      },
       fallback: {
         ...config.resolve.fallback,
         fs: false,
@@ -113,6 +114,24 @@ const nextConfig = {
           include: /node_modules/,
           type: 'javascript/auto',
         },
+        {
+          test: /\.(js|jsx|ts|tsx)$/,
+          include: [
+            /node_modules\/viem/,
+            /node_modules\/wagmi/,
+            /node_modules\/@wagmi/,
+            /node_modules\/@rainbow-me/,
+          ],
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                ['@babel/preset-env', { targets: { node: 'current' } }],
+                '@babel/preset-typescript',
+              ],
+            },
+          },
+        },
       ],
     };
 
@@ -120,14 +139,10 @@ const nextConfig = {
   },
   // Add experimental features
   experimental: {
-    // Handle external packages for server components
-    serverComponentsExternalPackages: [
-      '@particle-network/universal-account-sdk',
-      'viem',
-      'wagmi',
-    ],
     // Improve module resolution
     esmExternals: 'loose',
+    // Better support for ESM packages
+    externalDir: true,
   },
   // Compiler optimizations
   compiler: {
