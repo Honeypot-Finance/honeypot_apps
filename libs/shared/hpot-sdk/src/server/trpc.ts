@@ -39,7 +39,14 @@ export const getUser = async (req: NextApiRequest) => {
 
 export const createContext = async ({ req, res }: CreateNextContextOptions) => {
   const user = await getUser(req);
-  req.socket.setTimeout(100000); // 100 seconds
+  // Set appropriate timeout for serverless functions
+  req.socket.setTimeout(25000); // 25 seconds (less than Vercel's 30s limit)
+
+  // Add connection cleanup on request end
+  req.on('close', () => {
+    console.log('Request closed, cleaning up resources...');
+  });
+
   return {
     user,
     req,

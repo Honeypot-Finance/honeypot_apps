@@ -10,7 +10,7 @@
       "NEXT_TELEMETRY_DISABLED": "1",
       "SENTRY_UPLOAD_SOURCEMAPS": "false",
       "SENTRY_DISABLE_TELEMETRY": "true",
-      "NODE_OPTIONS": "--max-old-space-size=4096 --gc-interval=100 --max-old-space-size=4096"
+      "NODE_OPTIONS": "--max-old-space-size=4096 --gc-interval=100"
     }
   },
   "functions": {
@@ -18,7 +18,10 @@
       "maxDuration": 30,
       "memory": 1024,
       "ulimits": {
-        "nofile": 65535
+        "nofile": 32768
+      },
+      "env": {
+        "NODE_OPTIONS": "--max-old-space-size=1024 --enable-source-maps"
       }
     }
   },
