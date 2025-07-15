@@ -178,7 +178,7 @@ const SummaryCard = memo(function SummaryCard({
                 // Standard formula: (receiptWeight * poolReward) / totalWeight
                 // Then convert from wei to decimal representation
                 const estimatedWei = (receiptWeight * poolReward) / totalWeight;
-                const estimated = estimatedWei / Math.pow(10, decimals);
+                const estimated = estimatedWei / Math.pow(10, decimals) * 1e4;
 
                 console.log('Calculation:', {
                   receiptWeight,
