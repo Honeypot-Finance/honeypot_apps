@@ -15,6 +15,11 @@ import { observer } from 'mobx-react-lite';
 import { cn } from '@nextui-org/react';
 import Image from 'next/image';
 
+// Hardcoded block list for tokens to hide from selection
+const TOKEN_BLOCK_LIST = [
+  '0x2bde2638045e73dce5c7b0e415d07d2884e39857', // Add your specified address
+].map((address) => address.toLowerCase()); // Convert to lowercase for case-insensitive comparison
+
 interface InputSectionProps {
   onTokenChange?: (value: string) => void;
   onAmountChange?: (value: string) => void;
@@ -118,9 +123,15 @@ export function InputSectionComponent({
     notifyOnNetworkStatusChange: true,
     skip: isDisabled,
   });
-  const tokenSupportList = tokenSupportData?.supportReceipts?.items || [];
+  const tokenSupportList = (
+    tokenSupportData?.supportReceipts?.items || []
+  ).filter(
+    (token: { id: string }) =>
+      !TOKEN_BLOCK_LIST.includes(token.id.toLowerCase())
+  );
 
   console.log('=== DEBUGGING TOKEN DATA ===');
+  console.log('TOKEN_BLOCK_LIST:', TOKEN_BLOCK_LIST);
   console.log('tokenSupportClient:', tokenSupportClient);
   console.log('tokenSupportLoading:', tokenSupportLoading);
   console.log('tokenSupportError:', tokenSupportError);

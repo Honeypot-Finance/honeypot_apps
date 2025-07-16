@@ -47,6 +47,9 @@ const nextConfig = {
     '@wagmi/connectors',
     '@ethersproject/providers',
     '@ethersproject/contracts',
+    '@safe-global/safe-apps-sdk',
+    '@safe-global/safe-apps-provider',
+    'zustand',
   ],
   // Add webpack optimizations
   webpack: (config, { dev, isServer }) => {
@@ -58,6 +61,11 @@ const nextConfig = {
         fs: false,
         net: false,
         tls: false,
+      },
+
+      extensionAlias: {
+        '.js': ['.ts', '.tsx', '.js', '.jsx'],
+        '.mjs': ['.mts', '.mjs'],
       },
     };
 
@@ -104,6 +112,26 @@ const nextConfig = {
       config.optimization = optimization;
     }
 
+    // Add parser options to handle import.meta in CJS files
+    config.module.parser = {
+      ...config.module.parser,
+      javascript: {
+        ...config.module.parser?.javascript,
+        importMeta: false,
+      },
+    };
+
+    // Add DefinePlugin to define import.meta for problematic modules
+    const webpack = require('webpack');
+    config.plugins = [
+      ...config.plugins,
+      new webpack.DefinePlugin({
+        'import.meta.hot': 'undefined',
+        'import.meta.webpackHot': 'undefined',
+        'import.meta.env': '{}',
+      }),
+    ];
+
     // Add module resolution for problematic packages
     config.module = {
       ...config.module,
@@ -115,12 +143,38 @@ const nextConfig = {
           type: 'javascript/auto',
         },
         {
+          test: /node_modules\/viem\/_cjs\/.*\.js$/,
+          type: 'javascript/auto',
+          parser: {
+            importMeta: false,
+          },
+        },
+        {
+          test: /node_modules\/@safe-global\/safe-apps-sdk\/dist\/cjs\/.*\.js$/,
+          type: 'javascript/auto',
+          parser: {
+            importMeta: false,
+          },
+        },
+        {
+          test: /node_modules\/zustand\/.*\.(js|mjs)$/,
+          type: 'javascript/auto',
+          parser: {
+            importMeta: false,
+          },
+        },
+
+        {
           test: /\.(js|jsx|ts|tsx)$/,
           include: [
             /node_modules\/viem/,
             /node_modules\/wagmi/,
             /node_modules\/@wagmi/,
             /node_modules\/@rainbow-me/,
+          ],
+          exclude: [
+            /node_modules\/viem\/_cjs/,
+            /node_modules\/@safe-global\/safe-apps-sdk.*\/dist\/cjs/,
           ],
           use: {
             loader: 'babel-loader',
@@ -140,7 +194,7 @@ const nextConfig = {
   // Add experimental features
   experimental: {
     // Improve module resolution
-    esmExternals: 'loose',
+    esmExternals: false,
     // Better support for ESM packages
     externalDir: true,
   },

@@ -1,8 +1,9 @@
 import React, { useMemo, useCallback, useEffect } from 'react';
 // ...existing code...
 import { useQueryClient } from '@tanstack/react-query';
-import { Card } from '@nextui-org/react';
+import { Card, Tooltip } from '@nextui-org/react';
 import { useAccount, useReadContract } from 'wagmi';
+import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { RECEIPTS_LIST } from '@/lib/algebra/graphql/queries/receipts-list';
 import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
 import {
@@ -205,7 +206,7 @@ export default function StatCard() {
       label: 'LBGT Lifetime',
       value:
         decimals !== undefined
-          ? formatNumber(lbgtLifetime / Math.pow(10, decimals))
+          ? formatNumber(((lbgtLifetime / Math.pow(10, decimals)) * 4) / 9)
           : '0.0',
     },
   ];
@@ -219,8 +220,34 @@ export default function StatCard() {
             className="border-2 border-dashed border-black bg-white/90 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.8)]"
           >
             <div className="p-4 text-center">
-              <div className="text-sm text-gray-600 mb-1 font-theader">
+              <div className="text-sm text-gray-600 mb-1 font-theader flex items-center justify-center gap-1">
                 {stat.label}
+                {stat.label === 'LBGT Lifetime' && (
+                  <Tooltip
+                    content={
+                      <div className="text-center max-w-xs">
+                        <div className="text-xs">
+                          Berapaw take a 50% fee from all LBGT mint from this
+                          vault while returning 40% bribeback to this vault to
+                          strengthen the bribe power. The actual fee is 10% of
+                          all BGT or 20% of the delivered BGT. The delivered BGT
+                          is half the emission to this vault.
+                        </div>
+                      </div>
+                    }
+                    placement="top"
+                    closeDelay={100}
+                    classNames={{
+                      base: 'z-50',
+                      content:
+                        'bg-black text-white px-3 py-2 rounded text-xs max-w-xs',
+                    }}
+                  >
+                    <div className="inline-flex">
+                      <AiOutlineQuestionCircle className="text-gray-500 hover:text-gray-700 cursor-help text-base" />
+                    </div>
+                  </Tooltip>
+                )}
               </div>
               <div className="text-2xl font-bold text-gray-800">
                 {stat.value}
