@@ -189,7 +189,7 @@ export default function StatCard() {
 
   const statsData = [
     {
-      label: 'Total Weight',
+      label: 'Current Total Weight',
       value:
         totalWeightItems !== undefined
           ? formatNumber(totalWeightItems / 1e4)

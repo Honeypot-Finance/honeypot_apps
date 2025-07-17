@@ -6,7 +6,7 @@ import { observer } from 'mobx-react-lite';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { wallet } from '../../lib/wallet/wallet';
+import { wallet } from '@honeypot/shared';
 
 interface TokenLogoProps {
   size?: number;
@@ -36,7 +36,7 @@ export const TokenLogo = observer(
     return (
       <Tooltip
         content={
-          <div className="flex flex-col items-center gap-[8px]">
+          <div className="flex flex-col items-center gap-[8px] text-black">
             {token.name} ({token.symbol})
           </div>
         }
@@ -47,7 +47,7 @@ export const TokenLogo = observer(
           className={cn('shrink-0', disableLink && 'cursor-default')}
           href={
             disableLink
-              ? '#'
+              ? ''
               : `${wallet.currentChain.chain.blockExplorers?.default.url}/address/${token.address}`.replace(
                   '//',
                   '/'

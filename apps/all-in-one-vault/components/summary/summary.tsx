@@ -15,6 +15,9 @@ import { Card } from '@nextui-org/react';
 import { memo, useMemo } from 'react';
 import { erc20Abi } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
+import { Token } from '@honeypot/shared';
+import { wallet } from '@honeypot/shared/lib/wallet';
+import { TokenLogo } from '@honeypot/shared';
 
 interface SummaryData {
   weightPerToken: string | number;
@@ -43,6 +46,16 @@ const SummaryCard = memo(function SummaryCard({
   className = '',
   isLoading = false,
 }: SummaryCardProps) {
+  // Helper function to get LBGT token instance
+  const getLBGTTokenInstance = () => {
+    return Token.getToken({
+      address: ESTIMATED_REWARDS,
+      chainId: wallet.currentChainId.toString(),
+    });
+  };
+
+  // Get LBGT token instance
+  const lbgtToken = getLBGTTokenInstance();
   const formatValue = useMemo(
     () => (value: string | number | bigint) => {
       if (isLoading) return '...';
@@ -178,7 +191,7 @@ const SummaryCard = memo(function SummaryCard({
                 // Standard formula: (receiptWeight * poolReward) / totalWeight
                 // Then convert from wei to decimal representation
                 const estimatedWei = (receiptWeight * poolReward) / totalWeight;
-                const estimated = estimatedWei / Math.pow(10, decimals) * 1e4;
+                const estimated = (estimatedWei / Math.pow(10, decimals)) * 1e4;
 
                 console.log('Calculation:', {
                   receiptWeight,
@@ -215,10 +228,24 @@ const SummaryCard = memo(function SummaryCard({
                 }`}
                 aria-label={`${item.label}: ${item.value ?? '-'}`}
               >
-                {!isLoading &&
-                  (item.key === 'balance' || item.key === 'receiptWeight'
-                    ? item.value
-                    : formatValue(item.value ?? '-'))}
+                {!isLoading && (
+                  <div className="flex items-center justify-center gap-2">
+                    {item.key === 'estimatedRewards' && lbgtToken && (
+                      <div>
+                        <TokenLogo
+                          token={lbgtToken}
+                          size={20}
+                          disableTooltip={false}
+                        />
+                      </div>
+                    )}
+                    <span>
+                      {item.key === 'balance' || item.key === 'receiptWeight'
+                        ? item.value
+                        : formatValue(item.value ?? '-')}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           ))}
