@@ -882,9 +882,11 @@ const KlineChartComponent = observer(
                   </svg>
                 </button>
               </div>
-              <img
+              <Image
                 src={screenshotUrl}
                 alt="Chart Screenshot"
+                width={800}
+                height={600}
                 className="max-w-full"
               />
               <div className="mt-4 flex justify-end">
