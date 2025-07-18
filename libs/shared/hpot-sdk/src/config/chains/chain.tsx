@@ -221,29 +221,39 @@ export const berachainNetwork = new Network({
     //   amount: BigInt("1500000000000000000000000"),
     // },
     {
-      symbol: 'WBERA',
+      symbol: 'BERA',
       address: '0x6969696969696969696969696969696969696969'.toLowerCase(),
-      amount: BigInt('500000000000000000000'),
-    },
-    {
-      symbol: 'Honey',
-      address: '0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce'.toLowerCase(),
-      amount: BigInt('20000000000000000000000'),
-    },
-    {
-      symbol: 'NECT',
-      address: '0x1cE0a25D13CE4d52071aE7e02Cf1F6606F4C79d3'.toLowerCase(),
-      amount: BigInt('20000000000000000000000'),
+      amount: BigInt('500000000000000000000'), // 500 BERA
     },
     {
       symbol: 'WGBERA',
       address: '0xd77552d3849ab4d8c3b189a9582d0ba4c1f4f912'.toLowerCase(),
-      amount: BigInt('2000000000000000000000'),
+      amount: BigInt('2000000000000000000000'), // 2000 WGBERA
+    },
+    {
+      symbol: 'Honey',
+      address: '0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce'.toLowerCase(),
+      amount: BigInt('5000000000000000000000'), // 5000 HONEY
+    },
+    {
+      symbol: 'NECT',
+      address: '0x1cE0a25D13CE4d52071aE7e02Cf1F6606F4C79d3'.toLowerCase(),
+      amount: BigInt('5000000000000000000000'), // 5000 NECT
     },
     {
       symbol: 'HENLO',
       address: '0xb2F776e9c1C926C4b2e54182Fac058dA9Af0B6A5'.toLowerCase(),
-      amount: BigInt('40000000000000000000000000'),
+      amount: BigInt('40000000000000000000000000'), // 40M HENLO
+    },
+    {
+      symbol: 'LBGT',
+      address: '0xa2b0519F1D7F61eaB95D486301ED924b58E97022'.toLowerCase(),
+      amount: BigInt('2000000000000000000000'), // 2000 LBGT
+    },
+    {
+      symbol: 'BEE',
+      address: '0x93a0cb3ee34aa983db262f904021911ecd199228'.toLowerCase(),
+      amount: BigInt('2000000000000000000000000'), // 2M BEE
     },
   ],
   nativeFaucet: {
@@ -410,7 +420,13 @@ export const berachainNetwork = new Network({
       name: 'Liquid BGT',
       symbol: 'LBGT',
       decimals: 18,
-      logoURI: 'https://www.berapaw.com/static/images/tokens/lbgt.svg',
+      logoURI: '/images/icons/tokens/lbgt-token-icon.svg',
+    },
+    '0xa2b0519f1d7f61eab95d486301ed924b58e97022': {
+      name: 'Liquid BGT',
+      symbol: 'LBGT',
+      decimals: 18,
+      logoURI: '/images/icons/tokens/lbgt-token-icon.svg',
     },
     //bitget campaign
     '0xa40e6433782ffb18c8eeb16d201e331e37abfb74': {
