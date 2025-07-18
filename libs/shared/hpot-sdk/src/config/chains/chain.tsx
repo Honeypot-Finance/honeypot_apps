@@ -344,7 +344,6 @@ export const berachainNetwork = new Network({
       symbol: 'NECT',
       decimals: 18,
       logoURI: '/images/icons/tokens/nect-token.jpg',
-      isPopular: true,
       isStableCoin: true,
     },
     '0x467aa1bfa3dcc714f7c16b3d779200431f6a833b': {
@@ -434,21 +433,18 @@ export const berachainNetwork = new Network({
       symbol: 'XI',
       decimals: 18,
       logoURI: '/images/icons/tokens/xi.webp',
-      isPopular: true,
     },
     '0x10acd894a40d8584ad74628812525ef291e16c47': {
       name: 'Q5',
       symbol: 'Q5',
       decimals: 18,
       logoURI: '/images/icons/tokens/q5.webp',
-      isPopular: true,
     },
     '0x539aced84ebb5cbd609cfaf4047fb78b29553da9': {
       name: 'the chain has a bear on it',
       symbol: 'BERACHAIN',
       decimals: 18,
       logoURI: '/images/icons/tokens/berachain.webp',
-      isPopular: true,
     },
     '0xab7e0f3d69de8061aa46d7c9964dbc11878468eb': {
       name: 'Berally Token',
@@ -486,6 +482,7 @@ export const berachainNetwork = new Network({
       symbol: 'BEE',
       decimals: 18,
       logoURI: '/images/icons/tokens/bee-token-icon.jpg',
+      isPopular: true,
     },
   },
   validatedFtoAddresses: [],
