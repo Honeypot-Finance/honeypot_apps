@@ -19,42 +19,48 @@ const SwapPage = observer(() => {
   const searchParams = useSearchParams();
   const urlInputCurrency = searchParams?.get('inputCurrency');
   const urlOutputCurrency = searchParams?.get('outputCurrency');
-  
-  const [inputCurrency, setInputCurrency] = useState<string | undefined>(urlInputCurrency ?? undefined);
-  const [outputCurrency, setOutputCurrency] = useState<string | undefined>(urlOutputCurrency ?? undefined);
+
+  const [inputCurrency, setInputCurrency] = useState<string | undefined>(
+    undefined
+  );
+  const [outputCurrency, setOutputCurrency] = useState<string | undefined>(
+    undefined
+  );
 
   const isInit = wallet.isInit;
 
-  // Check localStorage for token addresses if not provided in URL
+  const defaultOutputToken = wallet.currentChain?.validatedTokens?.find(
+    (token) => token.isStableCoin
+  )?.address;
+
+  // Handle URL parameters and localStorage fallback
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // If no input currency from URL, check localStorage
-   const storedInputToken = localStorage.getItem('swapInputToken');
-    const storedOutputToken = localStorage.getItem('swapOutputToken');
-      if (!urlInputCurrency) {
-       
-        if (storedInputToken) {
-          setInputCurrency(storedInputToken);
-        }
+      const storedInputToken = localStorage.getItem('swapInputToken');
+      const storedOutputToken = localStorage.getItem('swapOutputToken');
+
+      // Set input currency: URL param takes priority, then localStorage, then undefined
+      if (urlInputCurrency) {
+        setInputCurrency(urlInputCurrency);
+      } else if (storedInputToken) {
+        setInputCurrency(storedInputToken);
+      } else {
+        setInputCurrency(undefined);
       }
 
-      // If no output currency from URL, check localStorage
-      if (!urlOutputCurrency) {
-       
-        if (storedOutputToken) {
-          setOutputCurrency(storedOutputToken);
-        }
-        else{
-          if(!storedInputToken){
-           
-            setOutputCurrency(defaultOutputToken);
-          }
-        }
-
-
+      // Set output currency: URL param takes priority, then localStorage, then default
+      if (urlOutputCurrency) {
+        setOutputCurrency(urlOutputCurrency);
+      } else if (storedOutputToken) {
+        setOutputCurrency(storedOutputToken);
+      } else if (!storedInputToken) {
+        // Only set default if no input token is stored
+        setOutputCurrency(defaultOutputToken);
+      } else {
+        setOutputCurrency(undefined);
       }
     }
-  }, [urlInputCurrency, urlOutputCurrency]);
+  }, [urlInputCurrency, urlOutputCurrency, defaultOutputToken]);
   const [klineRefreshKey, setKlineRefreshKey] = useState(0);
 
   if (!wallet.currentChain?.supportDEX) {
@@ -66,10 +72,6 @@ const SwapPage = observer(() => {
       </div>
     );
   }
-
-  const defaultOutputToken = wallet.currentChain?.validatedTokens?.find(
-    (token) => token.isStableCoin
-  )?.address;
 
   return isInit ? (
     <div className="w-full flex items-center justify-center pb-6 sm:pb-12 pt-8">
@@ -123,7 +125,7 @@ const SwapPage = observer(() => {
                 isInputNative={!inputCurrency}
                 isOutputNative={!outputCurrency}
                 isUpdatingPriceChart={true}
-                onSwapSuccess={() => setKlineRefreshKey(k => k + 1)}
+                onSwapSuccess={() => setKlineRefreshKey((k) => k + 1)}
               />
             </Tab>
             <Tab key="universal" title="Universal Account">
