@@ -23,13 +23,14 @@ import { unwrappedToken } from '@cryptoalgebra/sdk';
 import BigNumber from 'bignumber.js';
 import { PairContract } from '../../contract/dex/liquidity/pair-contract';
 import { Token } from '../../contract/token/token';
-import { useSubgraphClient } from './../../../hooks/useSubgraphClients';
+import { useSubgraphClient, getSubgraphClientByChainId } from './../../../hooks/useSubgraphClients';
 import { ApolloClient } from '@apollo/client';
 import { createClientHook } from '../clientUtils';
 import { useObserver } from 'mobx-react-lite';
 import { calculatePercentageChange } from '../../utils/calculatePercentageChange';
 import { algebraPositionManagerABI } from '../../abis/algebra-contracts/ABIs';
 import { algebraPositionManagerAddress } from '../../../wagmi-generated';
+
 
 let poolsByTokenPairRequestIds: string[] = [];
 let poolsByTokenPairRequestTimeout: NodeJS.Timeout | null = null;
@@ -326,7 +327,8 @@ export const poolExists = async (poolAddress: string) => {
 };
 
 const getPoolsByTokenPairBatch = async (tokens: string[]): Promise<Pool[]> => {
-  const infoClient = useSubgraphClient('algebra_info');
+ 
+  const infoClient = getSubgraphClientByChainId(wallet.currentChainId.toString(), 'algebra_info');
   const { data } = await infoClient.query<
     PoolsByTokenPairBatchQuery,
     PoolsByTokenPairBatchQueryVariables
@@ -335,5 +337,6 @@ const getPoolsByTokenPairBatch = async (tokens: string[]): Promise<Pool[]> => {
     variables: { tokens },
   });
 
+ 
   return data.pools as Pool[];
 };
