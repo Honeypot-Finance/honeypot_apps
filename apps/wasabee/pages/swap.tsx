@@ -11,7 +11,6 @@ import V3SwapCard from '@/components/algebra/swap/V3SwapCard';
 import KlineChart from './launch-detail/components/KlineChart';
 import { LoadingDisplay } from '@/components/LoadingDisplay/LoadingDisplay';
 import SwapTransactionHistory from '@/components/SwapTransactionHistory';
-import { Tab, Tabs } from '@nextui-org/react';
 import { cn } from '@/lib/tailwindcss';
 import { UniversalAccountBuyTokenModal } from '@honeypot/shared';
 
@@ -24,6 +23,7 @@ const SwapPage = observer(() => {
   const [outputCurrency, setOutputCurrency] = useState<string | undefined>(urlOutputCurrency ?? undefined);
 
   const isInit = wallet.isInit;
+  const isUniversalAccount = wallet.useUniversalAccount;
 
   // Check localStorage for token addresses if not provided in URL
   useEffect(() => {
@@ -94,28 +94,20 @@ const SwapPage = observer(() => {
           animate="visible"
           className="relative w-full flex flex-col items-center justify-start col-span-2 lg:col-span-1 overflow-visible"
         >
-          <Tabs
-            destroyInactiveTabPanel={false}
-            classNames={{
-              tab: 'px-2 sm:px-3 sm:h-10 text-xs sm:text-sm',
-              base: 'relative w-full',
-              cursor: 'bg-[#202020] !text-white/80 px-2 py-3',
-              tabList:
-                'flex rounded-[16px] border border-[#202020] bg-white shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] p-2 sm:p-3 absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 max-w-[90%] sm:max-w-none',
-              panel: cn(
-                'flex flex-col h-full w-full gap-y-4 items-center bg-[#FFCD4D] rounded-2xl text-[#202020]',
-                'px-4 sm:px-8 pt-[70px] pb-[70px]',
-                "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]",
-                'bg-[position:-65px_top,_-85px_bottom]',
-                'bg-[size:auto_65px,_auto_65px]',
-                'bg-repeat-x',
-                '!mt-0',
-                'h-auto'
-              ),
-              tabContent: 'text-[#202020] text-sm sm:text-base',
-            }}
+          <div
+            className={cn(
+              'flex flex-col h-full w-full gap-y-4 items-center bg-[#FFCD4D] rounded-2xl text-[#202020]',
+              'px-4 sm:px-8 pt-[70px] pb-[70px]',
+              "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]",
+              'bg-[position:-65px_top,_-85px_bottom]',
+              'bg-[size:auto_65px,_auto_65px]',
+              'bg-repeat-x',
+              'h-auto'
+            )}
           >
-            <Tab key="swap" title="Swap">
+            {isUniversalAccount ? (
+              <UniversalAccountBuyTokenModal />
+            ) : (
               <V3SwapCard
                 bordered={false}
                 fromTokenAddress={inputCurrency ?? undefined}
@@ -125,11 +117,8 @@ const SwapPage = observer(() => {
                 isUpdatingPriceChart={true}
                 onSwapSuccess={() => setKlineRefreshKey(k => k + 1)}
               />
-            </Tab>
-            <Tab key="universal" title="Universal Account">
-              <UniversalAccountBuyTokenModal />
-            </Tab>
-          </Tabs>
+            )}
+          </div>
         </motion.div>
 
         <motion.div

@@ -44,6 +44,7 @@ export class Wallet {
     }, {} as Record<number, Network>);
   }
   universalAccount: UniversalAccount | undefined = undefined;
+  useUniversalAccount = false;
 
   get walletBalance() {
     if (this.account === zeroAddress) {
@@ -60,7 +61,30 @@ export class Wallet {
     return this.account && this.account !== zeroAddress;
   }
 
+  get effectiveAccount() {
+    return this.useUniversalAccount && this.universalAccount?.evmSmartAccountAddress 
+      ? this.universalAccount.evmSmartAccountAddress 
+      : this.account;
+  }
+
+  toggleUniversalAccount() {
+    this.useUniversalAccount = !this.useUniversalAccount;
+    // Store preference in localStorage
+    localStorage.setItem('useUniversalAccount', this.useUniversalAccount.toString());
+  }
+
+  setUniversalAccountMode(enabled: boolean) {
+    this.useUniversalAccount = enabled;
+    localStorage.setItem('useUniversalAccount', enabled.toString());
+  }
+
   constructor(args: Partial<Wallet>) {
+    // Load universal account preference from localStorage
+    if (typeof window !== 'undefined') {
+      const savedUAMode = localStorage.getItem('useUniversalAccount');
+      this.useUniversalAccount = savedUAMode === 'true';
+    }
+    
     makeAutoObservable(this, {
       networksMap: false,
       currentChain: false,
@@ -134,6 +158,12 @@ export class Wallet {
     this.currentChain.init();
     await StorageState.sync();
 
+    // Restore universal account preference
+    const savedPreference = localStorage.getItem('useUniversalAccount');
+    if (savedPreference !== null) {
+      this.useUniversalAccount = savedPreference === 'true';
+    }
+
     if (this.account && this.account !== zeroAddress) {
       runInAction(() => {
         this.universalAccount = new UniversalAccount(this.account);
@@ -148,6 +178,16 @@ export class Wallet {
     runInAction(() => {
       this.isInit = true;
     });
+  }
+
+  setUniversalAccountMode(enabled: boolean) {
+    runInAction(() => {
+      this.useUniversalAccount = enabled;
+    });
+    // Save preference to localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('useUniversalAccount', enabled.toString());
+    }
   }
 }
 

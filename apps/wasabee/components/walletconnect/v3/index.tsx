@@ -1,14 +1,16 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ButtonHTMLAttributes } from 'react';
 import Image from 'next/image';
-import { useConnect, useConnectors } from 'wagmi';
+import { useConnect, useConnectors, useDisconnect } from 'wagmi';
 import { BiWallet } from 'react-icons/bi';
 import { BsPerson } from 'react-icons/bs';
 import Link from 'next/link';
 import { formatNumberWithUnit } from '@/lib/utils';
 import { mock } from 'wagmi/connectors';
-import { useObserver } from 'mobx-react-lite';
+import { useObserver, observer } from 'mobx-react-lite';
 import { wallet } from '@honeypot/shared/lib/wallet';
+import { UniversalAccountToggle, UniversalAccountDetailsModal } from '@honeypot/shared';
+import { useDisclosure } from '@nextui-org/react';
 
 const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
   return (
@@ -20,9 +22,15 @@ const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
   );
 };
 
-export const WalletConnect = () => {
+export const WalletConnect = observer(() => {
   const { connect } = useConnect();
+  const { disconnect } = useDisconnect();
+  const { isOpen: isDetailsOpen, onOpen: onDetailsOpen, onClose: onDetailsClose } = useDisclosure();
   const currentChain = useObserver(() => wallet.currentChain);
+  const isUniversalAccountActive = wallet.useUniversalAccount;
+  let chainModalRef: (() => void) | null = null;
+  
+  console.log('🔍 V3 WalletConnect render - isUniversalAccountActive:', isUniversalAccountActive);
 
   return (
     <div className="flex flex-col items-center">
@@ -44,6 +52,9 @@ export const WalletConnect = () => {
             authenticationStatus,
             mounted,
           }) => {
+            // Store the modal functions for use in the details modal
+            chainModalRef = openChainModal;
+            
             const ready = mounted && authenticationStatus !== 'loading';
             const connected =
               ready &&
@@ -118,39 +129,59 @@ export const WalletConnect = () => {
                     }
                     return (
                       <div className="flex items-center gap-1.5 lg:gap-3">
-                        <button
-                          onClick={openChainModal}
-                          type="button"
-                          className="flex cursor-pointer bg-[#202020] text-white px-3 lg:px-4 py-1.5 lg:py-2 rounded-2xl gap-1.5 lg:gap-2 items-center shrink-0 text-xs sm:text-sm lg:text-base"
-                        >
-                          <Image
-                            src={currentChain?.iconUrl}
-                            alt="icon"
-                            width={18}
-                            height={18}
-                            className="lg:w-5 lg:h-5 rounded-full"
-                          />
-                          <div className="text-nowrap text-white">
-                            {account.balanceFormatted ? (
-                              <span>{`${formatNumberWithUnit(
-                                Number(account.balanceFormatted),
-                                3
-                              )} ${account.balanceSymbol}`}</span>
-                            ) : (
-                              <div className="h-3 lg:h-4 w-16 lg:w-20 bg-gray-700 animate-pulse rounded"></div>
-                            )}
-                          </div>
-                        </button>
-                        <button
-                          onClick={openAccountModal}
-                          type="button"
-                          className="flex cursor-pointer bg-[#202020] text-white px-3 lg:px-4 py-1.5 lg:py-2 rounded-2xl gap-1.5 lg:gap-2 items-center shrink-0 text-xs sm:text-sm lg:text-base"
-                        >
-                          <BiWallet size={18} className="lg:w-5 lg:h-5" />
-                          <span className="whitespace-nowrap">
-                            {account.displayName}
-                          </span>
-                        </button>
+                        {/* Always show the toggle so users can switch back */}
+                        <UniversalAccountToggle />
+                        
+                        {isUniversalAccountActive ? (
+                          // Universal Account Mode - Show only account button
+                          <button
+                            onClick={onDetailsOpen}
+                            type="button"
+                            className="flex cursor-pointer bg-[#202020] text-white px-3 lg:px-4 py-1.5 lg:py-2 rounded-2xl gap-1.5 lg:gap-2 items-center shrink-0 text-xs sm:text-sm lg:text-base"
+                          >
+                            <BiWallet size={18} className="lg:w-5 lg:h-5" />
+                            <span className="whitespace-nowrap">
+                              Universal Account
+                            </span>
+                          </button>
+                        ) : (
+                          // Normal Mode - Show chain and wallet buttons
+                          <>
+                            <button
+                              onClick={openChainModal}
+                              type="button"
+                              className="flex cursor-pointer bg-[#202020] text-white px-3 lg:px-4 py-1.5 lg:py-2 rounded-2xl gap-1.5 lg:gap-2 items-center shrink-0 text-xs sm:text-sm lg:text-base"
+                            >
+                              <Image
+                                src={currentChain?.iconUrl}
+                                alt="icon"
+                                width={18}
+                                height={18}
+                                className="lg:w-5 lg:h-5 rounded-full"
+                              />
+                              <div className="text-nowrap text-white">
+                                {account.balanceFormatted ? (
+                                  <span>{`${formatNumberWithUnit(
+                                    Number(account.balanceFormatted),
+                                    3
+                                  )} ${account.balanceSymbol}`}</span>
+                                ) : (
+                                  <div className="h-3 lg:h-4 w-16 lg:w-20 bg-gray-700 animate-pulse rounded"></div>
+                                )}
+                              </div>
+                            </button>
+                            <button
+                              onClick={openAccountModal}
+                              type="button"
+                              className="flex cursor-pointer bg-[#202020] text-white px-3 lg:px-4 py-1.5 lg:py-2 rounded-2xl gap-1.5 lg:gap-2 items-center shrink-0 text-xs sm:text-sm lg:text-base"
+                            >
+                              <BiWallet size={18} className="lg:w-5 lg:h-5" />
+                              <span className="whitespace-nowrap">
+                                {account.displayName}
+                              </span>
+                            </button>
+                          </>
+                        )}
                       </div>
                     );
                   })()}
@@ -160,6 +191,14 @@ export const WalletConnect = () => {
           }}
         </ConnectButton.Custom>
       </div>
+      
+      {/* Universal Account Details Modal */}
+      <UniversalAccountDetailsModal
+        isOpen={isDetailsOpen}
+        onClose={onDetailsClose}
+        onOpenChainModal={chainModalRef || undefined}
+        onDisconnect={() => disconnect()}
+      />
     </div>
   );
-};
+});
