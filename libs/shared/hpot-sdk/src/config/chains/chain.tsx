@@ -223,7 +223,7 @@ export const berachainNetwork = new Network({
     {
       symbol: 'BERA',
       address: '0x6969696969696969696969696969696969696969'.toLowerCase(),
-      amount: BigInt('500000000000000000000'), // 500 BERA
+      amount: BigInt('2000000000000000000000'), // 2000 BERA
     },
     {
       symbol: 'WGBERA',
