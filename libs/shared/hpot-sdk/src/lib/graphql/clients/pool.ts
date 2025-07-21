@@ -23,7 +23,10 @@ import { unwrappedToken } from '@cryptoalgebra/sdk';
 import BigNumber from 'bignumber.js';
 import { PairContract } from '../../contract/dex/liquidity/pair-contract';
 import { Token } from '../../contract/token/token';
-import { useSubgraphClient } from './../../../hooks/useSubgraphClients';
+import {
+  useSubgraphClient,
+  getSubgraphClientByChainId,
+} from './../../../hooks/useSubgraphClients';
 import { ApolloClient } from '@apollo/client';
 import { createClientHook } from '../clientUtils';
 import { useObserver } from 'mobx-react-lite';
@@ -326,7 +329,10 @@ export const poolExists = async (poolAddress: string) => {
 };
 
 const getPoolsByTokenPairBatch = async (tokens: string[]): Promise<Pool[]> => {
-  const infoClient = useSubgraphClient('algebra_info');
+  const infoClient = getSubgraphClientByChainId(
+    wallet.currentChainId.toString(),
+    'algebra_info'
+  );
   const { data } = await infoClient.query<
     PoolsByTokenPairBatchQuery,
     PoolsByTokenPairBatchQueryVariables
