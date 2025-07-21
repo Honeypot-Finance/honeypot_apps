@@ -64,18 +64,10 @@ const PoolHeader = observer(
       >
         {token0?.address && token1?.address && (
           <Link
-            href={`/swap?inputCurrency=${token0.address}&outputCurrency=${token1.address}`}
-            className={`${isMobile ? 'w-full' : 'w-full md:w-auto'}`}
-            as="a"
+            href={`/swap?inputCurrency=${token0?.address}&outputCurrency=${token1?.address}`}
+            className="w-full md:w-auto"
           >
-            <Button
-              className="w-full rounded-[8px] border border-black bg-[#FFCD4D] p-2 text-[#202020] shadow-[2px_2px_0px_0px_#000] hover:translate-y-[2px] hover:shadow-[2px_1px_0px_0px_#000] active:translate-y-[2px] active:shadow-none"
-              onPress={() => {
-                if (typeof window !== 'undefined') {
-                  window.location.href = `/swap?inputCurrency=${token0.address}&outputCurrency=${token1.address}`;
-                }
-              }}
-            >
+            <Button className="w-full rounded-[8px] border border-black bg-[#FFCD4D] p-2 text-[#202020] shadow-[2px_2px_0px_0px_#000] hover:translate-y-[2px] hover:shadow-[2px_1px_0px_0px_#000] active:translate-y-[2px] active:shadow-none">
               Swap
             </Button>
           </Link>
