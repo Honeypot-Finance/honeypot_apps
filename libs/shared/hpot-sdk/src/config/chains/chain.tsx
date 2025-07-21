@@ -317,6 +317,12 @@ export const berachainNetwork = new Network({
       logoURI: '/images/icons/tokens/thpot-token-icon.jpg',
       isRouterToken: true,
     },
+    '0x773f8b20cc9bb82a67ad2c5d996bb3db79118ee1': {
+      name: ':-):-):-)',
+      symbol: ':-):-):-)',
+      decimals: 18,
+      logoURI: '/images/icons/tokens/usdc-token-icon.png',
+    },
     '0x549943e04f40284185054145c6e4e9568c1d3241': {
       name: 'USDC',
       symbol: 'USDC',
