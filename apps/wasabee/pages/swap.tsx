@@ -53,11 +53,9 @@ const SwapPage = observer(() => {
         setOutputCurrency(urlOutputCurrency);
       } else if (storedOutputToken) {
         setOutputCurrency(storedOutputToken);
-      } else if (!storedInputToken) {
+      } else {
         // Only set default if no input token is stored
         setOutputCurrency(defaultOutputToken);
-      } else {
-        setOutputCurrency(undefined);
       }
     }
   }, [urlInputCurrency, urlOutputCurrency, defaultOutputToken]);
