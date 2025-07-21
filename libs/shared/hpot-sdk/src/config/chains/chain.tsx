@@ -321,7 +321,6 @@ export const berachainNetwork = new Network({
       name: ':-):-):-)',
       symbol: ':-):-):-)',
       decimals: 18,
-      logoURI: '/images/icons/tokens/usdc-token-icon.png',
     },
     '0x549943e04f40284185054145c6e4e9568c1d3241': {
       name: 'USDC',
