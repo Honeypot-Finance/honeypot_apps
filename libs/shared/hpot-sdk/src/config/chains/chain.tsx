@@ -426,12 +426,6 @@ export const berachainNetwork = new Network({
       decimals: 18,
       logoURI: '/images/icons/tokens/lbgt-token-icon.svg',
     },
-    '0xa2b0519f1d7f61eab95d486301ed924b58e97022': {
-      name: 'Liquid BGT',
-      symbol: 'LBGT',
-      decimals: 18,
-      logoURI: '/images/icons/tokens/lbgt-token-icon.svg',
-    },
     //bitget campaign
     '0xa40e6433782ffb18c8eeb16d201e331e37abfb74': {
       name: 'Xi BERA',
