@@ -662,7 +662,7 @@ const KlineChartComponent = observer(
               }`}
             >
               {chart.chartPricePercentageChange >= 0 ? '▲' : '▼'}{' '}
-              {chart.chartPricePercentageChange.toFixed(2)}%
+              {isNaN(chart.chartPricePercentageChange) ? "This pair has no activity yet. Graph is not available" : `${chart.chartPricePercentageChange.toFixed(2)}%`}
             </span>
           </div>
         </div>
