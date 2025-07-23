@@ -1,5 +1,5 @@
 import { Input } from '@/components/algebra/ui/input';
-import { Currency, CurrencyAmount } from '@cryptoalgebra/sdk';
+import { Currency, CurrencyAmount, WNATIVE } from '@cryptoalgebra/sdk';
 import { useCallback, useMemo } from 'react';
 import { useAccount, useBalance } from 'wagmi';
 import { Address } from 'viem';
@@ -71,12 +71,19 @@ const EnterAmountCard = ({
             />
           )}
           <span className="font-medium text-black font-gliker text-xl">
-            {currency ? currency.symbol : 'Select a token'}
+            {currency
+              ? currency.wrapped.address.toLowerCase() ===
+                wallet.currentChain.nativeToken.address.toLowerCase()
+                ? useNative
+                  ? wallet.currentChain.nativeToken.symbol
+                  : `W${wallet.currentChain.nativeToken.symbol}`
+                : currency.symbol
+              : 'Select a token'}
           </span>
           {currency?.wrapped.address ===
             wallet.currentChain.nativeToken.address && (
             <HiOutlineSwitchHorizontal
-              className="w-5 h-5 text-black cursor-pointer"
+              className="w-5 h-5 text-black cursor-pointer min-w-5 min-h-5 z-10"
               onClick={() => setUseNative(!useNative)}
             />
           )}
