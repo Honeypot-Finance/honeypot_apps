@@ -381,23 +381,6 @@ export class MemePairContract implements BaseLaunchContract {
       throw new Error('Get project info failed, please select a chain first');
     }
 
-    const currentChainId = wallet.currentChainId;
-
-    if (!force) {
-      const cachedProjectInfo = localStorage.getItem(
-        `projectInfo-${currentChainId}-${this.address.toLowerCase()}`
-      );
-
-      if (
-        cachedProjectInfo &&
-        cachedProjectInfo !== 'undefined' &&
-        cachedProjectInfo !== 'null'
-      ) {
-        this.setData(JSON.parse(cachedProjectInfo));
-        return;
-      }
-    }
-
     const res = await trpcClient.projects.getProjectInfo.query({
       chain_id: wallet.currentChainId,
       pair: this.address,
@@ -456,23 +439,6 @@ export class MemePairContract implements BaseLaunchContract {
     if (res.beravote_space_id) {
       this.beravoteSpaceId = res.beravote_space_id;
     }
-
-    localStorage.setItem(
-      `projectInfo-${currentChainId}-${this.address.toLowerCase()}`,
-      JSON.stringify({
-        databaseId: res.id,
-        socials: this.socials,
-        logoUrl: this.logoUrl,
-        bannerUrl: this.bannerUrl,
-        beravoteSpaceId: this.beravoteSpaceId,
-        projectName: this.projectName,
-        description: this.description,
-        telegram: this.telegram,
-        twitter: this.twitter,
-        website: this.website,
-        provider: this.provider,
-      })
-    );
   }
 
   async init({
