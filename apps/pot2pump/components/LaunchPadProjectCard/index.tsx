@@ -6,6 +6,7 @@ import { Button } from "@/components/button";
 import { shortenAddress } from "@/lib/format";
 import { Address } from "viem";
 import Link from "next/link";
+import Image from "next/image";
 
 type IProjectCardStatus = "live" | "comming" | "ended";
 
@@ -70,9 +71,11 @@ const TokenInfo = observer(
       <div className="flex flex-col gap-[6px]">
         <div className="flex gap-[5px] items-center">
           <div className="w-[52px] h-[52px] rounded-full overflow-hidden relative">
-            <img
+            <Image
               src={symbol}
               alt={name}
+              width={52}
+              height={52}
               className="w-full h-full object-cover rounded-full"
               onError={({ currentTarget }) => {
                 currentTarget.onerror = null;
@@ -211,9 +214,11 @@ const LaunchPadProjectCard = observer(
           {isShowCoverImage && (
             <div className="h-[78px] relative w-full bg-[radial-gradient(at_center,#FFCD4D,#83C2E9)]">
               {!!coverImg && coverImg?.length > 0 && (
-                <img
+                <Image
                   alt="Cover Image"
                   src={coverImg}
+                  width={400}
+                  height={78}
                   className="object-cover h-[78px] w-full"
                   onError={({ currentTarget }) => {
                     currentTarget.onerror = null;
@@ -264,12 +269,14 @@ const LaunchPadProjectCard = observer(
           <div className="flex justify-between relative">
             <div className="grid grid-cols-[52px_1fr_1fr_1fr_100px] gap-5 items-center w-full">
               <div className="w-[52px] h-[52px] rounded-full overflow-hidden relative">
-                <img
+                <Image
                   src={
                     shareTokenSymbol ||
                     "/images/icons/tokens/thpot-token-yellow-icon.png"
                   }
                   alt={tokenName}
+                  width={52}
+                  height={52}
                   className="w-full h-full object-cover rounded-full"
                   onError={({ currentTarget }) => {
                     if (currentTarget.src.includes(shareTokenSymbol ?? "")) {

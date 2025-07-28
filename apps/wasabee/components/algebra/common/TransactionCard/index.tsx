@@ -6,6 +6,7 @@ import { Check, ExternalLinkIcon, X } from "lucide-react";
 import Loader from "../Loader";
 import { FarmingPositionImg } from "@/components/algebra/farming/FarmingPositionImg";
 import Link from "next/link";
+import Image from "next/image";
 import {
   TransactionType,
   Transaction,
@@ -51,9 +52,10 @@ export const TransactionCard = ({
         ) : currencyA ? (
           <CurrencyLogo currency={currencyA} size={40} />
         ) : (
-          <img
+          <Image
             className="brightness-150"
             src={EtherScanLogo}
+            alt="EtherScan Logo"
             width={40}
             height={40}
           />
