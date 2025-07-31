@@ -21,6 +21,7 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
     ICHIVaultContract | undefined
   >(undefined);
   const infoClient = useSubgraphClient('algebra_info');
+  
   const tokenA = Token.getToken({
     address: vault.token0?.address ?? '',
     chainId: wallet.currentChainId.toString(),
@@ -29,16 +30,14 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
     address: vault.token1?.address ?? '',
     chainId: wallet.currentChainId.toString(),
   });
+  
   const loading = useMemo(() => {
-    return !vaultContract || !tokenA || !tokenB;
+    // Show loading only if we don't have basic vault data
+    return !vault || !tokenA || !tokenB;
   }, [
-    vaultContract,
+    vault,
     tokenA,
     tokenB,
-    vaultContract?.pool,
-    vaultContract?.tvlUSD,
-    vaultContract?.pool?.volume_24h_USD,
-    vaultContract?.pool?.fees_24h_USD,
   ]);
 
   const isTokenAAllowed = useReadIchiVaultAllowToken0({
@@ -48,13 +47,6 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
   const isTokenBAllowed = useReadIchiVaultAllowToken1({
     address: vault.address,
   });
-
-  if (
-    vaultContract?.address.toLowerCase() ===
-    '0xb00ae8a7be63036dbcd143a842bfc14708c440bb'
-  ) {
-    console.log(vaultContract);
-  }
 
   useEffect(() => {
     if (!vault) return;
@@ -67,7 +59,7 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
       );
 
       if (vaultContract) {
-        Promise.all([
+       Promise.all([
           vaultContract?.getTotalAmounts(),
           vaultContract?.getTotalSupply(),
           vaultContract?.getBalanceOf(wallet.account),
@@ -112,12 +104,12 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
       {/* Token pair */}
       <td className="py-4 px-6">
         <div>
-          {vaultContract?.vaultTag && (
+          {(vaultContract?.vaultTag || vault.vaultTag) && (
             <VaultTag
-              tag={vaultContract.vaultTag.tag}
-              bgColor={vaultContract.vaultTag.bgColor}
-              textColor={vaultContract.vaultTag.textColor}
-              tooltip={vaultContract.vaultTag.tooltip}
+              tag={(vaultContract?.vaultTag || vault.vaultTag)!.tag}
+              bgColor={(vaultContract?.vaultTag || vault.vaultTag)!.bgColor}
+              textColor={(vaultContract?.vaultTag || vault.vaultTag)!.textColor}
+              tooltip={(vaultContract?.vaultTag || vault.vaultTag)!.tooltip}
             />
           )}
           <div className="flex items-center gap-3">
@@ -135,7 +127,7 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
             </div>
             <div className="flex flex-col">
               <p className="text-black font-medium">
-                {tokenA.symbol}/{tokenB.symbol}
+                {tokenA?.symbol || (vault as any).token0Symbol || 'Unknown'}/{tokenB?.symbol || (vault as any).token1Symbol || 'Unknown'}
               </p>
             </div>
           </div>
@@ -145,13 +137,13 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
       <td className="py-4 px-6">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1">
-            {isTokenAAllowed.data && <TokenLogo token={tokenA} size={24} />}
-            {isTokenBAllowed.data && <TokenLogo token={tokenB} size={24} />}
+            {(isTokenAAllowed.data || vault.allowToken0) && <TokenLogo token={tokenA} size={24} />}
+            {(isTokenBAllowed.data || vault.allowToken1) && <TokenLogo token={tokenB} size={24} />}
           </div>
           <div className="flex">
             <p className="text-black font-medium">
-              {isTokenAAllowed.data && tokenA.symbol}
-              {isTokenBAllowed.data && tokenB.symbol}
+              {(isTokenAAllowed.data || vault.allowToken0) && (tokenA?.symbol || (vault as any).token0Symbol || 'Unknown')}
+              {(isTokenBAllowed.data || vault.allowToken1) && (tokenB?.symbol || (vault as any).token1Symbol || 'Unknown')}
             </p>
           </div>
         </div>
@@ -160,11 +152,21 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
       {/* <td className="py-4 px-6 text-black">{vault.id}</td> */}
       {/* apr */}
       <td className="py-4 px-6 text-right text-black">
-        {DynamicFormatAmount({
-          amount: vaultContract?.tvlUSD ?? 0,
-          decimals: 3,
-          beginWith: ' $',
-        })}
+        {(() => {
+          // Use cached TVL if available, otherwise fall back to computed TVL
+          let tvlValue = (vault as any).cachedTvlUSD || vaultContract?.tvlUSD || vault.tvlUSD || 0;
+          
+          // Ensure we have a valid number
+          if (isNaN(Number(tvlValue))) {
+            tvlValue = 0;
+          }
+          
+          return DynamicFormatAmount({
+            amount: tvlValue,
+            decimals: 3,
+            beginWith: ' $',
+          });
+        })()}
       </td>
       {/* volume */}
       <td className="py-4 px-6 text-right text-black">
@@ -184,14 +186,14 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
       </td>
       <td className="py-4 px-6 text-right text-black">
         <div className="h-full flex justify-end items-center gap-2">
-          {vaultContract?.apr.toFixed(2)}%
+          {vaultContract?.apr?.toFixed(2) ?? vault.apr?.toFixed(2) ?? '0.00'}%
           <Tooltip
             content={
               <div>
-                <p>1d: {vaultContract?.detailedApr.feeApr_1d.toFixed(5)}%</p>
-                <p>3d: {vaultContract?.detailedApr.feeApr_3d.toFixed(5)}%</p>
-                <p>7d: {vaultContract?.detailedApr.feeApr_7d.toFixed(5)}%</p>
-                <p>30d: {vaultContract?.detailedApr.feeApr_30d.toFixed(5)}%</p>
+                <p>1d: {vaultContract?.detailedApr?.feeApr_1d?.toFixed(5) ?? vault.detailedApr?.feeApr_1d?.toFixed(5) ?? '0.00000'}%</p>
+                <p>3d: {vaultContract?.detailedApr?.feeApr_3d?.toFixed(5) ?? vault.detailedApr?.feeApr_3d?.toFixed(5) ?? '0.00000'}%</p>
+                <p>7d: {vaultContract?.detailedApr?.feeApr_7d?.toFixed(5) ?? vault.detailedApr?.feeApr_7d?.toFixed(5) ?? '0.00000'}%</p>
+                <p>30d: {vaultContract?.detailedApr?.feeApr_30d?.toFixed(5) ?? vault.detailedApr?.feeApr_30d?.toFixed(5) ?? '0.00000'}%</p>
               </div>
             }
           >

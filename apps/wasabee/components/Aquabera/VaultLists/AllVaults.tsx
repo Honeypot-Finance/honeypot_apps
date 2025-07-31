@@ -9,6 +9,8 @@ import { ICHIVaultContract } from '@honeypot/shared';
 import VaultRow from './VaulltRow';
 import { useSubgraphClient } from '@honeypot/shared';
 import VaultCard from './VaultCard';
+import { useVaultCache } from '@/hooks/useVaultCache';
+import { networksMap } from '@honeypot/shared';
 
 type SortField =
   | 'pair'
@@ -35,26 +37,76 @@ export function AllAquaberaVaults({
     []
   );
   const [vaults, setVaults] = useState<VaultsSortedByHoldersQuery>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isBackgroundLoading, setIsBackgroundLoading] = useState(false);
   const [sortField, setSortField] = useState<SortField>(sortBy as SortField);
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
   const infoClient = useSubgraphClient('algebra_info');
+  const { getCachedData, setCachedData, getCacheInfo } = useVaultCache();
+
+  // Get vault tags from chain configuration for immediate display
+  const getVaultTagFromConfig = (vaultAddress: string) => {
+    const network = networksMap[wallet.currentChainId.toString()];
+    if (!network?.validatedVault) {
+      return undefined;
+    }
+    
+    const vaultConfig = network.validatedVault.find(
+      vault => vault.address.toLowerCase() === vaultAddress.toLowerCase()
+    );
+    
+    return vaultConfig?.vaultTag;
+  };
 
   useEffect(() => {
     const initVaults = async () => {
       if (!wallet.isInit || !infoClient) return;
 
+      // Check cache first
+      const cachedData = getCachedData(searchString);
+      const cacheInfo = getCacheInfo(searchString);
+      
+      if (cachedData && !cacheInfo.isStale) {
+        // Use cached data immediately
+        
+        setVaults(cachedData);
+        if (onDataLoaded) {
+          onDataLoaded();
+        }
+        
+        // Update in background if data is stale
+        if (cacheInfo.isStale) {
+          setIsBackgroundLoading(true);
+          try {
+            const freshData = await getVaultPageData(infoClient, searchString);
+            setVaults(freshData);
+            setCachedData(freshData, searchString);
+          } catch (error) {
+            console.error('Error updating vaults in background:', error);
+          } finally {
+            setIsBackgroundLoading(false);
+          }
+        }
+        return;
+      }
+
+      // No cache or stale cache - load fresh data
+      setIsLoading(true);
       try {
-        // Load data regardless of searchString
         const res = await getVaultPageData(infoClient, searchString);
         setVaults(res);
+        setCachedData(res, searchString);
 
         if (onDataLoaded) {
           onDataLoaded();
         }
       } catch (error) {
         console.error('Error loading vaults:', error);
+        setIsLoading(false);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -71,8 +123,8 @@ export function AllAquaberaVaults({
 
     vaults.ichiVaults.forEach((vault) => {
       const vaultContract = ICHIVaultContract.getVault({
-        token0: vault.tokenA,
-        token1: vault.tokenB,
+        token0: Token.getToken({ address: vault.pool?.token0?.id || vault.tokenA.id, chainId: wallet.currentChainId.toString() }),
+        token1: Token.getToken({ address: vault.pool?.token1?.id || vault.tokenB.id, chainId: wallet.currentChainId.toString() }),
         address: vault.id as `0x${string}`,
         apr: Number(vault.feeApr_1d),
         detailedApr: {
@@ -81,10 +133,28 @@ export function AllAquaberaVaults({
           feeApr_7d: Number(vault.feeApr_7d),
           feeApr_30d: Number(vault.feeApr_30d),
         },
+        allowToken0: vault.allowTokenA || false,
+        allowToken1: vault.allowTokenB || false,
+        pool: vault.pool ? {
+          ...vault.pool,
+          volume_24h_USD: vault.pool.poolDayData?.[0]?.volumeUSD || '0',
+          fees_24h_USD: vault.pool.poolDayData?.[0]?.feesUSD || '0',
+        } as any : undefined,
       });
 
       if (vaultContract) {
-        newVaultsContracts.push(vaultContract);
+        // Add cached TVL data directly to the vault contract
+        (vaultContract as any).cachedTvlUSD = vault.pool?.totalValueLockedUSD || '0';
+        // Add token symbols as fallbacks
+        (vaultContract as any).token0Symbol = vault.pool?.token0?.symbol || 'Unknown';
+        (vaultContract as any).token1Symbol = vault.pool?.token1?.symbol || 'Unknown';
+        
+        // Add vault tag from chain configuration for immediate display
+        const vaultTag = getVaultTagFromConfig(vault.id);
+        if (vaultTag) {
+          vaultContract.vaultTag = vaultTag;
+        }
+          newVaultsContracts.push(vaultContract);
       }
     });
 
@@ -141,8 +211,11 @@ export function AllAquaberaVaults({
         }
         case 'address':
           return multiplier * a.address.localeCompare(b.address);
-        case 'tvl':
-          return multiplier * (Number(a.tvlUSD || 0) - Number(b.tvlUSD || 0));
+        case 'tvl': {
+          const aTvl = Number((a as any).cachedTvlUSD || a.tvlUSD || 0);
+          const bTvl = Number((b as any).cachedTvlUSD || b.tvlUSD || 0);
+          return multiplier * (aTvl - bTvl);
+        }
         case 'volume':
           return (
             multiplier *
@@ -174,8 +247,10 @@ export function AllAquaberaVaults({
     <div className="w-full">
       {/* Mobile view - card layout for small screens */}
       <div className="sm:hidden">
-        {!vaults ? (
+        {isLoading ? (
           <div className="text-center py-8 text-black">Loading...</div>
+        ) : !vaults ? (
+          <div className="text-center py-8 text-black">No data available.</div>
         ) : vaultsContracts.length === 0 ? (
           <div className="text-center py-8 text-black">
             No vaults available.
@@ -185,14 +260,32 @@ export function AllAquaberaVaults({
             No results match your criteria.
           </div>
         ) : (
-          sortedVaults.map((vault) => (
-            <VaultCard key={vault.address} vault={vault} />
-          ))
+          <>
+            {isBackgroundLoading && (
+              <div className="text-center py-2 text-sm text-gray-500">
+                Updating data...
+              </div>
+            )}
+            {sortedVaults.map((vault) => (
+              <VaultCard key={vault.address} vault={vault} />
+            ))}
+          </>
         )}
       </div>
 
       {/* Desktop view - table layout for medium screens and up */}
       <div className="hidden sm:block w-full overflow-x-auto custom-dashed-3xl sm:p-6 sm:bg-white">
+        {isBackgroundLoading && (
+          <div className="text-center py-2 text-sm text-gray-500 mb-4">
+            Updating data in background...
+          </div>
+        )}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="text-xs text-gray-400 mb-2">
+            Cache: {getCacheInfo(searchString).hasData ? 'Hit' : 'Miss'} 
+            {getCacheInfo(searchString).age && ` (${Math.round(getCacheInfo(searchString).age! / 1000)}s old)`}
+          </div>
+        )}
         <table className="w-full">
           <thead>
             <tr>
@@ -343,16 +436,31 @@ export function AllAquaberaVaults({
             </tr>
           </thead>
           <tbody className="divide-y divide-[#4D4D4D]">
-            {!sortedVaults.length ? (
+            {isLoading ? (
               <tr className="hover:bg-white border-white h-full">
-                <td colSpan={5} className="h-24 text-center text-black">
+                <td colSpan={6} className="h-24 text-center text-black">
+                  Loading...
+                </td>
+              </tr>
+            ) : !sortedVaults.length ? (
+              <tr className="hover:bg-white border-white h-full">
+                <td colSpan={6} className="h-24 text-center text-black">
                   No results.
                 </td>
               </tr>
             ) : (
-              sortedVaults.map((vault) => {
-                return <VaultRow key={vault.address} vault={vault} />;
-              })
+              <>
+                {isBackgroundLoading && (
+                  <tr className="hover:bg-white border-white">
+                    <td colSpan={6} className="h-8 text-center text-sm text-gray-500">
+                      Updating data...
+                    </td>
+                  </tr>
+                )}
+                {sortedVaults.map((vault) => {
+                  return <VaultRow key={vault.address} vault={vault} />;
+                })}
+              </>
             )}
           </tbody>
         </table>

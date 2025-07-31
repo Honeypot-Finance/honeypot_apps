@@ -22,7 +22,8 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
   const [vaultContract, setVaultContract] = useState<
     ICHIVaultContract | undefined
   >(undefined);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+
   const tokenA = Token.getToken({
     address: vault.token0?.address ?? '',
     chainId: wallet.currentChainId.toString(),
@@ -41,18 +42,18 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
 
     async function initializeVault() {
       try {
-        setLoading(true);
         const vaultContract = await getSingleVaultDetails(
           infoClient,
           vault.address
         );
 
         if (vaultContract) {
-          await Promise.all([
+         
+          Promise.all([
             vaultContract?.getTotalAmounts(),
             vaultContract?.getTotalSupply(),
             vaultContract?.getBalanceOf(wallet.account),
-          ]);
+          ])
 
           vaultContract?.token0?.init(false, {
             loadIndexerTokenData: true,
@@ -66,8 +67,6 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
         }
       } catch (error) {
         console.error('Error initializing vault:', error);
-      } finally {
-        setLoading(false);
       }
     }
 
@@ -75,20 +74,25 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
   }, [vault, tokenA, tokenB]);
 
   if (loading) {
-    return <Skeleton className="h-64 mb-4 bg-white custom-dashed-3xl" />;
+    return <Skeleton className="h-64 mb-4 bg-gray-200 custom-dashed-3xl" />;
   }
 
   // Use vaultContract for data if available, otherwise fall back to the original vault
   const displayVault = vaultContract || vault;
+  
+  // Show loading only if we don't have basic vault data
+  if (!vault || !tokenA || !tokenB) {
+    return <Skeleton className="h-64 mb-4 bg-gray-200 custom-dashed-3xl" />;
+  }
 
   return (
     <div className="mb-4 p-4 bg-white custom-dashed-3xl">
-      {vaultContract?.vaultTag && (
+      {(vaultContract?.vaultTag || vault.vaultTag) && (
         <VaultTag
-          tag={vaultContract.vaultTag.tag}
-          bgColor={vaultContract.vaultTag.bgColor}
-          textColor={vaultContract.vaultTag.textColor}
-          tooltip={vaultContract.vaultTag.tooltip}
+          tag={(vaultContract?.vaultTag || vault.vaultTag)!.tag}
+          bgColor={(vaultContract?.vaultTag || vault.vaultTag)!.bgColor}
+          textColor={(vaultContract?.vaultTag || vault.vaultTag)!.textColor}
+          tooltip={(vaultContract?.vaultTag || vault.vaultTag)!.tooltip}
         />
       )}
       <div className="flex justify-between items-center mb-3">
@@ -107,34 +111,39 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
             />
           </div>
           <span className="font-bold">
-            {tokenA.symbol}/{tokenB.symbol}
+            {tokenA?.symbol || (vault as any).token0Symbol || 'Unknown'}/{tokenB?.symbol || (vault as any).token1Symbol || 'Unknown'}
           </span>
         </div>
       </div>
 
       <div className="flex justify-between items-center mb-3">
         <div className="font-medium">Allow Token</div>
-        {vault.allowToken0 && (
-          <div className="flex items-center gap-1">
-            <TokenLogo token={tokenA} size={20} />
-            <span>{tokenA.symbol}</span>
-          </div>
-        )}
-        {vault.allowToken1 && (
-          <div className="flex items-center gap-1">
-            <TokenLogo token={tokenB} size={20} />
-            <span>{tokenB.symbol}</span>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          {vault.allowToken0 && (
+            <div className="flex items-center gap-1">
+              <TokenLogo token={tokenA} size={20} />
+              <span>{tokenA?.symbol || (vault as any).token0Symbol || 'Unknown'}</span>
+            </div>
+          )}
+          {vault.allowToken1 && (
+            <div className="flex items-center gap-1">
+              <TokenLogo token={tokenB} size={20} />
+              <span>{tokenB?.symbol || (vault as any).token1Symbol || 'Unknown'}</span>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex justify-between items-center mb-3">
         <div className="font-medium">Vault TVL</div>
         <div>
-          $
-          {Number(displayVault.tvlUSD || 0).toLocaleString('en-US', {
-            maximumFractionDigits: 2,
-          })}
+          {(() => {
+           
+            const tvlValue = Number((vault as any).cachedTvlUSD || displayVault.tvlUSD || vault.tvlUSD || 0);
+            return `$${tvlValue.toLocaleString('en-US', {
+              maximumFractionDigits: 2,
+            })}`;
+          })()}
         </div>
       </div>
 
@@ -163,7 +172,7 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
       <div className="flex justify-between items-center mb-3">
         <div className="font-medium">APR</div>
         <div className="font-bold text-green-600">
-          {Number(displayVault.apr || 0).toLocaleString('en-US', {
+          {Number(displayVault.apr || vault.apr || 0).toLocaleString('en-US', {
             maximumFractionDigits: 2,
           })}
           %
