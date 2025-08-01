@@ -16,7 +16,10 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useMemo, useState } from 'react';
 import { VaultTag } from '../VaultTag';
 
-export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
+export const VaultRow = observer(({ vault, onVaultUpdate }: { 
+  vault: ICHIVaultContract;
+  onVaultUpdate?: (updatedVault: ICHIVaultContract) => void;
+}) => {
   const [vaultContract, setVaultContract] = useState<
     ICHIVaultContract | undefined
   >(undefined);
@@ -52,9 +55,26 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
   useEffect(() => {
     if (!vault) return;
 
+    // Check if we already have cached actual computed data to display instantly
+    const hasCachedComputedData = vault && 
+                                 (vault as any).cachedTvlUSD !== undefined && 
+                                 (vault as any).cachedVolume24hUSD !== undefined && 
+                                 (vault as any).cachedFees24hUSD !== undefined;
+
+    // If we have cached computed data, show it immediately but still update in background
+    if (hasCachedComputedData) {
+      setVaultContract(vault);
+      setIsUpdatingData(false);
+      // Continue to make API call in background for fresh data
+    } else {
+      // No cached computed data, show updating initially
+      setIsUpdatingData(true);
+    }
+
+    // Always make API call to get fresh/accurate data
     async function getVaultsContracts() {
       if (!vault) return;
-      setIsUpdatingData(true);
+      
       const vaultContract = await getSingleVaultDetails(
         infoClient,
         vault.address
@@ -62,7 +82,7 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
 
       if (vaultContract) {
         // Load vault's actual locked amounts for proper TVL calculation
-        Promise.all([
+        await Promise.all([
           vaultContract?.getTotalAmounts(),
           vaultContract?.getTotalSupply(),
           vaultContract?.getBalanceOf(wallet.account),
@@ -81,14 +101,52 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
     }
 
     getVaultsContracts().then((vaultContract) => {
-      setVaultContract(vaultContract);
+      if (vaultContract) {
+        // Cache the actual computed values for future instant display
+        if (vaultContract.tvlUSD !== undefined) {
+          (vaultContract as any).cachedTvlUSD = vaultContract.tvlUSD;
+        }
+        
+        // Cache actual pool volume and fees values
+        if (vaultContract.pool?.volume_24h_USD !== undefined) {
+          (vaultContract as any).cachedVolume24hUSD = vaultContract.pool.volume_24h_USD;
+        }
+        
+        if (vaultContract.pool?.fees_24h_USD !== undefined) {
+          (vaultContract as any).cachedFees24hUSD = vaultContract.pool.fees_24h_USD;
+        }
+        
+        // Update display with fresh data
+        setVaultContract(vaultContract);
+        
+        // Update parent cache with fresh data (including cached computed values)
+        if (onVaultUpdate) {
+          onVaultUpdate(vaultContract);
+        }
+      }
       setIsUpdatingData(false);
     });
-  }, [vault]);
+  }, [vault, infoClient, onVaultUpdate]);
 
-  const volume = Number(vault.pool?.volume_24h_USD || 0);
+  // Use actual computed volume or cached actual volume (similar to TVL logic)
+  const volume = Number(
+    vaultContract?.pool?.volume_24h_USD || 
+    vault.pool?.volume_24h_USD || 
+    (vault as any).cachedVolume24hUSD || 
+    (vaultContract as any)?.cachedVolume24hUSD || 
+    0
+  );
 
-  const fees = Number(vault.pool?.fees_24h_USD || 0);
+  // Use actual computed fees or cached actual fees (similar to TVL logic)
+  const fees = Number(
+    vaultContract?.pool?.fees_24h_USD || 
+    vault.pool?.fees_24h_USD || 
+    (vault as any).cachedFees24hUSD || 
+    (vaultContract as any)?.cachedFees24hUSD || 
+    0
+  );
+  
+
 
   if (loading) {
     return (
@@ -100,17 +158,6 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
     );
   }
 
-  console.log('#[vaulissue] VaultRow received vault:', {
-    address: vault.address,
-    allowToken0: vault.allowToken0,
-    allowToken1: vault.allowToken1,
-    token0Symbol: vault.token0?.symbol,
-    token1Symbol: vault.token1?.symbol,
-    tvlUSD: vault.tvlUSD,
-    totalSupply: vault.totalSupply,
-    token0Price: vault.token0?.derivedUSD,
-    token1Price: vault.token1?.derivedUSD
-  });
 
   return (
     <tr
@@ -174,22 +221,18 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
           </div>
         ) : (
           (() => {
-            // Use vault's computed TVL (calculated from actual locked amounts)
-            let tvlValue = vaultContract?.tvlUSD || vault.tvlUSD || 0;
+            // Use vault's computed TVL (calculated from actual locked amounts) or cached approximation
+            let tvlValue = vaultContract?.tvlUSD || 
+                          vault.tvlUSD || 
+                          (vault as any).cachedTvlUSD || 
+                          (vaultContract as any)?.cachedTvlUSD || 
+                          0;
             
             // Ensure we have a valid number
             if (isNaN(Number(tvlValue))) {
               tvlValue = 0;
             }
             
-            console.log('#[vaulissue] Rendering vault TVL for', vault.address, ':', {
-              vaultContractTvl: vaultContract?.tvlUSD,
-              vaultTvl: vault.tvlUSD,
-              finalTvlValue: tvlValue,
-              totalSupply: vaultContract?.totalSupply,
-              token0Price: vaultContract?.token0?.derivedUSD,
-              token1Price: vaultContract?.token1?.derivedUSD
-            });
             return DynamicFormatAmount({
               amount: tvlValue,
               decimals: 3,

@@ -1,9 +1,11 @@
 import { VaultsSortedByHoldersQuery } from '@/lib/algebra/graphql/generated/graphql';
 import { ICHIVaultContract } from '@honeypot/shared';
 import { wallet } from '@honeypot/shared/lib/wallet';
+import type { ApolloClient } from '@apollo/client';
 
 interface CachedVaultData {
   data: VaultsSortedByHoldersQuery;
+  processedVaults?: ICHIVaultContract[];
   timestamp: number;
   chainId: string;
 }
@@ -22,13 +24,13 @@ export class VaultCache {
     return VaultCache.instance;
   }
 
-  private getCacheKey(searchString: string = ''): string {
+  private getCacheKey(searchString = '') {
     const chainId = wallet.currentChainId?.toString() || 'unknown';
     const searchHash = searchString ? btoa(searchString).slice(0, 10) : 'all';
     return `${CACHE_KEY}-${chainId}-${searchHash}`;
   }
 
-  getCachedData(searchString: string = ''): VaultsSortedByHoldersQuery | null {
+  getCachedData(searchString = ''): VaultsSortedByHoldersQuery | null {
     const key = this.getCacheKey(searchString);
     const cached = this.cache.get(key);
     
@@ -45,18 +47,45 @@ export class VaultCache {
     return cached.data;
   }
 
-  setCachedData(data: VaultsSortedByHoldersQuery, searchString: string = ''): void {
+  setCachedData(data: VaultsSortedByHoldersQuery, searchString = '', processedVaults?: ICHIVaultContract[]): void {
     const key = this.getCacheKey(searchString);
     const chainId = wallet.currentChainId?.toString() || 'unknown';
     
     this.cache.set(key, {
       data,
+      processedVaults,
       timestamp: Date.now(),
       chainId,
     });
   }
 
-  isDataStale(searchString: string = ''): boolean {
+  getCachedProcessedVaults(searchString = ''): ICHIVaultContract[] | null {
+    const key = this.getCacheKey(searchString);
+    const cached = this.cache.get(key);
+    
+    if (!cached || !cached.processedVaults) {
+      return null;
+    }
+
+    const now = Date.now();
+    if (now - cached.timestamp > CACHE_DURATION) {
+      this.cache.delete(key);
+      return null;
+    }
+
+    return cached.processedVaults;
+  }
+
+  setCachedProcessedVaults(processedVaults: ICHIVaultContract[], searchString = ''): void {
+    const key = this.getCacheKey(searchString);
+    const cached = this.cache.get(key);
+    
+    if (cached) {
+      cached.processedVaults = processedVaults;
+    }
+  }
+
+  isDataStale(searchString = ''): boolean {
     const key = this.getCacheKey(searchString);
     const cached = this.cache.get(key);
     
@@ -72,7 +101,7 @@ export class VaultCache {
     this.cache.clear();
   }
 
-  getCacheInfo(searchString: string = ''): { hasData: boolean; isStale: boolean; age: number | null } {
+  getCacheInfo(searchString = ''): { hasData: boolean; isStale: boolean; age: number | null } {
     const key = this.getCacheKey(searchString);
     const cached = this.cache.get(key);
     
@@ -87,7 +116,7 @@ export class VaultCache {
   }
 
   // Preload data for common search terms
-  async preloadCommonSearches(infoClient: any): Promise<void> {
+  async preloadCommonSearches(infoClient: ApolloClient<any>): Promise<void> {
     const commonSearches = ['', 'USDC', 'USDT', 'WETH'];
     
     for (const search of commonSearches) {
@@ -95,7 +124,7 @@ export class VaultCache {
       if (cacheInfo.isStale) {
         try {
           const { getVaultPageData } = await import('@/lib/algebra/graphql/clients/vaults');
-          const data = await getVaultPageData(infoClient, search);
+          const data = await getVaultPageData(infoClient as ApolloClient<any>, search);
           this.setCachedData(data, search);
         } catch (error) {
           console.error(`Error preloading data for search "${search}":`, error);
@@ -105,10 +134,10 @@ export class VaultCache {
   }
 
   // Force refresh cache for a specific search
-  async forceRefresh(infoClient: any, searchString: string = ''): Promise<VaultsSortedByHoldersQuery | null> {
+  async forceRefresh(infoClient: ApolloClient<any>, searchString = ''): Promise<VaultsSortedByHoldersQuery | null> {
     try {
       const { getVaultPageData } = await import('@/lib/algebra/graphql/clients/vaults');
-      const data = await getVaultPageData(infoClient, searchString);
+      const data = await getVaultPageData(infoClient as ApolloClient<any>, searchString);
       this.setCachedData(data, searchString);
       return data;
     } catch (error) {

@@ -16,9 +16,10 @@ import { getSubgraphClientByChainId } from '@honeypot/shared';
 
 interface VaultCardProps {
   vault: ICHIVaultContract;
+  onVaultUpdate?: (updatedVault: ICHIVaultContract) => void;
 }
 
-const VaultCard = observer(({ vault }: VaultCardProps) => {
+const VaultCard = observer(({ vault, onVaultUpdate }: VaultCardProps) => {
   const [vaultContract, setVaultContract] = useState<
     ICHIVaultContract | undefined
   >(undefined);
@@ -40,6 +41,23 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
   useEffect(() => {
     if (!vault) return;
 
+    // Check if we already have cached actual computed data to display instantly
+    const hasCachedComputedData = vault && 
+                                 (vault as any).cachedTvlUSD !== undefined && 
+                                 (vault as any).cachedVolume24hUSD !== undefined && 
+                                 (vault as any).cachedFees24hUSD !== undefined;
+
+    // If we have cached computed data, show it immediately but still update in background
+    if (hasCachedComputedData) {
+      setVaultContract(vault);
+      setLoading(false);
+      // Continue to make API call in background for fresh data
+    } else {
+      // No cached computed data, show loading initially
+      setLoading(true);
+    }
+
+    // Always make API call to get fresh/accurate data
     async function initializeVault() {
       try {
         const vaultContract = await getSingleVaultDetails(
@@ -48,12 +66,11 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
         );
 
         if (vaultContract) {
-         
-          Promise.all([
+          await Promise.all([
             vaultContract?.getTotalAmounts(),
             vaultContract?.getTotalSupply(),
             vaultContract?.getBalanceOf(wallet.account),
-          ])
+          ]);
 
           vaultContract?.token0?.init(false, {
             loadIndexerTokenData: true,
@@ -63,15 +80,37 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
             loadIndexerTokenData: true,
           });
 
+          // Cache the actual computed values for future instant display
+          if (vaultContract.tvlUSD !== undefined) {
+            (vaultContract as any).cachedTvlUSD = vaultContract.tvlUSD;
+          }
+          
+          // Cache actual pool volume and fees values
+          if (vaultContract.pool?.volume_24h_USD !== undefined) {
+            (vaultContract as any).cachedVolume24hUSD = vaultContract.pool.volume_24h_USD;
+          }
+          
+          if (vaultContract.pool?.fees_24h_USD !== undefined) {
+            (vaultContract as any).cachedFees24hUSD = vaultContract.pool.fees_24h_USD;
+          }
+          
+          // Update display with fresh data
           setVaultContract(vaultContract);
+          
+          // Update parent cache with fresh data (including cached computed values)
+          if (onVaultUpdate) {
+            onVaultUpdate(vaultContract);
+          }
         }
       } catch (error) {
         console.error('Error initializing vault:', error);
+      } finally {
+        setLoading(false);
       }
     }
 
     initializeVault();
-  }, [vault, tokenA, tokenB]);
+  }, [vault, tokenA, tokenB, onVaultUpdate]);
 
   if (loading) {
     return <Skeleton className="h-64 mb-4 bg-gray-200 custom-dashed-3xl" />;
@@ -141,13 +180,15 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
             <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
           ) : (
             (() => {
-              // Use vault's computed TVL (calculated from actual locked amounts)
-              const tvlValue = Number(displayVault.tvlUSD || vault.tvlUSD || 0);
-              console.log('#[vaulissue] VaultCard rendering vault TVL for', vault.address, ':', {
-                displayVaultTvl: displayVault.tvlUSD,
-                vaultTvl: vault.tvlUSD,
-                finalTvlValue: tvlValue
-              });
+              // Use vault's computed TVL (calculated from actual locked amounts) or cached approximation
+              const tvlValue = Number(
+                displayVault.tvlUSD || 
+                vault.tvlUSD || 
+                (vault as any).cachedTvlUSD || 
+                (displayVault as any).cachedTvlUSD || 
+                0
+              );
+             
               return `$${tvlValue.toLocaleString('en-US', {
                 maximumFractionDigits: 2,
               })}`;
@@ -162,10 +203,20 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
           {loading ? (
             <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
           ) : (
-            `$${Number(displayVault.pool?.volume_24h_USD || 0).toLocaleString(
-              'en-US',
-              { maximumFractionDigits: 2 }
-            )}`
+            (() => {
+              // Use actual computed volume or cached actual volume
+              const volumeValue = Number(
+                displayVault.pool?.volume_24h_USD || 
+                vault.pool?.volume_24h_USD || 
+                (vault as any).cachedVolume24hUSD || 
+                (displayVault as any).cachedVolume24hUSD || 
+                0
+              );
+             
+              return `$${volumeValue.toLocaleString('en-US', {
+                maximumFractionDigits: 2,
+              })}`;
+            })()
           )}
         </div>
       </div>
@@ -176,10 +227,20 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
           {loading ? (
             <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
           ) : (
-            `$${Number(displayVault.pool?.fees_24h_USD || 0).toLocaleString(
-              'en-US',
-              { maximumFractionDigits: 2 }
-            )}`
+            (() => {
+              // Use actual computed fees or cached actual fees
+              const feesValue = Number(
+                displayVault.pool?.fees_24h_USD || 
+                vault.pool?.fees_24h_USD || 
+                (vault as any).cachedFees24hUSD || 
+                (displayVault as any).cachedFees24hUSD || 
+                0
+              );
+              
+              return `$${feesValue.toLocaleString('en-US', {
+                maximumFractionDigits: 2,
+              })}`;
+            })()
           )}
         </div>
       </div>

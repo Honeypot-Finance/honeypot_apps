@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { vaultCache } from '@/lib/vaultCache';
 import { VaultsSortedByHoldersQuery } from '@/lib/algebra/graphql/generated/graphql';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient, ICHIVaultContract } from '@honeypot/shared';
 
 export const useVaultCache = () => {
   const infoClient = useSubgraphClient('algebra_info');
@@ -10,8 +10,8 @@ export const useVaultCache = () => {
     return vaultCache.getCachedData(searchString);
   }, []);
 
-  const setCachedData = useCallback((data: VaultsSortedByHoldersQuery, searchString: string = '') => {
-    vaultCache.setCachedData(data, searchString);
+  const setCachedData = useCallback((data: VaultsSortedByHoldersQuery, searchString: string = '', processedVaults?: ICHIVaultContract[]) => {
+    vaultCache.setCachedData(data, searchString, processedVaults);
   }, []);
 
   const isDataStale = useCallback((searchString: string = '') => {
@@ -55,6 +55,14 @@ export const useVaultCache = () => {
     return vaultCache.getCachedKeys();
   }, []);
 
+  const getCachedProcessedVaults = useCallback((searchString: string = '') => {
+    return vaultCache.getCachedProcessedVaults(searchString);
+  }, []);
+
+  const setCachedProcessedVaults = useCallback((processedVaults: ICHIVaultContract[], searchString: string = '') => {
+    vaultCache.setCachedProcessedVaults(processedVaults, searchString);
+  }, []);
+
   // Preload common searches when component mounts
   useEffect(() => {
     preloadCommonSearches();
@@ -63,6 +71,8 @@ export const useVaultCache = () => {
   return {
     getCachedData,
     setCachedData,
+    getCachedProcessedVaults,
+    setCachedProcessedVaults,
     isDataStale,
     getCacheInfo,
     clearCache,

@@ -44,7 +44,7 @@ export function AllAquaberaVaults({
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
   const infoClient = useSubgraphClient('algebra_info');
-  const { getCachedData, setCachedData, getCacheInfo } = useVaultCache();
+  const { getCachedData, setCachedData, getCacheInfo, getCachedProcessedVaults, setCachedProcessedVaults } = useVaultCache();
 
   // Get vault tags from chain configuration for immediate display
   const getVaultTagFromConfig = (vaultAddress: string) => {
@@ -66,11 +66,19 @@ export function AllAquaberaVaults({
 
       // Check cache first
       const cachedData = getCachedData(searchString);
+      const cachedProcessedVaults = getCachedProcessedVaults(searchString);
       const cacheInfo = getCacheInfo(searchString);
       
       if (cachedData && !cacheInfo.isStale) {
         // Use cached data immediately
         setVaults(cachedData);
+        setIsLoading(false); // Important: Set loading to false for cached data
+        
+        // If we have cached processed vaults, use them immediately too
+        if (cachedProcessedVaults) {
+          setVaultsContracts(cachedProcessedVaults);
+        }
+        
         if (onDataLoaded) {
           onDataLoaded();
         }
@@ -108,7 +116,7 @@ export function AllAquaberaVaults({
     };
 
     initVaults();
-  }, [wallet.isInit, searchString, onDataLoaded, infoClient]);
+  }, [searchString, onDataLoaded, infoClient, getCachedData, getCachedProcessedVaults, getCacheInfo, setCachedData]);
 
   useEffect(() => {
     if (!wallet.isInit || !vaults?.ichiVaults?.length) {
@@ -134,14 +142,12 @@ export function AllAquaberaVaults({
         allowToken1: vault.allowTokenB || false,
         pool: vault.pool ? {
           ...vault.pool,
-          volume_24h_USD: vault.pool.poolDayData?.[0]?.volumeUSD || '0',
-          fees_24h_USD: vault.pool.poolDayData?.[0]?.feesUSD || '0',
+          // Don't set approximation values - let actual computed values be cached after calculation
         } as any : undefined,
       });
 
       if (vaultContract) {
-        // Note: Don't cache pool's totalValueLockedUSD as vault TVL
-        // The vault TVL should be calculated from vault's actual locked amounts
+        // Don't set approximation values - let actual computed values be cached after calculation
         // Add token symbols as fallbacks
         (vaultContract as any).token0Symbol = vault.pool?.token0?.symbol || 'Unknown';
         (vaultContract as any).token1Symbol = vault.pool?.token1?.symbol || 'Unknown';
@@ -158,8 +164,10 @@ export function AllAquaberaVaults({
     // 只有当有新合约时才更新状态
     if (newVaultsContracts.length > 0) {
       setVaultsContracts(newVaultsContracts);
+      // Cache the processed vaults
+      setCachedProcessedVaults(newVaultsContracts, searchString);
     }
-  }, [wallet.isInit, vaults]);
+  }, [vaults, searchString, setCachedProcessedVaults]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -209,8 +217,8 @@ export function AllAquaberaVaults({
         case 'address':
           return multiplier * a.address.localeCompare(b.address);
         case 'tvl': {
-          const aTvl = Number(a.tvlUSD || 0);
-          const bTvl = Number(b.tvlUSD || 0);
+          const aTvl = Number(a.tvlUSD || (a as any).cachedTvlUSD || 0);
+          const bTvl = Number(b.tvlUSD || (b as any).cachedTvlUSD || 0);
           return multiplier * (aTvl - bTvl);
         }
         case 'volume':
@@ -273,7 +281,18 @@ export function AllAquaberaVaults({
               </div>
             )}
             {sortedVaults.map((vault) => (
-              <VaultCard key={vault.address} vault={vault} />
+              <VaultCard 
+                key={vault.address} 
+                vault={vault} 
+                onVaultUpdate={(updatedVault) => {
+                  // Update the vault in our cached list
+                  const updatedContracts = vaultsContracts.map(v => 
+                    v.address === updatedVault.address ? updatedVault : v
+                  );
+                  setVaultsContracts(updatedContracts);
+                  setCachedProcessedVaults(updatedContracts, searchString);
+                }}
+              />
             ))}
           </>
         )}
@@ -453,7 +472,20 @@ export function AllAquaberaVaults({
                   </tr>
                 )}
                 {sortedVaults.map((vault) => {
-                  return <VaultRow key={vault.address} vault={vault} />;
+                  return (
+                    <VaultRow 
+                      key={vault.address} 
+                      vault={vault} 
+                      onVaultUpdate={(updatedVault) => {
+                        // Update the vault in our cached list
+                        const updatedContracts = vaultsContracts.map(v => 
+                          v.address === updatedVault.address ? updatedVault : v
+                        );
+                        setVaultsContracts(updatedContracts);
+                        setCachedProcessedVaults(updatedContracts, searchString);
+                      }}
+                    />
+                  );
                 })}
               </>
             )}
