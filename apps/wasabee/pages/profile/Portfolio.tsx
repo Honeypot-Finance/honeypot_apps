@@ -17,6 +17,7 @@ import Image from 'next/image';
 import rhinoLogo from '@/public/images/partners/rhino-finance-logo.svg';
 import { ChevronDown } from 'lucide-react';
 import { TokenLogo } from '@honeypot/shared';
+import { profileDataCache } from '@/services/cache/profileDataCache';
 
 type SortField = 'name' | 'price' | 'balance' | 'value';
 type SortDirection = 'asc' | 'desc';
@@ -24,6 +25,7 @@ type SortDirection = 'asc' | 'desc';
 export const PortfolioTab = observer(() => {
   const [sortField, setSortField] = useState<SortField>('value');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [showCacheIndicator, setShowCacheIndicator] = useState(false);
 
   const sortOptions = [
     { key: 'name', label: 'Name' },
@@ -33,10 +35,28 @@ export const PortfolioTab = observer(() => {
   ];
 
   useEffect(() => {
-    if (wallet.isInit) {
+    if (wallet.isInit && wallet.account) {
+      // Check if we're using cached data
+      const cacheKey = profileDataCache.getPortfolioCacheKey(
+        wallet.account,
+        wallet.currentChainId.toString()
+      );
+      const cached = profileDataCache.get(cacheKey);
+
+      if (cached && cached.isStale) {
+        setShowCacheIndicator(true);
+      } else {
+        setShowCacheIndicator(false);
+      }
+
       portfolio.initPortfolio();
     }
-  }, [wallet.isInit]);
+  }, [wallet.isInit, wallet.account]);
+
+  const handleForceRefresh = async () => {
+    setShowCacheIndicator(false);
+    await portfolio.forceRefresh();
+  };
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {

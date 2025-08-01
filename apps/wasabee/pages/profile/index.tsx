@@ -9,6 +9,7 @@ import { MyPools } from './MyPools';
 import PortfolioTab from './Portfolio';
 import { ProtfolioBalanceChart } from './ProtfolioBalanceChart';
 import { portfolio } from '@/services/portfolio';
+import { poolsCache } from '@/services/cache/poolsCache';
 import {
   getLiquidatorDatas,
   UserPoolProfit,
@@ -22,9 +23,7 @@ import { useRouter } from 'next/router';
 import { useSubgraphClient } from '@honeypot/shared';
 
 export const Profile = observer(() => {
-  const { chainId } = useAccount();
   const chartContainerRef = useRef<HTMLDivElement>(null);
-  const [chartWidth, setChartWidth] = useState(0);
   const [timeRange, setTimeRange] = useState<'1D' | '1W' | '1M'>('1D');
   const [userPoolsProfit, setUserPoolsProfit] = useState<UserPoolProfit[]>([]);
   const router = useRouter();
@@ -36,14 +35,11 @@ export const Profile = observer(() => {
       getLiquidatorDatas(infoClient, wallet.account).then((data) => {
         setUserPoolsProfit(data);
       });
-    }
-  }, [wallet.account, getLiquidatorDatas]);
 
-  useEffect(() => {
-    if (chartContainerRef.current) {
-      setChartWidth(chartContainerRef.current.offsetWidth);
+      portfolio.initPortfolio();
+      poolsCache.getPoolsData('myPools'); // Preload pools data
     }
-  }, []);
+  }, [wallet.account, infoClient]);
 
   return (
     <div className="w-full max-w-[1200px] mx-auto px-2 sm:px-4 xl:px-0 font-gliker">
@@ -132,7 +128,8 @@ export const Profile = observer(() => {
                 }}
                 onSelectionChange={(key) => {
                   if (key === 'portfolio') {
-                    portfolio.initPortfolio();
+                  } else if (key === 'my-pools') {
+                    poolsCache.getPoolsData('myPools');
                   }
                 }}
               >
