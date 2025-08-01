@@ -20,6 +20,7 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
   const [vaultContract, setVaultContract] = useState<
     ICHIVaultContract | undefined
   >(undefined);
+  const [isUpdatingData, setIsUpdatingData] = useState(false);
   const infoClient = useSubgraphClient('algebra_info');
   
   const tokenA = Token.getToken({
@@ -53,13 +54,15 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
 
     async function getVaultsContracts() {
       if (!vault) return;
+      setIsUpdatingData(true);
       const vaultContract = await getSingleVaultDetails(
         infoClient,
         vault.address
       );
 
       if (vaultContract) {
-       Promise.all([
+        // Load vault's actual locked amounts for proper TVL calculation
+        Promise.all([
           vaultContract?.getTotalAmounts(),
           vaultContract?.getTotalSupply(),
           vaultContract?.getBalanceOf(wallet.account),
@@ -79,6 +82,7 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
 
     getVaultsContracts().then((vaultContract) => {
       setVaultContract(vaultContract);
+      setIsUpdatingData(false);
     });
   }, [vault]);
 
@@ -95,6 +99,18 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
       </tr>
     );
   }
+
+  console.log('#[vaulissue] VaultRow received vault:', {
+    address: vault.address,
+    allowToken0: vault.allowToken0,
+    allowToken1: vault.allowToken1,
+    token0Symbol: vault.token0?.symbol,
+    token1Symbol: vault.token1?.symbol,
+    tvlUSD: vault.tvlUSD,
+    totalSupply: vault.totalSupply,
+    token0Price: vault.token0?.derivedUSD,
+    token1Price: vault.token1?.derivedUSD
+  });
 
   return (
     <tr
@@ -152,37 +168,63 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
       {/* <td className="py-4 px-6 text-black">{vault.id}</td> */}
       {/* apr */}
       <td className="py-4 px-6 text-right text-black">
-        {(() => {
-          // Use cached TVL if available, otherwise fall back to computed TVL
-          let tvlValue = (vault as any).cachedTvlUSD || vaultContract?.tvlUSD || vault.tvlUSD || 0;
-          
-          // Ensure we have a valid number
-          if (isNaN(Number(tvlValue))) {
-            tvlValue = 0;
-          }
-          
-          return DynamicFormatAmount({
-            amount: tvlValue,
-            decimals: 3,
-            beginWith: ' $',
-          });
-        })()}
+        {isUpdatingData ? (
+          <div className="flex items-center justify-end">
+            <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
+          </div>
+        ) : (
+          (() => {
+            // Use vault's computed TVL (calculated from actual locked amounts)
+            let tvlValue = vaultContract?.tvlUSD || vault.tvlUSD || 0;
+            
+            // Ensure we have a valid number
+            if (isNaN(Number(tvlValue))) {
+              tvlValue = 0;
+            }
+            
+            console.log('#[vaulissue] Rendering vault TVL for', vault.address, ':', {
+              vaultContractTvl: vaultContract?.tvlUSD,
+              vaultTvl: vault.tvlUSD,
+              finalTvlValue: tvlValue,
+              totalSupply: vaultContract?.totalSupply,
+              token0Price: vaultContract?.token0?.derivedUSD,
+              token1Price: vaultContract?.token1?.derivedUSD
+            });
+            return DynamicFormatAmount({
+              amount: tvlValue,
+              decimals: 3,
+              beginWith: ' $',
+            });
+          })()
+        )}
       </td>
       {/* volume */}
       <td className="py-4 px-6 text-right text-black">
-        {DynamicFormatAmount({
-          amount: volume ?? 0,
-          decimals: 3,
-          beginWith: ' $',
-        })}
+        {isUpdatingData ? (
+          <div className="flex items-center justify-end">
+            <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
+          </div>
+        ) : (
+          DynamicFormatAmount({
+            amount: volume ?? 0,
+            decimals: 3,
+            beginWith: ' $',
+          })
+        )}
       </td>
       {/* fees */}
       <td className="py-4 px-6 text-right text-black">
-        {DynamicFormatAmount({
-          amount: fees ?? 0,
-          decimals: 3,
-          beginWith: ' $',
-        })}
+        {isUpdatingData ? (
+          <div className="flex items-center justify-end">
+            <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
+          </div>
+        ) : (
+          DynamicFormatAmount({
+            amount: fees ?? 0,
+            decimals: 3,
+            beginWith: ' $',
+          })
+        )}
       </td>
       <td className="py-4 px-6 text-right text-black">
         <div className="h-full flex justify-end items-center gap-2">

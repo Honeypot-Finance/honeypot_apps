@@ -70,24 +70,21 @@ export function AllAquaberaVaults({
       
       if (cachedData && !cacheInfo.isStale) {
         // Use cached data immediately
-        
         setVaults(cachedData);
         if (onDataLoaded) {
           onDataLoaded();
         }
         
-        // Update in background if data is stale
-        if (cacheInfo.isStale) {
-          setIsBackgroundLoading(true);
-          try {
-            const freshData = await getVaultPageData(infoClient, searchString);
-            setVaults(freshData);
-            setCachedData(freshData, searchString);
-          } catch (error) {
-            console.error('Error updating vaults in background:', error);
-          } finally {
-            setIsBackgroundLoading(false);
-          }
+        // Always update in background for fresh volume/fees data
+        setIsBackgroundLoading(true);
+        try {
+          const freshData = await getVaultPageData(infoClient, searchString);
+          setVaults(freshData);
+          setCachedData(freshData, searchString);
+        } catch (error) {
+          console.error('Error updating vaults in background:', error);
+        } finally {
+          setIsBackgroundLoading(false);
         }
         return;
       }
@@ -143,8 +140,8 @@ export function AllAquaberaVaults({
       });
 
       if (vaultContract) {
-        // Add cached TVL data directly to the vault contract
-        (vaultContract as any).cachedTvlUSD = vault.pool?.totalValueLockedUSD || '0';
+        // Note: Don't cache pool's totalValueLockedUSD as vault TVL
+        // The vault TVL should be calculated from vault's actual locked amounts
         // Add token symbols as fallbacks
         (vaultContract as any).token0Symbol = vault.pool?.token0?.symbol || 'Unknown';
         (vaultContract as any).token1Symbol = vault.pool?.token1?.symbol || 'Unknown';
@@ -154,7 +151,7 @@ export function AllAquaberaVaults({
         if (vaultTag) {
           vaultContract.vaultTag = vaultTag;
         }
-          newVaultsContracts.push(vaultContract);
+        newVaultsContracts.push(vaultContract);
       }
     });
 
@@ -212,8 +209,8 @@ export function AllAquaberaVaults({
         case 'address':
           return multiplier * a.address.localeCompare(b.address);
         case 'tvl': {
-          const aTvl = Number((a as any).cachedTvlUSD || a.tvlUSD || 0);
-          const bTvl = Number((b as any).cachedTvlUSD || b.tvlUSD || 0);
+          const aTvl = Number(a.tvlUSD || 0);
+          const bTvl = Number(b.tvlUSD || 0);
           return multiplier * (aTvl - bTvl);
         }
         case 'volume':
@@ -247,6 +244,15 @@ export function AllAquaberaVaults({
     <div className="w-full">
       {/* Mobile view - card layout for small screens */}
       <div className="sm:hidden">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center gap-4">
+            {isBackgroundLoading && (
+              <div className="text-sm text-gray-500">
+                Updating data...
+              </div>
+            )}
+          </div>
+        </div>
         {isLoading ? (
           <div className="text-center py-8 text-black">Loading...</div>
         ) : !vaults ? (
@@ -275,17 +281,6 @@ export function AllAquaberaVaults({
 
       {/* Desktop view - table layout for medium screens and up */}
       <div className="hidden sm:block w-full overflow-x-auto custom-dashed-3xl sm:p-6 sm:bg-white">
-        {isBackgroundLoading && (
-          <div className="text-center py-2 text-sm text-gray-500 mb-4">
-            Updating data in background...
-          </div>
-        )}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="text-xs text-gray-400 mb-2">
-            Cache: {getCacheInfo(searchString).hasData ? 'Hit' : 'Miss'} 
-            {getCacheInfo(searchString).age && ` (${Math.round(getCacheInfo(searchString).age! / 1000)}s old)`}
-          </div>
-        )}
         <table className="w-full">
           <thead>
             <tr>

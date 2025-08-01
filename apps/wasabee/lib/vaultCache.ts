@@ -9,7 +9,7 @@ interface CachedVaultData {
 }
 
 const CACHE_KEY = 'aquabera-vaults-cache';
-const CACHE_DURATION = 2 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 30 * 1000; // 30 seconds instead of 2 minutes
 
 export class VaultCache {
   private static instance: VaultCache;

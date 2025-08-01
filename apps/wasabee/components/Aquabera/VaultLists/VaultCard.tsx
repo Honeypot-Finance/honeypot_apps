@@ -137,23 +137,35 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
       <div className="flex justify-between items-center mb-3">
         <div className="font-medium">Vault TVL</div>
         <div>
-          {(() => {
-           
-            const tvlValue = Number((vault as any).cachedTvlUSD || displayVault.tvlUSD || vault.tvlUSD || 0);
-            return `$${tvlValue.toLocaleString('en-US', {
-              maximumFractionDigits: 2,
-            })}`;
-          })()}
+          {loading ? (
+            <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
+          ) : (
+            (() => {
+              // Use vault's computed TVL (calculated from actual locked amounts)
+              const tvlValue = Number(displayVault.tvlUSD || vault.tvlUSD || 0);
+              console.log('#[vaulissue] VaultCard rendering vault TVL for', vault.address, ':', {
+                displayVaultTvl: displayVault.tvlUSD,
+                vaultTvl: vault.tvlUSD,
+                finalTvlValue: tvlValue
+              });
+              return `$${tvlValue.toLocaleString('en-US', {
+                maximumFractionDigits: 2,
+              })}`;
+            })()
+          )}
         </div>
       </div>
 
       <div className="flex justify-between items-center mb-3">
         <div className="font-medium">24h Volume</div>
         <div>
-          $
-          {Number(displayVault.pool?.volume_24h_USD || 0).toLocaleString(
-            'en-US',
-            { maximumFractionDigits: 2 }
+          {loading ? (
+            <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
+          ) : (
+            `$${Number(displayVault.pool?.volume_24h_USD || 0).toLocaleString(
+              'en-US',
+              { maximumFractionDigits: 2 }
+            )}`
           )}
         </div>
       </div>
@@ -161,10 +173,13 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
       <div className="flex justify-between items-center mb-3">
         <div className="font-medium">24h Fees</div>
         <div>
-          $
-          {Number(displayVault.pool?.fees_24h_USD || 0).toLocaleString(
-            'en-US',
-            { maximumFractionDigits: 2 }
+          {loading ? (
+            <div className="animate-pulse bg-gray-200 h-4 w-16 rounded"></div>
+          ) : (
+            `$${Number(displayVault.pool?.fees_24h_USD || 0).toLocaleString(
+              'en-US',
+              { maximumFractionDigits: 2 }
+            )}`
           )}
         </div>
       </div>
@@ -172,10 +187,13 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
       <div className="flex justify-between items-center mb-3">
         <div className="font-medium">APR</div>
         <div className="font-bold text-green-600">
-          {Number(displayVault.apr || vault.apr || 0).toLocaleString('en-US', {
-            maximumFractionDigits: 2,
-          })}
-          %
+          {loading ? (
+            <div className="animate-pulse bg-gray-200 h-4 w-12 rounded"></div>
+          ) : (
+            `${Number(displayVault.apr || vault.apr || 0).toLocaleString('en-US', {
+              maximumFractionDigits: 2,
+            })}%`
+          )}
         </div>
       </div>
 
