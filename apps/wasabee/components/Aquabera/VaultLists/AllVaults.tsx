@@ -6,10 +6,10 @@ import { Button } from '@/components/algebra/ui/button';
 import { getVaultPageData } from '@/lib/algebra/graphql/clients/vaults';
 import { VaultsSortedByHoldersQuery } from '@/lib/algebra/graphql/generated/graphql';
 import { ICHIVaultContract } from '@honeypot/shared';
-import { useSubgraphClient } from '@honeypot/shared';
-import { LoadingDisplay } from '@/components/LoadingDisplay/LoadingDisplay';
-import VaultCard from './VaultCard';
 import VaultRow from './VaulltRow';
+import { useSubgraphClient } from '@honeypot/shared';
+import VaultCard from './VaultCard';
+import { Skeleton } from '@nextui-org/react';
 
 type SortField =
   | 'pair'
@@ -191,10 +191,9 @@ export function AllAquaberaVaults({
 
     const initializeVaultsWithDetails = async () => {
       try {
-        // Process all vaults in parallel instead of sequential
-        const vaultPromises = vaults.ichiVaults.map(async (vault) => {
+        // Process vaults in parallel for better performance
+        const vaultPromises = vaults.ichiVaults.map(async (vault: any) => {
           try {
-            // Get detailed vault contract with pool data, tvlUSD, etc.
             const vaultContract = await getSingleVaultDetails(
               infoClient,
               vault.id
@@ -452,184 +451,190 @@ export function AllAquaberaVaults({
           )
         ) : (
           <>
-            <LoadingDisplay />
+            {/* Show 5 skeleton loading cards for mobile */}
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div key={`mobile-loading-${index}`} className="mb-4">
+                <Skeleton className="h-64 bg-white custom-dashed-3xl" />
+              </div>
+            ))}
           </>
         )}
       </div>
 
       {/* Desktop view - table layout for medium screens and up */}
       <div className="hidden sm:block w-full overflow-x-auto custom-dashed-3xl sm:p-6 sm:bg-white">
-        {!isLoading ? (
-          <>
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
-                    <div
-                      className="flex items-center gap-2"
-                      onClick={() => handleSort('pair')}
-                    >
-                      <span>Token Pair</span>
-                      <div className="flex flex-col">
-                        <ChevronUp
-                          className={`h-3 w-3 ${
-                            sortField === 'pair' && sortDirection === 'asc'
-                              ? 'text-black'
-                              : 'text-[#4D4D4D]'
-                          }`}
-                        />
-                        <ChevronDown
-                          className={`h-3 w-3 ${
-                            sortField === 'pair' && sortDirection === 'desc'
-                              ? 'text-black'
-                              : 'text-[#4D4D4D]'
-                          }`}
-                        />
-                      </div>
-                    </div>
-                  </th>
-                  <th className="py-4 px-6 cursor-pointer text-[#4D4D4D] min-w-[180px]">
-                    <div
-                      className="flex items-center gap-2"
-                      onClick={() => handleSort('pair')}
-                    >
-                      <span>Allow Token</span>
-                      <div className="flex flex-col">
-                        <ChevronUp
-                          className={`h-3 w-3 ${
-                            sortField === 'pair' && sortDirection === 'asc'
-                              ? 'text-black'
-                              : 'text-[#4D4D4D]'
-                          }`}
-                        />
-                        <ChevronDown
-                          className={`h-3 w-3 ${
-                            sortField === 'pair' && sortDirection === 'desc'
-                              ? 'text-black'
-                              : 'text-[#4D4D4D]'
-                          }`}
-                        />
-                      </div>
-                    </div>
-                  </th>
-                  <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
-                    <div
-                      className="flex items-center gap-2 justify-end"
-                      onClick={() => handleSort('tvl')}
-                    >
-                      <span>Vault TVL</span>
-                      <div className="flex flex-col">
-                        <ChevronUp
-                          className={`h-3 w-3 ${
-                            sortField === 'tvl' && sortDirection === 'asc'
-                              ? 'text-black'
-                              : 'text-[#4D4D4D]'
-                          }`}
-                        />
-                        <ChevronDown
-                          className={`h-3 w-3 ${
-                            sortField === 'tvl' && sortDirection === 'desc'
-                              ? 'text-black'
-                              : 'text-[#4D4D4D]'
-                          }`}
-                        />
-                      </div>
-                    </div>
-                  </th>
-                  <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
-                    <div
-                      className="flex items-center gap-2 justify-end"
-                      onClick={() => handleSort('volume')}
-                    >
-                      <span>Pool 24h Volume</span>
-                      <div className="flex flex-col">
-                        <ChevronUp
-                          className={`h-3 w-3 ${
-                            sortField === 'volume' && sortDirection === 'asc'
-                              ? 'text-black'
-                              : 'text-[#4D4D4D]'
-                          }`}
-                        />
-                        <ChevronDown
-                          className={`h-3 w-3 ${
-                            sortField === 'volume' && sortDirection === 'desc'
-                              ? 'text-black'
-                              : 'text-[#4D4D4D]'
-                          }`}
-                        />
-                      </div>
-                    </div>
-                  </th>
-                  <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
-                    <div
-                      className="flex items-center gap-2 justify-end"
-                      onClick={() => handleSort('fees')}
-                    >
-                      <span>Pool 24h Fees</span>
-                      <div className="flex flex-col">
-                        <ChevronUp
-                          className={`h-3 w-3 ${
-                            sortField === 'fees' && sortDirection === 'asc'
-                              ? 'text-black'
-                              : 'text-[#4D4D4D]'
-                          }`}
-                        />
-                        <ChevronDown
-                          className={`h-3 w-3 ${
-                            sortField === 'fees' && sortDirection === 'desc'
-                              ? 'text-black'
-                              : 'text-[#4D4D4D]'
-                          }`}
-                        />
-                      </div>
-                    </div>
-                  </th>
-                  <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
-                    <div
-                      className="flex items-center gap-2 justify-end"
-                      onClick={() => handleSort('apr')}
-                    >
-                      <span>APR</span>
-                      <div className="flex flex-col">
-                        <ChevronUp
-                          className={`h-3 w-3 ${
-                            sortField === 'apr' && sortDirection === 'asc'
-                              ? 'text-black'
-                              : 'text-[#4D4D4D]'
-                          }`}
-                        />
-                        <ChevronDown
-                          className={`h-3 w-3 ${
-                            sortField === 'apr' && sortDirection === 'desc'
-                              ? 'text-black'
-                              : 'text-[#4D4D4D]'
-                          }`}
-                        />
-                      </div>
-                    </div>
-                  </th>
+        <table className="w-full">
+          <thead>
+            <tr>
+              <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
+                <div
+                  className="flex items-center gap-2"
+                  onClick={() => handleSort('pair')}
+                >
+                  <span>Token Pair</span>
+                  <div className="flex flex-col">
+                    <ChevronUp
+                      className={`h-3 w-3 ${
+                        sortField === 'pair' && sortDirection === 'asc'
+                          ? 'text-black'
+                          : 'text-[#4D4D4D]'
+                      }`}
+                    />
+                    <ChevronDown
+                      className={`h-3 w-3 ${
+                        sortField === 'pair' && sortDirection === 'desc'
+                          ? 'text-black'
+                          : 'text-[#4D4D4D]'
+                      }`}
+                    />
+                  </div>
+                </div>
+              </th>
+              <th className="py-4 px-6 cursor-pointer text-[#4D4D4D] min-w-[180px]">
+                <div
+                  className="flex items-center gap-2"
+                  onClick={() => handleSort('pair')}
+                >
+                  <span>Allow Token</span>
+                  <div className="flex flex-col">
+                    <ChevronUp
+                      className={`h-3 w-3 ${
+                        sortField === 'pair' && sortDirection === 'asc'
+                          ? 'text-black'
+                          : 'text-[#4D4D4D]'
+                      }`}
+                    />
+                    <ChevronDown
+                      className={`h-3 w-3 ${
+                        sortField === 'pair' && sortDirection === 'desc'
+                          ? 'text-black'
+                          : 'text-[#4D4D4D]'
+                      }`}
+                    />
+                  </div>
+                </div>
+              </th>
+              <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+                <div
+                  className="flex items-center gap-2 justify-end"
+                  onClick={() => handleSort('tvl')}
+                >
+                  <span>Vault TVL</span>
+                  <div className="flex flex-col">
+                    <ChevronUp
+                      className={`h-3 w-3 ${
+                        sortField === 'tvl' && sortDirection === 'asc'
+                          ? 'text-black'
+                          : 'text-[#4D4D4D]'
+                      }`}
+                    />
+                    <ChevronDown
+                      className={`h-3 w-3 ${
+                        sortField === 'tvl' && sortDirection === 'desc'
+                          ? 'text-black'
+                          : 'text-[#4D4D4D]'
+                      }`}
+                    />
+                  </div>
+                </div>
+              </th>
+              <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+                <div
+                  className="flex items-center gap-2 justify-end"
+                  onClick={() => handleSort('volume')}
+                >
+                  <span>Pool 24h Volume</span>
+                  <div className="flex flex-col">
+                    <ChevronUp
+                      className={`h-3 w-3 ${
+                        sortField === 'volume' && sortDirection === 'asc'
+                          ? 'text-black'
+                          : 'text-[#4D4D4D]'
+                      }`}
+                    />
+                    <ChevronDown
+                      className={`h-3 w-3 ${
+                        sortField === 'volume' && sortDirection === 'desc'
+                          ? 'text-black'
+                          : 'text-[#4D4D4D]'
+                      }`}
+                    />
+                  </div>
+                </div>
+              </th>
+              <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+                <div
+                  className="flex items-center gap-2 justify-end"
+                  onClick={() => handleSort('fees')}
+                >
+                  <span>Pool 24h Fees</span>
+                  <div className="flex flex-col">
+                    <ChevronUp
+                      className={`h-3 w-3 ${
+                        sortField === 'fees' && sortDirection === 'asc'
+                          ? 'text-black'
+                          : 'text-[#4D4D4D]'
+                      }`}
+                    />
+                    <ChevronDown
+                      className={`h-3 w-3 ${
+                        sortField === 'fees' && sortDirection === 'desc'
+                          ? 'text-black'
+                          : 'text-[#4D4D4D]'
+                      }`}
+                    />
+                  </div>
+                </div>
+              </th>
+              <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+                <div
+                  className="flex items-center gap-2 justify-end"
+                  onClick={() => handleSort('apr')}
+                >
+                  <span>APR</span>
+                  <div className="flex flex-col">
+                    <ChevronUp
+                      className={`h-3 w-3 ${
+                        sortField === 'apr' && sortDirection === 'asc'
+                          ? 'text-black'
+                          : 'text-[#4D4D4D]'
+                      }`}
+                    />
+                    <ChevronDown
+                      className={`h-3 w-3 ${
+                        sortField === 'apr' && sortDirection === 'desc'
+                          ? 'text-black'
+                          : 'text-[#4D4D4D]'
+                      }`}
+                    />
+                  </div>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#4D4D4D]">
+            {isLoading ? (
+              // Show 10 skeleton loading rows
+              Array.from({ length: 10 }).map((_, index) => (
+                <tr key={`loading-${index}`}>
+                  <td colSpan={6}>
+                    <Skeleton className="h-12 bg-yellow-500" />
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-[#4D4D4D]">
-                {!sortedVaults.length && !isLoadingFromCache ? (
-                  <tr className="hover:bg-white border-white h-full">
-                    <td colSpan={5} className="h-24 text-center text-black">
-                      No results.
-                    </td>
-                  </tr>
-                ) : (
-                  sortedVaults.map((vault) => {
-                    return <VaultRow key={vault.address} vault={vault} />;
-                  })
-                )}
-              </tbody>
-            </table>
-          </>
-        ) : (
-          <>
-            <LoadingDisplay />
-          </>
-        )}
+              ))
+            ) : !sortedVaults.length ? (
+              <tr className="hover:bg-white border-white h-full">
+                <td colSpan={6} className="h-24 text-center text-black">
+                  No results.
+                </td>
+              </tr>
+            ) : (
+              sortedVaults.map((vault) => {
+                return <VaultRow key={vault.address} vault={vault} />;
+              })
+            )}
+          </tbody>
+        </table>
       </div>
 
       {!isLoading && (
