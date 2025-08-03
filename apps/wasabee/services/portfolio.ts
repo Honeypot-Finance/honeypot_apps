@@ -38,6 +38,8 @@ class Portfolio {
   async initPortfolio() {
     if (!wallet.isInit) return;
 
+    if (this.isInit && !this.isLoading) return;
+
     const infoClient = getSubgraphClientByChainId(
       wallet.currentChainId.toString(),
       'algebra_info'
