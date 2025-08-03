@@ -1,14 +1,15 @@
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { Token } from '@honeypot/shared';
-import { useEffect, useState, useMemo } from 'react';
+import { getSingleVaultDetails, Token } from '@honeypot/shared';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/algebra/ui/button';
 import { getVaultPageData } from '@/lib/algebra/graphql/clients/vaults';
 import { VaultsSortedByHoldersQuery } from '@/lib/algebra/graphql/generated/graphql';
 import { ICHIVaultContract } from '@honeypot/shared';
-import VaultRow from './VaulltRow';
 import { useSubgraphClient } from '@honeypot/shared';
+import { LoadingDisplay } from '@/components/LoadingDisplay/LoadingDisplay';
 import VaultCard from './VaultCard';
+import VaultRow from './VaulltRow';
 
 type SortField =
   | 'pair'
@@ -31,10 +32,153 @@ export function AllAquaberaVaults({
   sortBy = 'apr',
   onDataLoaded,
 }: AllAquaberaVaultsProps) {
-  const [vaultsContracts, setVaultsContracts] = useState<ICHIVaultContract[]>(
-    []
-  );
   const [vaults, setVaults] = useState<VaultsSortedByHoldersQuery>();
+  
+  // Cache to persist vault contracts across tab switches using localStorage
+  const CACHE_KEY_PREFIX = 'vault-cache-';
+  const CACHE_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
+  
+  const vaultContractsCache = useRef<Map<string, ICHIVaultContract[]>>(new Map());
+  
+
+  
+
+
+  // Generate cache key based on vaults data
+  const cacheKey = useMemo(() => {
+    if (!vaults?.ichiVaults?.length) return '';
+    return `${wallet.currentChainId}-${vaults.ichiVaults.map(v => v.id).join('-')}`;
+  }, [vaults]);
+
+  // Initialize with cached data immediately if available  
+  const [vaultsContracts, setVaultsContracts] = useState<ICHIVaultContract[]>(() => {
+    console.log('🏁 useState initializer running for vaultsContracts');
+    
+    // SIMPLIFIED APPROACH - Just return empty and let useEffect handle caching
+    console.log('⚡ Simplified init - starting with empty array, will check cache in useEffect');
+    return [];
+  });
+
+
+
+  // Add component lifecycle debugging
+  useEffect(() => {
+    console.log('🎬 AllVaults component mounted');
+    return () => {
+      console.log('💀 AllVaults component unmounting');
+    };
+  }, []);
+
+  // Check for cached data immediately on mount - BEFORE any other effects
+  useEffect(() => {
+    console.log('🚀 PRIORITY CACHE CHECK on mount');
+    
+    try {
+      const chainPrefix = `${CACHE_KEY_PREFIX}${wallet.currentChainId}-`;
+      console.log('🎯 Looking for cache with prefix:', chainPrefix);
+      
+      const allKeys = Object.keys(localStorage);
+      const matchingKeys = allKeys.filter(k => k.startsWith(chainPrefix));
+      console.log('🔍 Found matching keys:', matchingKeys);
+      
+      if (matchingKeys.length > 0) {
+        const key = matchingKeys[0]; // Use first matching key
+        const cached = localStorage.getItem(key);
+        
+        if (cached) {
+          const { data, timestamp } = JSON.parse(cached);
+          const age = Date.now() - timestamp;
+          
+          console.log('📦 Found cached data:', {
+            key,
+            age: age + 'ms',
+            maxAge: CACHE_EXPIRY_MS + 'ms',
+            dataLength: data?.length,
+            isValid: age < CACHE_EXPIRY_MS && data?.length > 0
+          });
+          
+          if (age < CACHE_EXPIRY_MS && data?.length > 0) {
+            console.log('✅ LOADING FROM CACHE IMMEDIATELY:', data.length, 'vaults');
+            
+            // Convert lightweight cache back to proper vault objects with Token instances
+            const reconstructedVaults = data.map((cached: any) => {
+              const token0 = cached.token0 ? Token.getToken({
+                address: cached.token0.address,
+                chainId: wallet.currentChainId.toString(),
+                name: cached.token0.name,
+                symbol: cached.token0.symbol,
+                decimals: cached.token0.decimals,
+              }) : null;
+              
+              const token1 = cached.token1 ? Token.getToken({
+                address: cached.token1.address,
+                chainId: wallet.currentChainId.toString(),
+                name: cached.token1.name,
+                symbol: cached.token1.symbol,
+                decimals: cached.token1.decimals,
+              }) : null;
+              
+              // Initialize tokens immediately for TokenLogo component
+              if (token0) {
+                token0.init(false, { loadIndexerTokenData: true });
+              }
+              if (token1) {
+                token1.init(false, { loadIndexerTokenData: true });
+              }
+              
+              return {
+                ...cached,
+                token0,
+                token1,
+              };
+            });
+            
+            setVaultsContracts(reconstructedVaults);
+            
+            // Ensure no loading state when we have cached data
+            setIsLoadingFromCacheWithLogging(false);
+            
+            // Also load into memory cache
+            const memoryKey = key.replace(CACHE_KEY_PREFIX, '');
+            vaultContractsCache.current.set(memoryKey, reconstructedVaults);
+            return;
+          }
+        }
+      }
+      
+      console.log('❌ No valid cache found on mount');
+    } catch (error) {
+      console.error('💥 Cache check error:', error);
+    }
+  }, []); // Run only once, immediately on mount
+
+  // Update state immediately when cache key changes and cached data is available
+  useEffect(() => {
+    console.log('🔑 Cache key effect triggered:', {
+      cacheKey,
+      hasCache: vaultContractsCache.current.has(cacheKey),
+      currentVaultsLength: vaultsContracts.length
+    });
+    
+    if (cacheKey && vaultContractsCache.current.has(cacheKey)) {
+      const cachedData = vaultContractsCache.current.get(cacheKey);
+      console.log('📦 Found cached data:', cachedData?.length, 'vaults');
+      
+      if (cachedData && cachedData.length > 0 && cachedData.length !== vaultsContracts.length) {
+        console.log('🚀 Updating state with cached data:', cachedData.length, 'vaults');
+        setVaultsContracts(cachedData);
+      } else {
+        console.log('⏭️  Skipping cache update:', {
+          hasCachedData: !!cachedData,
+          cachedLength: cachedData?.length,
+          currentLength: vaultsContracts.length,
+          lengthsDiffer: cachedData?.length !== vaultsContracts.length
+        });
+      }
+    } else {
+      console.log('❌ No cache found for key:', cacheKey);
+    }
+  }, [cacheKey, vaultsContracts.length]);
   const [sortField, setSortField] = useState<SortField>(sortBy as SortField);
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [page, setPage] = useState(1);
@@ -59,40 +203,161 @@ export function AllAquaberaVaults({
     };
 
     initVaults();
-  }, [wallet.isInit, searchString, onDataLoaded, infoClient]);
+  }, [searchString, onDataLoaded, infoClient]);
 
   useEffect(() => {
-    if (!wallet.isInit || !vaults?.ichiVaults?.length) {
+    console.log('🏭 Vault loading effect triggered:', {
+      hasVaults: !!vaults?.ichiVaults?.length,
+      hasClient: !!infoClient,
+      cacheKey,
+      currentVaultsLength: vaultsContracts.length,
+      hasMemoryCache: vaultContractsCache.current.has(cacheKey)
+    });
+    
+    if (!vaults?.ichiVaults?.length || !infoClient || !cacheKey) {
+      console.log('⏹️  Early return from vault loading:', {
+        hasVaults: !!vaults?.ichiVaults?.length,
+        hasClient: !!infoClient,
+        hasCacheKey: !!cacheKey
+      });
       return;
     }
 
-    // 清空现有合约列表
-    const newVaultsContracts: ICHIVaultContract[] = [];
-
-    vaults.ichiVaults.forEach((vault) => {
-      const vaultContract = ICHIVaultContract.getVault({
-        token0: vault.tokenA,
-        token1: vault.tokenB,
-        address: vault.id as `0x${string}`,
-        apr: Number(vault.feeApr_1d),
-        detailedApr: {
-          feeApr_1d: Number(vault.feeApr_1d),
-          feeApr_3d: Number(vault.feeApr_3d),
-          feeApr_7d: Number(vault.feeApr_7d),
-          feeApr_30d: Number(vault.feeApr_30d),
-        },
-      });
-
-      if (vaultContract) {
-        newVaultsContracts.push(vaultContract);
-      }
-    });
-
-    // 只有当有新合约时才更新状态
-    if (newVaultsContracts.length > 0) {
-      setVaultsContracts(newVaultsContracts);
+    // Skip if we already have cached data or if we already have loaded data
+    if (vaultsContracts.length > 0) {
+      console.log('✅ Skipping vault load - already have data:', vaultsContracts.length, 'vaults');
+      return;
     }
-  }, [wallet.isInit, vaults]);
+    
+    if (vaultContractsCache.current.has(cacheKey)) {
+      console.log('✅ Skipping vault load - cache exists for key:', cacheKey);
+      const cachedData = vaultContractsCache.current.get(cacheKey);
+      if (cachedData && cachedData.length > 0) {
+        console.log('📦 Using cached data from memory:', cachedData.length, 'vaults');
+        setVaultsContracts(cachedData);
+      }
+      return;
+    }
+
+    // Set loading state when starting fresh load
+    console.log('⏳ Starting fresh vault load, setting isLoadingFromCache=true');
+    setIsLoadingFromCacheWithLogging(true);
+
+    const initializeVaultsWithDetails = async () => {
+      try {
+        // Process all vaults in parallel instead of sequential
+        const vaultPromises = vaults.ichiVaults.map(async (vault) => {
+          try {
+            // Get detailed vault contract with pool data, tvlUSD, etc.
+            const vaultContract = await getSingleVaultDetails(
+              infoClient,
+              vault.id
+            );
+
+            if (vaultContract) {
+              // Load additional vault data in parallel
+              await Promise.all([
+                vaultContract.getTotalAmounts(),
+                vaultContract.getTotalSupply(),
+                vaultContract.getBalanceOf(wallet.account),
+                // Initialize tokens in parallel too
+                vaultContract.token0?.init(false, {
+                  loadIndexerTokenData: true,
+                }),
+                vaultContract.token1?.init(false, {
+                  loadIndexerTokenData: true,
+                }),
+              ]);
+
+              return vaultContract;
+            }
+            return null;
+          } catch (error) {
+            console.error(`Error loading vault ${vault.id}:`, error);
+            return null;
+          }
+        });
+
+        // Wait for all vaults to be processed in parallel
+        const results = await Promise.all(vaultPromises);
+        
+        // Filter out null results
+        const validVaults = results.filter(
+          (vault): vault is ICHIVaultContract => vault !== null
+        );
+
+        // Cache the results for instant access on tab switches
+        vaultContractsCache.current.set(cacheKey, validVaults);
+        
+        // Save to localStorage for persistence across tab switches
+        try {
+          // Only cache the essential display fields (no BigInt issues!)
+          const lightweightCache = validVaults.map(vault => ({
+            // Essential fields for display
+            address: vault.address,
+            apr: vault.apr,
+            detailedApr: vault.detailedApr,
+            tvlUSD: vault.tvlUSD,
+            
+            // Token info for display
+            token0: vault.token0 ? {
+              address: vault.token0.address,
+              symbol: vault.token0.symbol,
+              name: vault.token0.name,
+              decimals: vault.token0.decimals,
+              logoURI: vault.token0.logoURI
+            } : null,
+            
+            token1: vault.token1 ? {
+              address: vault.token1.address,
+              symbol: vault.token1.symbol,
+              name: vault.token1.name,
+              decimals: vault.token1.decimals,
+              logoURI: vault.token1.logoURI
+            } : null,
+            
+            // Pool data for display
+            pool: vault.pool ? {
+              volume_24h_USD: vault.pool.volume_24h_USD,
+              fees_24h_USD: vault.pool.fees_24h_USD
+            } : null,
+            
+            // Basic vault info
+            name: vault.name,
+            fee: vault.fee,
+            allowToken0: vault.allowToken0,
+            allowToken1: vault.allowToken1,
+            vaultTag: vault.vaultTag  // Add vault badge/tag
+          }));
+          
+          const cacheData = {
+            data: lightweightCache,
+            timestamp: Date.now()
+          };
+          
+          const storageKey = `${CACHE_KEY_PREFIX}${cacheKey}`;
+          localStorage.setItem(storageKey, JSON.stringify(cacheData));
+          console.log('💾 Successfully saved lightweight cache to localStorage:', {
+            key: storageKey,
+            vaultCount: lightweightCache.length,
+            dataSize: JSON.stringify(cacheData).length,
+            timestamp: new Date().toISOString()
+          });
+        } catch (error) {
+          console.error('💥 Error saving to localStorage:', error);
+        }
+        
+        setVaultsContracts(validVaults);
+      } catch (error) {
+        console.error('Error initializing vaults:', error);
+      } finally {
+        console.log('✅ Vault loading completed, setting isLoadingFromCache=false');
+        setIsLoadingFromCacheWithLogging(false);
+      }
+    };
+
+    initializeVaultsWithDetails();
+  }, [vaults, infoClient, cacheKey, vaultsContracts.length]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -104,39 +369,104 @@ export function AllAquaberaVaults({
   };
 
   const pages = useMemo(() => {
-    if (!vaults?.ichiVaults) return 0;
-    return Math.ceil(vaults.ichiVaults.length / rowsPerPage);
-  }, [vaults?.ichiVaults]);
+    if (!vaultsContracts.length) return 0;
+    
+    // Calculate pages based on filtered results
+    let filteredCount = vaultsContracts.length;
+    if (searchString) {
+      filteredCount = vaultsContracts.filter((vault) => {
+        const token0Symbol = vault.token0?.symbol?.toLowerCase() || '';
+        const token1Symbol = vault.token1?.symbol?.toLowerCase() || '';
+        const searchLower = searchString.toLowerCase();
+        
+        return token0Symbol.includes(searchLower) || 
+               token1Symbol.includes(searchLower) ||
+               vault.address.toLowerCase().includes(searchLower);
+      }).length;
+    }
+    
+    return Math.ceil(filteredCount / rowsPerPage);
+  }, [vaultsContracts, searchString]);
 
   const [sortedVaults, setSortedVaults] = useState<ICHIVaultContract[]>([]);
+  const [isLoadingFromCache, setIsLoadingFromCache] = useState(() => {
+    console.log('🔄 isLoadingFromCache initialized to FALSE');
+    return false;
+  });
+
+  // Override setIsLoadingFromCache to add logging
+  const setIsLoadingFromCacheWithLogging = (value: boolean) => {
+    console.log('🔄 setIsLoadingFromCache called:', value);
+    setIsLoadingFromCache(value);
+  };
+  
+  // Track when loading state changes
+  const [prevLoadingState, setPrevLoadingState] = useState<boolean | null>(null);
+
+  // Determine if we should show loading state
+  const isLoading = useMemo(() => {
+    const hasData = vaultsContracts.length > 0;
+    const shouldShowLoading = !hasData && isLoadingFromCache;
+    
+    console.log('🔄 Loading state calculation:', {
+      hasData,
+      isLoadingFromCache,
+      vaultsLength: vaultsContracts.length,
+      shouldShowLoading,
+      timestamp: new Date().toISOString()
+    });
+    
+    // Track loading state changes
+    if (prevLoadingState !== shouldShowLoading) {
+      console.log('🔀 Loading state changed:', prevLoadingState, '->', shouldShowLoading);
+      setPrevLoadingState(shouldShowLoading);
+    }
+    
+    // If we have vault contract data, NEVER show loading
+    if (hasData) {
+      console.log('✅ Have data - NO LOADING');
+      return false;
+    }
+    
+    // Only show loading if we're actively fetching and have no data
+    console.log('🤔 Decision:', shouldShowLoading ? 'SHOW LOADING' : 'NO LOADING');
+    return isLoadingFromCache;
+  }, [vaultsContracts.length, isLoadingFromCache, prevLoadingState]);
+
+  // Reset page when search changes
+  useEffect(() => {
+    setPage(1);
+  }, [searchString]);
 
   useEffect(() => {
     if (!vaultsContracts.length) return;
 
-    const sortedVaults = [...vaultsContracts].sort((a, b) => {
+    // Filter vaults based on search string
+    let filteredVaults = vaultsContracts;
+    if (searchString) {
+      filteredVaults = vaultsContracts.filter((vault) => {
+        const token0Symbol = vault.token0?.symbol?.toLowerCase() || '';
+        const token1Symbol = vault.token1?.symbol?.toLowerCase() || '';
+        const searchLower = searchString.toLowerCase();
+        
+        return token0Symbol.includes(searchLower) || 
+               token1Symbol.includes(searchLower) ||
+               vault.address.toLowerCase().includes(searchLower);
+      });
+    }
+
+    const sortedVaults = [...filteredVaults].sort((a, b) => {
       const multiplier = sortDirection === 'asc' ? 1 : -1;
 
       switch (sortField) {
         case 'pair': {
-          const aSymbol = Token.getToken({
-            address: a.token0?.address ?? '',
-            chainId: wallet.currentChainId.toString(),
-          }).symbol;
-          const bSymbol = Token.getToken({
-            address: b.token0?.address ?? '',
-            chainId: wallet.currentChainId.toString(),
-          }).symbol;
+          const aSymbol = a.token0?.symbol || '';
+          const bSymbol = b.token0?.symbol || '';
           return multiplier * aSymbol.localeCompare(bSymbol);
         }
         case 'allow_token': {
-          const aSymbol = Token.getToken({
-            address: a.token0?.address ?? '',
-            chainId: wallet.currentChainId.toString(),
-          }).symbol;
-          const bSymbol = Token.getToken({
-            address: b.token0?.address ?? '',
-            chainId: wallet.currentChainId.toString(),
-          }).symbol;
+          const aSymbol = a.token0?.symbol || '';
+          const bSymbol = b.token0?.symbol || '';
           return multiplier * aSymbol.localeCompare(bSymbol);
         }
         case 'address':
@@ -168,33 +498,59 @@ export function AllAquaberaVaults({
 
     // 无论是否有数据，都更新排序后的列表
     setSortedVaults(paginatedVaults);
-  }, [vaultsContracts, sortField, sortDirection, page]);
+  }, [vaultsContracts, sortField, sortDirection, page, searchString]);
+
+  // Debug render decision
+  console.log('🎨 Render decision:', {
+    isLoading,
+    vaultsContractsLength: vaultsContracts.length,
+    sortedVaultsLength: sortedVaults.length,
+    willShowLoading: isLoading,
+    timestamp: new Date().toISOString()
+  });
 
   return (
     <div className="w-full">
       {/* Mobile view - card layout for small screens */}
       <div className="sm:hidden">
-        {!vaults ? (
-          <div className="text-center py-8 text-black">Loading...</div>
-        ) : vaultsContracts.length === 0 ? (
-          <div className="text-center py-8 text-black">
-            No vaults available.
-          </div>
-        ) : !sortedVaults.length ? (
-          <div className="text-center py-8 text-black">
-            No results match your criteria.
-          </div>
+        {!isLoading ? (
+          vaultsContracts.length === 0 ? (
+            <>
+              {console.log('📱 Mobile: Rendering "No vaults available"')}
+              <div className="text-center py-8 text-black">
+                No vaults available.
+              </div>
+            </>
+          ) : !sortedVaults.length ? (
+            <>
+              {console.log('📱 Mobile: Rendering "No results match criteria"')}
+              <div className="text-center py-8 text-black">
+                No results match your criteria.
+              </div>
+            </>
+          ) : (
+            <>
+              {console.log('📱 Mobile: Rendering', sortedVaults.length, 'vault cards')}
+              {sortedVaults.map((vault) => (
+                <VaultCard key={vault.address} vault={vault} />
+              ))}
+            </>
+          )
         ) : (
-          sortedVaults.map((vault) => (
-            <VaultCard key={vault.address} vault={vault} />
-          ))
+          <>
+            {console.log('📱 Mobile: Rendering LOADING DISPLAY')}
+            <LoadingDisplay />
+          </>
         )}
       </div>
 
       {/* Desktop view - table layout for medium screens and up */}
       <div className="hidden sm:block w-full overflow-x-auto custom-dashed-3xl sm:p-6 sm:bg-white">
-        <table className="w-full">
-          <thead>
+        {!isLoading ? (
+          <>
+            {console.log('🖥️  Desktop: Rendering table with', vaultsContracts.length, 'vaults')}
+            <table className="w-full">
+            <thead>
             <tr>
               <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
                 <div
@@ -343,7 +699,7 @@ export function AllAquaberaVaults({
             </tr>
           </thead>
           <tbody className="divide-y divide-[#4D4D4D]">
-            {!sortedVaults.length ? (
+            {!sortedVaults.length && !isLoadingFromCache ? (
               <tr className="hover:bg-white border-white h-full">
                 <td colSpan={5} className="h-24 text-center text-black">
                   No results.
@@ -355,32 +711,41 @@ export function AllAquaberaVaults({
               })
             )}
           </tbody>
-        </table>
+          </table>
+          </>
+        ) : (
+          <>
+            {console.log('🖥️  Desktop: Rendering LOADING DISPLAY')}
+            <LoadingDisplay />
+          </>
+        )}
       </div>
 
-      <div className="py-4">
-        <div className="flex flex-row justify-between items-center gap-4">
-          <span className="text-black text-sm">
-            Page {page} of {pages}
-          </span>
-          <div className="flex gap-x-2">
-            <Button
-              className="border border-[#2D2D2D] bg-white hover:bg-gray-50 text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
-              disabled={page === 1}
-              onClick={() => setPage(page - 1)}
-            >
-              Previous
-            </Button>
-            <Button
-              className="border border-[#2D2D2D] bg-white hover:bg-gray-50 text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
-              disabled={page === pages}
-              onClick={() => setPage(page + 1)}
-            >
-              Next
-            </Button>
+      {!isLoading && (
+        <div className="py-4">
+          <div className="flex flex-row justify-between items-center gap-4">
+            <span className="text-black text-sm">
+              Page {page} of {pages}
+            </span>
+            <div className="flex gap-x-2">
+              <Button
+                className="border border-[#2D2D2D] bg-white hover:bg-gray-50 text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
+                disabled={page === 1}
+                onClick={() => setPage(page - 1)}
+              >
+                Previous
+              </Button>
+              <Button
+                className="border border-[#2D2D2D] bg-white hover:bg-gray-50 text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
+                disabled={page === pages}
+                onClick={() => setPage(page + 1)}
+              >
+                Next
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
