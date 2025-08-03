@@ -33,91 +33,69 @@ export function AllAquaberaVaults({
   onDataLoaded,
 }: AllAquaberaVaultsProps) {
   const [vaults, setVaults] = useState<VaultsSortedByHoldersQuery>();
-  
+
   // Cache to persist vault contracts across tab switches using localStorage
   const CACHE_KEY_PREFIX = 'vault-cache-';
   const CACHE_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
-  
-  const vaultContractsCache = useRef<Map<string, ICHIVaultContract[]>>(new Map());
-  
 
-  
-
+  const vaultContractsCache = useRef<Map<string, ICHIVaultContract[]>>(
+    new Map()
+  );
 
   // Generate cache key based on vaults data
   const cacheKey = useMemo(() => {
     if (!vaults?.ichiVaults?.length) return '';
-    return `${wallet.currentChainId}-${vaults.ichiVaults.map(v => v.id).join('-')}`;
+    return `${wallet.currentChainId}-${vaults.ichiVaults
+      .map((v) => v.id)
+      .join('-')}`;
   }, [vaults]);
 
-  // Initialize with cached data immediately if available  
-  const [vaultsContracts, setVaultsContracts] = useState<ICHIVaultContract[]>(() => {
-    console.log('🏁 useState initializer running for vaultsContracts');
-    
-    // SIMPLIFIED APPROACH - Just return empty and let useEffect handle caching
-    console.log('⚡ Simplified init - starting with empty array, will check cache in useEffect');
-    return [];
-  });
-
-
-
-  // Add component lifecycle debugging
-  useEffect(() => {
-    console.log('🎬 AllVaults component mounted');
-    return () => {
-      console.log('💀 AllVaults component unmounting');
-    };
-  }, []);
+  // Initialize with cached data immediately if available
+  const [vaultsContracts, setVaultsContracts] = useState<ICHIVaultContract[]>(
+    () => {
+      return [];
+    }
+  );
 
   // Check for cached data immediately on mount - BEFORE any other effects
   useEffect(() => {
-    console.log('🚀 PRIORITY CACHE CHECK on mount');
-    
     try {
       const chainPrefix = `${CACHE_KEY_PREFIX}${wallet.currentChainId}-`;
-      console.log('🎯 Looking for cache with prefix:', chainPrefix);
-      
+
       const allKeys = Object.keys(localStorage);
-      const matchingKeys = allKeys.filter(k => k.startsWith(chainPrefix));
-      console.log('🔍 Found matching keys:', matchingKeys);
-      
+      const matchingKeys = allKeys.filter((k) => k.startsWith(chainPrefix));
+
       if (matchingKeys.length > 0) {
         const key = matchingKeys[0]; // Use first matching key
         const cached = localStorage.getItem(key);
-        
+
         if (cached) {
           const { data, timestamp } = JSON.parse(cached);
           const age = Date.now() - timestamp;
-          
-          console.log('📦 Found cached data:', {
-            key,
-            age: age + 'ms',
-            maxAge: CACHE_EXPIRY_MS + 'ms',
-            dataLength: data?.length,
-            isValid: age < CACHE_EXPIRY_MS && data?.length > 0
-          });
-          
+
           if (age < CACHE_EXPIRY_MS && data?.length > 0) {
-            console.log('✅ LOADING FROM CACHE IMMEDIATELY:', data.length, 'vaults');
-            
             // Convert lightweight cache back to proper vault objects with Token instances
             const reconstructedVaults = data.map((cached: any) => {
-              const token0 = cached.token0 ? Token.getToken({
-                address: cached.token0.address,
-                chainId: wallet.currentChainId.toString(),
-                name: cached.token0.name,
-                symbol: cached.token0.symbol,
-                decimals: cached.token0.decimals,
-              }) : null;
-              
-              const token1 = cached.token1 ? Token.getToken({
-                address: cached.token1.address,
-                chainId: wallet.currentChainId.toString(),
-                name: cached.token1.name,
-                symbol: cached.token1.symbol,
-                decimals: cached.token1.decimals,
-              }) : null;
-              
+              const token0 = cached.token0
+                ? Token.getToken({
+                    address: cached.token0.address,
+                    chainId: wallet.currentChainId.toString(),
+                    name: cached.token0.name,
+                    symbol: cached.token0.symbol,
+                    decimals: cached.token0.decimals,
+                  })
+                : null;
+
+              const token1 = cached.token1
+                ? Token.getToken({
+                    address: cached.token1.address,
+                    chainId: wallet.currentChainId.toString(),
+                    name: cached.token1.name,
+                    symbol: cached.token1.symbol,
+                    decimals: cached.token1.decimals,
+                  })
+                : null;
+
               // Initialize tokens immediately for TokenLogo component
               if (token0) {
                 token0.init(false, { loadIndexerTokenData: true });
@@ -125,19 +103,19 @@ export function AllAquaberaVaults({
               if (token1) {
                 token1.init(false, { loadIndexerTokenData: true });
               }
-              
+
               return {
                 ...cached,
                 token0,
                 token1,
               };
             });
-            
+
             setVaultsContracts(reconstructedVaults);
-            
+
             // Ensure no loading state when we have cached data
             setIsLoadingFromCacheWithLogging(false);
-            
+
             // Also load into memory cache
             const memoryKey = key.replace(CACHE_KEY_PREFIX, '');
             vaultContractsCache.current.set(memoryKey, reconstructedVaults);
@@ -145,38 +123,23 @@ export function AllAquaberaVaults({
           }
         }
       }
-      
-      console.log('❌ No valid cache found on mount');
     } catch (error) {
-      console.error('💥 Cache check error:', error);
+      console.error('Cache check error:', error);
     }
   }, []); // Run only once, immediately on mount
 
   // Update state immediately when cache key changes and cached data is available
   useEffect(() => {
-    console.log('🔑 Cache key effect triggered:', {
-      cacheKey,
-      hasCache: vaultContractsCache.current.has(cacheKey),
-      currentVaultsLength: vaultsContracts.length
-    });
-    
     if (cacheKey && vaultContractsCache.current.has(cacheKey)) {
       const cachedData = vaultContractsCache.current.get(cacheKey);
-      console.log('📦 Found cached data:', cachedData?.length, 'vaults');
-      
-      if (cachedData && cachedData.length > 0 && cachedData.length !== vaultsContracts.length) {
-        console.log('🚀 Updating state with cached data:', cachedData.length, 'vaults');
+
+      if (
+        cachedData &&
+        cachedData.length > 0 &&
+        cachedData.length !== vaultsContracts.length
+      ) {
         setVaultsContracts(cachedData);
-      } else {
-        console.log('⏭️  Skipping cache update:', {
-          hasCachedData: !!cachedData,
-          cachedLength: cachedData?.length,
-          currentLength: vaultsContracts.length,
-          lengthsDiffer: cachedData?.length !== vaultsContracts.length
-        });
       }
-    } else {
-      console.log('❌ No cache found for key:', cacheKey);
     }
   }, [cacheKey, vaultsContracts.length]);
   const [sortField, setSortField] = useState<SortField>(sortBy as SortField);
@@ -206,41 +169,24 @@ export function AllAquaberaVaults({
   }, [searchString, onDataLoaded, infoClient]);
 
   useEffect(() => {
-    console.log('🏭 Vault loading effect triggered:', {
-      hasVaults: !!vaults?.ichiVaults?.length,
-      hasClient: !!infoClient,
-      cacheKey,
-      currentVaultsLength: vaultsContracts.length,
-      hasMemoryCache: vaultContractsCache.current.has(cacheKey)
-    });
-    
     if (!vaults?.ichiVaults?.length || !infoClient || !cacheKey) {
-      console.log('⏹️  Early return from vault loading:', {
-        hasVaults: !!vaults?.ichiVaults?.length,
-        hasClient: !!infoClient,
-        hasCacheKey: !!cacheKey
-      });
       return;
     }
 
     // Skip if we already have cached data or if we already have loaded data
     if (vaultsContracts.length > 0) {
-      console.log('✅ Skipping vault load - already have data:', vaultsContracts.length, 'vaults');
       return;
     }
-    
+
     if (vaultContractsCache.current.has(cacheKey)) {
-      console.log('✅ Skipping vault load - cache exists for key:', cacheKey);
       const cachedData = vaultContractsCache.current.get(cacheKey);
       if (cachedData && cachedData.length > 0) {
-        console.log('📦 Using cached data from memory:', cachedData.length, 'vaults');
         setVaultsContracts(cachedData);
       }
       return;
     }
 
     // Set loading state when starting fresh load
-    console.log('⏳ Starting fresh vault load, setting isLoadingFromCache=true');
     setIsLoadingFromCacheWithLogging(true);
 
     const initializeVaultsWithDetails = async () => {
@@ -280,7 +226,7 @@ export function AllAquaberaVaults({
 
         // Wait for all vaults to be processed in parallel
         const results = await Promise.all(vaultPromises);
-        
+
         // Filter out null results
         const validVaults = results.filter(
           (vault): vault is ICHIVaultContract => vault !== null
@@ -288,70 +234,69 @@ export function AllAquaberaVaults({
 
         // Cache the results for instant access on tab switches
         vaultContractsCache.current.set(cacheKey, validVaults);
-        
+
         // Save to localStorage for persistence across tab switches
         try {
           // Only cache the essential display fields (no BigInt issues!)
-          const lightweightCache = validVaults.map(vault => ({
+          const lightweightCache = validVaults.map((vault) => ({
             // Essential fields for display
             address: vault.address,
             apr: vault.apr,
             detailedApr: vault.detailedApr,
             tvlUSD: vault.tvlUSD,
-            
+
             // Token info for display
-            token0: vault.token0 ? {
-              address: vault.token0.address,
-              symbol: vault.token0.symbol,
-              name: vault.token0.name,
-              decimals: vault.token0.decimals,
-              logoURI: vault.token0.logoURI
-            } : null,
-            
-            token1: vault.token1 ? {
-              address: vault.token1.address,
-              symbol: vault.token1.symbol,
-              name: vault.token1.name,
-              decimals: vault.token1.decimals,
-              logoURI: vault.token1.logoURI
-            } : null,
-            
+            token0: vault.token0
+              ? {
+                  address: vault.token0.address,
+                  symbol: vault.token0.symbol,
+                  name: vault.token0.name,
+                  decimals: vault.token0.decimals,
+                  logoURI: vault.token0.logoURI,
+                }
+              : null,
+
+            token1: vault.token1
+              ? {
+                  address: vault.token1.address,
+                  symbol: vault.token1.symbol,
+                  name: vault.token1.name,
+                  decimals: vault.token1.decimals,
+                  logoURI: vault.token1.logoURI,
+                }
+              : null,
+
             // Pool data for display
-            pool: vault.pool ? {
-              volume_24h_USD: vault.pool.volume_24h_USD,
-              fees_24h_USD: vault.pool.fees_24h_USD
-            } : null,
-            
+            pool: vault.pool
+              ? {
+                  volume_24h_USD: vault.pool.volume_24h_USD,
+                  fees_24h_USD: vault.pool.fees_24h_USD,
+                }
+              : null,
+
             // Basic vault info
             name: vault.name,
             fee: vault.fee,
             allowToken0: vault.allowToken0,
             allowToken1: vault.allowToken1,
-            vaultTag: vault.vaultTag  // Add vault badge/tag
+            vaultTag: vault.vaultTag, // Add vault badge/tag
           }));
-          
+
           const cacheData = {
             data: lightweightCache,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           };
-          
+
           const storageKey = `${CACHE_KEY_PREFIX}${cacheKey}`;
           localStorage.setItem(storageKey, JSON.stringify(cacheData));
-          console.log('💾 Successfully saved lightweight cache to localStorage:', {
-            key: storageKey,
-            vaultCount: lightweightCache.length,
-            dataSize: JSON.stringify(cacheData).length,
-            timestamp: new Date().toISOString()
-          });
         } catch (error) {
-          console.error('💥 Error saving to localStorage:', error);
+          console.error('Error saving to localStorage:', error);
         }
-        
+
         setVaultsContracts(validVaults);
       } catch (error) {
         console.error('Error initializing vaults:', error);
       } finally {
-        console.log('✅ Vault loading completed, setting isLoadingFromCache=false');
         setIsLoadingFromCacheWithLogging(false);
       }
     };
@@ -370,7 +315,7 @@ export function AllAquaberaVaults({
 
   const pages = useMemo(() => {
     if (!vaultsContracts.length) return 0;
-    
+
     // Calculate pages based on filtered results
     let filteredCount = vaultsContracts.length;
     if (searchString) {
@@ -378,60 +323,39 @@ export function AllAquaberaVaults({
         const token0Symbol = vault.token0?.symbol?.toLowerCase() || '';
         const token1Symbol = vault.token1?.symbol?.toLowerCase() || '';
         const searchLower = searchString.toLowerCase();
-        
-        return token0Symbol.includes(searchLower) || 
-               token1Symbol.includes(searchLower) ||
-               vault.address.toLowerCase().includes(searchLower);
+
+        return (
+          token0Symbol.includes(searchLower) ||
+          token1Symbol.includes(searchLower) ||
+          vault.address.toLowerCase().includes(searchLower)
+        );
       }).length;
     }
-    
+
     return Math.ceil(filteredCount / rowsPerPage);
   }, [vaultsContracts, searchString]);
 
   const [sortedVaults, setSortedVaults] = useState<ICHIVaultContract[]>([]);
-  const [isLoadingFromCache, setIsLoadingFromCache] = useState(() => {
-    console.log('🔄 isLoadingFromCache initialized to FALSE');
-    return false;
-  });
+  const [isLoadingFromCache, setIsLoadingFromCache] = useState(false);
 
   // Override setIsLoadingFromCache to add logging
   const setIsLoadingFromCacheWithLogging = (value: boolean) => {
-    console.log('🔄 setIsLoadingFromCache called:', value);
     setIsLoadingFromCache(value);
   };
-  
-  // Track when loading state changes
-  const [prevLoadingState, setPrevLoadingState] = useState<boolean | null>(null);
 
   // Determine if we should show loading state
   const isLoading = useMemo(() => {
     const hasData = vaultsContracts.length > 0;
     const shouldShowLoading = !hasData && isLoadingFromCache;
-    
-    console.log('🔄 Loading state calculation:', {
-      hasData,
-      isLoadingFromCache,
-      vaultsLength: vaultsContracts.length,
-      shouldShowLoading,
-      timestamp: new Date().toISOString()
-    });
-    
-    // Track loading state changes
-    if (prevLoadingState !== shouldShowLoading) {
-      console.log('🔀 Loading state changed:', prevLoadingState, '->', shouldShowLoading);
-      setPrevLoadingState(shouldShowLoading);
-    }
-    
+
     // If we have vault contract data, NEVER show loading
     if (hasData) {
-      console.log('✅ Have data - NO LOADING');
       return false;
     }
-    
+
     // Only show loading if we're actively fetching and have no data
-    console.log('🤔 Decision:', shouldShowLoading ? 'SHOW LOADING' : 'NO LOADING');
     return isLoadingFromCache;
-  }, [vaultsContracts.length, isLoadingFromCache, prevLoadingState]);
+  }, [vaultsContracts.length, isLoadingFromCache]);
 
   // Reset page when search changes
   useEffect(() => {
@@ -448,10 +372,12 @@ export function AllAquaberaVaults({
         const token0Symbol = vault.token0?.symbol?.toLowerCase() || '';
         const token1Symbol = vault.token1?.symbol?.toLowerCase() || '';
         const searchLower = searchString.toLowerCase();
-        
-        return token0Symbol.includes(searchLower) || 
-               token1Symbol.includes(searchLower) ||
-               vault.address.toLowerCase().includes(searchLower);
+
+        return (
+          token0Symbol.includes(searchLower) ||
+          token1Symbol.includes(searchLower) ||
+          vault.address.toLowerCase().includes(searchLower)
+        );
       });
     }
 
@@ -500,15 +426,6 @@ export function AllAquaberaVaults({
     setSortedVaults(paginatedVaults);
   }, [vaultsContracts, sortField, sortDirection, page, searchString]);
 
-  // Debug render decision
-  console.log('🎨 Render decision:', {
-    isLoading,
-    vaultsContractsLength: vaultsContracts.length,
-    sortedVaultsLength: sortedVaults.length,
-    willShowLoading: isLoading,
-    timestamp: new Date().toISOString()
-  });
-
   return (
     <div className="w-full">
       {/* Mobile view - card layout for small screens */}
@@ -516,21 +433,18 @@ export function AllAquaberaVaults({
         {!isLoading ? (
           vaultsContracts.length === 0 ? (
             <>
-              {console.log('📱 Mobile: Rendering "No vaults available"')}
               <div className="text-center py-8 text-black">
                 No vaults available.
               </div>
             </>
           ) : !sortedVaults.length ? (
             <>
-              {console.log('📱 Mobile: Rendering "No results match criteria"')}
               <div className="text-center py-8 text-black">
                 No results match your criteria.
               </div>
             </>
           ) : (
             <>
-              {console.log('📱 Mobile: Rendering', sortedVaults.length, 'vault cards')}
               {sortedVaults.map((vault) => (
                 <VaultCard key={vault.address} vault={vault} />
               ))}
@@ -538,7 +452,6 @@ export function AllAquaberaVaults({
           )
         ) : (
           <>
-            {console.log('📱 Mobile: Rendering LOADING DISPLAY')}
             <LoadingDisplay />
           </>
         )}
@@ -548,174 +461,172 @@ export function AllAquaberaVaults({
       <div className="hidden sm:block w-full overflow-x-auto custom-dashed-3xl sm:p-6 sm:bg-white">
         {!isLoading ? (
           <>
-            {console.log('🖥️  Desktop: Rendering table with', vaultsContracts.length, 'vaults')}
             <table className="w-full">
-            <thead>
-            <tr>
-              <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
-                <div
-                  className="flex items-center gap-2"
-                  onClick={() => handleSort('pair')}
-                >
-                  <span>Token Pair</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${
-                        sortField === 'pair' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${
-                        sortField === 'pair' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
-                    />
-                  </div>
-                </div>
-              </th>
-              <th className="py-4 px-6 cursor-pointer text-[#4D4D4D] min-w-[180px]">
-                <div
-                  className="flex items-center gap-2"
-                  onClick={() => handleSort('pair')}
-                >
-                  <span>Allow Token</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${
-                        sortField === 'pair' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${
-                        sortField === 'pair' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
-                    />
-                  </div>
-                </div>
-              </th>
-              <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
-                <div
-                  className="flex items-center gap-2 justify-end"
-                  onClick={() => handleSort('tvl')}
-                >
-                  <span>Vault TVL</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${
-                        sortField === 'tvl' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${
-                        sortField === 'tvl' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
-                    />
-                  </div>
-                </div>
-              </th>
-              <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
-                <div
-                  className="flex items-center gap-2 justify-end"
-                  onClick={() => handleSort('volume')}
-                >
-                  <span>Pool 24h Volume</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${
-                        sortField === 'volume' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${
-                        sortField === 'volume' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
-                    />
-                  </div>
-                </div>
-              </th>
-              <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
-                <div
-                  className="flex items-center gap-2 justify-end"
-                  onClick={() => handleSort('fees')}
-                >
-                  <span>Pool 24h Fees</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${
-                        sortField === 'fees' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${
-                        sortField === 'fees' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
-                    />
-                  </div>
-                </div>
-              </th>
-              <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
-                <div
-                  className="flex items-center gap-2 justify-end"
-                  onClick={() => handleSort('apr')}
-                >
-                  <span>APR</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${
-                        sortField === 'apr' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${
-                        sortField === 'apr' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
-                    />
-                  </div>
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#4D4D4D]">
-            {!sortedVaults.length && !isLoadingFromCache ? (
-              <tr className="hover:bg-white border-white h-full">
-                <td colSpan={5} className="h-24 text-center text-black">
-                  No results.
-                </td>
-              </tr>
-            ) : (
-              sortedVaults.map((vault) => {
-                return <VaultRow key={vault.address} vault={vault} />;
-              })
-            )}
-          </tbody>
-          </table>
+              <thead>
+                <tr>
+                  <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
+                    <div
+                      className="flex items-center gap-2"
+                      onClick={() => handleSort('pair')}
+                    >
+                      <span>Token Pair</span>
+                      <div className="flex flex-col">
+                        <ChevronUp
+                          className={`h-3 w-3 ${
+                            sortField === 'pair' && sortDirection === 'asc'
+                              ? 'text-black'
+                              : 'text-[#4D4D4D]'
+                          }`}
+                        />
+                        <ChevronDown
+                          className={`h-3 w-3 ${
+                            sortField === 'pair' && sortDirection === 'desc'
+                              ? 'text-black'
+                              : 'text-[#4D4D4D]'
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </th>
+                  <th className="py-4 px-6 cursor-pointer text-[#4D4D4D] min-w-[180px]">
+                    <div
+                      className="flex items-center gap-2"
+                      onClick={() => handleSort('pair')}
+                    >
+                      <span>Allow Token</span>
+                      <div className="flex flex-col">
+                        <ChevronUp
+                          className={`h-3 w-3 ${
+                            sortField === 'pair' && sortDirection === 'asc'
+                              ? 'text-black'
+                              : 'text-[#4D4D4D]'
+                          }`}
+                        />
+                        <ChevronDown
+                          className={`h-3 w-3 ${
+                            sortField === 'pair' && sortDirection === 'desc'
+                              ? 'text-black'
+                              : 'text-[#4D4D4D]'
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </th>
+                  <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+                    <div
+                      className="flex items-center gap-2 justify-end"
+                      onClick={() => handleSort('tvl')}
+                    >
+                      <span>Vault TVL</span>
+                      <div className="flex flex-col">
+                        <ChevronUp
+                          className={`h-3 w-3 ${
+                            sortField === 'tvl' && sortDirection === 'asc'
+                              ? 'text-black'
+                              : 'text-[#4D4D4D]'
+                          }`}
+                        />
+                        <ChevronDown
+                          className={`h-3 w-3 ${
+                            sortField === 'tvl' && sortDirection === 'desc'
+                              ? 'text-black'
+                              : 'text-[#4D4D4D]'
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </th>
+                  <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+                    <div
+                      className="flex items-center gap-2 justify-end"
+                      onClick={() => handleSort('volume')}
+                    >
+                      <span>Pool 24h Volume</span>
+                      <div className="flex flex-col">
+                        <ChevronUp
+                          className={`h-3 w-3 ${
+                            sortField === 'volume' && sortDirection === 'asc'
+                              ? 'text-black'
+                              : 'text-[#4D4D4D]'
+                          }`}
+                        />
+                        <ChevronDown
+                          className={`h-3 w-3 ${
+                            sortField === 'volume' && sortDirection === 'desc'
+                              ? 'text-black'
+                              : 'text-[#4D4D4D]'
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </th>
+                  <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+                    <div
+                      className="flex items-center gap-2 justify-end"
+                      onClick={() => handleSort('fees')}
+                    >
+                      <span>Pool 24h Fees</span>
+                      <div className="flex flex-col">
+                        <ChevronUp
+                          className={`h-3 w-3 ${
+                            sortField === 'fees' && sortDirection === 'asc'
+                              ? 'text-black'
+                              : 'text-[#4D4D4D]'
+                          }`}
+                        />
+                        <ChevronDown
+                          className={`h-3 w-3 ${
+                            sortField === 'fees' && sortDirection === 'desc'
+                              ? 'text-black'
+                              : 'text-[#4D4D4D]'
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </th>
+                  <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+                    <div
+                      className="flex items-center gap-2 justify-end"
+                      onClick={() => handleSort('apr')}
+                    >
+                      <span>APR</span>
+                      <div className="flex flex-col">
+                        <ChevronUp
+                          className={`h-3 w-3 ${
+                            sortField === 'apr' && sortDirection === 'asc'
+                              ? 'text-black'
+                              : 'text-[#4D4D4D]'
+                          }`}
+                        />
+                        <ChevronDown
+                          className={`h-3 w-3 ${
+                            sortField === 'apr' && sortDirection === 'desc'
+                              ? 'text-black'
+                              : 'text-[#4D4D4D]'
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#4D4D4D]">
+                {!sortedVaults.length && !isLoadingFromCache ? (
+                  <tr className="hover:bg-white border-white h-full">
+                    <td colSpan={5} className="h-24 text-center text-black">
+                      No results.
+                    </td>
+                  </tr>
+                ) : (
+                  sortedVaults.map((vault) => {
+                    return <VaultRow key={vault.address} vault={vault} />;
+                  })
+                )}
+              </tbody>
+            </table>
           </>
         ) : (
           <>
-            {console.log('🖥️  Desktop: Rendering LOADING DISPLAY')}
             <LoadingDisplay />
           </>
         )}
