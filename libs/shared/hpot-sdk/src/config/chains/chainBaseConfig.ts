@@ -10,7 +10,12 @@ import {
   berachain,
   berachainBepolia,
   arbitrumSepolia,
+  bsc,
 } from 'viem/chains';
+
+export const bscMainnet: Chain = {
+  ...bsc,
+};
 
 export const arbitrumSepoliaTestnet: Chain = {
   ...arbitrumSepolia,

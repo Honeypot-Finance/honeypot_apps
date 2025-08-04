@@ -12,6 +12,7 @@ import {
   berachainBepoliaTestnet,
   arbitrumSepoliaTestnet,
   sepoliaTestnet,
+  bscMainnet,
 } from './chainBaseConfig';
 import { ICHIVaultContract } from '../../lib/contract/aquabera/ICHIVault-contract';
 import { getMultipleTokensData } from '../../lib/graphql/clients/token';
@@ -21,14 +22,14 @@ import { contractAddresses, ContractAddresses } from '../contractAddresses';
 import { subgraphAddresses, SubgraphAddresses } from '../subgraphEndPoint';
 
 export class Network {
-  supportDEX: boolean = false;
-  supportVault: boolean = false;
-  supportBridge: boolean = false;
-  supportLBP: boolean = false;
-  supportPot2Pump: boolean = false;
-  supportUniversalAccount: boolean = false;
-  isActive: boolean = true;
-  iconUrl: string = '';
+  supportDEX = false;
+  supportVault = false;
+  supportBridge = false;
+  supportLBP = false;
+  supportPot2Pump = false;
+  supportUniversalAccount = false;
+  isActive = true;
+  iconUrl = '';
   get chainId() {
     return this.chain.id;
   }
@@ -76,8 +77,6 @@ export class Network {
     }
   ) {
     Object.assign(this, args);
-    if (args) {
-    }
   }
 
   init() {
@@ -125,6 +124,44 @@ export class Network {
     });
   }
 }
+
+export const bscMainnetNetwork = new Network({
+  supportDEX: true,
+  supportVault: true,
+  iconUrl: 'https://cryptologos.cc/logos/bnb-bnb-logo.svg?v=040',
+  chain: bscMainnet,
+  nativeToken: {
+    address: '0x0000000000000000000000000000000000000000',
+    name: 'BNB',
+    symbol: 'BNB',
+    decimals: 18,
+    isNative: true,
+    logoURI: 'https://bscscan.com/token/images/bnbchain2_32.png',
+    chainId: '56',
+  },
+  raisedTokenData: [],
+  faucetTokens: [],
+  contracts: contractAddresses['56'],
+  subgraphAddresses: subgraphAddresses['56'],
+  validatedTokensInfo: {
+    //when adding a new token, make sure to add the address as lowercase
+    '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c': {
+      name: 'Wrapped BNB',
+      symbol: 'WBNB',
+      decimals: 18,
+      logoURI: 'https://bscscan.com/token/images/bnbchain2_32.png',
+      isRouterToken: true,
+      isPopular: true,
+    },
+    '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d': {
+      name: 'Binance-Peg USD Coin',
+      symbol: 'USDC',
+      decimals: 18,
+      logoURI: 'https://bscscan.com/token/images/centre-usdc_28.png',
+      isRouterToken: true,
+    },
+  },
+});
 
 export const berachainBepoliaNetwork = new Network({
   supportDEX: true,
@@ -891,6 +928,7 @@ export const networks = [
   berachainBepoliaNetwork,
   arbitrumSepoliaNetwork,
   sepoliaNetwork,
+  bscMainnetNetwork,
   // berachainBartioTestnetNetwork,
   // movementNetWork,
   // sprotoNetWork,

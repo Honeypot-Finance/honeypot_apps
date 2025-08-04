@@ -169,4 +169,49 @@ export const contractAddresses: Record<string, ContractAddresses> = {
       tokenVesting: '0x559066e029787e27153bc99dcf9e540111f346f4',
     },
   },
+  // BSC mainnet
+  '56': {
+    //algebra
+    algebraPoolInitCodeHash:
+      '0xb3fc09be5eb433d99b1ec89fd8435aaf5ffea75c1879e19028aa2414a14b3c85',
+    algebraFactory: '0xE8B1932CecF2d3fB85033135D72c728893c80D86',
+    algebraPoolDeployer: '0xb53fC1b41965F2A269Ef68B33351c5AA97095624',
+    algebraPositionManager: '0x559066e029787e27153BC99Dcf9E540111F346f4',
+    algebraNonfungiblePositionDescriptor:
+      '0x34DD3Fc1A50ec71785FabCdC4bA50f61aAdb7865',
+    algebraEntryPoint: '0x1b32FDe39d379A5105401389c3CfD985958c9d0f',
+    algebraTickLens: '0xC4c2FB9dC086eeD9F463CF717875a869C36459b1',
+    algebraQuoter: '0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6',
+    algebraQuoterV2: '0xc961e26393B4A2301b8e23Ee004A23C856153A49',
+    algebraSwapRouter: '0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc',
+    algebraEternalFarming: zeroAddress,
+    algebraFarmingCenter: zeroAddress,
+    algebraCommunityVault: '0xAdaf9B5875c86b7E1b671A180E0F917841c52608',
+    algebraVaultFactoryStub: '0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27',
+    algebraPluginFactory: '0x1Fb8CC6C93FD62BCB2908cA3431D57cE27cc22AE',
+    algebraProxy: '0x2160E65c07aAFD809f4f39a94513a21FbE20b615',
+    algebraInterfaceMulticall: '0x77383d6B0f22fdF4A337CE55eE371bf720EbB8B2',
+
+    //launchpad
+    ftoFactory: zeroAddress,
+    ftoFacade: zeroAddress,
+    memeFactory: zeroAddress,
+    memeFacade: zeroAddress,
+
+    //aquabera vault
+    vaultFactory: zeroAddress,
+    vaultVolatilityCheck: zeroAddress,
+
+    //aquabera vault staker
+    vaultStakerFactory: zeroAddress,
+
+    //berachain reward vault
+    rewardVaultFactory: zeroAddress,
+
+    //hpot
+    hpotToken: {
+      token: zeroAddress,
+      tokenVesting: zeroAddress,
+    },
+  },
 };

@@ -312,6 +312,9 @@ const SwapPairV3Independent = ({
         address: computePoolAddress({
           tokenA: baseCurrency.wrapped,
           tokenB: quoteCurrency.wrapped,
+          initCodeHashManualOverride:
+            wallet.currentChain.contracts.algebraPoolInitCodeHash,
+          poolDeployer: wallet.currentChain.contracts.algebraPoolDeployer,
         }),
       });
       pairContract.init().then((pair) => {

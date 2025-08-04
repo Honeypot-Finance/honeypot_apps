@@ -46,4 +46,14 @@ export const subgraphAddresses: Record<string, SubgraphAddresses> = {
     lbp: 'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-lbp-sepolia/1.0.1/gn',
     wasabee_ido: '',
   },
+  //bsc mainnet
+  '56': {
+    algebra_info:
+      'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-bsc/1.0.0/gn',
+    algebra_farming:
+      'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-farming-bsc/1.0.0/gn',
+    bgt_market: '',
+    lbp: '',
+    wasabee_ido: '',
+  },
 };

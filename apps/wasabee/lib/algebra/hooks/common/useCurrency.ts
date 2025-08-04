@@ -1,5 +1,5 @@
 import { Address } from 'viem';
-import { Currency, ExtendedNative, Token } from '@cryptoalgebra/sdk';
+import { Currency, ExtendedNative, Token, WNATIVE } from '@cryptoalgebra/sdk';
 import { ADDRESS_ZERO } from '@cryptoalgebra/sdk';
 import { useAlgebraToken } from './useAlgebraToken';
 import { wallet } from '@honeypot/shared/lib/wallet';
@@ -15,10 +15,22 @@ export function useCurrency(
       currentChain: wallet.currentChain,
     };
   });
+  // Get the actual wrapped native token address from WNATIVE
+  const wrappedNativeAddress = WNATIVE[currentChainId]?.address;
+  
   const isWNative =
-    address?.toLowerCase() === currentChain.nativeToken.address.toLowerCase();
+    address && wrappedNativeAddress && 
+    address.toLowerCase() === wrappedNativeAddress.toLowerCase();
 
   const isNative = address === ADDRESS_ZERO;
+  
+  console.log('useCurrency called:', {
+    address,
+    ADDRESS_ZERO,
+    isNative,
+    isWNative,
+    wrappedNativeAddress
+  });
 
   const token = useAlgebraToken(isNative || isWNative ? ADDRESS_ZERO : address);
 
@@ -29,6 +41,12 @@ export function useCurrency(
   );
 
   if (withNative) return isNative || isWNative ? extendedEther : token;
-  if (isWNative) return extendedEther.wrapped;
+  
+  // For wrapped native tokens, return the wrapped token from extendedEther
+  if (isWNative) {
+    return extendedEther.wrapped;
+  }
+  
+  // Return tokens as-is
   return isNative ? extendedEther : token;
 }

@@ -1,7 +1,7 @@
 import { Input } from '@/components/algebra/ui/input';
 import { formatBalance } from '@/lib/algebra/utils/common/formatBalance';
 import { formatUSD } from '@/lib//algebra/utils/common/formatUSD';
-import { Currency, Percent } from '@cryptoalgebra/sdk';
+import { Currency, Percent, ExtendedNative } from '@cryptoalgebra/sdk';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useAccount, useBalance, useWatchBlockNumber } from 'wagmi';
 import { Address, zeroAddress } from 'viem';
@@ -384,9 +384,11 @@ const TokenCardV3 = ({
             <TokenSelector
               staticTokenList={staticTokenList}
               value={
-                currency?.wrapped?.address
+                currency
                   ? Token.getToken({
-                      address: currency?.wrapped.address,
+                      address: currency.isNative 
+                        ? "0x0000000000000000000000000000000000000000" 
+                        : currency.address,
                       isNative: currency.isNative,
                       chainId: wallet.currentChainId.toString(),
                     })
@@ -397,13 +399,11 @@ const TokenCardV3 = ({
                 await token.init();
                 handleTokenSelect(
                   token.isNative
-                    ? new AlgebraToken(
+                    ? ExtendedNative.onChain(
                         wallet.currentChainId,
-                        zeroAddress,
-                        wallet.currentChain.nativeToken.decimals,
                         wallet.currentChain.nativeToken.symbol,
                         wallet.currentChain.nativeToken.name
-                      ) && ({ isNative: true } as Currency)
+                      )
                     : new AlgebraToken(
                         wallet.currentChainId,
                         token.address,
