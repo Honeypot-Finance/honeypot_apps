@@ -57,7 +57,7 @@ const ChainSelector: React.FC<ChainSelectorProps> = observer(({ value, onChange,
               height={20}
               className="rounded-full"
             />
-            <span className="text-sm font-medium">{value.chain.name}</span>
+            <span className="text-sm font-medium">{value.displayName || value.chain.name}</span>
           </div>
         </Button>
       </PopoverTrigger>
@@ -88,7 +88,7 @@ const ChainSelector: React.FC<ChainSelectorProps> = observer(({ value, onChange,
                   height={16}
                   className="rounded-full"
                 />
-                <span className="text-xs">{chain.chain.name}</span>
+                <span className="text-xs">{chain.displayName || chain.chain.name}</span>
               </div>
             </Button>
           ))}

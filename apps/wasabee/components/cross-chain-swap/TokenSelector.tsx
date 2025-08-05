@@ -1,12 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, Input } from '@nextui-org/react';
 import { ChevronDown, Search } from 'lucide-react';
 import Image from 'next/image';
 import { observer } from 'mobx-react-lite';
-import { Token, DynamicFormatAmount } from '@honeypot/shared';
+import { Token, DynamicFormatAmount, wallet } from '@honeypot/shared';
 import { UniversalTokenLogo } from './UniversalTokenLogo';
 import { crossChainSwapService } from '@/services/crossChainSwap';
-import { getUniversalTokenMetadata } from '../../config/universalTokenMetadata';
 
 interface TokenSelectorProps {
   chainId: number;
@@ -14,6 +13,39 @@ interface TokenSelectorProps {
   onChange: (token: Token) => void;
   variant?: 'light' | 'dark';
 }
+
+// Component to display token balance
+const TokenBalance: React.FC<{ token: Token }> = observer(({ token }) => {
+  const [balance, setBalance] = useState('0');
+  
+  useEffect(() => {
+    let mounted = true;
+    
+    const loadBalance = async () => {
+      if (!token) return;
+      
+      console.log(`Loading balance for token ${token.symbol} (${token.address}) on chain ${token.chainId}`);
+      
+      try {
+        const bal = await crossChainSwapService.getCrossChainTokenBalance(token);
+        console.log(`Got balance for ${token.symbol}: ${bal}`);
+        if (mounted) {
+          setBalance(bal);
+        }
+      } catch (err) {
+        console.warn('Failed to load balance:', err);
+      }
+    };
+    
+    loadBalance();
+    
+    return () => {
+      mounted = false;
+    };
+  }, [token, wallet.account, wallet.currentChainId]); // Re-load when wallet changes
+  
+  return <span>{balance}</span>;
+});
 
 const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, onChange, variant = 'light' }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -126,18 +158,16 @@ const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, 
                       />
                       <div className="text-left">
                         <div className="font-medium text-sm">
-                          {getUniversalTokenMetadata(chainId, token.address)?.symbol || token.symbol || 'Unknown'}
+                          {token.symbol || 'Unknown'}
                         </div>
                         <div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                          {getUniversalTokenMetadata(chainId, token.address)?.name || token.name || 
-                           (token.address.slice(0, 6) + '...' + token.address.slice(-4))}
+                          {token.name || (token.address.slice(0, 6) + '...' + token.address.slice(-4))}
                         </div>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="text-sm font-medium">
-                        {/* Don't show balance for Universal Account tokens */}
-                        -
+                        <TokenBalance token={token} />
                       </div>
                       {/* Price display placeholder */}
                     </div>

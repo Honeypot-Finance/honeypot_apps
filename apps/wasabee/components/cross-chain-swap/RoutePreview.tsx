@@ -13,6 +13,9 @@ interface RoutePreviewProps {
   fromChain: Network | null;
   toChain: Network | null;
   variant?: 'light' | 'dark';
+  priceImpact?: number;
+  estimatedTime?: number;
+  feeInUSD?: string;
 }
 
 const RoutePreview: React.FC<RoutePreviewProps> = observer(({
@@ -22,26 +25,35 @@ const RoutePreview: React.FC<RoutePreviewProps> = observer(({
   toAmount,
   fromChain,
   toChain,
-  variant = 'light'
+  variant = 'light',
+  priceImpact: providedPriceImpact,
+  estimatedTime: providedEstimatedTime,
+  feeInUSD
 }) => {
   const isDark = variant === 'dark';
   
-  const priceImpact = React.useMemo(() => {
+  const calculatedPriceImpact = React.useMemo(() => {
+    if (providedPriceImpact !== undefined) {
+      return providedPriceImpact;
+    }
+    
     if (!fromAmount || !toAmount) {
       return 0;
     }
     
-    // For now, calculate based on token amounts only
-    // In real implementation, this would use actual USD prices
+    // Fallback calculation based on token amounts only
     const fromValue = parseFloat(fromAmount);
     const toValue = parseFloat(toAmount);
     
     if (fromValue === 0) return 0;
     
     return Math.abs((fromValue - toValue) / fromValue) * 100;
-  }, [fromAmount, toAmount]);
+  }, [fromAmount, toAmount, providedPriceImpact]);
 
-  const estimatedTime = fromChain?.chainId === toChain?.chainId ? '~30s' : '~2-5 min';
+  const displayTime = providedEstimatedTime 
+    ? `~${Math.round(providedEstimatedTime / 60)} min`
+    : (fromChain?.chainId === toChain?.chainId ? '~30s' : '~2-5 min');
+  
   const exchangeRate = parseFloat(toAmount) / parseFloat(fromAmount) || 0;
 
   return (
@@ -69,11 +81,23 @@ const RoutePreview: React.FC<RoutePreviewProps> = observer(({
           Price Impact
         </span>
         <span className={`text-sm font-medium ${
-          priceImpact > 5 ? 'text-red-500' : priceImpact > 3 ? 'text-orange-500' : 'text-green-500'
+          calculatedPriceImpact > 5 ? 'text-red-500' : calculatedPriceImpact > 3 ? 'text-orange-500' : 'text-green-500'
         }`}>
-          {priceImpact.toFixed(2)}%
+          {calculatedPriceImpact.toFixed(2)}%
         </span>
       </div>
+
+      {/* Fee */}
+      {feeInUSD && (
+        <div className="flex items-center justify-between">
+          <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            Network Fee
+          </span>
+          <span className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            ${parseFloat(feeInUSD).toFixed(2)}
+          </span>
+        </div>
+      )}
 
       {/* Estimated Time */}
       <div className="flex items-center justify-between">
@@ -81,7 +105,7 @@ const RoutePreview: React.FC<RoutePreviewProps> = observer(({
           Estimated Time
         </span>
         <span className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
-          {estimatedTime}
+          {displayTime}
         </span>
       </div>
 

@@ -3,7 +3,6 @@ import { observer } from 'mobx-react-lite';
 import { Token } from '@honeypot/shared';
 import Image from 'next/image';
 import { Tooltip } from '@nextui-org/react';
-import { getUniversalTokenMetadata } from '../../config/universalTokenMetadata';
 
 interface UniversalTokenLogoProps {
   token: Token;
@@ -13,13 +12,10 @@ interface UniversalTokenLogoProps {
 // A simpler token logo component that doesn't initialize the token
 // Used for Universal Account tokens to avoid contract calls
 export const UniversalTokenLogo = observer(({ token, size = 24 }: UniversalTokenLogoProps) => {
-  // Try to get metadata first
-  const metadata = getUniversalTokenMetadata(parseInt(token.chainId), token.address);
-  
-  // Use metadata if available, otherwise fall back to token properties
-  const logoURI = metadata?.logoURI || token.logoURI;
-  const symbol = metadata?.symbol || token.symbol || 'Unknown';
-  const name = metadata?.name || token.name || 'Unknown Token';
+  // Use token properties directly
+  const logoURI = token.logoURI;
+  const symbol = token.symbol || 'Unknown';
+  const name = token.name || 'Unknown Token';
   
   return (
     <Tooltip

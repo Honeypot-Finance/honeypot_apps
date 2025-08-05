@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Tab, Tabs } from '@nextui-org/react';
 import { Clock, CheckCircle, XCircle, ExternalLink, ArrowRight } from 'lucide-react';
@@ -6,31 +6,7 @@ import { wallet } from '@honeypot/shared/lib/wallet';
 import { DynamicFormatAmount } from '@honeypot/shared';
 import { TokenLogo } from '@/components/TokenLogo/TokenLogo';
 import Image from 'next/image';
-
-interface Transaction {
-  id: string;
-  status: 'pending' | 'completed' | 'failed';
-  fromToken: {
-    symbol: string;
-    logo: string;
-    amount: string;
-  };
-  toToken: {
-    symbol: string;
-    logo: string;
-    amount: string;
-  };
-  fromChain: {
-    name: string;
-    logo: string;
-  };
-  toChain: {
-    name: string;
-    logo: string;
-  };
-  timestamp: number;
-  txHash?: string;
-}
+import { crossChainTransactionService, CrossChainTransaction } from '@/services/crossChainTransactionService';
 
 interface CrossChainTransactionHistoryProps {
   inModal?: boolean;
@@ -39,40 +15,18 @@ interface CrossChainTransactionHistoryProps {
 const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> = observer(({ inModal = false }) => {
   const [selectedTab, setSelectedTab] = useState('all');
 
-  // Mock data - in real implementation, this would come from a service
-  const mockTransactions: Transaction[] = [
-    {
-      id: '1',
-      status: 'completed',
-      fromToken: {
-        symbol: 'USDC',
-        logo: 'https://assets.coingecko.com/coins/images/6319/standard/usdc.png',
-        amount: '100'
-      },
-      toToken: {
-        symbol: 'USDT',
-        logo: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png',
-        amount: '99.95'
-      },
-      fromChain: {
-        name: 'BSC',
-        logo: 'https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png'
-      },
-      toChain: {
-        name: 'Berachain',
-        logo: 'https://raw.githubusercontent.com/berachain/default-token-list/main/src/assets/chains/bera.png'
-      },
-      timestamp: Date.now() - 3600000, // 1 hour ago
-      txHash: '0x123...abc'
-    }
-  ];
+  // Get real transactions from the service
+  const userTransactions = useMemo(() => {
+    if (!wallet.account) return [];
+    return crossChainTransactionService.getTransactionsByUser(wallet.account);
+  }, [wallet.account, crossChainTransactionService.transactions]);
 
-  const filteredTransactions = mockTransactions.filter(tx => {
+  const filteredTransactions = userTransactions.filter(tx => {
     if (selectedTab === 'all') return true;
     return tx.status === selectedTab;
   });
 
-  const getStatusIcon = (status: Transaction['status']) => {
+  const getStatusIcon = (status: CrossChainTransaction['status']) => {
     switch (status) {
       case 'pending':
         return <Clock className="w-4 h-4 text-yellow-500" />;
@@ -83,7 +37,7 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
     }
   };
 
-  const getStatusText = (status: Transaction['status']) => {
+  const getStatusText = (status: CrossChainTransaction['status']) => {
     switch (status) {
       case 'pending':
         return 'Pending';
@@ -144,6 +98,13 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
                   </span>
                 </div>
 
+                {/* Error Message for Failed Transactions */}
+                {tx.status === 'failed' && tx.errorMessage && (
+                  <div className="bg-red-900/20 border border-red-800/30 rounded-lg p-2 mb-3">
+                    <p className="text-xs text-red-400">{tx.errorMessage}</p>
+                  </div>
+                )}
+
                 {/* Swap Details */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -151,14 +112,14 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
                     <div className="flex items-center gap-2">
                       <div className="relative">
                         <Image
-                          src={tx.fromToken.logo}
+                          src={tx.fromToken.logoURI || '/images/icons/tokens/unknown.png'}
                           alt={tx.fromToken.symbol}
                           width={32}
                           height={32}
                           className="rounded-full"
                         />
                         <Image
-                          src={tx.fromChain.logo}
+                          src={tx.fromChain.iconUrl}
                           alt={tx.fromChain.name}
                           width={14}
                           height={14}
@@ -181,14 +142,14 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
                     <div className="flex items-center gap-2">
                       <div className="relative">
                         <Image
-                          src={tx.toToken.logo}
+                          src={tx.toToken.logoURI || '/images/icons/tokens/unknown.png'}
                           alt={tx.toToken.symbol}
                           width={32}
                           height={32}
                           className="rounded-full"
                         />
                         <Image
-                          src={tx.toChain.logo}
+                          src={tx.toChain.iconUrl}
                           alt={tx.toChain.name}
                           width={14}
                           height={14}
