@@ -15,6 +15,32 @@ import {
 
 export const bscMainnet: Chain = {
   ...bsc,
+  rpcUrls: {
+    default: {
+      http: [
+        'https://bsc-dataseed1.binance.org',
+        'https://bsc-dataseed2.binance.org',
+        'https://bsc-dataseed3.binance.org',
+        'https://bsc-dataseed4.binance.org',
+        'https://bsc-dataseed1.defibit.io',
+        'https://bsc-dataseed2.defibit.io',
+      ],
+    },
+    public: {
+      http: [
+        'https://bsc-dataseed1.binance.org',
+        'https://bsc-dataseed2.binance.org',
+        'https://bsc-dataseed3.binance.org',
+        'https://bsc-dataseed4.binance.org',
+      ],
+    },
+  },
+  contracts: {
+    ...bsc.contracts,
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    },
+  },
 };
 
 export const arbitrumSepoliaTestnet: Chain = {

@@ -187,6 +187,11 @@ export class Token implements BaseContract {
     if (!!this.logoURI || !wallet.isInit) {
       return;
     }
+    
+    // Check if address is valid before proceeding
+    if (!this.address || this.address === '' || this.address === zeroAddress) {
+      return;
+    }
 
     if (!force) {
       //cache the logoURI
@@ -413,6 +418,12 @@ export class Token implements BaseContract {
   }
 
   async getPot2PumpAddress() {
+    // Check if address is valid before proceeding
+    if (!this.address || this.address === '' || this.address === zeroAddress) {
+      this.pot2pumpAddress = null;
+      return null;
+    }
+    
     if (this.pot2pumpAddress !== undefined) {
       return this.pot2pumpAddress;
     }

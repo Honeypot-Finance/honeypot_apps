@@ -127,16 +127,18 @@ export class Network {
 
 export const bscMainnetNetwork = new Network({
   supportDEX: true,
+  supportUniversalAccount: true,
   supportVault: true,
-  iconUrl: 'https://cryptologos.cc/logos/bnb-bnb-logo.svg?v=040',
+  iconUrl: 'https://bscscan.com/token/images/bnbchain2_32.png',
   chain: bscMainnet,
   nativeToken: {
-    address: '0x0000000000000000000000000000000000000000',
+    address: '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c',
     name: 'BNB',
     symbol: 'BNB',
     decimals: 18,
     isNative: true,
-    logoURI: 'https://bscscan.com/token/images/bnbchain2_32.png',
+    logoURI:
+      'https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png',
     chainId: '56',
   },
   raisedTokenData: [],
