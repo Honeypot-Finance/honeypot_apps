@@ -67,22 +67,22 @@ export function AllAquaberaVaults({
           const reconstructedVaults = data.map((cached: any) => {
             const token0 = cached.token0
               ? Token.getToken({
-                  address: cached.token0.address,
-                  chainId: wallet.currentChainId.toString(),
-                  name: cached.token0.name,
-                  symbol: cached.token0.symbol,
-                  decimals: cached.token0.decimals,
-                })
+                address: cached.token0.address,
+                chainId: wallet.currentChainId.toString(),
+                name: cached.token0.name,
+                symbol: cached.token0.symbol,
+                decimals: cached.token0.decimals,
+              })
               : null;
 
             const token1 = cached.token1
               ? Token.getToken({
-                  address: cached.token1.address,
-                  chainId: wallet.currentChainId.toString(),
-                  name: cached.token1.name,
-                  symbol: cached.token1.symbol,
-                  decimals: cached.token1.decimals,
-                })
+                address: cached.token1.address,
+                chainId: wallet.currentChainId.toString(),
+                name: cached.token1.name,
+                symbol: cached.token1.symbol,
+                decimals: cached.token1.decimals,
+              })
               : null;
 
             // Initialize tokens immediately for TokenLogo component
@@ -222,30 +222,30 @@ export function AllAquaberaVaults({
             // Token info for display
             token0: vault.token0
               ? {
-                  address: vault.token0.address,
-                  symbol: vault.token0.symbol,
-                  name: vault.token0.name,
-                  decimals: vault.token0.decimals,
-                  logoURI: vault.token0.logoURI,
-                }
+                address: vault.token0.address,
+                symbol: vault.token0.symbol,
+                name: vault.token0.name,
+                decimals: vault.token0.decimals,
+                logoURI: vault.token0.logoURI,
+              }
               : null,
 
             token1: vault.token1
               ? {
-                  address: vault.token1.address,
-                  symbol: vault.token1.symbol,
-                  name: vault.token1.name,
-                  decimals: vault.token1.decimals,
-                  logoURI: vault.token1.logoURI,
-                }
+                address: vault.token1.address,
+                symbol: vault.token1.symbol,
+                name: vault.token1.name,
+                decimals: vault.token1.decimals,
+                logoURI: vault.token1.logoURI,
+              }
               : null,
 
             // Pool data for display
             pool: vault.pool
               ? {
-                  volume_24h_USD: vault.pool.volume_24h_USD,
-                  fees_24h_USD: vault.pool.fees_24h_USD,
-                }
+                volume_24h_USD: vault.pool.volume_24h_USD,
+                fees_24h_USD: vault.pool.fees_24h_USD,
+              }
               : null,
 
             // Basic vault info
@@ -455,18 +455,16 @@ export function AllAquaberaVaults({
                   <span>Token Pair</span>
                   <div className="flex flex-col">
                     <ChevronUp
-                      className={`h-3 w-3 ${
-                        sortField === 'pair' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
+                      className={`h-3 w-3 ${sortField === 'pair' && sortDirection === 'asc'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
+                        }`}
                     />
                     <ChevronDown
-                      className={`h-3 w-3 ${
-                        sortField === 'pair' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
+                      className={`h-3 w-3 ${sortField === 'pair' && sortDirection === 'desc'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
+                        }`}
                     />
                   </div>
                 </div>
@@ -479,18 +477,16 @@ export function AllAquaberaVaults({
                   <span>Allow Token</span>
                   <div className="flex flex-col">
                     <ChevronUp
-                      className={`h-3 w-3 ${
-                        sortField === 'pair' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
+                      className={`h-3 w-3 ${sortField === 'pair' && sortDirection === 'asc'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
+                        }`}
                     />
                     <ChevronDown
-                      className={`h-3 w-3 ${
-                        sortField === 'pair' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
+                      className={`h-3 w-3 ${sortField === 'pair' && sortDirection === 'desc'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
+                        }`}
                     />
                   </div>
                 </div>
@@ -503,18 +499,16 @@ export function AllAquaberaVaults({
                   <span>Vault TVL</span>
                   <div className="flex flex-col">
                     <ChevronUp
-                      className={`h-3 w-3 ${
-                        sortField === 'tvl' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
+                      className={`h-3 w-3 ${sortField === 'tvl' && sortDirection === 'asc'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
+                        }`}
                     />
                     <ChevronDown
-                      className={`h-3 w-3 ${
-                        sortField === 'tvl' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
+                      className={`h-3 w-3 ${sortField === 'tvl' && sortDirection === 'desc'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
+                        }`}
                     />
                   </div>
                 </div>
@@ -527,18 +521,16 @@ export function AllAquaberaVaults({
                   <span>Pool 24h Volume</span>
                   <div className="flex flex-col">
                     <ChevronUp
-                      className={`h-3 w-3 ${
-                        sortField === 'volume' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
+                      className={`h-3 w-3 ${sortField === 'volume' && sortDirection === 'asc'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
+                        }`}
                     />
                     <ChevronDown
-                      className={`h-3 w-3 ${
-                        sortField === 'volume' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
+                      className={`h-3 w-3 ${sortField === 'volume' && sortDirection === 'desc'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
+                        }`}
                     />
                   </div>
                 </div>
@@ -551,18 +543,16 @@ export function AllAquaberaVaults({
                   <span>Pool 24h Fees</span>
                   <div className="flex flex-col">
                     <ChevronUp
-                      className={`h-3 w-3 ${
-                        sortField === 'fees' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
+                      className={`h-3 w-3 ${sortField === 'fees' && sortDirection === 'asc'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
+                        }`}
                     />
                     <ChevronDown
-                      className={`h-3 w-3 ${
-                        sortField === 'fees' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
+                      className={`h-3 w-3 ${sortField === 'fees' && sortDirection === 'desc'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
+                        }`}
                     />
                   </div>
                 </div>
@@ -575,18 +565,16 @@ export function AllAquaberaVaults({
                   <span>APR</span>
                   <div className="flex flex-col">
                     <ChevronUp
-                      className={`h-3 w-3 ${
-                        sortField === 'apr' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
+                      className={`h-3 w-3 ${sortField === 'apr' && sortDirection === 'asc'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
+                        }`}
                     />
                     <ChevronDown
-                      className={`h-3 w-3 ${
-                        sortField === 'apr' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
-                      }`}
+                      className={`h-3 w-3 ${sortField === 'apr' && sortDirection === 'desc'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
+                        }`}
                     />
                   </div>
                 </div>
