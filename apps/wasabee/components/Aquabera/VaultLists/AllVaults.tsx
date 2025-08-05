@@ -149,15 +149,11 @@ export function AllAquaberaVaults({
       return;
     }
 
-
     const storageKey = `${CACHE_KEY_PREFIX}${cacheKey}`;
 
-
     getVaultsFromLocalStorage();
-
-
-    // Set loading state when starting fresh load
-    setIsLoadingFromCache(false);
+    
+    setIsLoadingFromCache(true);
 
     const initializeVaultsWithDetailsFromSubgraph = async () => {
       try {
@@ -332,6 +328,7 @@ export function AllAquaberaVaults({
       setIsSearching(false);
     }
   }, [searchString]);
+
   const sortAndFilter = () => {
     // Filter vaults based on search string
     let filteredVaults = vaultsContracts;
@@ -393,6 +390,7 @@ export function AllAquaberaVaults({
     // 无论是否有数据，都更新排序后的列表
     setSortedVaults(paginatedVaults);
   };
+
   useEffect(() => {
     if (!vaultsContracts.length) return;
     sortAndFilter();
