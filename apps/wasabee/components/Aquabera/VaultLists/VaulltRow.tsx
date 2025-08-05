@@ -1,45 +1,19 @@
 import { TokenLogo } from '@honeypot/shared';
-
-import { getSingleVaultDetails } from '@honeypot/shared';
 import { DynamicFormatAmount } from '@honeypot/shared';
-import { useSubgraphClient } from '@honeypot/shared';
 import { ICHIVaultContract } from '@honeypot/shared';
-import { Token } from '@honeypot/shared';
-import { wallet } from '@honeypot/shared/lib/wallet';
 import {
   useReadIchiVaultAllowToken0,
   useReadIchiVaultAllowToken1,
 } from '@/wagmi-generated';
-import { Skeleton, Tooltip } from '@nextui-org/react';
+import { Tooltip } from '@nextui-org/react';
 import { InfoIcon } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useMemo, useState } from 'react';
 import { VaultTag } from '../VaultTag';
 
 export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
-  const [vaultContract, setVaultContract] = useState<
-    ICHIVaultContract | undefined
-  >(undefined);
-  const infoClient = useSubgraphClient('algebra_info');
-  const tokenA = Token.getToken({
-    address: vault.token0?.address ?? '',
-    chainId: wallet.currentChainId.toString(),
-  });
-  const tokenB = Token.getToken({
-    address: vault.token1?.address ?? '',
-    chainId: wallet.currentChainId.toString(),
-  });
-  const loading = useMemo(() => {
-    return !vaultContract || !tokenA || !tokenB;
-  }, [
-    vaultContract,
-    tokenA,
-    tokenB,
-    vaultContract?.pool,
-    vaultContract?.tvlUSD,
-    vaultContract?.pool?.volume_24h_USD,
-    vaultContract?.pool?.fees_24h_USD,
-  ]);
+  // Use fully initialized tokens from parent - no additional setup needed!
+  const tokenA = vault.token0;
+  const tokenB = vault.token1;
 
   const isTokenAAllowed = useReadIchiVaultAllowToken0({
     address: vault.address,
@@ -49,60 +23,8 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
     address: vault.address,
   });
 
-  if (
-    vaultContract?.address.toLowerCase() ===
-    '0xb00ae8a7be63036dbcd143a842bfc14708c440bb'
-  ) {
-    console.log(vaultContract);
-  }
-
-  useEffect(() => {
-    if (!vault) return;
-
-    async function getVaultsContracts() {
-      if (!vault) return;
-      const vaultContract = await getSingleVaultDetails(
-        infoClient,
-        vault.address
-      );
-
-      if (vaultContract) {
-        Promise.all([
-          vaultContract?.getTotalAmounts(),
-          vaultContract?.getTotalSupply(),
-          vaultContract?.getBalanceOf(wallet.account),
-        ]);
-
-        vaultContract?.token0?.init(false, {
-          loadIndexerTokenData: true,
-        });
-
-        vaultContract?.token1?.init(false, {
-          loadIndexerTokenData: true,
-        });
-
-        return vaultContract;
-      }
-    }
-
-    getVaultsContracts().then((vaultContract) => {
-      setVaultContract(vaultContract);
-    });
-  }, [vault]);
-
   const volume = Number(vault.pool?.volume_24h_USD || 0);
-
   const fees = Number(vault.pool?.fees_24h_USD || 0);
-
-  if (loading) {
-    return (
-      <tr>
-        <td colSpan={6}>
-          <Skeleton className="h-12 bg-yellow-500" />
-        </td>
-      </tr>
-    );
-  }
 
   return (
     <tr
@@ -112,30 +34,30 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
       {/* Token pair */}
       <td className="py-4 px-6">
         <div>
-          {vaultContract?.vaultTag && (
+          {vault?.vaultTag && (
             <VaultTag
-              tag={vaultContract.vaultTag.tag}
-              bgColor={vaultContract.vaultTag.bgColor}
-              textColor={vaultContract.vaultTag.textColor}
-              tooltip={vaultContract.vaultTag.tooltip}
+              tag={vault.vaultTag.tag}
+              bgColor={vault.vaultTag.bgColor}
+              textColor={vault.vaultTag.textColor}
+              tooltip={vault.vaultTag.tooltip}
             />
           )}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
-              <TokenLogo
+              {tokenA && <TokenLogo
                 token={tokenA}
                 addtionalClasses="translate-x-[25%]"
                 size={24}
-              />
-              <TokenLogo
+              />}
+              {tokenB && <TokenLogo
                 token={tokenB}
                 addtionalClasses="translate-x-[-25%]"
                 size={24}
-              />
+              />}
             </div>
             <div className="flex flex-col">
               <p className="text-black font-medium">
-                {tokenA.symbol}/{tokenB.symbol}
+                {tokenA?.symbol || 'Token'}/{tokenB?.symbol || 'Token'}
               </p>
             </div>
           </div>
@@ -145,13 +67,13 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
       <td className="py-4 px-6">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1">
-            {isTokenAAllowed.data && <TokenLogo token={tokenA} size={24} />}
-            {isTokenBAllowed.data && <TokenLogo token={tokenB} size={24} />}
+            {isTokenAAllowed.data && tokenA && <TokenLogo token={tokenA} size={24} />}
+            {isTokenBAllowed.data && tokenB && <TokenLogo token={tokenB} size={24} />}
           </div>
           <div className="flex">
             <p className="text-black font-medium">
-              {isTokenAAllowed.data && tokenA.symbol}
-              {isTokenBAllowed.data && tokenB.symbol}
+              {isTokenAAllowed.data && tokenA?.symbol}
+              {isTokenBAllowed.data && tokenB?.symbol}
             </p>
           </div>
         </div>
@@ -161,7 +83,7 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
       {/* apr */}
       <td className="py-4 px-6 text-right text-black">
         {DynamicFormatAmount({
-          amount: vaultContract?.tvlUSD ?? 0,
+          amount: vault.tvlUSD ?? 0,
           decimals: 3,
           beginWith: ' $',
         })}
@@ -184,14 +106,14 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
       </td>
       <td className="py-4 px-6 text-right text-black">
         <div className="h-full flex justify-end items-center gap-2">
-          {vaultContract?.apr.toFixed(2)}%
+          {vault.apr?.toFixed(2) || '0.00'}%
           <Tooltip
             content={
               <div>
-                <p>1d: {vaultContract?.detailedApr.feeApr_1d.toFixed(5)}%</p>
-                <p>3d: {vaultContract?.detailedApr.feeApr_3d.toFixed(5)}%</p>
-                <p>7d: {vaultContract?.detailedApr.feeApr_7d.toFixed(5)}%</p>
-                <p>30d: {vaultContract?.detailedApr.feeApr_30d.toFixed(5)}%</p>
+                <p>1d: {vault.detailedApr?.feeApr_1d?.toFixed(5) || '0.00000'}%</p>
+                <p>3d: {vault.detailedApr?.feeApr_3d?.toFixed(5) || '0.00000'}%</p>
+                <p>7d: {vault.detailedApr?.feeApr_7d?.toFixed(5) || '0.00000'}%</p>
+                <p>30d: {vault.detailedApr?.feeApr_30d?.toFixed(5) || '0.00000'}%</p>
               </div>
             }
           >
