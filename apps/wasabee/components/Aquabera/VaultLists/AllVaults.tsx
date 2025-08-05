@@ -149,20 +149,12 @@ export function AllAquaberaVaults({
       return;
     }
 
-    // Check if we have valid cached data
+
     const storageKey = `${CACHE_KEY_PREFIX}${cacheKey}`;
-    const cached = localStorage.getItem(storageKey);
 
-    if (cached) {
-      const { data, timestamp } = JSON.parse(cached);
-      const age = Date.now() - timestamp;
 
-      if (age < CACHE_EXPIRY_MS && data?.length > 0) {
-        // Cache is still valid, load it
-        getVaultsFromLocalStorage();
-        return;
-      }
-    }
+    getVaultsFromLocalStorage();
+
 
     // Set loading state when starting fresh load
     setIsLoadingFromCache(false);
