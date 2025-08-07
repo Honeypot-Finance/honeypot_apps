@@ -1,20 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import { motion } from 'framer-motion';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { itemPopUpVariants } from '@/lib/animation';
 import { LoadingDisplay } from '@/components/LoadingDisplay/LoadingDisplay';
-import CrossChainSwapCard from '@/components/cross-chain-swap/CrossChainSwapCard';
-import TransactionHistoryModal from '@/components/cross-chain-swap/TransactionHistoryModal';
+import CrossChainSwapLayout from '@/components/cross-chain-swap/CrossChainSwapLayout';
 import { useAccount } from 'wagmi';
 import { Button } from '@nextui-org/react';
-import { History } from 'lucide-react';
 import { universalAccountService } from '@/services/universalAccountService';
 
 const CrossChainSwapPage = observer(() => {
   const { address } = useAccount();
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [showHistory, setShowHistory] = useState(false);
   const isInit = wallet.isInit;
 
   // Set dark background for this page
@@ -86,44 +80,7 @@ const CrossChainSwapPage = observer(() => {
     );
   }
 
-  return (
-    <div className="w-full min-h-[80vh] flex flex-col items-center justify-center pb-6 sm:pb-12 pt-8">
-      <div className="w-full max-w-[500px] px-2 sm:px-4">
-        <motion.div
-          variants={itemPopUpVariants}
-          initial="hidden"
-          animate="visible"
-          transition={{ duration: 0.5 }}
-          className="relative w-full flex flex-col items-center"
-        >
-          <CrossChainSwapCard
-            onSwapSuccess={() => {
-              setRefreshKey((k) => k + 1);
-              // Optionally open history after successful swap
-              setShowHistory(true);
-            }}
-          />
-          
-          {/* Transaction History Button */}
-          <Button
-            variant="flat"
-            size="lg"
-            className="mt-6 bg-[#1a1a1a] hover:bg-[#2a2a2a] text-white border border-[#2a2a2a] px-6"
-            startContent={<History className="w-5 h-5" />}
-            onPress={() => setShowHistory(true)}
-          >
-            View Transaction History
-          </Button>
-        </motion.div>
-      </div>
-
-      {/* Transaction History Modal */}
-      <TransactionHistoryModal 
-        isOpen={showHistory}
-        onClose={() => setShowHistory(false)}
-      />
-    </div>
-  );
+  return <CrossChainSwapLayout />;
 });
 
 export default CrossChainSwapPage;

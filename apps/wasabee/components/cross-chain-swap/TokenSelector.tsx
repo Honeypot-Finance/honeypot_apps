@@ -12,6 +12,7 @@ interface TokenSelectorProps {
   value?: Token;
   onChange: (token: Token) => void;
   variant?: 'light' | 'dark';
+  compact?: boolean;
 }
 
 // Component to display token balance
@@ -47,7 +48,7 @@ const TokenBalance: React.FC<{ token: Token }> = observer(({ token }) => {
   return <span>{balance}</span>;
 });
 
-const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, onChange, variant = 'light' }) => {
+const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, onChange, variant = 'light', compact = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -82,7 +83,7 @@ const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, 
       <Button
         variant="flat"
         size="sm"
-        className={`min-w-[120px] justify-between ${
+        className={`${compact ? 'min-w-[80px] px-2' : 'min-w-[120px]'} justify-between ${
           isDark 
             ? 'bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white border-[#3a3a3a]' 
             : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'
@@ -99,7 +100,7 @@ const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, 
             <span className="text-sm font-medium">{value.symbol}</span>
           </div>
         ) : (
-          <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Select Token</span>
+          <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{compact ? 'Token' : 'Select Token'}</span>
         )}
       </Button>
 

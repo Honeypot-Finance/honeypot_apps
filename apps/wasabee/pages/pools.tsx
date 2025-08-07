@@ -46,7 +46,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
       >
         <Tab
           key="aquabera"
-          title={<span className="text-xs sm:text-base">POGE Vault</span>}
+          title={<span className="text-xs sm:text-base">Automateds Vault</span>}
         >
           <AquaberaList />
         </Tab>

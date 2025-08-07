@@ -1,75 +1,85 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Tab, Tabs } from '@nextui-org/react';
-import { Clock, CheckCircle, XCircle, ExternalLink, ArrowRight } from 'lucide-react';
+import {
+  Clock,
+  CheckCircle,
+  XCircle,
+  ExternalLink,
+  ArrowRight,
+} from 'lucide-react';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { DynamicFormatAmount } from '@honeypot/shared';
 import { TokenLogo } from '@/components/TokenLogo/TokenLogo';
 import Image from 'next/image';
-import { crossChainTransactionService, CrossChainTransaction } from '@/services/crossChainTransactionService';
+import {
+  crossChainTransactionService,
+  CrossChainTransaction,
+} from '@/services/crossChainTransactionService';
 
 interface CrossChainTransactionHistoryProps {
   inModal?: boolean;
 }
 
-const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> = observer(({ inModal = false }) => {
-  const [selectedTab, setSelectedTab] = useState('all');
+const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> =
+  observer(({ inModal = false }) => {
+    const [selectedTab, setSelectedTab] = useState('all');
 
-  // Get real transactions from the service
-  const userTransactions = useMemo(() => {
-    if (!wallet.account) return [];
-    return crossChainTransactionService.getTransactionsByUser(wallet.account);
-  }, [wallet.account, crossChainTransactionService.transactions]);
+    // Get real transactions from the service - directly use observable data
+    const userTransactions = wallet.account
+      ? crossChainTransactionService.getTransactionsByUser(wallet.account)
+      : [];
 
-  const filteredTransactions = userTransactions.filter(tx => {
-    if (selectedTab === 'all') return true;
-    return tx.status === selectedTab;
-  });
+    // Sort by timestamp (most recent first) and filter by selected tab
+    const filteredTransactions = userTransactions
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .filter((tx) => {
+        if (selectedTab === 'all') return true;
+        return tx.status === selectedTab;
+      });
 
-  const getStatusIcon = (status: CrossChainTransaction['status']) => {
-    switch (status) {
-      case 'pending':
-        return <Clock className="w-4 h-4 text-yellow-500" />;
-      case 'completed':
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'failed':
-        return <XCircle className="w-4 h-4 text-red-500" />;
-    }
-  };
+    const getStatusIcon = (status: CrossChainTransaction['status']) => {
+      switch (status) {
+        case 'pending':
+          return <Clock className="w-4 h-4 text-yellow-500" />;
+        case 'completed':
+          return <CheckCircle className="w-4 h-4 text-green-500" />;
+        case 'failed':
+          return <XCircle className="w-4 h-4 text-red-500" />;
+      }
+    };
 
-  const getStatusText = (status: CrossChainTransaction['status']) => {
-    switch (status) {
-      case 'pending':
-        return 'Pending';
-      case 'completed':
-        return 'Completed';
-      case 'failed':
-        return 'Failed';
-    }
-  };
+    const getStatusText = (status: CrossChainTransaction['status']) => {
+      switch (status) {
+        case 'pending':
+          return 'Pending';
+        case 'completed':
+          return 'Completed';
+        case 'failed':
+          return 'Failed';
+      }
+    };
 
-  const formatTime = (timestamp: number) => {
-    const now = Date.now();
-    const diff = now - timestamp;
-    
-    if (diff < 60000) return 'Just now';
-    if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
-    if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
-    return `${Math.floor(diff / 86400000)}d ago`;
-  };
+    const formatTime = (timestamp: number) => {
+      const now = Date.now();
+      const diff = now - timestamp;
 
-  const content = (
-    <>
-      {!inModal && <h3 className="text-xl font-semibold mb-4 text-white">Transaction History</h3>}
-        
+      if (diff < 60000) return 'Just now';
+      if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+      if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+      return `${Math.floor(diff / 86400000)}d ago`;
+    };
+
+    const content = (
+      <>
         <Tabs
           selectedKey={selectedTab}
           onSelectionChange={(key) => setSelectedTab(key as string)}
           classNames={{
-            tabList: "bg-[#141414] rounded-lg p-1",
-            cursor: "bg-[#2a2a2a]",
-            tab: "text-sm text-gray-400 data-[selected=true]:text-white",
-            tabContent: "group-data-[selected=true]:text-white"
+            tabList: 'bg-[#141414] rounded-lg p-1',
+            cursor: 'bg-[#2a2a2a]',
+            tab: 'text-sm text-gray-400 data-[selected=true]:text-white',
+            tabContent: 'group-data-[selected=true]:text-white',
           }}
         >
           <Tab key="all" title="All" />
@@ -82,7 +92,7 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
           {filteredTransactions.length > 0 ? (
             filteredTransactions.map((tx) => (
               <div
-                key={tx.id}
+                key={`${tx.id}-${tx.status}-${tx.timestamp}`}
                 className="bg-[#141414] border border-[#2a2a2a] rounded-2xl p-4 space-y-3"
               >
                 {/* Status and Time */}
@@ -112,7 +122,10 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
                     <div className="flex items-center gap-2">
                       <div className="relative">
                         <Image
-                          src={tx.fromToken.logoURI || '/images/icons/tokens/unknown.png'}
+                          src={
+                            tx.fromToken.logoURI ||
+                            '/images/icons/tokens/unknown.png'
+                          }
                           alt={tx.fromToken.symbol}
                           width={32}
                           height={32}
@@ -142,7 +155,10 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
                     <div className="flex items-center gap-2">
                       <div className="relative">
                         <Image
-                          src={tx.toToken.logoURI || '/images/icons/tokens/unknown.png'}
+                          src={
+                            tx.toToken.logoURI ||
+                            '/images/icons/tokens/unknown.png'
+                          }
                           alt={tx.toToken.symbol}
                           width={32}
                           height={32}
@@ -168,9 +184,11 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
                   </div>
 
                   {/* View Transaction */}
-                  {tx.txHash && (
+                  {(tx.universalTxId || tx.txHash) && (
                     <a
-                      href={`https://universalx.app/activity/details?id=${tx.txHash}`}
+                      href={`https://universalx.app/activity/details?id=${
+                        tx.universalTxId || tx.txHash
+                      }`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1 text-sm text-purple-400 hover:text-purple-300"
@@ -184,25 +202,29 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
             ))
           ) : (
             <div className="text-center py-12">
-              <p className="text-lg font-medium mb-2 text-gray-300">No transactions yet</p>
-              <p className="text-sm text-gray-500">Your cross-chain swaps will appear here</p>
+              <p className="text-lg font-medium mb-2 text-gray-300">
+                No transactions yet
+              </p>
+              <p className="text-sm text-gray-500">
+                Your cross-chain swaps will appear here
+              </p>
             </div>
           )}
         </div>
-    </>
-  );
+      </>
+    );
 
-  if (inModal) {
-    return content;
-  }
+    if (inModal) {
+      return content;
+    }
 
-  return (
-    <div className="w-full">
-      <div className="bg-[#1a1a1a] rounded-3xl border border-[#2a2a2a] shadow-2xl p-6">
-        {content}
+    return (
+      <div className="w-full">
+        <div className="bg-[#271A0C] rounded-3xl border border-[#2a2a2a] shadow-2xl p-6">
+          {content}
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  });
 
 export default CrossChainTransactionHistory;

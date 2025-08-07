@@ -139,18 +139,63 @@ export class UniversalAccount {
 
   async deposit(token: Token, amount: string) {
     try {
-      token.transfer.call([
-        this.evmSmartAccountAddress,
-        BigInt(
-          new BigNumber(amount).multipliedBy(10 ** token.decimals).toFixed()
-        ),
-      ]);
+      // Original implementation - but let's fix it
+      // The issue is that token.transfer doesn't exist as a function
+      // We need to use the contract's write method properly
+      
+      const amountInSmallestUnit = BigInt(
+        new BigNumber(amount).multipliedBy(10 ** token.decimals).toFixed()
+      );
+
+      console.log('Depositing:', {
+        token: token.symbol,
+        amount,
+        amountInSmallestUnit: amountInSmallestUnit.toString(),
+        to: this.evmSmartAccountAddress,
+      });
+
+      // Based on the pattern from buyToken and withdraw methods,
+      // we should directly use wallet.walletClient for the transaction
+      if (token.isNative) {
+        // Send native token
+        const hash = await wallet.walletClient.sendTransaction({
+          to: this.evmSmartAccountAddress as `0x${string}`,
+          value: amountInSmallestUnit,
+          account: wallet.account as `0x${string}`,
+          chain: wallet.currentChain.chain,
+        });
+        
+        console.log('Native deposit hash:', hash);
+        return { hash };
+      } else {
+        // Send ERC20 token using transfer function
+        const hash = await wallet.walletClient.writeContract({
+          address: token.address as `0x${string}`,
+          abi: [{
+            name: 'transfer',
+            type: 'function',
+            inputs: [
+              { name: 'recipient', type: 'address' },
+              { name: 'amount', type: 'uint256' },
+            ],
+            outputs: [{ name: '', type: 'bool' }],
+          }],
+          functionName: 'transfer',
+          args: [this.evmSmartAccountAddress as `0x${string}`, amountInSmallestUnit],
+          account: wallet.account as `0x${string}`,
+          chain: wallet.currentChain.chain,
+        });
+        
+        console.log('ERC20 deposit hash:', hash);
+        return { hash };
+      }
     } catch (error: any) {
       console.log({ error });
       WrappedToastify.error({
         title: 'Error depositing token',
         message: error.message,
       });
+      throw error; // Re-throw to handle in the caller
     }
   }
 

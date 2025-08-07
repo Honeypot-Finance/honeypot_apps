@@ -173,6 +173,26 @@ input[type="number"] {
   background-color: #b66e16;
 }
 
+/* Custom scrollbar for transaction history */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  background-color: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #2a2a2a;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4a4a4a;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #5a5a5a;
+}
+
 /* Date picker */
 .date-picker-wrapper div[data-slot="input-wrapper"] {
   background-color: #ffffff;

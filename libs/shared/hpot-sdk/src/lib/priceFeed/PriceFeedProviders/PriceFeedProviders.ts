@@ -19,36 +19,59 @@ export class DefinedPriceFeed implements PriceFeedProvider {
     query: string
   ): Promise<ApiResponseType<T>> => {
     if (!this.apiKey || !query) {
+      console.error('❌ Defined API: Missing API key or query');
       return {
         status: 'error',
         message: 'Error: API Key or query is missing.',
       };
     }
 
-    const res = await fetch(DEFINED_API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: this.apiKey,
-      },
-      body: JSON.stringify({ query: query }),
-    });
+    console.log('\n📡 Calling Defined API:');
+    console.log('Endpoint:', DEFINED_API_ENDPOINT);
+    console.log('Query:', query);
 
-    const data = await res.json();
+    try {
+      const res = await fetch(DEFINED_API_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: this.apiKey,
+        },
+        body: JSON.stringify({ query: query }),
+      });
 
-    console.log(data);
+      const data = await res.json();
+      
+      console.log('✅ Defined API Response:', JSON.stringify(data, null, 2));
 
-    return {
-      status: 'success',
-      data: data.data,
-      message: 'Success',
-    };
+      if (data.errors) {
+        console.error('❌ GraphQL Errors:', data.errors);
+        return {
+          status: 'error',
+          message: `GraphQL Error: ${data.errors[0]?.message || 'Unknown error'}`,
+        };
+      }
+
+      return {
+        status: 'success',
+        data: data.data,
+        message: 'Success',
+      };
+    } catch (error) {
+      console.error('❌ Defined API Fetch Error:', error);
+      return {
+        status: 'error',
+        message: `Fetch Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      };
+    }
   };
 
   getTokenCurrentPrice = async (
     address: string,
     networkId: string
   ): Promise<ApiResponseType<TokenCurrentPriceResponseType>> => {
+    console.log(`\n🔍 Getting token price for address: ${address} on network: ${networkId}`);
+    
     const query = `#graphql
     {
       getTokenPrices(
@@ -66,17 +89,30 @@ export class DefinedPriceFeed implements PriceFeedProvider {
     );
 
     if (!data || data.status === 'error') {
+      console.error('❌ Failed to fetch token price:', data?.message);
       return {
         status: 'error',
-        message: 'Failed to fetch data.',
+        message: data?.message || 'Failed to fetch data.',
+      };
+    } else if (!data.data?.getTokenPrices || data.data.getTokenPrices.length === 0) {
+      console.warn('⚠️ No price data returned for token');
+      return {
+        status: 'error',
+        message: 'No price data available for this token',
       };
     } else {
+      const priceData = data.data.getTokenPrices[0];
+      const price = priceData.priceUsd || 0;
+      
+      console.log(`✅ Token price retrieved: $${price}`);
+      
       return {
         status: 'success',
         data: {
           address: address,
-          price: data.data.getTokenPrices[0].priceUsd,
-          lastUpdated: data.data.getTokenPrices[0].timestamp,
+          priceUSD: price.toString(), // Changed from 'price' to 'priceUSD' to match the expected format
+          price: price, // Keep both for compatibility
+          lastUpdated: priceData.timestamp,
         },
         message: 'Success',
       };

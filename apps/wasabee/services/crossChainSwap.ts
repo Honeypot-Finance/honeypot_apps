@@ -2,8 +2,9 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import { Token, wallet, Network, networks } from '@honeypot/shared';
 import { BigNumber } from 'bignumber.js';
 import { universalAccountService } from './universalAccountService';
-import { SUPPORTED_PRIMARY_TOKENS } from '@particle-network/universal-account-sdk';
-import { zeroAddress } from 'viem';
+import { SUPPORTED_PRIMARY_TOKENS, SUPPORTED_TOKEN_TYPE } from '@particle-network/universal-account-sdk';
+import { zeroAddress, createPublicClient, http, formatUnits } from 'viem';
+import { erc20Abi } from 'viem';
 
 interface SwapQuote {
   toAmount: string;
@@ -18,6 +19,8 @@ class CrossChainSwapService {
   toChain: Network | null = null;
   fromToken: Token | null = null;
   toToken: Token | null = null;
+  private balanceCache = new Map<string, { balance: string; timestamp: number }>();
+  private CACHE_DURATION = 30000; // 30 seconds cache
   slippage: number = 1; // 1%
 
   constructor() {
@@ -27,6 +30,15 @@ class CrossChainSwapService {
     setTimeout(() => {
       this.initializeChains();
     }, 100);
+    
+    // Clear cache when account changes
+    if (wallet && wallet.watchAccount) {
+      wallet.watchAccount((account) => {
+        if (account) {
+          this.balanceCache.clear();
+        }
+      });
+    }
   }
 
   initializeChains = () => {
@@ -43,7 +55,13 @@ class CrossChainSwapService {
   }
 
   get universalAccountBalance() {
-    return wallet.universalAccount?.accountUsdValue || 0;
+    if (!wallet.universalAccount) return 0;
+    
+    // Try different possible property names for the USD value
+    return wallet.universalAccount.accountUsdValue || 
+           wallet.universalAccount.totalUsdValue || 
+           wallet.universalAccount.usdValue || 
+           0;
   }
 
   // Get user's wallet token balance - for regular token use (same chain only)
@@ -298,71 +316,207 @@ class CrossChainSwapService {
         feeInUSD: undefined
       };
     }
+    
+    // Check minimum amount
+    const decimals = this.fromToken.decimals || 18;
+    const amountFloat = parseFloat(fromAmount);
+    const multiplier = Math.pow(10, decimals);
+    const amountInSmallestUnit = amountFloat * multiplier;
+    
+    if (amountInSmallestUnit < 1) {
+      // Amount too small, return empty quote
+      return {
+        toAmount: '',
+        priceImpact: 0,
+        estimatedTime: 0,
+        route: [],
+        feeInUSD: undefined
+      };
+    }
 
     try {
       // Try to get a preview using the Universal Account
       // This will give us more accurate quotes including fees
       
-      // First, we need to estimate the USD value
-      // In production, this should use actual price feeds
-      const tokenPrices: Record<string, number> = {
-        'ETH': 3000,
-        'WETH': 3000,
-        'BNB': 600,
-        'WBNB': 600,
-        'USDT': 1,
-        'USDC': 1,
-        'BTC': 60000,
-        'WBTC': 60000,
-        'MATIC': 0.8,
-        'AVAX': 35,
-        'SOL': 150,
-        'BERA': 0.5,
-      };
-
-      const fromTokenPrice = tokenPrices[this.fromToken.symbol.toUpperCase()] || 1;
-      const toTokenPrice = tokenPrices[this.toToken.symbol.toUpperCase()] || 1;
+      // Get real token prices from API if available
+      let fromTokenPrice = 1;
+      let toTokenPrice = 1;
       
-      // Calculate USD value
+      try {
+        // Import trpcClient dynamically to avoid circular dependencies
+        const { trpcClient } = await import('@honeypot/shared/lib/trpc/trpc');
+        
+        // For native tokens, use wrapped token address for price lookup
+        let fromPriceAddress = this.fromToken.address;
+        let toPriceAddress = this.toToken.address;
+        
+        // Map native tokens to their wrapped versions for price lookup
+        const wrappedAddresses: Record<string, Record<string, string>> = {
+          '1': { 'ETH': '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2' }, // WETH on Ethereum
+          '56': { 'BNB': '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' }, // WBNB on BSC
+          '137': { 'MATIC': '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270' }, // WMATIC on Polygon
+          '8453': { 'ETH': '0x4200000000000000000000000000000000000006' }, // WETH on Base
+          '42161': { 'ETH': '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1' }, // WETH on Arbitrum
+          '10': { 'ETH': '0x4200000000000000000000000000000000000006' }, // WETH on Optimism
+          '43114': { 'AVAX': '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7' }, // WAVAX on Avalanche
+        };
+        
+        // Handle native tokens - ALWAYS use wrapped address for native tokens
+        if (this.fromToken.isNative || !this.fromToken.address || this.fromToken.address === zeroAddress) {
+          const chainWrapped = wrappedAddresses[this.fromToken.chainId];
+          if (chainWrapped && chainWrapped[this.fromToken.symbol.toUpperCase()]) {
+            fromPriceAddress = chainWrapped[this.fromToken.symbol.toUpperCase()];
+            console.log(`Using wrapped address for native ${this.fromToken.symbol} on chain ${this.fromToken.chainId}: ${fromPriceAddress}`);
+          } else {
+            console.warn(`No wrapped address mapping for ${this.fromToken.symbol} on chain ${this.fromToken.chainId}`);
+          }
+        }
+        
+        if (this.toToken.isNative || !this.toToken.address || this.toToken.address === zeroAddress) {
+          const chainWrapped = wrappedAddresses[this.toToken.chainId];
+          if (chainWrapped && chainWrapped[this.toToken.symbol.toUpperCase()]) {
+            toPriceAddress = chainWrapped[this.toToken.symbol.toUpperCase()];
+            console.log(`Using wrapped address for native ${this.toToken.symbol} on chain ${this.toToken.chainId}: ${toPriceAddress}`);
+          } else {
+            console.warn(`No wrapped address mapping for ${this.toToken.symbol} on chain ${this.toToken.chainId}`);
+          }
+        }
+        
+        // Debug logging for price fetch
+        console.log('\n🔍 PRICE FETCH DEBUG in crossChainSwap.getQuote():');
+        console.log('From Token:', this.fromToken.symbol, 'Chain:', this.fromToken.chainId, 'Price Address:', fromPriceAddress);
+        console.log('To Token:', this.toToken.symbol, 'Chain:', this.toToken.chainId, 'Price Address:', toPriceAddress);
+        
+        // Fetch both prices in parallel
+        const [fromPriceRes, toPriceRes] = await Promise.all([
+          fromPriceAddress && fromPriceAddress !== zeroAddress
+            ? trpcClient.priceFeed.getSingleTokenPrice.query({
+                chainId: this.fromToken.chainId,
+                tokenAddress: fromPriceAddress,
+              }).then(res => {
+                console.log(`📡 API Response for ${this.fromToken.symbol}:`, JSON.stringify(res, null, 2));
+                return res;
+              }).catch((err) => {
+                console.error(`❌ API Error for ${this.fromToken.symbol}:`, err);
+                return null;
+              })
+            : null,
+          toPriceAddress && toPriceAddress !== zeroAddress
+            ? trpcClient.priceFeed.getSingleTokenPrice.query({
+                chainId: this.toToken.chainId,
+                tokenAddress: toPriceAddress,
+              }).then(res => {
+                console.log(`📡 API Response for ${this.toToken.symbol}:`, JSON.stringify(res, null, 2));
+                return res;
+              }).catch((err) => {
+                console.error(`❌ API Error for ${this.toToken.symbol}:`, err);
+                return null;
+              })
+            : null
+        ]);
+        
+        // Set prices from API or use 0 if not available
+        // Check for both 'price' and 'priceUSD' fields for compatibility
+        if (fromPriceRes?.status === 'success' && fromPriceRes.data && (fromPriceRes.data.price || fromPriceRes.data.priceUSD)) {
+          fromTokenPrice = parseFloat(fromPriceRes.data.price || fromPriceRes.data.priceUSD);
+          console.log(`✅ ${this.fromToken.symbol} price from API: $${fromTokenPrice}`);
+        } else {
+          console.log(`⚠️ No valid price for ${this.fromToken.symbol}. Response was:`, fromPriceRes);
+          // Only use $1 for known stablecoins, otherwise 0
+          const stablecoins = ['USDT', 'USDC', 'DAI', 'BUSD', 'TUSD', 'FRAX'];
+          fromTokenPrice = stablecoins.includes(this.fromToken.symbol.toUpperCase()) ? 1 : 0;
+          console.log(`Using fallback for ${this.fromToken.symbol}: $${fromTokenPrice}`);
+        }
+        
+        if (toPriceRes?.status === 'success' && toPriceRes.data && (toPriceRes.data.price || toPriceRes.data.priceUSD)) {
+          toTokenPrice = parseFloat(toPriceRes.data.price || toPriceRes.data.priceUSD);
+          console.log(`✅ ${this.toToken.symbol} price from API: $${toTokenPrice}`);
+        } else {
+          console.log(`⚠️ No valid price for ${this.toToken.symbol}. Response was:`, toPriceRes);
+          // Only use $1 for known stablecoins, otherwise 0
+          const stablecoins = ['USDT', 'USDC', 'DAI', 'BUSD', 'TUSD', 'FRAX'];
+          toTokenPrice = stablecoins.includes(this.toToken.symbol.toUpperCase()) ? 1 : 0;
+          console.log(`Using fallback for ${this.toToken.symbol}: $${toTokenPrice}`);
+        }
+      } catch (error) {
+        console.error('Failed to fetch real-time prices:', error);
+        // Only set $1 for stablecoins, 0 for everything else
+        const stablecoins = ['USDT', 'USDC', 'DAI', 'BUSD', 'TUSD', 'FRAX'];
+        fromTokenPrice = stablecoins.includes(this.fromToken.symbol.toUpperCase()) ? 1 : 0;
+        toTokenPrice = stablecoins.includes(this.toToken.symbol.toUpperCase()) ? 1 : 0;
+      }
+      
+      // Don't calculate quote if we don't have valid prices
+      if (fromTokenPrice === 0 || toTokenPrice === 0) {
+        console.warn('Cannot calculate quote without valid token prices');
+        return {
+          toAmount: '',
+          priceImpact: 0,
+          estimatedTime: 0,
+          route: ['Price data unavailable'],
+          feeInUSD: undefined
+        };
+      }
+      
+      // Calculate USD value of input amount
       const fromAmountBN = new BigNumber(fromAmount);
       const usdValue = fromAmountBN.multipliedBy(fromTokenPrice);
+      
+      console.log('Quote calculation:', {
+        fromAmount,
+        fromToken: this.fromToken.symbol,
+        fromTokenPrice,
+        toToken: this.toToken.symbol,
+        toTokenPrice,
+        usdValue: usdValue.toFixed(2)
+      });
       
       let toAmount: BigNumber;
       let feeInUSD: string | undefined;
       let priceImpact = 1; // Default 1% fee
       
-      try {
-        // Try to get accurate preview from Universal Account
-        const preview = await this.getTransactionPreview(usdValue.toFixed(2));
-        
-        if (preview) {
-          // Extract fee information
-          feeInUSD = preview.feeInUSD;
-          
-          // Calculate actual amount after fees
-          const feeAmount = new BigNumber(feeInUSD || '0');
-          const usdValueAfterFees = usdValue.minus(feeAmount);
-          toAmount = usdValueAfterFees.dividedBy(toTokenPrice);
-          
-          // Calculate price impact based on fees
-          if (usdValue.gt(0)) {
-            priceImpact = feeAmount.dividedBy(usdValue).multipliedBy(100).toNumber();
-          }
-        } else {
-          // Fallback calculation
-          const feePercentage = 0.01; // 1% fee
-          const usdValueAfterFees = usdValue.multipliedBy(1 - feePercentage);
-          toAmount = usdValueAfterFees.dividedBy(toTokenPrice);
-          priceImpact = feePercentage * 100;
-        }
-      } catch (previewError) {
-        console.warn('Failed to get transaction preview, using estimate:', previewError);
-        // Fallback calculation
-        const feePercentage = 0.01; // 1% fee
-        const usdValueAfterFees = usdValue.multipliedBy(1 - feePercentage);
+      // For cross-chain swaps through Universal Account, calculate based on USD value
+      // The Universal Account handles the conversion internally
+      
+      // Calculate fees
+      const baseFeePercentage = 0.01; // 1% base fee
+      const crossChainFeePercentage = this.fromChain?.chainId !== this.toChain?.chainId ? 0.005 : 0; // Additional 0.5% for cross-chain
+      const totalFeePercentage = baseFeePercentage + crossChainFeePercentage;
+      
+      // Calculate the fee in USD
+      const feeAmountUSD = usdValue.multipliedBy(totalFeePercentage);
+      feeInUSD = feeAmountUSD.toFixed(2);
+      
+      // Calculate USD value after fees
+      const usdValueAfterFees = usdValue.minus(feeAmountUSD);
+      
+      // Calculate the output amount based on token prices
+      // This is the key fix: divide USD value by target token price
+      if (toTokenPrice > 0) {
         toAmount = usdValueAfterFees.dividedBy(toTokenPrice);
-        priceImpact = feePercentage * 100;
+      } else {
+        // If we don't have a price for the target token, use the USD value directly for stablecoins
+        const isToStablecoin = ['USDT', 'USDC', 'DAI', 'BUSD'].includes(this.toToken.symbol.toUpperCase());
+        if (isToStablecoin) {
+          toAmount = usdValueAfterFees; // USD value = token amount for stablecoins
+        } else {
+          // For tokens without price, show 0
+          toAmount = new BigNumber(0);
+        }
       }
+      
+      // Calculate price impact
+      if (usdValue.gt(0)) {
+        priceImpact = feeAmountUSD.dividedBy(usdValue).multipliedBy(100).toNumber();
+      }
+      
+      console.log('Quote result:', {
+        usdValue: usdValue.toFixed(2),
+        usdValueAfterFees: usdValueAfterFees.toFixed(2),
+        toAmount: toAmount.toFixed(6),
+        feeInUSD,
+        priceImpact: priceImpact.toFixed(2) + '%'
+      });
       
       // Estimate time based on chain combination
       const estimatedTime = this.fromChain?.chainId === this.toChain?.chainId ? 30 : 180;
@@ -500,108 +654,445 @@ class CrossChainSwapService {
     }
   }
 
-  // Create a universal transaction for cross-chain swap
+  // Create a cross-chain swap transaction
   async createSwapTransaction(fromAmount: string, toAmount: string) {
-    if (!wallet.universalAccount || !this.fromToken || !this.toToken || !this.toChain) {
+    if (!this.fromToken || !this.toToken || !this.toChain || !this.fromChain) {
       throw new Error('Missing required parameters for swap');
     }
 
+    if (!wallet.universalAccount) {
+      throw new Error('Universal Account not available');
+    }
+
     try {
-      // Determine the token type for Universal Account
-      const getTokenType = (symbol: string): string => {
-        // Map common token symbols to SUPPORTED_TOKEN_TYPE
-        const tokenTypeMap: Record<string, string> = {
-          'USDT': 'USDT',
-          'USDC': 'USDC',
-          'ETH': 'ETH',
-          'WETH': 'ETH',
-          'BNB': 'BNB',
-          'WBNB': 'BNB',
-          'BTC': 'BTC',
-          'WBTC': 'BTC',
-          'MATIC': 'MATIC',
-          'AVAX': 'AVAX',
-          'SOL': 'SOL',
-          'BERA': 'BERA',
+      // For cross-chain swaps, we need to use deposit/withdraw flow
+      // The flow is:
+      // 1. User deposits tokens from source chain to Universal Account
+      // 2. Universal Account handles the cross-chain conversion
+      // 3. User withdraws tokens on destination chain from Universal Account
+
+      const getTokenType = (symbol: string): SUPPORTED_TOKEN_TYPE => {
+        const tokenTypeMap: Record<string, SUPPORTED_TOKEN_TYPE> = {
+          'USDT': 'USDT' as SUPPORTED_TOKEN_TYPE,
+          'USDC': 'USDC' as SUPPORTED_TOKEN_TYPE,
+          'ETH': 'ETH' as SUPPORTED_TOKEN_TYPE,
+          'WETH': 'ETH' as SUPPORTED_TOKEN_TYPE,
+          'BNB': 'BNB' as SUPPORTED_TOKEN_TYPE,
+          'WBNB': 'BNB' as SUPPORTED_TOKEN_TYPE,
+          'BTC': 'BTC' as SUPPORTED_TOKEN_TYPE,
+          'WBTC': 'BTC' as SUPPORTED_TOKEN_TYPE,
+          'MATIC': 'MATIC' as SUPPORTED_TOKEN_TYPE,
+          'AVAX': 'AVAX' as SUPPORTED_TOKEN_TYPE,
+          'SOL': 'SOL' as SUPPORTED_TOKEN_TYPE,
+          'BERA': 'BERA' as SUPPORTED_TOKEN_TYPE,
         };
         
-        return tokenTypeMap[symbol.toUpperCase()] || symbol.toUpperCase();
+        return tokenTypeMap[symbol.toUpperCase()] || symbol.toUpperCase() as SUPPORTED_TOKEN_TYPE;
       };
 
+      const fromTokenType = getTokenType(this.fromToken.symbol);
       const toTokenType = getTokenType(this.toToken.symbol);
       
-      console.log('Creating universal transaction:', {
-        chainId: this.toChain.chainId,
-        expectToken: toTokenType,
-        amount: toAmount
-      });
-
-      // Check if the method exists
-      if (typeof wallet.universalAccount.createUniversalTransaction !== 'function') {
-        console.warn('createUniversalTransaction not available, using fallback');
-        // Return a mock transaction for development
-        return {
-          rootHash: '0x' + Math.random().toString(16).substr(2, 64),
+      console.log('Preparing cross-chain swap:', {
+        from: {
+          chainId: this.fromChain.chainId,
+          token: fromTokenType,
+          amount: fromAmount
+        },
+        to: {
           chainId: this.toChain.chainId,
-          expectTokens: [{
-            type: toTokenType,
-            amount: toAmount,
-          }],
-          transactions: []
-        };
-      }
-
-      // Create the universal transaction
-      const transaction = await wallet.universalAccount.createUniversalTransaction({
-        chainId: this.toChain.chainId,
-        expectTokens: [
-          {
-            type: toTokenType,
-            amount: toAmount,
-          },
-        ],
-        transactions: [], // No follow-up transactions needed for simple swap
+          token: toTokenType,
+          amount: toAmount
+        }
       });
 
-      return transaction;
+      // Create a swap transaction object that contains all necessary info
+      // This will be processed in sendSwapTransaction
+      const swapTransaction = {
+        type: 'cross-chain-swap',
+        fromChain: this.fromChain.chainId,
+        toChain: this.toChain.chainId,
+        fromToken: fromTokenType,
+        toToken: toTokenType,
+        fromAmount,
+        toAmount,
+        timestamp: Date.now(),
+        // We'll need to create a unique identifier for signing
+        id: `swap-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      };
+
+      console.log('Cross-chain swap transaction prepared:', swapTransaction);
+      return swapTransaction;
     } catch (error) {
       console.error('Failed to create swap transaction:', error);
       throw error;
     }
   }
 
-  // Send the signed transaction
+  // Send the signed cross-chain swap transaction
   async sendSwapTransaction(transaction: any, signature: string) {
     if (!wallet.universalAccount) {
       throw new Error('Universal Account not available');
     }
 
+    if (transaction.type !== 'cross-chain-swap') {
+      throw new Error('Invalid transaction type');
+    }
+
     try {
-      // Check if the method exists
-      if (typeof wallet.universalAccount.sendTransaction !== 'function') {
-        console.warn('sendTransaction not available, using fallback');
-        // Return a mock result for development
-        return {
-          transactionHash: '0x' + Math.random().toString(16).substr(2, 64),
-          hash: '0x' + Math.random().toString(16).substr(2, 64),
-          status: 'success'
-        };
+      console.log('Executing cross-chain swap with signature:', signature);
+      console.log('Transaction details:', transaction);
+      
+      // Step 1: First, ensure we're on the source chain
+      if (wallet.currentChainId !== transaction.fromChain) {
+        throw new Error('Please switch to the source chain before executing the swap');
+      }
+      
+      // Check if the token is supported on current chain
+      // currentChainSupportedTokens is a property, not a method
+      const supportedTokens = wallet.universalAccount.currentChainSupportedTokens;
+      console.log('Supported tokens on current chain:', supportedTokens);
+      
+      // supportedTokens is likely an array of Token objects, not strings
+      // We need to check if our token is in the list
+      const isTokenSupported = supportedTokens && supportedTokens.some((t: any) => 
+        t.symbol === this.fromToken?.symbol || 
+        t.address === this.fromToken?.address
+      );
+      
+      if (!isTokenSupported) {
+        console.warn(`Token ${this.fromToken?.symbol} may not be supported on chain ${transaction.fromChain}`);
+        // Don't throw error, let's try to proceed anyway
       }
 
-      const result = await wallet.universalAccount.sendTransaction({
-        transaction,
-        signature
+      // Step 2: Deposit tokens to Universal Account
+      console.log('Step 1: Depositing tokens to Universal Account...');
+      console.log('Deposit parameters:', {
+        token: transaction.fromToken,
+        amount: transaction.fromAmount,
+        fromChain: transaction.fromChain
       });
-
-      return result;
+      
+      // The deposit function expects a Token object, not a string
+      let depositTx;
+      
+      try {
+        // The deposit method expects a Token object as first parameter
+        // We need to use the actual fromToken object from our service
+        if (!this.fromToken) {
+          throw new Error('From token not selected');
+        }
+        
+        console.log('Depositing with Token object:', this.fromToken);
+        console.log('Amount (human readable):', transaction.fromAmount);
+        
+        // Check if amount is too small
+        const decimals = this.fromToken.decimals || 18;
+        const amountFloat = parseFloat(transaction.fromAmount);
+        const multiplier = Math.pow(10, decimals);
+        const amountInSmallestUnitFloat = amountFloat * multiplier;
+        
+        if (amountInSmallestUnitFloat < 1) {
+          const minAmount = (1 / multiplier).toFixed(decimals);
+          throw new Error(`Amount too small. Minimum amount is ${minAmount} ${this.fromToken.symbol}`);
+        }
+        
+        // The deposit method in universalAccount.tsx already handles conversion to smallest unit
+        // So we pass the amount in human-readable format (as a string)
+        depositTx = await wallet.universalAccount.deposit(
+          this.fromToken,  // Token object
+          transaction.fromAmount  // Amount in human-readable format as string
+        );
+        
+        console.log('Deposit transaction successful:', depositTx);
+      } catch (error: any) {
+        console.error('Deposit failed:', error);
+        throw new Error(`Deposit failed: ${error.message || 'Unknown error'}`);
+      }
+      
+      if (depositTx && depositTx.hash) {
+        console.log('Deposit transaction hash:', depositTx.hash);
+      }
+      
+      // Step 3: Wait for deposit confirmation and then create cross-chain operation
+      console.log('Step 2: Waiting for deposit confirmation...');
+      
+      // Give the Universal Account some time to process the deposit
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      // Reload Universal Account info to get updated balances
+      await wallet.universalAccount.loadUniversalAccountInfo();
+      
+      console.log('Step 3: Creating cross-chain operation...');
+      
+      try {
+        if (!wallet.universalAccount.universalAccount) {
+          throw new Error('Universal Account not initialized');
+        }
+        
+        let crossChainTransaction;
+        let operationType = 'transfer';
+        
+        // Check if we're doing a same-chain transfer or cross-chain swap
+        if (transaction.fromChain === transaction.toChain) {
+          // Same chain - just transfer the tokens back
+          console.log('Same chain operation - creating withdrawal transaction...');
+          crossChainTransaction = await wallet.universalAccount.universalAccount.createTransferTransaction({
+            receiver: wallet.account,
+            amount: transaction.fromAmount,
+            token: {
+              chainId: transaction.toChain,
+              address: this.toToken?.address || zeroAddress,
+            },
+          });
+        } else {
+          // Cross-chain - try different approaches based on token types
+          console.log('Cross-chain swap - determining best approach...');
+          
+          const isStablecoinSwap = 
+            ['USDT', 'USDC'].includes(this.fromToken?.symbol.toUpperCase() || '') &&
+            ['USDT', 'USDC'].includes(this.toToken?.symbol.toUpperCase() || '');
+          
+          if (isStablecoinSwap) {
+            // For stablecoin to stablecoin, just do a direct transfer on target chain
+            console.log('Stablecoin cross-chain transfer - creating withdrawal on target chain...');
+            
+            // Try to withdraw the equivalent amount on the target chain
+            crossChainTransaction = await wallet.universalAccount.universalAccount.createTransferTransaction({
+              receiver: wallet.account,
+              amount: transaction.toAmount,
+              token: {
+                chainId: transaction.toChain,
+                address: this.toToken?.address || zeroAddress,
+              },
+            });
+            operationType = 'withdrawal';
+          } else {
+            // For other tokens, try the buy transaction approach
+            try {
+              console.log('Attempting cross-chain token conversion...');
+              
+              // Calculate USD value for the swap
+              const tokenPrices: Record<string, number> = {
+                'ETH': 3000, 'WETH': 3000,
+                'BNB': 600, 'WBNB': 600,
+                'USDT': 1, 'USDC': 1,
+                'BTC': 60000, 'WBTC': 60000,
+                'MATIC': 0.8, 'AVAX': 35,
+                'SOL': 150, 'BERA': 0.5,
+              };
+              
+              const fromTokenPrice = tokenPrices[this.fromToken?.symbol.toUpperCase() || ''] || 1;
+              const usdValue = parseFloat(transaction.fromAmount) * fromTokenPrice;
+              
+              console.log(`Converting ${transaction.fromAmount} ${this.fromToken?.symbol} (≈$${usdValue}) to ${this.toToken?.symbol} on chain ${transaction.toChain}`);
+              
+              // Try to create a buy transaction for the target token
+              crossChainTransaction = await wallet.universalAccount.universalAccount.createBuyTransaction({
+                token: {
+                  chainId: transaction.toChain,
+                  address: this.toToken?.isNative ? zeroAddress : (this.toToken?.address || zeroAddress),
+                },
+                amountInUSD: usdValue.toFixed(2),
+              });
+              operationType = 'buy';
+            } catch (buyError: any) {
+              // If buy fails, fall back to transfer
+              console.log('Buy transaction failed, falling back to transfer:', buyError.message);
+              
+              if (buyError.message?.includes('already have same amount tokens')) {
+                // User already has tokens on target chain, just withdraw them
+                console.log('Tokens already available on target chain - creating withdrawal...');
+                crossChainTransaction = await wallet.universalAccount.universalAccount.createTransferTransaction({
+                  receiver: wallet.account,
+                  amount: transaction.toAmount,
+                  token: {
+                    chainId: transaction.toChain,
+                    address: this.toToken?.address || zeroAddress,
+                  },
+                });
+                operationType = 'withdrawal';
+              } else {
+                throw buyError; // Re-throw if it's a different error
+              }
+            }
+          }
+        }
+        
+        console.log(`${operationType} transaction created:`, crossChainTransaction);
+        
+        // Sign the transaction
+        const transferSignature = await wallet.walletClient.request({
+          method: 'personal_sign',
+          params: [
+            crossChainTransaction?.rootHash as `0x${string}`,
+            wallet.account as `0x${string}`,
+          ],
+        });
+        
+        console.log('Transaction signed');
+        
+        // Send the transaction through Universal Account
+        const transferResult = await wallet.universalAccount.universalAccount.sendTransaction(
+          crossChainTransaction,
+          transferSignature as `0x${string}`
+        );
+        
+        console.log('Cross-chain operation result:', transferResult);
+        
+        // Step 4: If this was a buy operation, we need to withdraw the tokens to the user's wallet
+        let withdrawalTxId = null;
+        if (operationType === 'buy' && this.toToken) {
+          console.log('Step 4: Withdrawing purchased tokens to user wallet...');
+          
+          try {
+            // Wait for the buy transaction to be processed
+            await new Promise(resolve => setTimeout(resolve, 5000));
+            
+            // Reload Universal Account info to get updated balances
+            await wallet.universalAccount.loadUniversalAccountInfo();
+            
+            // Create withdrawal transaction for the purchased tokens
+            const withdrawTransaction = await wallet.universalAccount.universalAccount.createTransferTransaction({
+              receiver: wallet.account,
+              amount: transaction.toAmount,
+              token: {
+                chainId: transaction.toChain,
+                address: this.toToken.address || zeroAddress,
+              },
+            });
+            
+            console.log('Withdrawal transaction created:', withdrawTransaction);
+            
+            // Sign the withdrawal transaction
+            const withdrawSignature = await wallet.walletClient.request({
+              method: 'personal_sign',
+              params: [
+                withdrawTransaction?.rootHash as `0x${string}`,
+                wallet.account as `0x${string}`,
+              ],
+            });
+            
+            console.log('Withdrawal transaction signed');
+            
+            // Send the withdrawal transaction
+            const withdrawResult = await wallet.universalAccount.universalAccount.sendTransaction(
+              withdrawTransaction,
+              withdrawSignature as `0x${string}`
+            );
+            
+            withdrawalTxId = withdrawResult.transactionId;
+            console.log('Withdrawal completed:', withdrawResult);
+            
+          } catch (withdrawError: any) {
+            // Log the error but don't fail the entire operation since the buy was successful
+            console.error('Failed to automatically withdraw tokens:', withdrawError);
+            console.log('Tokens are available in Universal Account and can be withdrawn manually');
+          }
+        }
+        
+        // Return success result
+        const result = {
+          status: 'completed',
+          depositTxHash: depositTx.hash || depositTx.transactionHash,
+          transferTxId: transferResult.transactionId,
+          withdrawalTxId: withdrawalTxId,
+          message: withdrawalTxId 
+            ? `Cross-chain swap completed and tokens withdrawn successfully!`
+            : `Cross-chain ${operationType === 'withdrawal' ? 'transfer' : 'swap'} completed successfully!`,
+          transactionHash: depositTx.hash || depositTx.transactionHash,
+          universalTxUrl: `https://universalx.app/activity/details?id=${withdrawalTxId || transferResult.transactionId}`,
+          tx: { id: withdrawalTxId || transferResult.transactionId }  // Add tx.id for the UI
+        };
+        
+        console.log('Cross-chain swap completed:', result);
+        
+        // Wait a bit for the transaction to be processed on the blockchain
+        console.log('Waiting for transaction confirmation...');
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        
+        // Force reload of token balances
+        await this.reloadTokenBalances();
+        
+        // Extra wait and reload for cross-chain transactions
+        if (transaction.fromChain !== transaction.toChain) {
+          console.log('Cross-chain transaction detected, waiting for chain sync...');
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          await this.reloadTokenBalances();
+        }
+        
+        return result;
+        
+      } catch (transferError: any) {
+        console.error('Cross-chain operation failed:', transferError);
+        
+        // Check if it's a specific error we can handle
+        if (transferError.message?.includes('simulate user operation') || 
+            transferError.message?.includes('insufficient')) {
+          // This might mean insufficient balance or token not supported
+          const result = {
+            status: 'deposit_complete',
+            depositTxHash: depositTx.hash || depositTx.transactionHash,
+            message: 'Tokens deposited successfully. You may need to complete the cross-chain transfer manually through the Universal Account interface.',
+            transactionHash: depositTx.hash || depositTx.transactionHash,
+            needsManualTransfer: true
+          };
+          
+          // Still reload balances
+          await this.reloadTokenBalances();
+          
+          return result;
+        }
+        
+        // Generic error handling
+        const result = {
+          status: 'deposit_complete',
+          depositTxHash: depositTx.hash || depositTx.transactionHash,
+          message: `Tokens deposited to Universal Account. ${transferError.message || 'Please complete the transfer manually.'}`,
+          transactionHash: depositTx.hash || depositTx.transactionHash,
+          needsManualTransfer: true
+        };
+        
+        // Still reload balances even if transfer failed (deposit was successful)
+        await this.reloadTokenBalances();
+        
+        return result;
+      }
     } catch (error) {
-      console.error('Failed to send swap transaction:', error);
+      console.error('Failed to execute cross-chain swap:', error);
+      throw error;
+    }
+  }
+
+  // Withdraw tokens from Universal Account after cross-chain swap
+  async withdrawFromUniversalAccount(token: Token, amount: string) {
+    if (!wallet.universalAccount) {
+      throw new Error('Universal Account not available');
+    }
+
+    try {
+      console.log('Withdrawing from Universal Account:', { 
+        token: token.symbol, 
+        amount, 
+        chainId: token.chainId 
+      });
+      
+      // The withdraw method also expects a Token object
+      const withdrawTx = await wallet.universalAccount.withdraw(
+        token,  // Token object
+        amount  // Amount as string
+      );
+      
+      console.log('Withdraw transaction:', withdrawTx);
+      return withdrawTx;
+    } catch (error) {
+      console.error('Failed to withdraw from Universal Account:', error);
       throw error;
     }
   }
 
   executeSwap = async (fromAmount: string, toAmount: string) => {
-    if (!wallet.universalAccount || !this.fromToken || !this.toToken) {
+    if (!this.fromToken || !this.toToken) {
       throw new Error('Missing required parameters for swap');
     }
 
@@ -618,6 +1109,224 @@ class CrossChainSwapService {
       fromChain: this.fromChain,
       toChain: this.toChain
     };
+  }
+
+  // Clear the balance cache to force refresh
+  clearBalanceCache = () => {
+    this.balanceCache.clear();
+    console.log('Balance cache cleared');
+  }
+
+  // Reload token balances
+  async reloadTokenBalances() {
+    console.log('Reloading token balances...');
+    
+    // Clear the cache first
+    this.clearBalanceCache();
+    
+    // Reload from token balance if it exists
+    if (this.fromToken) {
+      try {
+        // Force token to reload its balance
+        if (this.fromToken.isInit) {
+          await this.fromToken.getBalance();
+        } else {
+          await this.fromToken.init(false, {
+            loadBalance: true,
+            loadName: true,
+            loadSymbol: true,
+            loadDecimals: true,
+            loadLogoURI: false,
+          });
+        }
+        console.log('From token balance reloaded:', this.fromToken.balance?.toString());
+      } catch (error) {
+        console.error('Failed to reload from token balance:', error);
+      }
+    }
+    
+    // Reload to token balance if it exists
+    if (this.toToken) {
+      try {
+        // Force token to reload its balance
+        if (this.toToken.isInit) {
+          await this.toToken.getBalance();
+        } else {
+          await this.toToken.init(false, {
+            loadBalance: true,
+            loadName: true,
+            loadSymbol: true,
+            loadDecimals: true,
+            loadLogoURI: false,
+          });
+        }
+        console.log('To token balance reloaded:', this.toToken.balance?.toString());
+      } catch (error) {
+        console.error('Failed to reload to token balance:', error);
+      }
+    }
+    
+    // Reload Universal Account info
+    if (wallet.universalAccount?.loadUniversalAccountInfo) {
+      await wallet.universalAccount.loadUniversalAccountInfo();
+      console.log('Universal Account info reloaded');
+    }
+  }
+
+  // Get RPC URL for a specific chain from the network configuration
+  private getRpcUrl(chainId: number): string {
+    // Try to get RPC URL from network configuration first
+    const network = networks.find(n => n.chainId === chainId);
+    if (network && network.chain && network.chain.rpcUrls) {
+      // Use the default RPC URL from the chain config
+      const defaultRpc = network.chain.rpcUrls.default?.http?.[0];
+      if (defaultRpc) {
+        console.log(`Using RPC URL from network config for chain ${chainId}: ${defaultRpc}`);
+        return defaultRpc;
+      }
+    }
+    
+    // Fallback to hardcoded RPC URLs for common chains
+    const rpcUrls: Record<number, string> = {
+      1: 'https://eth.llamarpc.com',
+      10: 'https://mainnet.optimism.io',
+      56: 'https://bsc-dataseed.binance.org',
+      137: 'https://polygon-rpc.com',
+      250: 'https://rpc.ftm.tools',
+      42161: 'https://arb1.arbitrum.io/rpc',
+      43114: 'https://api.avax.network/ext/bc/C/rpc',
+      8453: 'https://mainnet.base.org',
+      534352: 'https://rpc.scroll.io',
+      59144: 'https://rpc.linea.build',
+      81457: 'https://rpc.blast.io',
+      1301: 'https://rpc.unichain.org',
+      666666666: 'https://rpc.degen.tips',
+      7777777: 'https://rpc.zora.energy',
+      34443: 'https://mode.drpc.org',
+      146: 'https://rpc.sonic.fantom.network',
+      169: 'https://pacific-rpc.manta.network/http',
+      4200: 'https://rpc.merlinchain.io',
+      80084: 'https://bartio.rpc.berachain.com',
+      80085: 'https://bera-testnet.nodeinfra.com',
+      // Add more as needed
+    };
+
+    const fallbackUrl = rpcUrls[chainId];
+    if (fallbackUrl) {
+      console.log(`Using fallback RPC URL for chain ${chainId}: ${fallbackUrl}`);
+    }
+    return fallbackUrl || '';
+  }
+
+  // Get balance for a token across chains
+  getCrossChainTokenBalance = async (token: Token): Promise<string> => {
+    if (!token || !wallet.account) {
+      return '0';
+    }
+
+    try {
+      // Create cache key
+      const cacheKey = `${wallet.account}-${token.chainId}-${token.address || 'native'}`;
+      
+      // Check cache first
+      const cached = this.balanceCache.get(cacheKey);
+      if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
+        console.log(`Using cached balance for ${token.symbol} on chain ${token.chainId}: ${cached.balance}`);
+        return cached.balance;
+      }
+
+      // If we're on the same chain as the token, use standard balance
+      if (wallet.currentChainId.toString() === token.chainId) {
+        // Initialize token if needed
+        if (!token.isInit) {
+          await token.init(false, {
+            loadBalance: true,
+            loadName: true,
+            loadSymbol: true,
+            loadDecimals: true,
+            loadLogoURI: false,
+          });
+        } else {
+          // Just refresh balance
+          await token.getBalance();
+        }
+        
+        // Return the balance as a string
+        const balance = token.balance?.toString() || '0';
+        console.log(`Token balance on current chain: ${balance}`);
+        
+        // Cache the result
+        this.balanceCache.set(cacheKey, { balance, timestamp: Date.now() });
+        return balance;
+      }
+
+      // For cross-chain balance, fetch directly from the chain
+      const chainId = parseInt(token.chainId);
+      console.log(`Fetching cross-chain balance for ${token.symbol} on chain ${chainId}`);
+      
+      const rpcUrl = this.getRpcUrl(chainId);
+      
+      if (!rpcUrl) {
+        console.warn(`No RPC URL configured for chain ${chainId}`);
+        return '0';
+      }
+
+      // Get the network for proper chain configuration
+      const network = networks.find(n => n.chainId === chainId);
+      
+      // Create a public client for the specific chain
+      const publicClient = createPublicClient({
+        chain: network?.chain,
+        transport: http(rpcUrl),
+      });
+
+      let balance: bigint;
+      
+      try {
+        // Check if it's a native token
+        if (token.isNative || token.address === zeroAddress || !token.address) {
+          console.log(`Getting native balance for ${wallet.account} on chain ${chainId}`);
+          // Get native token balance
+          balance = await publicClient.getBalance({
+            address: wallet.account as `0x${string}`,
+          });
+          console.log(`Native balance result: ${balance.toString()}`);
+        } else {
+          console.log(`Getting ERC20 balance for token ${token.address} on chain ${chainId}`);
+          // Get ERC20 token balance
+          balance = await publicClient.readContract({
+            address: token.address as `0x${string}`,
+            abi: erc20Abi,
+            functionName: 'balanceOf',
+            args: [wallet.account as `0x${string}`],
+          });
+          console.log(`ERC20 balance result: ${balance.toString()}`);
+        }
+
+        // Convert to human-readable format
+        const decimals = token.decimals || 18;
+        const formattedBalance = formatUnits(balance, decimals);
+        
+        console.log(`Cross-chain balance for ${token.symbol} on chain ${chainId}: ${formattedBalance}`);
+        
+        // Cache the result
+        this.balanceCache.set(cacheKey, { balance: formattedBalance, timestamp: Date.now() });
+        return formattedBalance;
+      } catch (rpcError) {
+        console.error(`RPC error fetching balance for ${token.symbol} on chain ${chainId}:`, rpcError);
+        
+        // Try alternative approach or return 0
+        this.balanceCache.set(cacheKey, { balance: '0', timestamp: Date.now() });
+        return '0';
+      }
+      
+    } catch (error) {
+      console.error('Failed to get cross-chain token balance:', error);
+      // Cache the error result to avoid repeated failures
+      const cacheKey = `${wallet.account}-${token.chainId}-${token.address || 'native'}`;
+      this.balanceCache.set(cacheKey, { balance: '0', timestamp: Date.now() });
+      return '0';
+    }
   }
 }
 

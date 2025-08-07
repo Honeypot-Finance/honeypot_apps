@@ -30,6 +30,7 @@ export interface CrossChainTransaction {
   };
   timestamp: number;
   txHash?: string;
+  universalTxId?: string; // Universal Account transaction ID
   userAddress: string;
   errorMessage?: string;
 }
@@ -111,7 +112,13 @@ class CrossChainTransactionService {
     return transactionId;
   }
   
-  updateTransactionStatus(transactionId: string, status: CrossChainTransaction['status'], txHash?: string, errorMessage?: string) {
+  updateTransactionStatus(
+    transactionId: string, 
+    status: CrossChainTransaction['status'], 
+    txHash?: string, 
+    errorMessage?: string,
+    universalTxId?: string
+  ) {
     const transaction = this.transactions.find(tx => tx.id === transactionId);
     if (transaction) {
       transaction.status = status;
@@ -120,6 +127,9 @@ class CrossChainTransactionService {
       }
       if (errorMessage) {
         transaction.errorMessage = errorMessage;
+      }
+      if (universalTxId) {
+        transaction.universalTxId = universalTxId;
       }
       this.saveTransactions();
     }
