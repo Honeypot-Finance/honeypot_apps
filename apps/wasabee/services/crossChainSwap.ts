@@ -179,7 +179,7 @@ class CrossChainSwapService {
       if (isNative && network) {
         // Get token metadata for better logo support
         const nativeMetadata = this.getTokenMetadataFromType(network.nativeToken.symbol);
-        const wrappedMetadata = network.wrappedNativeToken ? 
+        const wrappedMetadata = network.wrappedNativeToken?.symbol ? 
           this.getTokenMetadataFromType(network.wrappedNativeToken.symbol) : null;
         
         // Add native token - use wrapped token logo as fallback
