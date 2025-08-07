@@ -160,8 +160,6 @@ export function AquaberaList({ prefetchedData }: AquaberaListProps) {
             searchString={search}
             sortBy={sortField}
             key={`my-${sortField}-${search}`}
-            prefetchedData={prefetchedData?.myVaults}
-            prefetchedContracts={prefetchedData?.myVaultContracts}
           />
         )}
       </div>

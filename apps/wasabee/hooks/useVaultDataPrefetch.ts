@@ -2,22 +2,17 @@ import { useEffect, useState } from 'react';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { useSubgraphClient } from '@honeypot/shared';
 import {
-  getAccountVaultsList,
   getVaultPageData,
   getSingleVaultDetails,
 } from '@/lib/algebra/graphql/clients/vaults';
 import {
-  AccountVaultSharesQuery,
   VaultsSortedByHoldersQuery,
 } from '@/lib/algebra/graphql/generated/graphql';
 import { ICHIVaultContract } from '@honeypot/shared';
 
 interface VaultDataStore {
-  myVaults: AccountVaultSharesQuery | null;
   allVaults: VaultsSortedByHoldersQuery | null;
   allVaultContracts: ICHIVaultContract[] | null;
-  myVaultContracts: ICHIVaultContract[] | null;
-  isMyVaultsLoading: boolean;
   isAllVaultsLoading: boolean;
   isContractsLoading: boolean;
   lastFetched: number;
@@ -33,11 +28,8 @@ const DATA_DURATION = 5 * 60 * 1000; // 5 minutes
 
 // Global data to persist across component unmounts
 let globalVaultData: VaultDataStore = {
-  myVaults: null,
   allVaults: null,
   allVaultContracts: null,
-  myVaultContracts: null,
-  isMyVaultsLoading: false,
   isAllVaultsLoading: false,
   isContractsLoading: false,
   lastFetched: 0,
@@ -153,110 +145,7 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
     }
   };
 
-  // Process my vault contracts with full initialization
-  const processMyVaultContracts = async (
-    vaultShares: any[]
-  ): Promise<ICHIVaultContract[]> => {
-    if (typeof window === 'undefined') return []; // Skip during SSR/build
 
-    try {
-      const myVaultContracts = await Promise.all(
-        vaultShares.map(async (vaultShare) => {
-          try {
-            const vaultContract = ICHIVaultContract.getVault({
-              token0: vaultShare.vault.tokenA,
-              token1: vaultShare.vault.tokenB,
-              address: vaultShare.vault.id as `0x${string}`,
-              apr: Number(vaultShare.vault.feeApr_1d),
-              detailedApr: {
-                feeApr_1d: Number(vaultShare.vault.feeApr_1d),
-                feeApr_3d: Number(vaultShare.vault.feeApr_3d),
-                feeApr_7d: Number(vaultShare.vault.feeApr_7d),
-                feeApr_30d: Number(vaultShare.vault.feeApr_30d),
-              },
-            });
-
-            if (vaultContract && wallet.account) {
-              // Initialize with full data loading
-              await Promise.all([
-                vaultContract.getTotalAmounts(),
-                vaultContract.getTotalSupply(),
-                vaultContract.getBalanceOf(wallet.account),
-                vaultContract.token0?.init(true, {
-                  loadIndexerTokenData: true,
-                }),
-                vaultContract.token1?.init(true, {
-                  loadIndexerTokenData: true,
-                }),
-              ]);
-            }
-
-            return vaultContract;
-          } catch (error) {
-            console.error(
-              `Error processing user vault ${vaultShare.vault.id}:`,
-              error
-            );
-            return null;
-          }
-        })
-      );
-
-      const validContracts = myVaultContracts.filter(
-        Boolean
-      ) as ICHIVaultContract[];
-
-      return validContracts;
-    } catch (error) {
-      console.error('Error processing my vault contracts:', error);
-      return [];
-    }
-  };
-
-  const fetchMyVaults = async () => {
-    if (!wallet.isInit || !wallet.account || !infoClient) return;
-
-    setData((prev) => ({
-      ...prev,
-      isMyVaultsLoading: true,
-      isContractsLoading: true,
-    }));
-    globalVaultData.isMyVaultsLoading = true;
-    globalVaultData.isContractsLoading = true;
-
-    try {
-      const myVaultsData = await getAccountVaultsList(
-        infoClient,
-        wallet.account
-      );
-
-      // Process vault contracts with full initialization
-      const myVaultContracts = await processMyVaultContracts(
-        myVaultsData.vaultShares
-      );
-
-      const newData = {
-        ...globalVaultData,
-        myVaults: myVaultsData,
-        myVaultContracts,
-        isMyVaultsLoading: false,
-        isContractsLoading: false,
-        lastFetched: Date.now(),
-      };
-
-      globalVaultData = newData;
-      setData(newData);
-    } catch (error) {
-      console.error('Error fetching my vaults:', error);
-      const newData = {
-        ...globalVaultData,
-        isMyVaultsLoading: false,
-        isContractsLoading: false,
-      };
-      globalVaultData = newData;
-      setData(newData);
-    }
-  };
 
   const fetchAllVaults = async () => {
     if (!infoClient) return;
@@ -301,45 +190,26 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
   };
 
   const prefetchVaultData = async () => {
-    // Skip if data is fresh and both datasets with contracts are available
+    // Skip if data is fresh and vault data with contracts is available
     if (
       isDataFresh() &&
       data.allVaults &&
-      data.allVaultContracts &&
-      data.myVaults &&
-      data.myVaultContracts
+      data.allVaultContracts
     ) {
       return;
     }
 
-    // Skip if already loading both datasets
-    if (data.isMyVaultsLoading && data.isAllVaultsLoading) {
+    // Skip if already loading
+    if (data.isAllVaultsLoading) {
       return;
     }
 
-    // Fetch both datasets in parallel for maximum speed
-    const promises: Promise<void>[] = [];
-
-    // Always fetch all vaults if not fresh or not available
+    // Fetch vault data if not fresh or not available
     if (
       !data.isAllVaultsLoading &&
       (!data.allVaults || !data.allVaultContracts || !isDataFresh())
     ) {
-      promises.push(fetchAllVaults());
-    }
-
-    // Only fetch my vaults if wallet is connected and data is not fresh
-    if (
-      !data.isMyVaultsLoading &&
-      (!data.myVaults || !data.myVaultContracts || !isDataFresh()) &&
-      wallet.isInit &&
-      wallet.account
-    ) {
-      promises.push(fetchMyVaults());
-    }
-
-    if (promises.length > 0) {
-      await Promise.all(promises);
+      await fetchAllVaults();
     }
   };
 
@@ -349,35 +219,15 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
     if (!wallet.isInit || !infoClient) return;
 
     prefetchVaultData();
-  }, [wallet.isInit, wallet.account, infoClient]);
-
-  // Refresh data when wallet account changes
-  useEffect(() => {
-    if (typeof window === 'undefined') return; // Skip during SSR/build
-    if (!wallet.account) return;
-
-    // Clear my vaults data when account changes
-    globalVaultData.myVaults = null;
-    globalVaultData.myVaultContracts = null;
-    setData((prev) => ({ ...prev, myVaults: null, myVaultContracts: null }));
-
-    // Fetch new data
-    prefetchVaultData();
-  }, [wallet.account]);
+  }, [wallet.isInit, infoClient]);
 
   return {
-    myVaults: data.myVaults,
     allVaults: data.allVaults,
     allVaultContracts: data.allVaultContracts,
-    myVaultContracts: data.myVaultContracts,
-    isMyVaultsLoading: data.isMyVaultsLoading,
     isAllVaultsLoading: data.isAllVaultsLoading,
     isContractsLoading: data.isContractsLoading,
     lastFetched: data.lastFetched,
-    isLoading:
-      data.isMyVaultsLoading ||
-      data.isAllVaultsLoading ||
-      data.isContractsLoading,
+    isLoading: data.isAllVaultsLoading || data.isContractsLoading,
     prefetchVaultData,
     isDataFresh: isDataFresh(),
   };
