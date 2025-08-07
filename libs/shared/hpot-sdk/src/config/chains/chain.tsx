@@ -985,38 +985,6 @@ export const sprotoNetWork = new Network({
   validatedMemeAddresses: [],
 });
 
-// Berachain Bartio Testnet
-export const berachainBartioTestnetNetwork = new Network({
-  supportDEX: true,
-  supportVault: true,
-  supportUniversalAccount: true,
-  chain: berachainBartioTestnet,
-  iconUrl: 'https://artio.berachain.com/icons/icon-96x96.png',
-  nativeToken: {
-    address: '0x5806e416da447b267cea759358cf22cc41fae80f',
-    name: 'BERA',
-    symbol: 'BERA',
-    decimals: 18,
-    isNative: true,
-    logoURI: '/images/icons/tokens/wbera-token-icon.png',
-    chainId: '80094',
-  },
-  wrappedNativeToken: {
-    address: '0x5806e416da447b267cea759358cf22cc41fae80f',
-    name: 'Wrapped BERA',
-    symbol: 'WBERA',
-    decimals: 18,
-    chainId: '80094',
-  },
-  contracts: contractAddresses['80094'] || contractAddresses['default'],
-  subgraphAddresses: subgraphAddresses['80094'] || subgraphAddresses['default'],
-  faucetTokens: [],
-  raisedTokenData: [],
-  validatedTokensInfo: {},
-  validatedFtoAddresses: [],
-  validatedMemeAddresses: [],
-});
-
 // Optimism Network
 export const optimismNetwork = new Network({
   supportDEX: true,
@@ -1334,7 +1302,6 @@ export const networks = [
   arbitrumSepoliaNetwork,
   sepoliaNetwork,
   bscMainnetNetwork,
-  berachainBartioTestnetNetwork,
   optimismNetwork,
   polygonNetwork,
   avalancheNetwork,
