@@ -9,8 +9,6 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { DynamicFormatAmount } from '@honeypot/shared';
-import { TokenLogo } from '@/components/TokenLogo/TokenLogo';
 import Image from 'next/image';
 import {
   crossChainTransactionService,

@@ -32,8 +32,13 @@ class CrossChainSwapService {
     }, 100);
     
     // Clear cache when account changes
-    // Note: watchAccount method doesn't exist in current wallet implementation
-    // Cache will be cleared manually when needed
+    if (wallet && wallet.watchAccount) {
+      wallet.watchAccount((account) => {
+        if (account) {
+          this.balanceCache.clear();
+        }
+      });
+    }
   }
 
   initializeChains = () => {
@@ -53,9 +58,9 @@ class CrossChainSwapService {
     if (!wallet.universalAccount) return 0;
     
     // Try different possible property names for the USD value
-    return (wallet.universalAccount as any).accountUsdValue || 
-           (wallet.universalAccount as any).totalUsdValue || 
-           (wallet.universalAccount as any).usdValue || 
+    return wallet.universalAccount.accountUsdValue || 
+           wallet.universalAccount.totalUsdValue || 
+           wallet.universalAccount.usdValue || 
            0;
   }
 
@@ -78,8 +83,7 @@ class CrossChainSwapService {
           loadLogoURI: false,
         });
         
-        const balance = token.balanceFormatted;
-        return typeof balance === 'string' ? balance : '0';
+        return token.balanceFormatted;
       }
       
       // If wallet is on different chain, we can't get balance
@@ -113,11 +117,11 @@ class CrossChainSwapService {
         transport: http(network.chain.rpcUrls.default.http[0])
       });
 
-      let tokenBalance: bigint;
+      let balance: bigint;
       
       if (token.isNative || token.address === zeroAddress) {
         // Get native token balance
-        tokenBalance = await publicClient.getBalance({
+        balance = await publicClient.getBalance({
           address: wallet.account as `0x${string}`,
         });
       } else {
@@ -132,7 +136,7 @@ class CrossChainSwapService {
           },
         ] as const;
         
-        tokenBalance = await publicClient.readContract({
+        balance = await publicClient.readContract({
           address: token.address as `0x${string}`,
           abi: minimalERC20ABI,
           functionName: 'balanceOf',
@@ -141,12 +145,11 @@ class CrossChainSwapService {
       }
 
       // Update token balance
-      token.balanceWithoutDecimals = new BigNumber(tokenBalance.toString());
+      token.balanceWithoutDecimals = new BigNumber(balance.toString());
       
       console.log(`Cross-chain balance loaded for ${token.symbol}:`, token.balanceFormatted);
       
-      const formattedBalance = token.balanceFormatted;
-      return typeof formattedBalance === 'string' ? formattedBalance : '0';
+      return token.balanceFormatted;
     } catch (err) {
       console.error('Failed to get cross-chain token balance:', err);
       return '0';
@@ -185,7 +188,7 @@ class CrossChainSwapService {
           name: network.nativeToken.name,
           symbol: network.nativeToken.symbol,
           decimals: network.nativeToken.decimals,
-          logoURI: network.nativeToken.logoURI || undefined
+          logoURI: network.nativeToken.logoURI
         });
         nativeToken.balanceWithoutDecimals = new BigNumber(0);
         tokens.push(nativeToken);
@@ -193,7 +196,7 @@ class CrossChainSwapService {
         // Add wrapped native token if available
         if (network.wrappedNativeToken) {
           const wrappedToken = Token.getToken({
-            address: network.wrappedNativeToken.address || '',
+            address: network.wrappedNativeToken.address,
             chainId: chainId.toString(),
             isNative: false,
             name: network.wrappedNativeToken.name,
@@ -214,7 +217,7 @@ class CrossChainSwapService {
         };
         
         // Generate name and symbol from SDK token type/assetId
-        const tokenMetadata = this.getTokenMetadataFromType(sdkToken.type || sdkToken.assetId || '');
+        const tokenMetadata = this.getTokenMetadataFromType(sdkToken.type || sdkToken.assetId);
         tokenData.name = tokenMetadata.name;
         tokenData.symbol = tokenMetadata.symbol;
         tokenData.logoURI = tokenMetadata.logoURI;
@@ -388,25 +391,25 @@ class CrossChainSwapService {
         const [fromPriceRes, toPriceRes] = await Promise.all([
           fromPriceAddress && fromPriceAddress !== zeroAddress
             ? trpcClient.priceFeed.getSingleTokenPrice.query({
-                chainId: this.fromToken!.chainId,
+                chainId: this.fromToken.chainId,
                 tokenAddress: fromPriceAddress,
               }).then(res => {
-                console.log(`📡 API Response for ${this.fromToken!.symbol}:`, JSON.stringify(res, null, 2));
+                console.log(`📡 API Response for ${this.fromToken.symbol}:`, JSON.stringify(res, null, 2));
                 return res;
               }).catch((err) => {
-                console.error(`❌ API Error for ${this.fromToken!.symbol}:`, err);
+                console.error(`❌ API Error for ${this.fromToken.symbol}:`, err);
                 return null;
               })
             : null,
           toPriceAddress && toPriceAddress !== zeroAddress
             ? trpcClient.priceFeed.getSingleTokenPrice.query({
-                chainId: this.toToken!.chainId,
+                chainId: this.toToken.chainId,
                 tokenAddress: toPriceAddress,
               }).then(res => {
-                console.log(`📡 API Response for ${this.toToken!.symbol}:`, JSON.stringify(res, null, 2));
+                console.log(`📡 API Response for ${this.toToken.symbol}:`, JSON.stringify(res, null, 2));
                 return res;
               }).catch((err) => {
-                console.error(`❌ API Error for ${this.toToken!.symbol}:`, err);
+                console.error(`❌ API Error for ${this.toToken.symbol}:`, err);
                 return null;
               })
             : null
@@ -414,8 +417,8 @@ class CrossChainSwapService {
         
         // Set prices from API or use 0 if not available
         // Check for both 'price' and 'priceUSD' fields for compatibility
-        if (fromPriceRes?.status === 'success' && fromPriceRes.data && fromPriceRes.data.price) {
-          fromTokenPrice = typeof fromPriceRes.data.price === 'string' ? parseFloat(fromPriceRes.data.price) : fromPriceRes.data.price;
+        if (fromPriceRes?.status === 'success' && fromPriceRes.data && (fromPriceRes.data.price || fromPriceRes.data.priceUSD)) {
+          fromTokenPrice = parseFloat(fromPriceRes.data.price || fromPriceRes.data.priceUSD);
           console.log(`✅ ${this.fromToken.symbol} price from API: $${fromTokenPrice}`);
         } else {
           console.log(`⚠️ No valid price for ${this.fromToken.symbol}. Response was:`, fromPriceRes);
@@ -425,8 +428,8 @@ class CrossChainSwapService {
           console.log(`Using fallback for ${this.fromToken.symbol}: $${fromTokenPrice}`);
         }
         
-        if (toPriceRes?.status === 'success' && toPriceRes.data && toPriceRes.data.price) {
-          toTokenPrice = typeof toPriceRes.data.price === 'string' ? parseFloat(toPriceRes.data.price) : toPriceRes.data.price;
+        if (toPriceRes?.status === 'success' && toPriceRes.data && (toPriceRes.data.price || toPriceRes.data.priceUSD)) {
+          toTokenPrice = parseFloat(toPriceRes.data.price || toPriceRes.data.priceUSD);
           console.log(`✅ ${this.toToken.symbol} price from API: $${toTokenPrice}`);
         } else {
           console.log(`⚠️ No valid price for ${this.toToken.symbol}. Response was:`, toPriceRes);
@@ -991,13 +994,13 @@ class CrossChainSwapService {
         // Return success result
         const result = {
           status: 'completed',
-          depositTxHash: depositTx.hash || (depositTx as any).transactionHash,
+          depositTxHash: depositTx.hash || depositTx.transactionHash,
           transferTxId: transferResult.transactionId,
           withdrawalTxId: withdrawalTxId,
           message: withdrawalTxId 
             ? `Cross-chain swap completed and tokens withdrawn successfully!`
             : `Cross-chain ${operationType === 'withdrawal' ? 'transfer' : 'swap'} completed successfully!`,
-          transactionHash: depositTx.hash || (depositTx as any).transactionHash,
+          transactionHash: depositTx.hash || depositTx.transactionHash,
           universalTxUrl: `https://universalx.app/activity/details?id=${withdrawalTxId || transferResult.transactionId}`,
           tx: { id: withdrawalTxId || transferResult.transactionId }  // Add tx.id for the UI
         };
@@ -1029,9 +1032,9 @@ class CrossChainSwapService {
           // This might mean insufficient balance or token not supported
           const result = {
             status: 'deposit_complete',
-            depositTxHash: depositTx.hash || (depositTx as any).transactionHash,
+            depositTxHash: depositTx.hash || depositTx.transactionHash,
             message: 'Tokens deposited successfully. You may need to complete the cross-chain transfer manually through the Universal Account interface.',
-            transactionHash: depositTx.hash || (depositTx as any).transactionHash,
+            transactionHash: depositTx.hash || depositTx.transactionHash,
             needsManualTransfer: true
           };
           
@@ -1044,9 +1047,9 @@ class CrossChainSwapService {
         // Generic error handling
         const result = {
           status: 'deposit_complete',
-          depositTxHash: depositTx.hash || (depositTx as any).transactionHash,
+          depositTxHash: depositTx.hash || depositTx.transactionHash,
           message: `Tokens deposited to Universal Account. ${transferError.message || 'Please complete the transfer manually.'}`,
-          transactionHash: depositTx.hash || (depositTx as any).transactionHash,
+          transactionHash: depositTx.hash || depositTx.transactionHash,
           needsManualTransfer: true
         };
         
@@ -1215,6 +1218,116 @@ class CrossChainSwapService {
     return fallbackUrl || '';
   }
 
+  // Duplicate method removed - using the async method at line 98 instead
+  // getCrossChainTokenBalance = async (token: Token): Promise<string> => {
+    if (!token || !wallet.account) {
+      return '0';
+    }
+
+    try {
+      // Create cache key
+      const cacheKey = `${wallet.account}-${token.chainId}-${token.address || 'native'}`;
+      
+      // Check cache first
+      const cached = this.balanceCache.get(cacheKey);
+      if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
+        console.log(`Using cached balance for ${token.symbol} on chain ${token.chainId}: ${cached.balance}`);
+        return cached.balance;
+      }
+
+      // If we're on the same chain as the token, use standard balance
+      if (wallet.currentChainId.toString() === token.chainId) {
+        // Initialize token if needed
+        if (!token.isInit) {
+          await token.init(false, {
+            loadBalance: true,
+            loadName: true,
+            loadSymbol: true,
+            loadDecimals: true,
+            loadLogoURI: false,
+          });
+        } else {
+          // Just refresh balance
+          await token.getBalance();
+        }
+        
+        // Return the balance as a string
+        const balance = token.balance?.toString() || '0';
+        console.log(`Token balance on current chain: ${balance}`);
+        
+        // Cache the result
+        this.balanceCache.set(cacheKey, { balance, timestamp: Date.now() });
+        return balance;
+      }
+
+      // For cross-chain balance, fetch directly from the chain
+      const chainId = parseInt(token.chainId);
+      console.log(`Fetching cross-chain balance for ${token.symbol} on chain ${chainId}`);
+      
+      const rpcUrl = this.getRpcUrl(chainId);
+      
+      if (!rpcUrl) {
+        console.warn(`No RPC URL configured for chain ${chainId}`);
+        return '0';
+      }
+
+      // Get the network for proper chain configuration
+      const network = networks.find(n => n.chainId === chainId);
+      
+      // Create a public client for the specific chain
+      const publicClient = createPublicClient({
+        chain: network?.chain,
+        transport: http(rpcUrl),
+      });
+
+      let balance: bigint;
+      
+      try {
+        // Check if it's a native token
+        if (token.isNative || token.address === zeroAddress || !token.address) {
+          console.log(`Getting native balance for ${wallet.account} on chain ${chainId}`);
+          // Get native token balance
+          balance = await publicClient.getBalance({
+            address: wallet.account as `0x${string}`,
+          });
+          console.log(`Native balance result: ${balance.toString()}`);
+        } else {
+          console.log(`Getting ERC20 balance for token ${token.address} on chain ${chainId}`);
+          // Get ERC20 token balance
+          balance = await publicClient.readContract({
+            address: token.address as `0x${string}`,
+            abi: erc20Abi,
+            functionName: 'balanceOf',
+            args: [wallet.account as `0x${string}`],
+          });
+          console.log(`ERC20 balance result: ${balance.toString()}`);
+        }
+
+        // Convert to human-readable format
+        const decimals = token.decimals || 18;
+        const formattedBalance = formatUnits(balance, decimals);
+        
+        console.log(`Cross-chain balance for ${token.symbol} on chain ${chainId}: ${formattedBalance}`);
+        
+        // Cache the result
+        this.balanceCache.set(cacheKey, { balance: formattedBalance, timestamp: Date.now() });
+        return formattedBalance;
+      } catch (rpcError) {
+        console.error(`RPC error fetching balance for ${token.symbol} on chain ${chainId}:`, rpcError);
+        
+        // Try alternative approach or return 0
+        this.balanceCache.set(cacheKey, { balance: '0', timestamp: Date.now() });
+        return '0';
+      }
+      
+    } catch (error) {
+      console.error('Failed to get cross-chain token balance:', error);
+      // Cache the error result to avoid repeated failures
+      const cacheKey = `${wallet.account}-${token.chainId}-${token.address || 'native'}`;
+      this.balanceCache.set(cacheKey, { balance: '0', timestamp: Date.now() });
+      return '0';
+    }
+  }
 }
 
 export const crossChainSwapService = new CrossChainSwapService();

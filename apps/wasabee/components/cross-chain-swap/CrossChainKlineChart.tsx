@@ -64,7 +64,7 @@ const CrossChainKlineChart: React.FC<CrossChainKlineChartProps> = observer(
           symbol: fromToken.symbol,
           name: fromToken.name || fromToken.symbol,
           decimals: fromToken.decimals || 18,
-          chainId: tokenChainId,
+          chainId: tokenChainId.toString(),
           isNative: fromToken.isNative,
         });
 

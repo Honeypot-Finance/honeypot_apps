@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Button } from '@nextui-org/react';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { ArrowDown, Settings, ArrowRight } from 'lucide-react';
+import { ArrowDown, Settings } from 'lucide-react';
 import ChainSelector from './ChainSelector';
 import TokenSelector from './TokenSelector';
 import { crossChainSwapService } from '@/services/crossChainSwap';
@@ -50,27 +50,9 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
       crossChainSwapService.initializeChains();
       // Clear balance cache when account changes
       crossChainSwapService.clearBalanceCache();
-    }, [wallet.account]);
+    }, []); // Remove wallet.account dependency - MobX handles reactivity
 
-    // Manual refresh function
-    const refreshBalances = async () => {
-      console.log('Manually refreshing balances...');
-      crossChainSwapService.clearBalanceCache();
-
-      if (fromToken && wallet.account) {
-        const balance = await crossChainSwapService.getCrossChainTokenBalance(
-          fromToken
-        );
-        setFromTokenBalance(balance);
-      }
-
-      if (toToken && wallet.account) {
-        const balance = await crossChainSwapService.getCrossChainTokenBalance(
-          toToken
-        );
-        setToTokenBalance(balance);
-      }
-    };
+    // Manual refresh function removed - not used
 
     const handleFromAmountChange = useCallback((value: string) => {
       setFromAmount(value);
@@ -234,11 +216,11 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                   if (
                     res.status === 'success' &&
                     res.data &&
-                    (res.data.price || res.data.priceUSD)
+                    res.data.price
                   ) {
-                    const price = parseFloat(
-                      res.data.price || res.data.priceUSD
-                    );
+                    const price = typeof res.data.price === 'string' 
+                      ? parseFloat(res.data.price) 
+                      : res.data.price;
                     setFromTokenPrice(price);
                     console.log(
                       `  ✅ ${fromToken.symbol} price from API: $${price}`
@@ -248,7 +230,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                       `  ⚠️ No valid price data in response for ${fromToken.symbol}`
                     );
                     console.log(`  Response status: ${res.status}`);
-                    console.log(`  Response data:`, res.data);
+                    console.log(`  Response data:`, res.status === 'success' ? res.data : 'No data');
                     // Only use fallback for stablecoins
                     const stablecoins = ['USDT', 'USDC', 'DAI', 'BUSD'];
                     const fallbackPrice = stablecoins.includes(
@@ -347,11 +329,11 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                   if (
                     res.status === 'success' &&
                     res.data &&
-                    (res.data.price || res.data.priceUSD)
+                    res.data.price
                   ) {
-                    const price = parseFloat(
-                      res.data.price || res.data.priceUSD
-                    );
+                    const price = typeof res.data.price === 'string' 
+                      ? parseFloat(res.data.price) 
+                      : res.data.price;
                     setToTokenPrice(price);
                     console.log(
                       `  ✅ ${toToken.symbol} price from API: $${price}`
@@ -361,7 +343,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                       `  ⚠️ No valid price data in response for ${toToken.symbol}`
                     );
                     console.log(`  Response status: ${res.status}`);
-                    console.log(`  Response data:`, res.data);
+                    console.log(`  Response data:`, res.status === 'success' ? res.data : 'No data');
                     // Only use fallback for stablecoins
                     const stablecoins = ['USDT', 'USDC', 'DAI', 'BUSD'];
                     const fallbackPrice = stablecoins.includes(
@@ -449,7 +431,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
         userAddress: wallet.account as string,
       });
 
-      let pendingToastId: any;
+      let pendingToastId: string | number | undefined;
 
       try {
         pendingToastId = WrappedToastify.pending({
@@ -476,7 +458,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
 
         // For cross-chain swaps, we sign the transaction ID
         const messageToSign =
-          transaction.id || transaction.rootHash || 'cross-chain-swap';
+          transaction.id || 'cross-chain-swap';
 
         // Sign the message
         const signature = await wallet.walletClient.signMessage({
@@ -503,7 +485,8 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
         if (result.status === 'completed') {
           // Use withdrawalTxId if available, otherwise use transferTxId
           const finalTxId =
-            (result as any).withdrawalTxId || (result as any).transferTxId;
+            (result as { withdrawalTxId?: string; transferTxId?: string }).withdrawalTxId || 
+            (result as { withdrawalTxId?: string; transferTxId?: string }).transferTxId;
 
           crossChainTransactionService.updateTransactionStatus(
             transactionId,
@@ -522,9 +505,9 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                 Successfully swapped {fromAmount} {fromToken.symbol} to{' '}
                 {toAmount} {toToken.symbol}
               </p>
-              {(result as any).universalTxUrl && (
+              {(result as { universalTxUrl?: string }).universalTxUrl && (
                 <a
-                  href={(result as any).universalTxUrl}
+                  href={(result as { universalTxUrl?: string }).universalTxUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-400 underline"
@@ -574,7 +557,8 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
 
         // Update transaction status to completed with Universal transaction ID
         const universalTxId =
-          (result as any)?.tx?.id || (result as any)?.transactionId;
+          (result as { tx?: { id?: string }; transactionId?: string })?.tx?.id || 
+          (result as { tx?: { id?: string }; transactionId?: string })?.transactionId;
         crossChainTransactionService.updateTransactionStatus(
           transactionId,
           'completed',
@@ -719,7 +703,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
           console.error('Failed to load from token balance:', err);
           setFromTokenBalance('0');
         });
-    }, [fromToken, wallet.account, wallet.currentChainId]); // Re-render when token, wallet or chain changes
+    }, [fromToken]); // MobX handles wallet reactivity
 
     useEffect(() => {
       if (!toToken || !wallet.account) {
@@ -742,7 +726,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
           console.error('Failed to load to token balance:', err);
           setToTokenBalance('0');
         });
-    }, [toToken, wallet.account, wallet.currentChainId]); // Re-render when token, wallet or chain changes
+    }, [toToken]); // MobX handles wallet reactivity
 
     // Ensure we have chains before rendering
     if (!fromChain || !toChain) {

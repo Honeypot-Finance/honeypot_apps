@@ -110,8 +110,7 @@ export class DefinedPriceFeed implements PriceFeedProvider {
         status: 'success',
         data: {
           address: address,
-          priceUSD: price.toString(), // Changed from 'price' to 'priceUSD' to match the expected format
-          price: price, // Keep both for compatibility
+          price: price, // API expects 'price' not 'priceUSD'
           lastUpdated: priceData.timestamp,
         },
         message: 'Success',

@@ -60,11 +60,11 @@ class UniversalAccountService {
         tokensByChain.get(chainId)?.push({
           chainId: token.chainId,
           address: token.address,
-          symbol: token.symbol,
-          name: token.name,
+          symbol: token.symbol || '',
+          name: token.name || '',
           decimals: token.decimals,
-          type: token.type,
-          logoURI: token.logoURI
+          type: token.type as SUPPORTED_TOKEN_TYPE,
+          logoURI: (token as any).logoURI
         });
       });
 
