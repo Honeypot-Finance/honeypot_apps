@@ -47,11 +47,11 @@ const PoolsList = ({
   const orderBy = mappingSortKeys[sorting[0].id];
 
   const { data: pools, loading: isPoolsListLoading } = usePoolsListQuery({
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'cache-first', // Use cache first for faster initial load
     nextFetchPolicy: 'cache-and-network',
-    initialFetchPolicy: 'cache-and-network',
+    initialFetchPolicy: 'cache-first',
     notifyOnNetworkStatusChange: true,
-    pollInterval: 10000, // Refetch every 10 seconds,
+    pollInterval: 30000, // Reduced polling to 30 seconds for better performance
     variables: {
       search: search,
     },
@@ -64,6 +64,8 @@ const PoolsList = ({
   const { data: activeFarmings, loading: isFarmingsLoading } =
     useActiveFarmingsQuery({
       client: farmingClient,
+      fetchPolicy: 'cache-first',
+      nextFetchPolicy: 'cache-and-network',
     });
 
   const isLoading =

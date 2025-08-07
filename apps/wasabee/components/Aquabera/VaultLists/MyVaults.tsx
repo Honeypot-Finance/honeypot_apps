@@ -30,14 +30,16 @@ type SortDirection = 'asc' | 'desc';
 interface MyAquaberaVaultsProps {
   searchString?: string;
   sortBy?: string;
+  prefetchedData?: AccountVaultSharesQuery | null;
+  prefetchedContracts?: ICHIVaultContract[] | null;
 }
 
 export const MyAquaberaVaults = observer(
-  ({ searchString = '', sortBy = 'apr' }: MyAquaberaVaultsProps) => {
+  ({ searchString = '', sortBy = 'apr', prefetchedData, prefetchedContracts }: MyAquaberaVaultsProps) => {
     const [vaultsContracts, setVaultsContracts] = useState<ICHIVaultContract[]>(
-      []
+      prefetchedContracts || []
     );
-    const [myVaults, setMyVaults] = useState<AccountVaultSharesQuery>();
+    const [myVaults, setMyVaults] = useState<AccountVaultSharesQuery | undefined>(prefetchedData || undefined);
     const [sortField, setSortField] = useState<SortField>('tvl');
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const infoClient = useSubgraphClient('algebra_info');
@@ -50,6 +52,15 @@ export const MyAquaberaVaults = observer(
       if (!wallet.isInit || !myVaults) {
         return;
       }
+
+      // Skip if we already have prefetched contracts
+      if (prefetchedContracts && prefetchedContracts.length > 0) {
+        console.log('📋 Using prefetched vault contracts for MyVaults');
+        return;
+      }
+
+      // Clear existing contracts before adding new ones
+      setVaultsContracts([]);
 
       myVaults.vaultShares.forEach((vault) => {
         const vaultContract = ICHIVaultContract.getVault({
@@ -68,12 +79,19 @@ export const MyAquaberaVaults = observer(
           setVaultsContracts((prev) => [...prev, vaultContract]);
         }
       });
-    }, [wallet.isInit, myVaults]);
+    }, [wallet.isInit, myVaults, prefetchedContracts]);
 
     useEffect(() => {
       if (!wallet.isInit) return;
+      
+      // If we have prefetched data, use it
+      if (prefetchedData) {
+        setMyVaults(prefetchedData);
+        return;
+      }
+      
       loadMyVaults(wallet.account);
-    }, [wallet.isInit, wallet.account]);
+    }, [wallet.isInit, wallet.account, prefetchedData]);
 
     const loadMyVaults = async (accountAddress: string) => {
       const myVaultsQuery = await getAccountVaultsList(
