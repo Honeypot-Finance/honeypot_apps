@@ -218,7 +218,7 @@ export const berachainBepoliaNetwork = new Network({
     'https://cdn.prod.website-files.com/633c67ced5457aa4dec572be/67b845abe842d21521095c26_667ac3022260a22071b3cf37_u_b_f51944d0-b527-11ee-be26-a5e0a0cc15ce.png',
   chain: berachainBepoliaTestnet,
   nativeToken: {
-    address: '0x6969696969696969696969696969696969696969',
+    address: '0x0000000000000000000000000000000000000000',
     name: 'Bera',
     symbol: 'BERA',
     decimals: 18,
@@ -294,13 +294,20 @@ export const berachainNetwork = new Network({
     },
   ],
   nativeToken: {
-    address: '0x6969696969696969696969696969696969696969',
+    address: '0x0000000000000000000000000000000000000000',
     name: 'Bera',
     symbol: 'BERA',
     decimals: 18,
     isNative: true,
     logoURI: '/images/icons/tokens/wbera-token-icon.png',
     isPopular: true,
+    chainId: '80094',
+  },
+  wrappedNativeToken: {
+    address: '0x6969696969696969696969696969696969696969',
+    name: 'Wrapped BERA',
+    symbol: 'WBERA',
+    decimals: 18,
     chainId: '80094',
   },
   raisedTokenData: [

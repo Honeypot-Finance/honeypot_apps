@@ -49,7 +49,7 @@ export default function useWrapCallback(
   );
 
   const { data: wrapConfig } = useSimulateWrappedNativeDeposit({
-    address: currentChain.nativeToken.address as Address,
+    address: (currentChain.wrappedNativeToken?.address || currentChain.nativeToken.address) as Address,
     value: inputAmount ? BigInt(inputAmount.quotient.toString()) : undefined,
   });
 
@@ -61,12 +61,12 @@ export default function useWrapCallback(
     isSuccess: isWrapSuccess,
   } = useTransactionAwait(wrapData, {
     title: `Wrap ${inputAmount?.toSignificant(3)} ${DEFAULT_NATIVE_SYMBOL}`,
-    tokenA: currentChain.nativeToken.address as Address,
+    tokenA: (currentChain.wrappedNativeToken?.address || currentChain.nativeToken.address) as Address,
     type: TransactionType.SWAP,
   });
 
   const { data: unwrapConfig } = useSimulateWrappedNativeWithdraw({
-    address: currentChain.nativeToken.address as Address,
+    address: (currentChain.wrappedNativeToken?.address || currentChain.nativeToken.address) as Address,
     args: inputAmount ? [BigInt(inputAmount.quotient.toString())] : undefined,
   });
 
@@ -79,7 +79,7 @@ export default function useWrapCallback(
 
   const { isLoading: isUnwrapLoading } = useTransactionAwait(unwrapData, {
     title: `Unwrap ${inputAmount?.toSignificant(3)} W${DEFAULT_NATIVE_SYMBOL}`,
-    tokenA: currentChain.nativeToken.address as Address,
+    tokenA: (currentChain.wrappedNativeToken?.address || currentChain.nativeToken.address) as Address,
     type: TransactionType.SWAP,
   });
 
@@ -106,7 +106,7 @@ export default function useWrapCallback(
     if (
       inputCurrency.isNative &&
       outputCurrency.isToken &&
-      outputCurrency.wrapped.address === currentChain.nativeToken.address
+      outputCurrency.address === currentChain.wrappedNativeToken?.address
     ) {
       return {
         wrapType: WrapType.WRAP,
@@ -124,7 +124,7 @@ export default function useWrapCallback(
       };
     } else if (
       inputCurrency.isToken &&
-      inputCurrency.wrapped.address === currentChain.nativeToken.address &&
+      inputCurrency.address === currentChain.wrappedNativeToken?.address &&
       outputCurrency.isNative
     ) {
       return {

@@ -24,27 +24,40 @@ export function useCurrency(
 
   const isNative = address === ADDRESS_ZERO;
   
-  console.log('useCurrency called:', {
-    address,
-    ADDRESS_ZERO,
-    isNative,
-    isWNative,
-    wrappedNativeAddress
-  });
 
-  const token = useAlgebraToken(isNative || isWNative ? ADDRESS_ZERO : address);
+  const token = useAlgebraToken(isNative ? ADDRESS_ZERO : address);
 
   const extendedEther = ExtendedNative.onChain(
     currentChainId,
     currentChain.nativeToken.symbol,
     currentChain.nativeToken.name
   );
+  
 
   if (withNative) return isNative || isWNative ? extendedEther : token;
   
-  // For wrapped native tokens, return the wrapped token from extendedEther
-  if (isWNative) {
-    return extendedEther.wrapped;
+  // For wrapped native tokens, create a Token with the correct symbol from chain config
+  if (isWNative && currentChain.wrappedNativeToken) {
+    const wrappedConfig = currentChain.wrappedNativeToken;
+    // Use the token from useAlgebraToken if available, as it's already cached
+    if (token) {
+      return token;
+    }
+    // Otherwise create the wrapped token with correct symbol
+    const wrappedToken = new Token(
+      currentChainId,
+      wrappedNativeAddress,
+      wrappedConfig.decimals || 18,
+      wrappedConfig.symbol || 'WBERA',
+      wrappedConfig.name || 'Wrapped BERA'
+    );
+    
+    // Set the wrapped property to itself (wrapped tokens wrap to themselves)
+    Object.defineProperty(wrappedToken, 'wrapped', {
+      get() { return this; }
+    });
+    
+    return wrappedToken;
   }
   
   // Return tokens as-is

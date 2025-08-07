@@ -364,10 +364,19 @@ export function useDerivedSwapInfo(): {
     ? undefined
     : currencies[SwapField.INPUT] &&
       currencies[SwapField.OUTPUT] &&
-      (computePoolAddress({
-        tokenA: currencies[SwapField.INPUT]!.wrapped,
-        tokenB: currencies[SwapField.OUTPUT]!.wrapped,
-      }).toLowerCase() as Address);
+      (() => {
+        try {
+          return computePoolAddress({
+            tokenA: currencies[SwapField.INPUT]!.wrapped,
+            tokenB: currencies[SwapField.OUTPUT]!.wrapped,
+            initCodeHashManualOverride: wallet.currentChain?.contracts?.algebraPoolInitCodeHash,
+            poolDeployer: wallet.currentChain?.contracts?.algebraPoolDeployer,
+          }).toLowerCase() as Address;
+        } catch (error) {
+          console.warn('Failed to compute pool address in swapStore:', error);
+          return undefined;
+        }
+      })();
 
   const { data: globalState } = useReadAlgebraPoolGlobalState({
     address: poolAddress,
@@ -529,10 +538,19 @@ export function useDerivedSwapInfoWithoutSwapState({
     ? undefined
     : currencies[SwapField.INPUT] &&
       currencies[SwapField.OUTPUT] &&
-      (computePoolAddress({
-        tokenA: currencies[SwapField.INPUT]!.wrapped,
-        tokenB: currencies[SwapField.OUTPUT]!.wrapped,
-      }).toLowerCase() as Address);
+      (() => {
+        try {
+          return computePoolAddress({
+            tokenA: currencies[SwapField.INPUT]!.wrapped,
+            tokenB: currencies[SwapField.OUTPUT]!.wrapped,
+            initCodeHashManualOverride: wallet.currentChain?.contracts?.algebraPoolInitCodeHash,
+            poolDeployer: wallet.currentChain?.contracts?.algebraPoolDeployer,
+          }).toLowerCase() as Address;
+        } catch (error) {
+          console.warn('Failed to compute pool address in swapStore:', error);
+          return undefined;
+        }
+      })();
 
   const { data: globalState } = useReadAlgebraPoolGlobalState({
     address: poolAddress,

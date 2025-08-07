@@ -50,11 +50,20 @@ export function useSwapPools(
   useEffect(() => {
     async function getPools() {
       const poolsAddresses = allCurrencyCombinations.map(
-        ([tokenA, tokenB]) =>
-          computePoolAddress({
-            tokenA,
-            tokenB,
-          }) as Address
+        ([tokenA, tokenB]) => {
+          try {
+            return computePoolAddress({
+              tokenA,
+              tokenB,
+              initCodeHashManualOverride: wallet.currentChain?.contracts?.algebraPoolInitCodeHash,
+              poolDeployer: wallet.currentChain?.contracts?.algebraPoolDeployer,
+            }) as Address;
+          } catch (error) {
+            // If computePoolAddress fails, return a dummy address
+            console.warn('Failed to compute pool address:', error);
+            return '0x0000000000000000000000000000000000000000' as Address;
+          }
+        }
       );
 
       const poolsData = await getMultiplePools({

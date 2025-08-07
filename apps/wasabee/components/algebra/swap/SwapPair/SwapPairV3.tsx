@@ -62,6 +62,7 @@ const SwapPairV3 = ({
 
   const baseCurrency = currencies[SwapField.INPUT];
   const quoteCurrency = currencies[SwapField.OUTPUT];
+  
 
   const { independentField, typedValue } = useSwapState();
   const dependentField: SwapFieldType =
@@ -214,13 +215,23 @@ const SwapPairV3 = ({
               )
             );
           } else {
+            // Check if this is the wrapped native token
+            const isWrappedNative = token.address?.toLowerCase() === wallet.currentChain?.wrappedNativeToken?.address?.toLowerCase();
+            const tokenSymbol = isWrappedNative && wallet.currentChain?.wrappedNativeToken?.symbol
+              ? wallet.currentChain.wrappedNativeToken.symbol
+              : token.symbol;
+            const tokenName = isWrappedNative && wallet.currentChain?.wrappedNativeToken?.name
+              ? wallet.currentChain.wrappedNativeToken.name
+              : token.name;
+            
+            
             handleInputSelect(
               new AlgebraToken(
                 Number(wallet.currentChainId),
                 token.address,
                 Number(token.decimals),
-                token.symbol,
-                token.name
+                tokenSymbol,
+                tokenName
               )
             );
           }
@@ -243,13 +254,23 @@ const SwapPairV3 = ({
               )
             );
           } else {
+            // Check if this is the wrapped native token
+            const isWrappedNative = token.address?.toLowerCase() === wallet.currentChain?.wrappedNativeToken?.address?.toLowerCase();
+            const tokenSymbol = isWrappedNative && wallet.currentChain?.wrappedNativeToken?.symbol
+              ? wallet.currentChain.wrappedNativeToken.symbol
+              : token.symbol;
+            const tokenName = isWrappedNative && wallet.currentChain?.wrappedNativeToken?.name
+              ? wallet.currentChain.wrappedNativeToken.name
+              : token.name;
+            
+            
             handleOutputSelect(
               new AlgebraToken(
                 Number(wallet.currentChainId),
                 token.address,
                 Number(token.decimals),
-                token.symbol,
-                token.name
+                tokenSymbol,
+                tokenName
               )
             );
           }

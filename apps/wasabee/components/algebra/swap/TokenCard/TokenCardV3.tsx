@@ -386,30 +386,58 @@ const TokenCardV3 = ({
               value={
                 currency
                   ? (() => {
+                      // For wrapped native tokens, check if address matches wrapped native token
+                      const currencyAddress = currency.isNative ? undefined : (currency.isToken ? (currency as any).address : undefined);
+                      const isWrappedNative = !currency.isNative && 
+                        currencyAddress?.toLowerCase() === wallet.currentChain?.wrappedNativeToken?.address?.toLowerCase();
+                      
+                      
                       // Find the token in the validated tokens list first
-                      const validatedToken = wallet.currentChain.validatedTokens?.find(
-                        t => currency.isNative 
-                          ? t.isNative 
-                          : t.address.toLowerCase() === currency.address?.toLowerCase()
-                      );
+                      const validatedToken = currency.isNative 
+                        ? wallet.currentChain.validatedTokens?.find(t => t.isNative)
+                        : wallet.currentChain.validatedTokens?.find(
+                            t => !t.isNative && t.address.toLowerCase() === currencyAddress?.toLowerCase()
+                          );
                       
                       if (validatedToken) {
+                        // If it's the wrapped native token, ensure it has the correct symbol
+                        if (!currency.isNative && isWrappedNative && wallet.currentChain?.wrappedNativeToken) {
+                          // Create a new token with the correct symbol for wrapped native
+                          const correctedToken = Token.getToken({
+                            ...validatedToken,
+                            symbol: wallet.currentChain.wrappedNativeToken.symbol || validatedToken.symbol,
+                            name: wallet.currentChain.wrappedNativeToken.name || validatedToken.name,
+                          });
+                          return correctedToken;
+                        }
+                        
                         return validatedToken;
                       }
                       
                       // Create a new token if not found
+                      // Override symbol for wrapped native tokens since SDK has wrong symbol
+                      let tokenSymbol = currency.symbol;
+                      let tokenName = currency.name;
+                      if (isWrappedNative && wallet.currentChain?.wrappedNativeToken) {
+                        tokenSymbol = wallet.currentChain.wrappedNativeToken.symbol || currency.symbol;
+                        tokenName = wallet.currentChain.wrappedNativeToken.name || currency.name;
+                      }
+                      
+                      
                       const token = Token.getToken({
                         address: currency.isNative 
                           ? "0x0000000000000000000000000000000000000000" 
-                          : currency.address,
+                          : currencyAddress || "",
                         isNative: currency.isNative,
                         chainId: wallet.currentChainId.toString(),
-                        symbol: currency.symbol,
-                        name: currency.name,
+                        symbol: tokenSymbol,
+                        name: tokenName,
                         decimals: currency.decimals,
-                        // For native tokens, use wrapped token logo as fallback
+                        // For native tokens or wrapped native, use appropriate logo
                         logoURI: currency.isNative 
                           ? wallet.currentChain?.nativeToken?.logoURI || wallet.currentChain?.wrappedNativeToken?.logoURI
+                          : isWrappedNative
+                          ? wallet.currentChain?.wrappedNativeToken?.logoURI
                           : undefined,
                       });
                       return token;
@@ -419,6 +447,19 @@ const TokenCardV3 = ({
               disableSelection={disableSelection}
               onSelect={async (token) => {
                 await token.init();
+                
+                // Check if this is the wrapped native token
+                const isWrappedNative = !token.isNative && 
+                  token.address?.toLowerCase() === wallet.currentChain?.wrappedNativeToken?.address?.toLowerCase();
+                
+                // Use the correct symbol for wrapped native tokens
+                const tokenSymbol = isWrappedNative && wallet.currentChain?.wrappedNativeToken?.symbol
+                  ? wallet.currentChain.wrappedNativeToken.symbol
+                  : token.symbol;
+                const tokenName = isWrappedNative && wallet.currentChain?.wrappedNativeToken?.name
+                  ? wallet.currentChain.wrappedNativeToken.name
+                  : token.name;
+                
                 handleTokenSelect(
                   token.isNative
                     ? ExtendedNative.onChain(
@@ -430,8 +471,8 @@ const TokenCardV3 = ({
                         wallet.currentChainId,
                         token.address,
                         Number(token.decimals),
-                        token.symbol,
-                        token.name
+                        tokenSymbol,
+                        tokenName
                       )
                 );
               }}
