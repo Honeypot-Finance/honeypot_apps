@@ -177,7 +177,12 @@ class CrossChainSwapService {
       
       // For native tokens, add both native and wrapped versions
       if (isNative && network) {
-        // Add native token
+        // Get token metadata for better logo support
+        const nativeMetadata = this.getTokenMetadataFromType(network.nativeToken.symbol);
+        const wrappedMetadata = network.wrappedNativeToken ? 
+          this.getTokenMetadataFromType(network.wrappedNativeToken.symbol) : null;
+        
+        // Add native token - use wrapped token logo as fallback
         const nativeToken = Token.getToken({
           address: zeroAddress,
           chainId: chainId.toString(),
@@ -185,7 +190,10 @@ class CrossChainSwapService {
           name: network.nativeToken.name,
           symbol: network.nativeToken.symbol,
           decimals: network.nativeToken.decimals,
-          logoURI: network.nativeToken.logoURI || undefined
+          logoURI: network.nativeToken.logoURI || 
+                   nativeMetadata.logoURI || 
+                   wrappedMetadata?.logoURI || 
+                   undefined
         });
         nativeToken.balanceWithoutDecimals = new BigNumber(0);
         tokens.push(nativeToken);
@@ -199,7 +207,10 @@ class CrossChainSwapService {
             name: network.wrappedNativeToken.name,
             symbol: network.wrappedNativeToken.symbol,
             decimals: network.wrappedNativeToken.decimals,
-            logoURI: network.wrappedNativeToken.logoURI || network.nativeToken.logoURI
+            logoURI: network.wrappedNativeToken.logoURI || 
+                     wrappedMetadata?.logoURI ||
+                     nativeMetadata.logoURI ||
+                     undefined
           });
           wrappedToken.balanceWithoutDecimals = new BigNumber(0);
           tokens.push(wrappedToken);
@@ -565,6 +576,11 @@ class CrossChainSwapService {
         symbol: 'ETH',
         logoURI: 'https://assets.coingecko.com/coins/images/279/standard/ethereum.png'
       },
+      'WETH': {
+        name: 'Wrapped Ether',
+        symbol: 'WETH',
+        logoURI: 'https://assets.coingecko.com/coins/images/279/standard/ethereum.png'
+      },
       'USDT': {
         name: 'Tether USD',
         symbol: 'USDT',
@@ -580,6 +596,11 @@ class CrossChainSwapService {
         symbol: 'BTC',
         logoURI: 'https://assets.coingecko.com/coins/images/1/standard/bitcoin.png'
       },
+      'WBTC': {
+        name: 'Wrapped Bitcoin',
+        symbol: 'WBTC',
+        logoURI: 'https://assets.coingecko.com/coins/images/1/standard/bitcoin.png'
+      },
       'SOL': {
         name: 'Solana',
         symbol: 'SOL',
@@ -588,6 +609,11 @@ class CrossChainSwapService {
       'BNB': {
         name: 'BNB',
         symbol: 'BNB',
+        logoURI: 'https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png'
+      },
+      'WBNB': {
+        name: 'Wrapped BNB',
+        symbol: 'WBNB',
         logoURI: 'https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png'
       },
       'MATIC': {

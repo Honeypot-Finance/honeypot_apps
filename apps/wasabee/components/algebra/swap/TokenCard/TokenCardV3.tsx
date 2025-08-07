@@ -385,13 +385,35 @@ const TokenCardV3 = ({
               staticTokenList={staticTokenList}
               value={
                 currency
-                  ? Token.getToken({
-                      address: currency.isNative 
-                        ? "0x0000000000000000000000000000000000000000" 
-                        : currency.address,
-                      isNative: currency.isNative,
-                      chainId: wallet.currentChainId.toString(),
-                    })
+                  ? (() => {
+                      // Find the token in the validated tokens list first
+                      const validatedToken = wallet.currentChain.validatedTokens?.find(
+                        t => currency.isNative 
+                          ? t.isNative 
+                          : t.address.toLowerCase() === currency.address?.toLowerCase()
+                      );
+                      
+                      if (validatedToken) {
+                        return validatedToken;
+                      }
+                      
+                      // Create a new token if not found
+                      const token = Token.getToken({
+                        address: currency.isNative 
+                          ? "0x0000000000000000000000000000000000000000" 
+                          : currency.address,
+                        isNative: currency.isNative,
+                        chainId: wallet.currentChainId.toString(),
+                        symbol: currency.symbol,
+                        name: currency.name,
+                        decimals: currency.decimals,
+                        // For native tokens, use wrapped token logo as fallback
+                        logoURI: currency.isNative 
+                          ? wallet.currentChain?.nativeToken?.logoURI || wallet.currentChain?.wrappedNativeToken?.logoURI
+                          : undefined,
+                      });
+                      return token;
+                    })()
                   : undefined
               }
               disableSelection={disableSelection}
