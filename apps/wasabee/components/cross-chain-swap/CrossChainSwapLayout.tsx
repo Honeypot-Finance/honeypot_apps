@@ -12,26 +12,26 @@ const CrossChainSwapLayout: React.FC = observer(() => {
   const [refreshKey, setRefreshKey] = useState(0);
 
   return (
-    <div className="w-full h-screen overflow-hidden flex flex-col">
-      {/* Main content area with fixed height */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="container mx-auto px-4 py-6 max-w-7xl flex-1 flex flex-col">
-          {/* Swap and Chart Section - Takes up most vertical space */}
-          <div className="flex-1 flex flex-col lg:flex-row gap-4 mb-6 min-h-0">
-            {/* Chart - Takes remaining horizontal and vertical space */}
+    <div className="w-full flex flex-col pb-8">
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col">
+        <div className="container mx-auto px-4 py-6 max-w-7xl flex flex-col gap-6">
+          {/* Swap and Chart Section */}
+          <div className="flex flex-col lg:flex-row gap-4">
+            {/* Chart - Takes remaining horizontal space */}
             <motion.div
               variants={itemPopUpVariants}
               initial="hidden"
               animate="visible"
               transition={{ duration: 0.5 }}
-              className="order-2 lg:order-1 lg:flex-1 flex flex-col min-h-[300px] lg:min-h-0"
+              className="order-2 lg:order-1 lg:flex-1 flex flex-col h-[400px]"
             >
               <div className="flex-1 w-full">
                 <CrossChainKlineChart refreshKey={refreshKey} />
               </div>
             </motion.div>
 
-            {/* Swap Card - Fixed width and height */}
+            {/* Swap Card - Fixed width */}
             <motion.div
               variants={itemPopUpVariants}
               initial="hidden"
@@ -53,9 +53,9 @@ const CrossChainSwapLayout: React.FC = observer(() => {
             initial="hidden"
             animate="visible"
             transition={{ duration: 0.5 }}
-            className="w-full h-[400px]"
+            className="w-full h-[350px]"
           >
-            <div className="bg-[#140D06] rounded-2xl border border-[#333333] p-4 h-full flex flex-col">
+            <div className="bg-[#140D06] rounded-2xl border border-[#333333] p-4 h-full flex flex-col overflow-hidden">
               <Tabs
                 classNames={{
                   tabList: cn(
@@ -73,12 +73,12 @@ const CrossChainSwapLayout: React.FC = observer(() => {
                     'text-gray-400 group-data-[selected=true]:text-white',
                     'text-base font-medium'
                   ),
-                  panel: 'flex-1 overflow-hidden flex flex-col pt-4',
+                  panel: 'flex-1 overflow-hidden flex flex-col pt-4 min-h-0',
                 }}
                 variant="underlined"
               >
                 <Tab key="history" title="Transaction History">
-                  <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                  <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar min-h-0">
                     <CrossChainTransactionHistory inModal={false} />
                   </div>
                 </Tab>
