@@ -4,9 +4,13 @@ import superjson from 'superjson';
 import { createTRPCReact } from '@trpc/react-query';
 
 export function getBaseUrl() {
-  if (typeof window !== 'undefined')
-    // browser should use relative path
-    return '';
+  if (typeof window !== 'undefined') {
+    // For browser requests, always use the current origin
+    // This ensures we use the correct port in development
+    const origin = window.location.origin;
+    console.log('[tRPC] Using origin for API calls:', origin);
+    return origin;
+  }
 
   if (process.env['VERCEL_URL'])
     // reference for vercel.com

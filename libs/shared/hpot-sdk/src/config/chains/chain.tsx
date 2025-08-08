@@ -162,6 +162,7 @@ export class Network {
 
 export const bscMainnetNetwork = new Network({
   supportDEX: true,
+  supportPot2Pump: true,
   supportUniversalAccount: true,
   supportVault: true,
   displayName: 'BNB Chain',

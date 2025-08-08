@@ -64,7 +64,27 @@ const TokenBalance: React.FC<{ token: Token }> = observer(({ token }) => {
     };
   }, [token?.address, token?.chainId, wallet.account]); // Re-load when token or wallet changes
   
-  return <span>{isLoading ? '...' : balance}</span>;
+  // Format the balance for display
+  const formatBalance = (bal: string) => {
+    const numBal = parseFloat(bal);
+    if (isNaN(numBal) || numBal === 0) return '0';
+    
+    // Format based on size
+    if (numBal >= 1000000) {
+      return `${(numBal / 1000000).toFixed(2)}M`;
+    } else if (numBal >= 1000) {
+      return `${(numBal / 1000).toFixed(2)}K`;
+    } else if (numBal >= 1) {
+      return numBal.toFixed(2);
+    } else if (numBal >= 0.0001) {
+      return numBal.toFixed(4);
+    } else if (numBal > 0) {
+      return '<0.0001';
+    }
+    return '0';
+  };
+  
+  return <span>{isLoading ? '...' : formatBalance(balance)}</span>;
 });
 
 const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, onChange, variant = 'light', compact = false }) => {

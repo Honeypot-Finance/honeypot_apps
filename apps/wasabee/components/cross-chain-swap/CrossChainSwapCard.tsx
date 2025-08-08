@@ -43,9 +43,27 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
 
     // Load universal account info when wallet connects
     useEffect(() => {
-      if (wallet.universalAccount && wallet.isInit) {
-        wallet.universalAccount.loadUniversalAccountInfo();
-      }
+      const initializeUniversalAccount = async () => {
+        if (wallet.universalAccount && wallet.isInit) {
+          try {
+            await wallet.universalAccount.loadUniversalAccountInfo();
+          } catch (error) {
+            console.warn('Failed to load Universal Account info on mount:', error);
+            // Try again after a short delay
+            setTimeout(async () => {
+              try {
+                if (wallet.universalAccount) {
+                  await wallet.universalAccount.loadUniversalAccountInfo();
+                }
+              } catch (retryError) {
+                console.error('Failed to load Universal Account info after retry:', retryError);
+              }
+            }, 2000);
+          }
+        }
+      };
+      
+      initializeUniversalAccount();
       // Also ensure chains are initialized
       crossChainSwapService.initializeChains();
       // Clear balance cache when account changes
@@ -62,8 +80,9 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
 
     const handleSwapChains = useCallback(() => {
       crossChainSwapService.swapChains();
-      setFromAmount('');
+      // Don't clear amounts - just the calculated quote
       setToAmount('');
+      // The balance useEffects will automatically trigger due to chain/token changes
     }, []);
 
     const handleQuoteUpdate = useCallback(async () => {
@@ -410,6 +429,22 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
       ) {
         return;
       }
+      
+      // Check if Universal Account is properly initialized
+      if (!wallet.universalAccount.universalAccount) {
+        WrappedToastify.error({
+          title: 'Universal Account Not Ready',
+          message: 'Please wait for the Universal Account to initialize and try again.',
+        });
+        
+        // Try to initialize it
+        try {
+          await wallet.universalAccount.loadUniversalAccountInfo();
+        } catch (error) {
+          console.error('Failed to initialize Universal Account:', error);
+        }
+        return;
+      }
 
       // Double check we're on the right chain
       if (isWrongChain) {
@@ -701,7 +736,14 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
         `Loading balance for from token ${fromToken.symbol} on chain ${fromToken.chainId}, current wallet chain: ${currentChainId}`
       );
 
+      // Add loading state
+      setFromTokenBalance('Loading...');
+
+      // Clear any existing cache to force fresh fetch
+      crossChainSwapService.clearBalanceCache();
+
       // Always use getCrossChainTokenBalance for cross-chain swaps
+      // This fetches balance from the token's chain, not current wallet chain
       crossChainSwapService
         .getCrossChainTokenBalance(fromToken)
         .then((balance) => {
@@ -712,7 +754,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
           console.error('Failed to load from token balance:', err);
           setFromTokenBalance('0');
         });
-    }, [fromToken, currentChainId]); // Re-fetch when token or chain changes
+    }, [fromToken?.address, fromToken?.chainId, fromChain?.chainId]); // Re-fetch when token address, chainId or chain changes
 
     useEffect(() => {
       if (!toToken || !wallet.account) {
@@ -724,7 +766,14 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
         `Loading balance for to token ${toToken.symbol} on chain ${toToken.chainId}, current wallet chain: ${currentChainId}`
       );
 
+      // Add loading state
+      setToTokenBalance('Loading...');
+
+      // Clear any existing cache to force fresh fetch
+      crossChainSwapService.clearBalanceCache();
+
       // Always use getCrossChainTokenBalance for cross-chain swaps
+      // This fetches balance from the token's chain, not current wallet chain
       crossChainSwapService
         .getCrossChainTokenBalance(toToken)
         .then((balance) => {
@@ -735,7 +784,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
           console.error('Failed to load to token balance:', err);
           setToTokenBalance('0');
         });
-    }, [toToken, currentChainId]); // Re-fetch when token or chain changes
+    }, [toToken?.address, toToken?.chainId, toChain?.chainId]); // Re-fetch when token address, chainId or chain changes
 
     // Ensure we have chains before rendering
     if (!fromChain || !toChain) {
@@ -820,11 +869,18 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                         'Max button clicked, balance:',
                         fromTokenBalance
                       );
-                      if (fromTokenBalance && fromTokenBalance !== '0') {
-                        // Remove any trailing zeros and format properly
-                        const cleanBalance =
-                          parseFloat(fromTokenBalance).toString();
-                        setFromAmount(cleanBalance);
+                      if (fromTokenBalance && fromTokenBalance !== '0' && fromTokenBalance !== 'Loading...') {
+                        try {
+                          // Parse the balance and handle it properly
+                          const balance = parseFloat(fromTokenBalance);
+                          if (!isNaN(balance) && balance > 0) {
+                            // Format to avoid scientific notation and trailing zeros
+                            const cleanBalance = balance.toFixed(10).replace(/\.?0+$/, '');
+                            setFromAmount(cleanBalance);
+                          }
+                        } catch (err) {
+                          console.error('Error parsing balance:', err);
+                        }
                       }
                     }}
                   >

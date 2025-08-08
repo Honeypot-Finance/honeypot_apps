@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Popover,
@@ -21,6 +21,8 @@ interface ChainSelectorProps {
 
 const ChainSelector: React.FC<ChainSelectorProps> = observer(
   ({ value, onChange, label, variant = 'light', compact = false }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    
     // Get chains that support Universal Account from the service
     const supportedChains = crossChainSwapService.availableChains;
 
@@ -45,8 +47,17 @@ const ChainSelector: React.FC<ChainSelectorProps> = observer(
       );
     }
 
+    const handleChainSelect = (chain: Network) => {
+      onChange(chain);
+      setIsOpen(false); // Close the dropdown after selection
+    };
+
     return (
-      <Popover placement="bottom">
+      <Popover 
+        placement="bottom"
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+      >
         <PopoverTrigger>
           <Button
             variant="flat"
@@ -81,11 +92,11 @@ const ChainSelector: React.FC<ChainSelectorProps> = observer(
             isDark ? 'bg-[#140D06] border-[#2a2a2a]' : ''
           }`}
         >
-          <div className="space-y-1">
+          <div className="space-y-1 max-h-[400px] overflow-y-auto">
             {label && (
               <div
-                className={`px-2 py-1 text-xs font-medium ${
-                  isDark ? 'text-gray-400' : 'text-gray-500'
+                className={`px-2 py-1 text-xs font-medium sticky top-0 ${
+                  isDark ? 'text-gray-400 bg-[#140D06]' : 'text-gray-500 bg-white'
                 }`}
               >
                 {label}
@@ -105,7 +116,7 @@ const ChainSelector: React.FC<ChainSelectorProps> = observer(
                     ? 'hover:bg-[#2a2a2a] text-gray-300'
                     : ''
                 }`}
-                onPress={() => onChange(chain)}
+                onPress={() => handleChainSelect(chain)}
               >
                 <div className="flex items-center gap-2">
                   <Image
