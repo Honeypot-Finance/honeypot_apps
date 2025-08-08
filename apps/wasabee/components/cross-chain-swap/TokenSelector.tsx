@@ -18,34 +18,53 @@ interface TokenSelectorProps {
 // Component to display token balance
 const TokenBalance: React.FC<{ token: Token }> = observer(({ token }) => {
   const [balance, setBalance] = useState('0');
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
     let mounted = true;
     
     const loadBalance = async () => {
-      if (!token) return;
+      if (!token || !wallet.account) {
+        if (mounted) {
+          setBalance('0');
+          setIsLoading(false);
+        }
+        return;
+      }
       
       console.log(`Loading balance for token ${token.symbol} (${token.address}) on chain ${token.chainId}`);
+      setIsLoading(true);
       
       try {
         const bal = await crossChainSwapService.getCrossChainTokenBalance(token);
         console.log(`Got balance for ${token.symbol}: ${bal}`);
         if (mounted) {
-          setBalance(bal);
+          setBalance(bal || '0');
         }
       } catch (err) {
         console.warn('Failed to load balance:', err);
+        if (mounted) {
+          setBalance('0');
+        }
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
     
     loadBalance();
     
+    // Also reload on a timer to catch updates
+    const interval = setInterval(loadBalance, 10000); // Refresh every 10 seconds
+    
     return () => {
       mounted = false;
+      clearInterval(interval);
     };
-  }, [token, wallet.account, wallet.currentChainId]); // Re-load when wallet changes
+  }, [token?.address, token?.chainId, wallet.account]); // Re-load when token or wallet changes
   
-  return <span>{balance}</span>;
+  return <span>{isLoading ? '...' : balance}</span>;
 });
 
 const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, onChange, variant = 'light', compact = false }) => {

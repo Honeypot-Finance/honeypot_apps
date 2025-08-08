@@ -801,9 +801,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                 <div className="text-right">
                   <div className="text-xs text-gray-500">
                     <span className="text-gray-600">⚡</span>{' '}
-                    {fromTokenBalance && fromTokenBalance !== '0'
-                      ? parseFloat(fromTokenBalance).toFixed(6)
-                      : '0.000000'}{' '}
+                    {fromTokenBalance}{' '}
                     {fromToken?.symbol || 'ETH'}
                   </div>
                   <button
@@ -882,9 +880,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                 <div className="text-right">
                   <div className="text-xs text-gray-500">
                     <span className="text-gray-600">⚡</span>{' '}
-                    {toTokenBalance && toTokenBalance !== '0'
-                      ? parseFloat(toTokenBalance).toFixed(6)
-                      : '0.000000'}{' '}
+                    {toTokenBalance}{' '}
                     {toToken?.symbol || 'USDT'}
                   </div>
                 </div>

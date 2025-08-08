@@ -107,7 +107,7 @@ class CrossChainSwapService {
       }
 
       // Create a public client for the token's chain
-      const { createPublicClient, http } = await import('viem');
+      const { createPublicClient, http, formatUnits } = await import('viem');
       const publicClient = createPublicClient({
         chain: network.chain,
         transport: http(network.chain.rpcUrls.default.http[0])
@@ -140,13 +140,32 @@ class CrossChainSwapService {
         }) as bigint;
       }
 
-      // Update token balance
-      token.balanceWithoutDecimals = new BigNumber(tokenBalance.toString());
+      // Format the balance properly
+      const decimals = token.decimals || 18;
+      const formattedBalance = formatUnits(tokenBalance, decimals);
       
-      console.log(`Cross-chain balance loaded for ${token.symbol}:`, token.balanceFormatted);
+      // Parse to remove trailing zeros and format nicely
+      const balanceNumber = parseFloat(formattedBalance);
+      let displayBalance = '0';
       
-      const formattedBalance = token.balanceFormatted;
-      return typeof formattedBalance === 'string' ? formattedBalance : '0';
+      if (balanceNumber > 0) {
+        if (balanceNumber < 0.0001) {
+          displayBalance = '<0.0001';
+        } else if (balanceNumber < 1) {
+          displayBalance = balanceNumber.toFixed(4).replace(/\.?0+$/, '');
+        } else if (balanceNumber < 1000) {
+          displayBalance = balanceNumber.toFixed(2).replace(/\.?0+$/, '');
+        } else {
+          displayBalance = balanceNumber.toLocaleString('en-US', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 0
+          });
+        }
+      }
+      
+      console.log(`Cross-chain balance for ${token.symbol}: ${tokenBalance.toString()} raw, ${displayBalance} formatted`);
+      
+      return displayBalance;
     } catch (err) {
       console.error('Failed to get cross-chain token balance:', err);
       return '0';
@@ -195,7 +214,7 @@ class CrossChainSwapService {
                    wrappedMetadata?.logoURI || 
                    undefined
         });
-        nativeToken.balanceWithoutDecimals = new BigNumber(0);
+        // Don't initialize with 0 - let it be fetched properly
         tokens.push(nativeToken);
         
         // Add wrapped native token if available
@@ -212,7 +231,7 @@ class CrossChainSwapService {
                      nativeMetadata.logoURI ||
                      undefined
           });
-          wrappedToken.balanceWithoutDecimals = new BigNumber(0);
+          // Don't initialize with 0 - let it be fetched properly
           tokens.push(wrappedToken);
         }
       } else if (!isNative) {
@@ -233,7 +252,7 @@ class CrossChainSwapService {
         console.log('Creating token with data:', tokenData);
         
         const token = Token.getToken(tokenData);
-        token.balanceWithoutDecimals = new BigNumber(0);
+        // Don't initialize with 0 - let it be fetched properly
         tokens.push(token);
       }
     });
