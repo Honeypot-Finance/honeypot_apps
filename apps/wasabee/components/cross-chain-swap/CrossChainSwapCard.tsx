@@ -652,11 +652,17 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
       }
     };
 
-    const isWrongChain = useMemo(() => {
-      return (
-        fromToken && wallet.currentChainId.toString() !== fromToken.chainId
-      );
-    }, [fromToken]);
+    // Compute directly without useMemo - MobX will handle reactivity
+    const isWrongChain = fromToken && wallet.currentChainId.toString() !== fromToken.chainId;
+    
+    // Debug logging to track chain changes
+    useEffect(() => {
+      console.log('Chain state updated:', {
+        currentChainId: wallet.currentChainId?.toString(),
+        fromTokenChainId: fromToken?.chainId,
+        isWrongChain: fromToken && wallet.currentChainId.toString() !== fromToken.chainId
+      });
+    }, [fromToken]); // Only depend on fromToken changes
 
     const isSwapDisabled = useMemo(() => {
       if (isWrongChain) return false; // Allow button to be clicked to switch chain
@@ -681,7 +687,10 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
     const [fromTokenBalance, setFromTokenBalance] = useState('0');
     const [toTokenBalance, setToTokenBalance] = useState('0');
 
-    // Load balances when tokens change or wallet changes
+    // Create a reactive chain ID variable that triggers effects
+    const currentChainId = wallet.currentChainId;
+    
+    // Load balances when tokens change or wallet/chain changes
     useEffect(() => {
       if (!fromToken || !wallet.account) {
         setFromTokenBalance('0');
@@ -689,7 +698,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
       }
 
       console.log(
-        `Loading balance for from token ${fromToken.symbol} on chain ${fromToken.chainId}, current wallet chain: ${wallet.currentChainId}`
+        `Loading balance for from token ${fromToken.symbol} on chain ${fromToken.chainId}, current wallet chain: ${currentChainId}`
       );
 
       // Always use getCrossChainTokenBalance for cross-chain swaps
@@ -703,7 +712,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
           console.error('Failed to load from token balance:', err);
           setFromTokenBalance('0');
         });
-    }, [fromToken]); // MobX handles wallet reactivity
+    }, [fromToken, currentChainId]); // Re-fetch when token or chain changes
 
     useEffect(() => {
       if (!toToken || !wallet.account) {
@@ -712,7 +721,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
       }
 
       console.log(
-        `Loading balance for to token ${toToken.symbol} on chain ${toToken.chainId}, current wallet chain: ${wallet.currentChainId}`
+        `Loading balance for to token ${toToken.symbol} on chain ${toToken.chainId}, current wallet chain: ${currentChainId}`
       );
 
       // Always use getCrossChainTokenBalance for cross-chain swaps
@@ -726,7 +735,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
           console.error('Failed to load to token balance:', err);
           setToTokenBalance('0');
         });
-    }, [toToken]); // MobX handles wallet reactivity
+    }, [toToken, currentChainId]); // Re-fetch when token or chain changes
 
     // Ensure we have chains before rendering
     if (!fromChain || !toChain) {
