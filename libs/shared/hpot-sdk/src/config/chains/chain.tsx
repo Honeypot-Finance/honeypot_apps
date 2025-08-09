@@ -185,7 +185,13 @@ export const bscMainnetNetwork = new Network({
     decimals: 18,
     chainId: '56',
   },
-  raisedTokenData: [],
+  raisedTokenData: [
+    {
+      symbol: 'WBNB',
+      address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'.toLowerCase(),
+      amount: BigInt('100000000000000'),
+    },
+  ],
   faucetTokens: [],
   contracts: contractAddresses['56'],
   subgraphAddresses: subgraphAddresses['56'],

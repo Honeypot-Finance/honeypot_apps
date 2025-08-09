@@ -8,27 +8,43 @@ import {
 import { ChevronDown } from 'lucide-react';
 import Image from 'next/image';
 import { observer } from 'mobx-react-lite';
-import { Network } from '@honeypot/shared';
 import { crossChainSwapService } from '@/services/crossChainSwap';
 
-interface ChainSelectorProps {
-  value: Network | null;
-  onChange: (chain: Network) => void;
+// Define a minimal interface for what we need from Network
+// to avoid importing from the lazy-loaded library
+interface ChainInfo {
+  chainId: number;
+  chain: {
+    name: string;
+  };
+  iconUrl: string;
+  displayName?: string;
+}
+
+// Use generics to accept any chain type that extends our minimal interface
+interface ChainSelectorProps<T extends ChainInfo = ChainInfo> {
+  value: T | null;
+  onChange: (chain: T) => void;
   label?: string;
   variant?: 'light' | 'dark';
   compact?: boolean;
 }
 
-const ChainSelector: React.FC<ChainSelectorProps> = observer(
-  ({ value, onChange, label, variant = 'light', compact = false }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    
-    // Get chains that support Universal Account from the service
-    const supportedChains = crossChainSwapService.availableChains;
+function ChainSelector<T extends ChainInfo = ChainInfo>({
+  value,
+  onChange,
+  label,
+  variant = 'light',
+  compact = false,
+}: ChainSelectorProps<T>) {
+  const [isOpen, setIsOpen] = useState(false);
 
-    const isDark = variant === 'dark';
+  // Get chains that support Universal Account from the service
+  const supportedChains = crossChainSwapService.availableChains as unknown as T[];
 
-    if (!value) {
+  const isDark = variant === 'dark';
+
+  if (!value) {
       return (
         <Button
           variant="flat"
@@ -47,17 +63,13 @@ const ChainSelector: React.FC<ChainSelectorProps> = observer(
       );
     }
 
-    const handleChainSelect = (chain: Network) => {
-      onChange(chain);
-      setIsOpen(false); // Close the dropdown after selection
-    };
+  const handleChainSelect = (chain: T) => {
+    onChange(chain);
+    setIsOpen(false); // Close the dropdown after selection
+  };
 
     return (
-      <Popover 
-        placement="bottom"
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
-      >
+      <Popover placement="bottom" isOpen={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger>
           <Button
             variant="flat"
@@ -96,13 +108,15 @@ const ChainSelector: React.FC<ChainSelectorProps> = observer(
             {label && (
               <div
                 className={`px-2 py-1 text-xs font-medium sticky top-0 ${
-                  isDark ? 'text-gray-400 bg-[#140D06]' : 'text-gray-500 bg-white'
+                  isDark
+                    ? 'text-gray-400 bg-[#140D06]'
+                    : 'text-gray-500 bg-white'
                 }`}
               >
                 {label}
               </div>
             )}
-            {supportedChains.map((chain: Network) => (
+            {supportedChains.map((chain) => (
               <Button
                 key={chain.chainId}
                 variant={chain.chainId === value.chainId ? 'flat' : 'light'}
@@ -136,7 +150,7 @@ const ChainSelector: React.FC<ChainSelectorProps> = observer(
         </PopoverContent>
       </Popover>
     );
-  }
-);
+}
 
-export default ChainSelector;
+// Wrap with observer and export
+export default observer(ChainSelector) as typeof ChainSelector;

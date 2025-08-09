@@ -1,10 +1,43 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-// @ts-ignore - Disable eslint warning for lazy-loaded library
-import { Token, wallet, Network, networks } from '@honeypot/shared';
 import { BigNumber } from 'bignumber.js';
 import { universalAccountService } from './universalAccountService';
 import { SUPPORTED_PRIMARY_TOKENS, SUPPORTED_TOKEN_TYPE } from '@particle-network/universal-account-sdk';
 import { zeroAddress } from 'viem';
+
+// Define types locally to avoid static imports from lazy-loaded library
+type Token = any;
+type Network = any;
+type wallet = any;
+type networks = any;
+
+// Lazy load the shared library
+let sharedLib: any = null;
+let cachedWallet: any = null;
+let cachedNetworks: any = null;
+
+const getSharedLib = async () => {
+  if (!sharedLib) {
+    sharedLib = await import('@honeypot/shared');
+    cachedWallet = sharedLib.wallet;
+    cachedNetworks = sharedLib.networks;
+  }
+  return sharedLib;
+};
+
+// Synchronous getters that return cached values or null
+const getWallet = () => {
+  if (!cachedWallet && sharedLib) {
+    cachedWallet = sharedLib.wallet;
+  }
+  return cachedWallet;
+};
+
+const getNetworks = () => {
+  if (!cachedNetworks && sharedLib) {
+    cachedNetworks = sharedLib.networks;
+  }
+  return cachedNetworks;
+};
 
 interface SwapQuote {
   toAmount: string;
@@ -25,6 +58,9 @@ class CrossChainSwapService {
 
   constructor() {
     makeAutoObservable(this);
+    
+    // Load the shared library asynchronously
+    getSharedLib().catch(console.error);
     
     // Initialize chains after universal account service loads
     setTimeout(() => {
@@ -49,13 +85,20 @@ class CrossChainSwapService {
     }
   }
 
+  // Helper method to check if wallet is connected without importing wallet from lazy-loaded library
+  isWalletConnected = () => {
+    const wallet = getWallet();
+    return wallet?.account ? true : false;
+  }
+
   get universalAccountBalance() {
-    if (!wallet.universalAccount) return 0;
+    const wallet = getWallet();
+    if (!wallet?.universalAccount) return 0;
     
     // Try different possible property names for the USD value
-    return (wallet.universalAccount as any).accountUsdValue || 
-           (wallet.universalAccount as any).totalUsdValue || 
-           (wallet.universalAccount as any).usdValue || 
+    return (getWallet().universalAccount as any).accountUsdValue || 
+           (getWallet().universalAccount as any).totalUsdValue || 
+           (getWallet().universalAccount as any).usdValue || 
            0;
   }
 
@@ -67,7 +110,7 @@ class CrossChainSwapService {
 
     try {
       // If wallet is on same chain as token, get the actual balance
-      if (wallet.isInit && wallet.account && wallet.currentChainId.toString() === token.chainId) {
+      if (getWallet().isInit && getWallet().account && getWallet().currentChainId.toString() === token.chainId) {
         // Force reinitialize the token to ensure it has the correct contract instance
         token.isInit = false;
         await token.init(true, {
@@ -92,7 +135,7 @@ class CrossChainSwapService {
 
   // Get cross-chain token balance - specifically for cross-chain swap page
   async getCrossChainTokenBalance(token: Token): Promise<string> {
-    if (!token || !wallet.account) {
+    if (!token || !getWallet().account) {
       return '0';
     }
 
@@ -100,7 +143,7 @@ class CrossChainSwapService {
       console.log(`getCrossChainTokenBalance called for ${token.symbol} on chain ${token.chainId}`);
 
       // Get the network for this token
-      const network = networks.find(n => n.chainId.toString() === token.chainId);
+      const network = getNetworks().find((n: any) => n.chainId.toString() === token.chainId);
       if (!network) {
         console.warn(`Network not found for chain ${token.chainId}`);
         return '0';
@@ -118,7 +161,7 @@ class CrossChainSwapService {
       if (token.isNative || token.address === zeroAddress) {
         // Get native token balance
         tokenBalance = await publicClient.getBalance({
-          address: wallet.account as `0x${string}`,
+          address: getWallet().account as `0x${string}`,
         });
       } else {
         // Get ERC20 token balance using minimal ABI
@@ -136,7 +179,7 @@ class CrossChainSwapService {
           address: token.address as `0x${string}`,
           abi: minimalERC20ABI,
           functionName: 'balanceOf',
-          args: [wallet.account as `0x${string}`],
+          args: [getWallet().account as `0x${string}`],
         }) as bigint;
       }
 
@@ -210,7 +253,8 @@ class CrossChainSwapService {
     console.log('SDK tokens for chain', chainId, ':', sdkTokens);
     
     const tokens: Token[] = [];
-    const network = networks.find(n => n.chainId === chainId);
+    const network = getNetworks().find((n: any) => n.chainId === chainId);
+    const TokenClass = sharedLib?.Token;
     
     // Convert to our Token format
     sdkTokens.forEach(sdkToken => {
@@ -225,7 +269,8 @@ class CrossChainSwapService {
           this.getTokenMetadataFromType(network.wrappedNativeToken.symbol) : null;
         
         // Add native token - use wrapped token logo as fallback
-        const nativeToken = Token.getToken({
+        const TokenClass = sharedLib?.Token;
+        const nativeToken = TokenClass ? TokenClass.getToken({
           address: zeroAddress,
           chainId: chainId.toString(),
           isNative: true,
@@ -236,13 +281,15 @@ class CrossChainSwapService {
                    nativeMetadata.logoURI || 
                    wrappedMetadata?.logoURI || 
                    undefined
-        });
+        }) : null;
         // Don't initialize with 0 - let it be fetched properly
-        tokens.push(nativeToken);
+        if (nativeToken) {
+          tokens.push(nativeToken);
+        }
         
         // Add wrapped native token if available
-        if (network.wrappedNativeToken) {
-          const wrappedToken = Token.getToken({
+        if (network.wrappedNativeToken && TokenClass) {
+          const wrappedToken = TokenClass.getToken({
             address: network.wrappedNativeToken.address || '',
             chainId: chainId.toString(),
             isNative: false,
@@ -275,9 +322,11 @@ class CrossChainSwapService {
         
         console.log(`Creating token ${tokenMetadata.symbol} with decimals: ${tokenDecimals}, data:`, tokenData);
         
-        const token = Token.getToken(tokenData);
+        const token = TokenClass ? TokenClass.getToken(tokenData) : null;
         // Don't initialize with 0 - let it be fetched properly
-        tokens.push(token);
+        if (token) {
+          tokens.push(token);
+        }
       }
     });
     
@@ -301,7 +350,7 @@ class CrossChainSwapService {
   setFromToken = async (token: Token) => {
     this.fromToken = token;
     // For cross-chain swap, we can only get balance if wallet is on the same chain
-    if (token && wallet.isInit && wallet.account && wallet.currentChainId.toString() === token.chainId) {
+    if (token && getWallet().isInit && getWallet().account && getWallet().currentChainId.toString() === token.chainId) {
       try {
         // Initialize token to get balance
         if (!token.isInit) {
@@ -325,7 +374,7 @@ class CrossChainSwapService {
   setToToken = async (token: Token) => {
     this.toToken = token;
     // For cross-chain swap, we can only get balance if wallet is on the same chain
-    if (token && wallet.isInit && wallet.account && wallet.currentChainId.toString() === token.chainId) {
+    if (token && getWallet().isInit && getWallet().account && getWallet().currentChainId.toString() === token.chainId) {
       try {
         // Initialize token to get balance
         if (!token.isInit) {
@@ -358,7 +407,7 @@ class CrossChainSwapService {
   }
 
   getQuote = async (fromAmount: string): Promise<SwapQuote> => {
-    if (!this.fromToken || !this.toToken || !fromAmount || parseFloat(fromAmount) === 0 || !wallet.universalAccount || !this.toChain) {
+    if (!this.fromToken || !this.toToken || !fromAmount || parseFloat(fromAmount) === 0 || !getWallet().universalAccount || !this.toChain) {
       return {
         toAmount: '',
         priceImpact: 0,
@@ -732,7 +781,7 @@ class CrossChainSwapService {
 
   // Get a preview of the transaction including fees
   async getTransactionPreview(amountInUSD: string) {
-    if (!wallet.universalAccount || !this.toToken || !this.toChain) {
+    if (!getWallet().universalAccount || !this.toToken || !this.toChain) {
       return null;
     }
 
@@ -760,7 +809,7 @@ class CrossChainSwapService {
   // Check if Universal Account has sufficient balance for the swap
   async checkUniversalAccountBalance(token: Token, requiredAmount: string): Promise<{ hasBalance: boolean; actualBalance: string; error?: string }> {
     try {
-      if (!wallet.universalAccount?.universalAccount) {
+      if (!getWallet().universalAccount?.universalAccount) {
         return { hasBalance: false, actualBalance: '0', error: 'Universal Account not initialized' };
       }
 
@@ -770,7 +819,7 @@ class CrossChainSwapService {
       let balance = '0';
       
       // Try to get balance from the token itself if it's on current chain
-      if (wallet.currentChainId === Number(token.chainId) && token.balance) {
+      if (getWallet().currentChainId === Number(token.chainId) && token.balance) {
         balance = token.balance.toString();
       }
       
@@ -802,7 +851,7 @@ class CrossChainSwapService {
       throw new Error('Missing required parameters for swap');
     }
 
-    if (!wallet.universalAccount) {
+    if (!getWallet().universalAccount) {
       throw new Error('Universal Account not available');
     }
 
@@ -873,11 +922,11 @@ class CrossChainSwapService {
 
   // Send the signed cross-chain swap transaction
   async sendSwapTransaction(transaction: any, signature: string) {
-    if (!wallet.universalAccount) {
+    if (!getWallet().universalAccount) {
       throw new Error('Universal Account not available. Please connect your wallet first.');
     }
 
-    if (!wallet.universalAccount.universalAccount) {
+    if (!getWallet().universalAccount.universalAccount) {
       throw new Error('Universal Account not initialized. Please wait for it to load or refresh the page.');
     }
 
@@ -910,18 +959,18 @@ class CrossChainSwapService {
       console.log('Executing cross-chain swap with signature:', signature);
       console.log('Transaction details:', transaction);
       console.log('Universal Account state:', {
-        isConnected: !!wallet.universalAccount.universalAccount,
-        address: wallet.universalAccount.evmSmartAccountAddress
+        isConnected: !!getWallet().universalAccount.universalAccount,
+        address: getWallet().universalAccount.evmSmartAccountAddress
       });
       
       // Step 1: First, ensure we're on the source chain
-      if (wallet.currentChainId !== transaction.fromChain) {
+      if (getWallet().currentChainId !== transaction.fromChain) {
         throw new Error('Please switch to the source chain before executing the swap');
       }
       
       // Check if the token is supported on current chain
       // currentChainSupportedTokens is a property, not a method
-      const supportedTokens = wallet.universalAccount.currentChainSupportedTokens;
+      const supportedTokens = getWallet().universalAccount.currentChainSupportedTokens;
       console.log('Supported tokens on current chain:', supportedTokens);
       
       // supportedTokens is likely an array of Token objects, not strings
@@ -970,7 +1019,7 @@ class CrossChainSwapService {
         
         // The deposit method in universalAccount.tsx already handles conversion to smallest unit
         // So we pass the amount in human-readable format (as a string)
-        depositTx = await wallet.universalAccount.deposit(
+        depositTx = await getWallet().universalAccount.deposit(
           this.fromToken,  // Token object
           transaction.fromAmount  // Amount in human-readable format as string
         );
@@ -992,7 +1041,7 @@ class CrossChainSwapService {
       await new Promise(resolve => setTimeout(resolve, 5000));
       
       // Reload Universal Account info to get updated balances
-      await wallet.universalAccount.loadUniversalAccountInfo();
+      await getWallet().universalAccount.loadUniversalAccountInfo();
       
       // Verify the deposit was successful by checking balance
       console.log('Verifying deposit...');
@@ -1003,7 +1052,7 @@ class CrossChainSwapService {
       console.log('Step 3: Creating cross-chain operation...');
       
       try {
-        if (!wallet.universalAccount.universalAccount) {
+        if (!getWallet().universalAccount.universalAccount) {
           throw new Error('Universal Account not initialized');
         }
         
@@ -1027,8 +1076,8 @@ class CrossChainSwapService {
         if (transaction.fromChain === transaction.toChain) {
           // Same chain - just transfer the tokens back
           console.log('Same chain operation - creating withdrawal transaction...');
-          crossChainTransaction = await wallet.universalAccount.universalAccount.createTransferTransaction({
-            receiver: wallet.account,
+          crossChainTransaction = await getWallet().universalAccount.universalAccount.createTransferTransaction({
+            receiver: getWallet().account,
             amount: transaction.fromAmount,
             token: {
               chainId: transaction.toChain,
@@ -1058,8 +1107,8 @@ class CrossChainSwapService {
             console.log(`Same token bridge: ${this.fromToken?.symbol} from chain ${transaction.fromChain} to ${transaction.toChain}`);
             console.log('Creating direct withdrawal transaction...');
             
-            crossChainTransaction = await wallet.universalAccount.universalAccount.createTransferTransaction({
-              receiver: wallet.account,
+            crossChainTransaction = await getWallet().universalAccount.universalAccount.createTransferTransaction({
+              receiver: getWallet().account,
               amount: transaction.toAmount,
               token: {
                 chainId: transaction.toChain,
@@ -1090,7 +1139,7 @@ class CrossChainSwapService {
               console.log(`Attempting to buy ${this.toToken?.symbol} on chain ${transaction.toChain} with $${usdValue.toFixed(2)}`);
               
               // Create buy transaction
-              crossChainTransaction = await wallet.universalAccount.universalAccount.createBuyTransaction({
+              crossChainTransaction = await getWallet().universalAccount.universalAccount.createBuyTransaction({
                 token: {
                   chainId: transaction.toChain,
                   address: toTokenAddress,
@@ -1107,8 +1156,8 @@ class CrossChainSwapService {
               // If buy fails, try direct withdrawal as fallback
               console.log('Buy failed, attempting direct withdrawal as fallback...');
               try {
-                crossChainTransaction = await wallet.universalAccount.universalAccount.createTransferTransaction({
-                  receiver: wallet.account,
+                crossChainTransaction = await getWallet().universalAccount.universalAccount.createTransferTransaction({
+                  receiver: getWallet().account,
                   amount: transaction.toAmount,
                   token: {
                     chainId: transaction.toChain,
@@ -1132,11 +1181,11 @@ class CrossChainSwapService {
         console.log(`${operationType} transaction created:`, crossChainTransaction);
         
         // Sign the transaction
-        const transferSignature = await wallet.walletClient.request({
+        const transferSignature = await getWallet().walletClient.request({
           method: 'personal_sign',
           params: [
             crossChainTransaction?.rootHash as `0x${string}`,
-            wallet.account as `0x${string}`,
+            getWallet().account as `0x${string}`,
           ],
         });
         
@@ -1158,7 +1207,7 @@ class CrossChainSwapService {
             toAmount: transaction.toAmount
           });
           
-          transferResult = await wallet.universalAccount.universalAccount.sendTransaction(
+          transferResult = await getWallet().universalAccount.universalAccount.sendTransaction(
             crossChainTransaction,
             transferSignature as `0x${string}`
           );
@@ -1208,7 +1257,7 @@ class CrossChainSwapService {
         // Step 4: For buy operations, we need to withdraw the purchased tokens
         let withdrawalTxId = null;
         if (operationType === 'buy' && this.toToken) {
-          console.log('Step 4: Buy transaction completed. Now withdrawing purchased tokens to user wallet...');
+          console.log('Step 4: Buy transaction completed. Now withdrawing purchased tokens to user getWallet()...');
           
           try {
             // Wait for the buy transaction to be processed
@@ -1217,8 +1266,8 @@ class CrossChainSwapService {
             
             // Reload Universal Account info to get updated balances
             console.log('Reloading Universal Account balances...');
-            if (wallet.universalAccount.loadUniversalAccountInfo) {
-              await wallet.universalAccount.loadUniversalAccountInfo();
+            if (getWallet().universalAccount.loadUniversalAccountInfo) {
+              await getWallet().universalAccount.loadUniversalAccountInfo();
             }
             
             // Calculate the actual amount we should have received
@@ -1226,8 +1275,8 @@ class CrossChainSwapService {
             const expectedAmount = (parseFloat(transaction.toAmount) * 0.98).toFixed(6); // Allow 2% slippage
             
             console.log(`Creating withdrawal for approximately ${expectedAmount} ${this.toToken.symbol} on chain ${transaction.toChain}`);
-            const withdrawTransaction = await wallet.universalAccount.universalAccount.createTransferTransaction({
-              receiver: wallet.account,
+            const withdrawTransaction = await getWallet().universalAccount.universalAccount.createTransferTransaction({
+              receiver: getWallet().account,
               amount: expectedAmount, // Use the adjusted amount
               token: {
                 chainId: transaction.toChain,
@@ -1238,18 +1287,18 @@ class CrossChainSwapService {
             console.log('Withdrawal transaction created:', withdrawTransaction);
             
             // Sign the withdrawal transaction
-            const withdrawSignature = await wallet.walletClient.request({
+            const withdrawSignature = await getWallet().walletClient.request({
               method: 'personal_sign',
               params: [
                 withdrawTransaction?.rootHash as `0x${string}`,
-                wallet.account as `0x${string}`,
+                getWallet().account as `0x${string}`,
               ],
             });
             
             console.log('Withdrawal transaction signed');
             
             // Send the withdrawal transaction
-            const withdrawResult = await wallet.universalAccount.universalAccount.sendTransaction(
+            const withdrawResult = await getWallet().universalAccount.universalAccount.sendTransaction(
               withdrawTransaction,
               withdrawSignature as `0x${string}`
             );
@@ -1339,7 +1388,7 @@ class CrossChainSwapService {
 
   // Withdraw tokens from Universal Account after cross-chain swap
   async withdrawFromUniversalAccount(token: Token, amount: string) {
-    if (!wallet.universalAccount) {
+    if (!getWallet().universalAccount) {
       throw new Error('Universal Account not available');
     }
 
@@ -1351,7 +1400,7 @@ class CrossChainSwapService {
       });
       
       // The withdraw method also expects a Token object
-      const withdrawTx = await wallet.universalAccount.withdraw(
+      const withdrawTx = await getWallet().universalAccount.withdraw(
         token,  // Token object
         amount  // Amount as string
       );
@@ -1440,8 +1489,8 @@ class CrossChainSwapService {
     }
     
     // Reload Universal Account info
-    if (wallet.universalAccount?.loadUniversalAccountInfo) {
-      await wallet.universalAccount.loadUniversalAccountInfo();
+    if (getWallet().universalAccount?.loadUniversalAccountInfo) {
+      await getWallet().universalAccount.loadUniversalAccountInfo();
       console.log('Universal Account info reloaded');
     }
   }
@@ -1449,7 +1498,7 @@ class CrossChainSwapService {
   // Get RPC URL for a specific chain from the network configuration
   private getRpcUrl(chainId: number): string {
     // Try to get RPC URL from network configuration first
-    const network = networks.find(n => n.chainId === chainId);
+    const network = getNetworks().find((n: any) => n.chainId === chainId);
     if (network && network.chain && network.chain.rpcUrls) {
       // Use the default RPC URL from the chain config
       const defaultRpc = network.chain.rpcUrls.default?.http?.[0];

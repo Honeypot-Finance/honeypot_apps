@@ -195,11 +195,11 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     //launchpad
     ftoFactory: zeroAddress,
     ftoFacade: zeroAddress,
-    memeFactory: zeroAddress,
-    memeFacade: zeroAddress,
+    memeFactory: '0xb1F22eac12aEC43107dea99001C0660719D67F4e',
+    memeFacade: '0xbd339A80E442089ad2007B73FF46cace07d18C74',
 
     //aquabera vault
-    vaultFactory: zeroAddress,
+    vaultFactory: '0x4fdD224DD6A7CcBdeAA7ae1be3257EC10456d042',
     vaultVolatilityCheck: zeroAddress,
 
     //aquabera vault staker

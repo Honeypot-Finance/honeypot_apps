@@ -3,7 +3,9 @@ import { Button, Modal, ModalContent, ModalHeader, ModalBody, Input } from '@nex
 import { ChevronDown, Search } from 'lucide-react';
 import Image from 'next/image';
 import { observer } from 'mobx-react-lite';
-import { Token, DynamicFormatAmount, wallet } from '@honeypot/shared';
+// Avoid static imports from lazy-loaded library
+// Import the actual Token type dynamically
+type Token = any; // Use any to avoid type issues with lazy-loaded library
 import { UniversalTokenLogo } from './UniversalTokenLogo';
 import { crossChainSwapService } from '@/services/crossChainSwap';
 
@@ -24,7 +26,9 @@ const TokenBalance: React.FC<{ token: Token }> = observer(({ token }) => {
     let mounted = true;
     
     const loadBalance = async () => {
-      if (!token || !wallet.account) {
+      // Check if wallet is connected through the service
+      const isConnected = crossChainSwapService.isWalletConnected();
+      if (!token || !isConnected) {
         if (mounted) {
           setBalance('0');
           setIsLoading(false);
@@ -62,7 +66,7 @@ const TokenBalance: React.FC<{ token: Token }> = observer(({ token }) => {
       mounted = false;
       clearInterval(interval);
     };
-  }, [token?.address, token?.chainId, wallet.account]); // Re-load when token or wallet changes
+  }, [token?.address, token?.chainId]); // Re-load when token changes
   
   // Format the balance for display
   const formatBalance = (bal: string) => {

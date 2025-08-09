@@ -376,7 +376,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                       {
                         prefix: '',
                         decimals: 0,
-                        fixed: 3,
+                        fixed: 5,
                         symbol: ` ${token.symbol}`,
                       }
                     )}
