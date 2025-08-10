@@ -145,14 +145,14 @@ export function AquaberaList() {
           <AllAquaberaVaults
             searchString={search}
             sortBy={sortField}
-            key={`all-${sortField}`}
+            key={`all-${sortField}-${search}`}
             onDataLoaded={handleDataLoaded}
           />
         ) : (
           <MyAquaberaVaults
             searchString={search}
             sortBy={sortField}
-            key={`my-${sortField}`}
+            key={`my-${sortField}-${search}`}
           />
         )}
       </div>
