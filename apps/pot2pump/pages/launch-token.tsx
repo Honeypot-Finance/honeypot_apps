@@ -337,24 +337,26 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
             )}
           </div>
 
-          {wallet.isInit && (
+          {wallet.isInit && wallet.currentChain?.raisedTokenData?.length > 0 && (
             <div className="flex flex-col gap-2">
               <label className={labelBaseClass}>
                 Raise Token <span className="text-red-500">*</span>
               </label>
               <WarppedNextSelect
                 isRequired
-                defaultSelectedKeys={[
-                  wallet.currentChain.raisedTokenData[0].address,
-                ]}
-                items={wallet.currentChain?.raisedTokenData}
+                defaultSelectedKeys={
+                  wallet.currentChain.raisedTokenData[0]?.address
+                    ? [wallet.currentChain.raisedTokenData[0].address]
+                    : []
+                }
+                items={wallet.currentChain?.raisedTokenData || []}
                 selectorIcon={<></>}
                 onSelectionChange={(value) => {
                   state.setRaisedTokenAddress(value.currentKey ?? '');
                 }}
                 {...register('raisedToken')}
               >
-                {wallet.currentChain?.raisedTokenData.map((token) => (
+                {(wallet.currentChain?.raisedTokenData || []).map((token) => (
                   <SelectItem
                     key={token.address}
                     value={token.address}
@@ -383,6 +385,17 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
                   </SelectItem>
                 ))}
               </WarppedNextSelect>
+            </div>
+          )}
+
+          {wallet.isInit && (!wallet.currentChain?.raisedTokenData || wallet.currentChain.raisedTokenData.length === 0) && (
+            <div className="flex flex-col gap-2">
+              <label className={labelBaseClass}>
+                Raise Token <span className="text-red-500">*</span>
+              </label>
+              <div className="p-4 rounded-lg bg-default-100 text-default-500 text-sm">
+                No raised tokens available on this chain. Please switch to a supported chain or contact support.
+              </div>
             </div>
           )}
 

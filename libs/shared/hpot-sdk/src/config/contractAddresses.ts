@@ -195,8 +195,8 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     //launchpad
     ftoFactory: zeroAddress,
     ftoFacade: zeroAddress,
-    memeFactory: '0xb1F22eac12aEC43107dea99001C0660719D67F4e',
-    memeFacade: '0xbd339A80E442089ad2007B73FF46cace07d18C74',
+    memeFactory: '0xB192af2225791c439CB2024290158d3202DbcD95',
+    memeFacade: '0xebF244521CCAc3C5a18FeAE79b4BaFBFc8926B46',
 
     //aquabera vault
     vaultFactory: '0x4fdD224DD6A7CcBdeAA7ae1be3257EC10456d042',

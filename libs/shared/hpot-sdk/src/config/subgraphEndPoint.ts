@@ -49,7 +49,7 @@ export const subgraphAddresses: Record<string, SubgraphAddresses> = {
   //bsc mainnet
   '56': {
     algebra_info:
-      'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-bsc/1.0.1/gn',
+      'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-bsc/1.0.0/gn',
     algebra_farming:
       'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-farming-bsc/1.0.0/gn',
     bgt_market: '',
