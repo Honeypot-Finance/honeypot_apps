@@ -2,9 +2,9 @@ import { useState, useMemo } from 'react';
 import { debounce } from 'lodash';
 import { Link, Tooltip } from '@nextui-org/react';
 import { formatNumberWithUnit } from '@/lib/utils';
-import { useLbpLaunchList } from '@honeypot/shared';
 import { truncateHash } from '@/lib/algebra/utils/common/truncateHash';
 import Image from 'next/image';
+import { launchedProjects } from '@/config/dreampadLeaderboardData';
 
 interface StatsCard {
   title: string;
@@ -17,6 +17,7 @@ const DreampadLeaderboard = () => {
   const [searchInput, setSearchInput] = useState('');
   const [searchAddress, setSearchAddress] = useState('');
   const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState<'raised' | 'participants'>('raised');
   const pageSize = 10;
 
   // Create debounced search handler
@@ -49,8 +50,9 @@ const DreampadLeaderboard = () => {
     debouncedSearch(address);
   };
 
-  // Real data hooks
-  const { data: lbpData, loading: lbpLoading } = useLbpLaunchList();
+  // Use hardcoded data
+  const lbpData = launchedProjects;
+  const lbpLoading = false;
 
   // Process and sort data by total raised amount
   const processedData = useMemo(() => {
@@ -60,29 +62,32 @@ const DreampadLeaderboard = () => {
     let filteredData = lbpData;
     if (searchAddress) {
       filteredData = lbpData.filter((item) =>
-        item.address?.toLowerCase().includes(searchAddress.toLowerCase())
+        item.tokenAddress?.toLowerCase().includes(searchAddress.toLowerCase())
       );
     }
 
-    // Sort by total raised amount (descending)
+    // Sort based on selected criteria
     const sortedData = [...filteredData].sort((a, b) => {
-      const aRaised = a.fundsRaised?.toNumber() || 0;
-      const bRaised = b.fundsRaised?.toNumber() || 0;
-      return bRaised - aRaised;
+      if (sortBy === 'raised') {
+        return b.raisedFund - a.raisedFund;
+      } else {
+        return b.participants - a.participants;
+      }
     });
 
     return sortedData.map((item, index) => ({
       rank: index + 1,
-      contractAddress: item.address,
-      projectName: item.shareToken?.name || 'Unknown',
-      tokenSymbol: item.shareToken?.symbol || 'N/A',
-      totalRaised: item.fundsRaised?.toNumber() || 0,
-      assetTokenSymbol: item.assetToken?.symbol || 'BERA',
-      status: item.launchStatusDisplay || 'Unknown',
-      imageUrl: item.imageUrl,
-      pairAddress: item.address,
+      contractAddress: item.tokenAddress,
+      projectName: item.name,
+      tokenSymbol: item.symbol,
+      totalRaised: item.raisedFund,
+      participants: item.participants,
+      chain: item.chain,
+      status: 'Completed',
+      imageUrl: item.image,
+      pairAddress: item.tokenAddress,
     }));
-  }, [lbpData, searchAddress]);
+  }, [lbpData, searchAddress, sortBy]);
 
   // Calculate stats
   const stats = useMemo(() => {
@@ -90,23 +95,20 @@ const DreampadLeaderboard = () => {
 
     const totalProjects = lbpData.length;
     const totalRaised = lbpData.reduce(
-      (sum, item) => sum + (item.fundsRaised?.toNumber() || 0),
+      (sum, item) => sum + item.raisedFund,
       0
     );
-    const liveProjects = lbpData.filter(
-      (item) => item.launchStatusDisplay === 'Started'
-    ).length;
-    const completedProjects = lbpData.filter(
-      (item) =>
-        item.launchStatusDisplay === 'Ended' ||
-        item.launchStatusDisplay === 'Closed'
-    ).length;
+    const totalParticipants = lbpData.reduce(
+      (sum, item) => sum + item.participants,
+      0
+    );
+    const averageRaised = totalProjects > 0 ? totalRaised / totalProjects : 0;
 
     return {
       totalProjects,
       totalRaised,
-      liveProjects,
-      completedProjects,
+      totalParticipants,
+      averageRaised,
     };
   }, [lbpData]);
 
@@ -120,17 +122,18 @@ const DreampadLeaderboard = () => {
       title: 'Total Raised',
       value: stats?.totalRaised || 0,
       decimals: 2,
-      subValue: 'BERA',
+      subValue: 'USD',
     },
     {
-      title: 'Live Projects',
-      value: stats?.liveProjects || 0,
+      title: 'Total Participants',
+      value: stats?.totalParticipants || 0,
       decimals: 0,
     },
     {
-      title: 'Completed Projects',
-      value: stats?.completedProjects || 0,
-      decimals: 0,
+      title: 'Avg. Raised',
+      value: stats?.averageRaised || 0,
+      decimals: 2,
+      subValue: 'USD',
     },
   ];
 
@@ -161,7 +164,7 @@ const DreampadLeaderboard = () => {
         ))}
       </div>
 
-      {/* 搜索栏 */}
+      {/* 搜索栏和排序选项 */}
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2 flex-1 max-w-md">
           <input
@@ -180,15 +183,28 @@ const DreampadLeaderboard = () => {
             </button>
           )}
         </div>
-        {searchInput && (
-          <div className="text-gray-400 text-sm ml-4">
-            {lbpLoading
-              ? 'Searching...'
-              : processedData.length > 0
-              ? `Found ${processedData.length} results`
-              : 'No results found'}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-400 text-sm">Sort by:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'raised' | 'participants')}
+              className="bg-[#1a1b1f] border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm"
+            >
+              <option value="raised">Total Raised</option>
+              <option value="participants">Participants</option>
+            </select>
           </div>
-        )}
+          {searchInput && (
+            <div className="text-gray-400 text-sm">
+              {lbpLoading
+                ? 'Searching...'
+                : processedData.length > 0
+                ? `Found ${processedData.length} results`
+                : 'No results found'}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 交易数据表格 */}
@@ -202,26 +218,26 @@ const DreampadLeaderboard = () => {
               <thead className="bg-[#323232] text-white border-b border-[#5C5C5C]">
                 <tr>
                   <th className="py-4 px-6 text-left text-base font-medium whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 bg-[#FFCD4D] rounded"></div>
-                      Project
-                    </div>
+                    Project
                   </th>
                   <th className="py-4 px-6 text-left text-base font-medium whitespace-nowrap">
-                    Contract Address
+                    Chain
                   </th>
                   <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
-                    Status
+                    Participants
                   </th>
                   <th className="py-4 px-6 text-center text-base font-medium whitespace-nowrap">
                     Total Raised
+                  </th>
+                  <th className="py-4 px-6 text-left text-base font-medium whitespace-nowrap">
+                    Contract
                   </th>
                 </tr>
               </thead>
               <tbody className="text-white divide-y divide-[#5C5C5C]">
                 {lbpLoading ? (
                   <tr>
-                    <td colSpan={4} className="py-4 px-6 text-center">
+                    <td colSpan={5} className="py-4 px-6 text-center">
                       Loading...
                     </td>
                   </tr>
@@ -233,13 +249,20 @@ const DreampadLeaderboard = () => {
                     >
                       <td className="py-4 px-6 text-base">
                         <div className="flex items-center gap-3">
-                          <div className="w-4 h-4 bg-[#FFCD4D] rounded"></div>
+                          <div className={`flex items-center justify-center w-8 h-8 rounded-lg font-bold text-sm ${
+                            item.rank === 1 ? 'bg-yellow-500/20 text-yellow-400' :
+                            item.rank === 2 ? 'bg-gray-300/20 text-gray-300' :
+                            item.rank === 3 ? 'bg-orange-500/20 text-orange-400' :
+                            'bg-[#3a3a3a] text-gray-400'
+                          }`}>
+                            {item.rank}
+                          </div>
                           <div className="flex items-center gap-2">
                             <Image
-                              src="/images/honey.png"
+                              src={item.imageUrl}
                               alt={item.projectName}
-                              width={24}
-                              height={24}
+                              width={32}
+                              height={32}
                               className="rounded-full"
                             />
                             <div className="flex flex-col">
@@ -253,13 +276,42 @@ const DreampadLeaderboard = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 px-6 text-base font-mono text-blue-400">
+                      <td className="py-4 px-6 text-base">
+                        <div className="flex items-center gap-2">
+                          {item.chain?.iconUrl && (
+                            <Image
+                              src={item.chain.iconUrl}
+                              alt={item.chain?.chain?.name || 'Chain'}
+                              width={20}
+                              height={20}
+                              className="rounded-full"
+                            />
+                          )}
+                          <span className="text-gray-300">
+                            {item.chain?.chain?.name || 'Unknown'}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6 text-center text-base">
+                        <span className="text-white font-medium">
+                          {item.participants.toLocaleString()}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-center text-base font-medium">
+                        <div className="flex flex-col">
+                          <span className="text-lg text-white">
+                            ${formatNumberWithUnit(item.totalRaised)}
+                          </span>
+                          <span className="text-xs text-gray-400">USD</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6 text-base font-mono">
                         <Tooltip
                           content={
                             <div className="text-center">
                               <div>{item.contractAddress}</div>
                               <div className="text-xs mt-1 opacity-75">
-                                Click to search
+                                Click to copy or view on explorer
                               </div>
                             </div>
                           }
@@ -272,58 +324,38 @@ const DreampadLeaderboard = () => {
                         >
                           <div className="flex gap-2">
                             <span
-                              onClick={(e) =>
-                                handleAddressClick(
-                                  item.contractAddress || '',
-                                  e
-                                )
-                              }
+                              onClick={(e) => {
+                                navigator.clipboard.writeText(item.contractAddress || '');
+                                e.preventDefault();
+                              }}
                               className="text-blue-400 cursor-pointer hover:text-blue-300 transition-colors"
                             >
                               {truncateHash(item.contractAddress || '0x')}
                             </span>
-                            <Link
-                              href={`https://berascan.com/address/${item.contractAddress}`}
-                              target="_blank"
-                              className="text-gray-400 hover:text-white transition-colors"
-                              title="Open in Berascan"
-                            >
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                            {item.chain?.chain?.blockExplorers?.default?.url && (
+                              <Link
+                                href={`${item.chain.chain.blockExplorers.default.url}/address/${item.contractAddress}`}
+                                target="_blank"
+                                className="text-gray-400 hover:text-white transition-colors"
+                                title={`Open in ${item.chain.chain.blockExplorers.default.name}`}
                               >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                />
-                              </svg>
-                            </Link>
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                  />
+                                </svg>
+                              </Link>
+                            )}
                           </div>
                         </Tooltip>
-                      </td>
-                      <td className="py-4 px-6 text-center text-base">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            item.status === 'Started'
-                              ? 'bg-green-500/20 text-green-400'
-                              : item.status === 'Ended' ||
-                                item.status === 'Closed'
-                              ? 'bg-blue-500/20 text-blue-400'
-                              : item.status === 'Not Started'
-                              ? 'bg-yellow-500/20 text-yellow-400'
-                              : 'bg-gray-500/20 text-gray-400'
-                          }`}
-                        >
-                          {item.status}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-center text-base font-medium">
-                        {formatNumberWithUnit(item.totalRaised)}{' '}
-                        {item.assetTokenSymbol}
                       </td>
                     </tr>
                   ))
