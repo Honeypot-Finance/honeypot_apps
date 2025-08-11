@@ -91,7 +91,7 @@ export const Layout = ({
   return (
     <div
       className={cn(
-        "flex flex-col min-h-screen w-full overflow-x-hidden overflow-y-auto bg-[#140D06]",
+        'flex flex-col min-h-screen w-full overflow-x-hidden overflow-y-auto bg-[#140D06]',
         className
       )}
     >
@@ -108,7 +108,7 @@ export const Layout = ({
         strategy="beforeInteractive"
       />
 
-      <AnnouncementBar slogans={slogans} interval={5000} />
+      {/* <AnnouncementBar slogans={slogans} interval={5000} /> */}
       {/* <GuideModal /> */}
       {/* <ChatWidget /> */}
 
