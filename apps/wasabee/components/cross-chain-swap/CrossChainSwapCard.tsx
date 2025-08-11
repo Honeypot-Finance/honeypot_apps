@@ -640,23 +640,62 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
           toast.dismiss(pendingToastId);
         }
 
-        // Update transaction status to failed
-        crossChainTransactionService.updateTransactionStatus(
-          transactionId,
-          'failed',
-          undefined,
-          error instanceof Error
-            ? error.message
-            : 'Failed to execute cross-chain swap'
-        );
+        const errorMessage = error instanceof Error ? error.message : 'Failed to execute cross-chain swap';
+        
+        // Check if it's a refund scenario (funds were returned)
+        const isRefunded = errorMessage.includes('has been refunded') || errorMessage.includes('✅');
+        const isHighGasError = errorMessage.toLowerCase().includes('high gas fee') || errorMessage.toLowerCase().includes('gas prices');
+        
+        // Update transaction status based on error type
+        if (isRefunded) {
+          crossChainTransactionService.updateTransactionStatus(
+            transactionId,
+            'failed',
+            undefined,
+            'Refunded due to high gas fees'
+          );
+          
+          // Show info notification for refund
+          WrappedToastify.info({
+            title: 'Swap Cancelled - Funds Refunded',
+            message: errorMessage,
+            options: {
+              autoClose: 10000, // Keep visible longer for important info
+            }
+          });
+        } else if (isHighGasError) {
+          crossChainTransactionService.updateTransactionStatus(
+            transactionId,
+            'failed',
+            undefined,
+            'High gas fees - funds in Universal Account'
+          );
+          
+          // Show warning notification for funds in Universal Account
+          WrappedToastify.warning({
+            title: 'Swap Failed - Manual Recovery Needed',
+            message: errorMessage,
+            options: {
+              autoClose: 15000, // Keep visible even longer
+            }
+          });
+        } else {
+          // Regular error
+          crossChainTransactionService.updateTransactionStatus(
+            transactionId,
+            'failed',
+            undefined,
+            errorMessage
+          );
 
-        WrappedToastify.error({
-          title: 'Swap Failed',
-          message:
-            error instanceof Error
-              ? error.message
-              : 'Failed to execute cross-chain swap',
-        });
+          WrappedToastify.error({
+            title: 'Swap Failed',
+            message: errorMessage,
+            options: {
+              autoClose: 8000,
+            }
+          });
+        }
 
         // Still reload balances in case of partial completion
         try {

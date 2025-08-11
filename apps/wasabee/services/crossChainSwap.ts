@@ -1153,26 +1153,114 @@ class CrossChainSwapService {
               console.error('Failed to create buy transaction:', buyError.message);
               console.error('Full error:', buyError);
               
-              // If buy fails, try direct withdrawal as fallback
-              console.log('Buy failed, attempting direct withdrawal as fallback...');
-              try {
-                crossChainTransaction = await getWallet().universalAccount.universalAccount.createTransferTransaction({
-                  receiver: getWallet().account,
-                  amount: transaction.toAmount,
-                  token: {
-                    chainId: transaction.toChain,
-                    address: toTokenAddress,
-                  },
-                });
-                operationType = 'withdrawal';
-                console.log('Fallback withdrawal transaction created');
-              } catch (withdrawError: any) {
-                console.error('Withdrawal also failed:', withdrawError.message);
-                throw new Error(
-                  `Unable to convert ${this.fromToken?.symbol} to ${this.toToken?.symbol}.\n\n` +
-                  `The Universal Account may not support this token pair conversion.\n\n` +
-                  `Error: ${buyError.message}`
-                );
+              // Check if it's a gas fee related error
+              const isGasError = buyError.message?.toLowerCase().includes('gas') || 
+                                buyError.message?.toLowerCase().includes('fee') ||
+                                buyError.message?.toLowerCase().includes('insufficient funds for gas');
+              
+              if (isGasError) {
+                console.log('High gas fee detected, attempting to withdraw deposited funds back to original chain...');
+                
+                // Try to withdraw the deposited amount back to the user on the original chain
+                try {
+                  const withdrawTransaction = await getWallet().universalAccount.universalAccount.createTransferTransaction({
+                    receiver: getWallet().account,
+                    amount: transaction.fromAmount, // Return the original deposited amount
+                    token: {
+                      chainId: transaction.fromChain, // Withdraw to original chain
+                      address: fromTokenAddress,
+                    },
+                  });
+                  
+                  console.log('Withdrawal transaction created for refund:', withdrawTransaction);
+                  
+                  // Sign the withdrawal transaction
+                  const withdrawSignature = await getWallet().walletClient.request({
+                    method: 'personal_sign',
+                    params: [
+                      withdrawTransaction?.rootHash as `0x${string}`,
+                      getWallet().account as `0x${string}`,
+                    ],
+                  });
+                  
+                  // Send the withdrawal transaction
+                  const withdrawResult = await getWallet().universalAccount.universalAccount.sendTransaction(
+                    withdrawTransaction,
+                    withdrawSignature as `0x${string}`
+                  );
+                  
+                  console.log('Refund withdrawal completed:', withdrawResult);
+                  
+                  // Return a special status indicating refund
+                  throw new Error(
+                    `Cross-chain swap failed due to high gas fees.\n\n` +
+                    `Your ${transaction.fromAmount} ${this.fromToken?.symbol} has been refunded to your wallet on ${this.fromChain?.displayName || this.fromChain?.chain.name}.\n\n` +
+                    `Please try again with a smaller amount or when gas fees are lower.`
+                  );
+                } catch (refundError: any) {
+                  console.error('Failed to refund deposited tokens:', refundError);
+                  throw new Error(
+                    `Cross-chain swap failed due to high gas fees.\n\n` +
+                    `Your ${transaction.fromAmount} ${this.fromToken?.symbol} is still in your Universal Account.\n\n` +
+                    `You can withdraw it manually from the Universal Account interface.\n\n` +
+                    `Original error: ${buyError.message}`
+                  );
+                }
+              } else {
+                // If buy fails for non-gas reasons, try direct withdrawal as fallback
+                console.log('Buy failed, attempting direct withdrawal as fallback...');
+                try {
+                  crossChainTransaction = await getWallet().universalAccount.universalAccount.createTransferTransaction({
+                    receiver: getWallet().account,
+                    amount: transaction.toAmount,
+                    token: {
+                      chainId: transaction.toChain,
+                      address: toTokenAddress,
+                    },
+                  });
+                  operationType = 'withdrawal';
+                  console.log('Fallback withdrawal transaction created');
+                } catch (withdrawError: any) {
+                  console.error('Withdrawal also failed:', withdrawError.message);
+                  
+                  // Try to refund to original chain
+                  console.log('Attempting to refund deposited funds to original chain...');
+                  try {
+                    const refundTransaction = await getWallet().universalAccount.universalAccount.createTransferTransaction({
+                      receiver: getWallet().account,
+                      amount: transaction.fromAmount,
+                      token: {
+                        chainId: transaction.fromChain,
+                        address: fromTokenAddress,
+                      },
+                    });
+                    
+                    const refundSignature = await getWallet().walletClient.request({
+                      method: 'personal_sign',
+                      params: [
+                        refundTransaction?.rootHash as `0x${string}`,
+                        getWallet().account as `0x${string}`,
+                      ],
+                    });
+                    
+                    await getWallet().universalAccount.universalAccount.sendTransaction(
+                      refundTransaction,
+                      refundSignature as `0x${string}`
+                    );
+                    
+                    throw new Error(
+                      `Unable to convert ${this.fromToken?.symbol} to ${this.toToken?.symbol}.\n\n` +
+                      `Your ${transaction.fromAmount} ${this.fromToken?.symbol} has been refunded.\n\n` +
+                      `The Universal Account may not support this token pair conversion.`
+                    );
+                  } catch (finalRefundError) {
+                    throw new Error(
+                      `Unable to convert ${this.fromToken?.symbol} to ${this.toToken?.symbol}.\n\n` +
+                      `Your funds are safe in the Universal Account but need manual withdrawal.\n\n` +
+                      `Error: ${buyError.message}`
+                    );
+                  }
+                }
               }
             }
           }
@@ -1215,7 +1303,70 @@ class CrossChainSwapService {
           console.error('sendTransaction error details:', sendError);
           console.error('Error stack:', sendError.stack);
           
-          // Get more detailed error information
+          // Check if it's a gas fee related error
+          const isGasError = sendError.message?.toLowerCase().includes('gas') || 
+                            sendError.message?.toLowerCase().includes('fee') ||
+                            sendError.message?.toLowerCase().includes('insufficient funds for gas') ||
+                            sendError.message?.toLowerCase().includes('maxfeepergas') ||
+                            sendError.message?.toLowerCase().includes('maxpriorityfeeper');
+          
+          if (isGasError) {
+            console.log('High gas fee error detected during sendTransaction, attempting to refund...');
+            
+            // Try to withdraw the deposited funds back to the original chain
+            try {
+              const refundTransaction = await getWallet().universalAccount.universalAccount.createTransferTransaction({
+                receiver: getWallet().account,
+                amount: transaction.fromAmount, // Return the original deposited amount
+                token: {
+                  chainId: transaction.fromChain, // Withdraw to original chain
+                  address: fromTokenAddress,
+                },
+              });
+              
+              console.log('Refund transaction created:', refundTransaction);
+              
+              // Sign the refund transaction
+              const refundSignature = await getWallet().walletClient.request({
+                method: 'personal_sign',
+                params: [
+                  refundTransaction?.rootHash as `0x${string}`,
+                  getWallet().account as `0x${string}`,
+                ],
+              });
+              
+              // Send the refund transaction
+              const refundResult = await getWallet().universalAccount.universalAccount.sendTransaction(
+                refundTransaction,
+                refundSignature as `0x${string}`
+              );
+              
+              console.log('Refund completed:', refundResult);
+              
+              throw new Error(
+                `Cross-chain swap failed due to high gas fees.\n\n` +
+                `✅ Your ${transaction.fromAmount} ${this.fromToken?.symbol} has been refunded to your wallet on ${this.fromChain?.displayName || this.fromChain?.chain.name}.\n\n` +
+                `💡 Suggestions:\n` +
+                `• Try again when gas fees are lower\n` +
+                `• Use a smaller amount\n` +
+                `• Check gas prices on the destination chain`
+              );
+            } catch (refundError: any) {
+              console.error('Failed to automatically refund:', refundError);
+              
+              throw new Error(
+                `Cross-chain swap failed due to high gas fees.\n\n` +
+                `⚠️ Your ${transaction.fromAmount} ${this.fromToken?.symbol} is safe in your Universal Account.\n\n` +
+                `To recover your funds:\n` +
+                `1. Visit the Universal Account interface\n` +
+                `2. Navigate to your balance\n` +
+                `3. Withdraw ${transaction.fromAmount} ${this.fromToken?.symbol} to ${this.fromChain?.displayName || this.fromChain?.chain.name}\n\n` +
+                `Original error: ${sendError.message}`
+              );
+            }
+          }
+          
+          // Get more detailed error information for non-gas errors
           let errorDetails = 'Unknown error';
           let suggestedAction = 'Please try again or contact support.';
           
@@ -1249,7 +1400,12 @@ class CrossChainSwapService {
             errorDetails = sendError.message || 'Transaction failed';
           }
           
-          throw new Error(`Cross-chain swap failed:\n\n${errorDetails}\n\n${suggestedAction}`);
+          // For non-gas errors, still try to help user recover funds
+          console.log('Attempting to help user recover deposited funds...');
+          throw new Error(
+            `Cross-chain swap failed:\n\n${errorDetails}\n\n${suggestedAction}\n\n` +
+            `ℹ️ Your deposited ${transaction.fromAmount} ${this.fromToken?.symbol} is safe in your Universal Account and can be withdrawn manually.`
+          );
         }
         
         console.log('Cross-chain operation result:', transferResult);
@@ -1410,6 +1566,66 @@ class CrossChainSwapService {
     } catch (error) {
       console.error('Failed to withdraw from Universal Account:', error);
       throw error;
+    }
+  }
+
+  // Emergency withdrawal helper - attempts to recover funds stuck in Universal Account
+  async emergencyWithdrawToOriginalChain(token: Token, amount: string, originalChainId: number) {
+    if (!getWallet().universalAccount?.universalAccount) {
+      throw new Error('Universal Account not initialized');
+    }
+    
+    try {
+      console.log(`Emergency withdrawal: ${amount} ${token.symbol} to chain ${originalChainId}`);
+      
+      // Determine token address for the original chain
+      const tokenAddress = token.isNative ? zeroAddress : (token.address || zeroAddress);
+      
+      // Create withdrawal transaction to original chain
+      const withdrawTransaction = await getWallet().universalAccount.universalAccount.createTransferTransaction({
+        receiver: getWallet().account,
+        amount: amount,
+        token: {
+          chainId: originalChainId,
+          address: tokenAddress,
+        },
+      });
+      
+      console.log('Emergency withdrawal transaction created:', withdrawTransaction);
+      
+      // Sign the withdrawal transaction
+      const withdrawSignature = await getWallet().walletClient.request({
+        method: 'personal_sign',
+        params: [
+          withdrawTransaction?.rootHash as `0x${string}`,
+          getWallet().account as `0x${string}`,
+        ],
+      });
+      
+      // Send the withdrawal transaction
+      const withdrawResult = await getWallet().universalAccount.universalAccount.sendTransaction(
+        withdrawTransaction,
+        withdrawSignature as `0x${string}`
+      );
+      
+      console.log('Emergency withdrawal completed:', withdrawResult);
+      
+      // Clear cache and reload balances
+      this.clearBalanceCache();
+      await this.reloadTokenBalances();
+      
+      return {
+        success: true,
+        transactionId: withdrawResult.transactionId,
+        message: `Successfully withdrew ${amount} ${token.symbol} to chain ${originalChainId}`
+      };
+    } catch (error: any) {
+      console.error('Emergency withdrawal failed:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to perform emergency withdrawal',
+        message: `Failed to withdraw ${amount} ${token.symbol}. Please try manually through Universal Account interface.`
+      };
     }
   }
 
