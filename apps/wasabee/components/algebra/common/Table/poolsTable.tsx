@@ -265,7 +265,7 @@ const PoolsTable = observer(
                         shouldCloseOnInteractOutside: false,
                       });
                     }}
-                    disabled={wallet?.account === zeroAddress}
+                    disabled={!wallet?.account || wallet?.account === zeroAddress}
                   >
                     Create Pool
                   </Button>
@@ -339,7 +339,7 @@ const PoolsTable = observer(
                       shouldCloseOnInteractOutside: false,
                     })
                   }
-                  disabled={wallet?.account === zeroAddress}
+                  disabled={!wallet?.account || wallet?.account === zeroAddress}
                 >
                   <Plus className="text-black" />
                   <span className="text-black">Create Pool</span>

@@ -26,8 +26,6 @@ export default [
               onlyDependOnLibsWithTags: ['*'],
             },
           ],
-          // Allow these libraries to be imported in apps
-          allowedNonBuildableLibsInApps: ['@honeypot/shared', 'hpot-sdk'],
         },
       ],
     },

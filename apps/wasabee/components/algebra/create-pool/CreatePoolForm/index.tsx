@@ -72,6 +72,13 @@ const CreatePoolForm = () => {
         }) as Address)
       : undefined;
 
+  console.log('poolAddress computed:', poolAddress, {
+    areCurrenciesSelected,
+    isSameToken,
+    currencyA: currencyA?.wrapped,
+    currencyB: currencyB?.wrapped,
+  });
+
   const [poolState] = usePool(poolAddress);
 
   const isPoolExists = poolState === PoolState.EXISTS;
@@ -84,7 +91,8 @@ const CreatePoolForm = () => {
     poolAddress ?? undefined,
     selectedFee,
     currencyA ?? undefined,
-    undefined
+    undefined,
+    !isPoolExists ? [PoolState.NOT_EXISTS, null] : undefined
   );
 
   const { calldata, value } = useMemo(() => {
