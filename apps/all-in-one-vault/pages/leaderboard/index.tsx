@@ -17,7 +17,7 @@ export default function Leaderboard() {
               All-in-One Leaderboard
             </h1>
             <p className="text-white">
-              Combined leaderboard from Pot2Pump, Wasabee, and Dreampad
+              Combined leaderboard from Meme, Dex, and Launchpad
             </p>
           </div>
 
