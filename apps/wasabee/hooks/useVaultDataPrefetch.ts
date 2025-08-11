@@ -5,9 +5,7 @@ import {
   getVaultPageData,
   getSingleVaultDetails,
 } from '@/lib/algebra/graphql/clients/vaults';
-import {
-  VaultsSortedByHoldersQuery,
-} from '@/lib/algebra/graphql/generated/graphql';
+import { VaultsSortedByHoldersQuery } from '@/lib/algebra/graphql/generated/graphql';
 import { ICHIVaultContract } from '@honeypot/shared';
 
 interface VaultDataStore {
@@ -20,7 +18,6 @@ interface VaultDataStore {
 
 export interface VaultDataPrefetchReturn extends VaultDataStore {
   isLoading: boolean;
-  prefetchVaultData: () => Promise<void>;
   isDataFresh: boolean;
 }
 
@@ -145,8 +142,6 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
     }
   };
 
-
-
   const fetchAllVaults = async () => {
     if (!infoClient) return;
 
@@ -191,11 +186,7 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
 
   const prefetchVaultData = async () => {
     // Skip if data is fresh and vault data with contracts is available
-    if (
-      isDataFresh() &&
-      data.allVaults &&
-      data.allVaultContracts
-    ) {
+    if (isDataFresh() && data.allVaults && data.allVaultContracts) {
       return;
     }
 
