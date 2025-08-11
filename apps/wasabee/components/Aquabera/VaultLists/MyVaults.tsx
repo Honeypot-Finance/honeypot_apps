@@ -55,7 +55,7 @@ export const MyAquaberaVaults = observer(
 
       // Skip if we already have prefetched contracts
       if (prefetchedContracts && prefetchedContracts.length > 0) {
-        console.log('📋 Using prefetched vault contracts for MyVaults');
+      
         return;
       }
 
