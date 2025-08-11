@@ -228,7 +228,6 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
     isContractsLoading: data.isContractsLoading,
     lastFetched: data.lastFetched,
     isLoading: data.isAllVaultsLoading || data.isContractsLoading,
-    prefetchVaultData,
     isDataFresh: isDataFresh(),
   };
 };
