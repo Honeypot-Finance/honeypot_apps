@@ -16,7 +16,14 @@ import { formatAmountWithAlphabetSymbol } from '@/lib/algebra/utils/common/forma
 import { Position, ZERO } from '@cryptoalgebra/sdk';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useMemo, useState, useDeferredValue, startTransition, useCallback } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useState,
+  useDeferredValue,
+  startTransition,
+  useCallback,
+} from 'react';
 import { useAccount } from 'wagmi';
 import JSBI from 'jsbi';
 import {
@@ -41,14 +48,21 @@ import dynamic from 'next/dynamic';
 
 // Lazy load heavy components to reduce initial bundle size
 const PoolChart = dynamic(() => import('@/components/algebra/pool/PoolChart'), {
-  loading: () => <div className="w-full h-[400px] bg-gray-100 rounded-xl animate-pulse" />,
-  ssr: false
+  loading: () => (
+    <div className="w-full h-[400px] bg-gray-100 rounded-xl animate-pulse" />
+  ),
+  ssr: false,
 });
 
-const TopPoolPositions = dynamic(() => import('@/components/algebra/pool/TopPoolPositions'), {
-  loading: () => <div className="w-full h-[300px] bg-gray-100 rounded-xl animate-pulse" />,
-  ssr: false
-});
+const TopPoolPositions = dynamic(
+  () => import('@/components/algebra/pool/TopPoolPositions'),
+  {
+    loading: () => (
+      <div className="w-full h-[300px] bg-gray-100 rounded-xl animate-pulse" />
+    ),
+    ssr: false,
+  }
+);
 
 const PoolPage = observer(() => {
   const { address: account } = useAccount();
@@ -149,7 +163,7 @@ const PoolPage = observer(() => {
   // Debounce expensive fee calculations
   useEffect(() => {
     if (!filteredPositions.length) return;
-    
+
     const timeoutId = setTimeout(() => {
       async function getPositionsFees() {
         const fees = await Promise.all(
@@ -170,7 +184,7 @@ const PoolPage = observer(() => {
   // Debounce expensive APR calculations
   useEffect(() => {
     if (!poolId || !filteredPositions.length) return;
-    
+
     const timeoutId = setTimeout(() => {
       async function getPositionsAPRs() {
         const aprs = await Promise.all(
@@ -200,41 +214,67 @@ const PoolPage = observer(() => {
     }, 150); // Slightly longer delay for heavier calculation
 
     return () => clearTimeout(timeoutId);
-  }, [filteredPositions, deferredPoolInfo, poolId, poolFeeData, bundles, deferredNativePrice]);
+  }, [
+    filteredPositions,
+    deferredPoolInfo,
+    poolId,
+    poolFeeData,
+    bundles,
+    deferredNativePrice,
+  ]);
 
   // Memoize expensive formatting functions
-  const formatLiquidityUSD = useCallback((position: Position) => {
-    if (!deferredPoolInfo?.pool || !deferredNativePrice) return 0;
+  const formatLiquidityUSD = useCallback(
+    (position: Position) => {
+      if (!deferredPoolInfo?.pool || !deferredNativePrice) return 0;
 
-    const amount0USD =
-      Number(position.amount0.toSignificant()) *
-      (Number(deferredPoolInfo.pool.token0.derivedMatic) * Number(deferredNativePrice));
-    const amount1USD =
-      Number(position.amount1.toSignificant()) *
-      (Number(deferredPoolInfo.pool.token1.derivedMatic) * Number(deferredNativePrice));
+      const amount0USD =
+        Number(position.amount0.toSignificant()) *
+        (Number(deferredPoolInfo.pool.token0.derivedMatic) *
+          Number(deferredNativePrice));
+      const amount1USD =
+        Number(position.amount1.toSignificant()) *
+        (Number(deferredPoolInfo.pool.token1.derivedMatic) *
+          Number(deferredNativePrice));
 
-    return amount0USD + amount1USD;
-  }, [deferredPoolInfo?.pool, deferredNativePrice]);
+      return amount0USD + amount1USD;
+    },
+    [deferredPoolInfo?.pool, deferredNativePrice]
+  );
 
-  const formatFeesUSD = useCallback((idx: number) => {
-    if (!positionsFees || !positionsFees[idx] || !deferredPoolInfo?.pool || !deferredNativePrice) return 0;
+  const formatFeesUSD = useCallback(
+    (idx: number) => {
+      if (
+        !positionsFees ||
+        !positionsFees[idx] ||
+        !deferredPoolInfo?.pool ||
+        !deferredNativePrice
+      )
+        return 0;
 
-    const fees0USD = positionsFees[idx][0]
-      ? Number(positionsFees[idx][0].toSignificant()) *
-        (Number(deferredPoolInfo.pool.token0.derivedMatic) * Number(deferredNativePrice))
-      : 0;
-    const fees1USD = positionsFees[idx][1]
-      ? Number(positionsFees[idx][1].toSignificant()) *
-        (Number(deferredPoolInfo.pool.token1.derivedMatic) * Number(deferredNativePrice))
-      : 0;
+      const fees0USD = positionsFees[idx][0]
+        ? Number(positionsFees[idx][0].toSignificant()) *
+          (Number(deferredPoolInfo.pool.token0.derivedMatic) *
+            Number(deferredNativePrice))
+        : 0;
+      const fees1USD = positionsFees[idx][1]
+        ? Number(positionsFees[idx][1].toSignificant()) *
+          (Number(deferredPoolInfo.pool.token1.derivedMatic) *
+            Number(deferredNativePrice))
+        : 0;
 
-    return fees0USD + fees1USD;
-  }, [positionsFees, deferredPoolInfo?.pool, deferredNativePrice]);
+      return fees0USD + fees1USD;
+    },
+    [positionsFees, deferredPoolInfo?.pool, deferredNativePrice]
+  );
 
-  const formatAPR = useCallback((idx: number) => {
-    if (!positionsAPRs || !positionsAPRs[idx]) return 0;
-    return positionsAPRs[idx];
-  }, [positionsAPRs]);
+  const formatAPR = useCallback(
+    (idx: number) => {
+      if (!positionsAPRs || !positionsAPRs[idx]) return 0;
+      return positionsAPRs[idx];
+    },
+    [positionsAPRs]
+  );
 
   // Break down heavy positions data calculation
   const positionsData = useMemo(() => {
@@ -245,7 +285,7 @@ const PoolPage = observer(() => {
       const currentPosition = deposits.deposits.find(
         (deposit) => Number(deposit.id) === Number(positionId)
       );
-      
+
       return {
         id: positionId,
         isClosed: JSBI.EQ(position.liquidity, ZERO),
@@ -327,7 +367,7 @@ const PoolPage = observer(() => {
 
             <Tabs
               classNames={{
-                tab: 'px-2 sm:px-3 sm:h-10 text-xs sm:text-sm',
+                tab: 'px-2 sm:px-3 sm:h-10 text-xs sm:text-sm bg-[#86715B]',
                 base: 'relative w-full',
                 tabList:
                   'flex rounded-[16px] border border-[#202020] bg-white shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] p-2 sm:p-3 z-10 max-w-[90%] sm:max-w-none mx-auto absolute left-1/2 -translate-x-1/2 z-10',
@@ -423,11 +463,11 @@ const PoolPage = observer(() => {
 });
 
 const NoPositions = ({ poolId }: { poolId: Address }) => (
-  <div className="flex flex-col items-start animate-fade-in font-bold px-8 py-16 rounded-[24px] border border-black bg-white shadow-[4px_4px_0px_0px_#D29A0D]">
-    <h2 className="text-2xl font-bold">
+  <div className=" flex flex-col items-start animate-fade-in font-bold px-8 py-16 rounded-[24px] border border-black bg-white shadow-[4px_4px_0px_0px_#D29A0D]">
+    <h2 className="text-2xl font-bold text-black">
       {`You don't have positions for this pool`}
     </h2>
-    <p className="text-md font-semibold my-4">{`Let's create one!`}</p>
+    <p className="text-black text-md font-semibold my-4">{`Let's create one!`}</p>
     <Button className="gap-2" asChild>
       <Link
         className={cn(

@@ -4,9 +4,9 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   ADDRESS_ZERO,
   NonfungiblePositionManager,
-  algebraPositionManagerABI,
   computePoolAddress,
 } from '@cryptoalgebra/sdk';
+import { algebraPositionManagerABI } from '@/lib/abis/algebra-contracts/ABIs/algebraPositionManager';
 import { useTransactionAwait } from '@/lib/algebra/hooks/common/useTransactionAwait';
 import { useContractWrite, useWriteContract } from 'wagmi';
 import { Address, getContract, maxInt256 } from 'viem';
@@ -23,7 +23,7 @@ import {
   useSwapState,
 } from '@/lib/algebra/state/swapStore';
 import { SwapField } from '@/types/algebra/types/swap-field';
-import { useSimulateAlgebraPositionManagerMulticall } from '@/wagmi-generated';
+import { useSimulateAlgebraPositionManagerMulticall } from '@honeypot/shared/wagmi-generated';
 import { useToastify } from '@/lib/hooks/useContractToastify';
 import { Input } from '@/components/algebra/ui/input';
 import HoneyContainer from '@/components/CardContianer/HoneyContainer';
@@ -69,6 +69,9 @@ const CreatePoolForm = () => {
       ? (computePoolAddress({
           tokenA: currencyA.wrapped,
           tokenB: currencyB.wrapped,
+          poolDeployer: currentChain.contracts?.algebraPoolDeployer,
+          initCodeHashManualOverride:
+            currentChain.contracts?.algebraPoolInitCodeHash,
         }) as Address)
       : undefined;
 
@@ -77,6 +80,8 @@ const CreatePoolForm = () => {
     isSameToken,
     currencyA: currencyA?.wrapped,
     currencyB: currencyB?.wrapped,
+    deployer: currentChain.contracts?.algebraPoolDeployer,
+    initCodeHash: currentChain.contracts?.algebraPoolInitCodeHash,
   });
 
   const [poolState] = usePool(poolAddress);
@@ -119,12 +124,23 @@ const CreatePoolForm = () => {
         : [[calldata] as Address[]],
       value: BigInt(value || 0),
       query: {
-        enabled: Boolean({ calldata }),
+        enabled: Boolean(calldata && value !== undefined),
       },
     }
   );
 
-  console.log('config', { createPoolConfig, calldata, value, mintInfo });
+  console.log('config', {
+    createPoolConfig,
+    calldata,
+    value,
+    mintInfo,
+    poolState,
+    isPoolExists,
+    poolAddress,
+    errorMessage: mintInfo?.errorMessage,
+    errorCode: mintInfo?.errorCode,
+    invalidPool: mintInfo?.invalidPool,
+  });
 
   const { isLoading, isError, isSuccess } = useTransactionAwait(
     createPoolData,
@@ -151,24 +167,57 @@ const CreatePoolForm = () => {
     typeStartPriceInput('');
 
     return () => {
-      selectCurrency(SwapField.INPUT, ADDRESS_ZERO);
-      selectCurrency(
-        SwapField.OUTPUT,
-        currentChain.validatedTokens.filter((token) => token.isStableCoin)[0]
-          .address
-      );
+      selectCurrency(SwapField.INPUT, undefined);
+      selectCurrency(SwapField.OUTPUT, undefined);
       typeStartPriceInput('');
     };
   }, []);
 
   const handleButtonClick = async () => {
+    console.log('Button clicked', {
+      isPoolExists,
+      poolState,
+      poolAddress,
+      createPoolConfig,
+      calldata,
+      value,
+      mintInfo
+    });
+    
     if (isPoolExists && poolAddress) {
+      console.log('Pool exists, redirecting to:', `/pool-detail/${poolAddress}`);
+      router.push(`/pool-detail/${poolAddress}`);
+      return;
+    }
+    
+    if (poolState === PoolState.EXISTS && poolAddress) {
+      console.log('Pool state is EXISTS, redirecting to:', `/pool-detail/${poolAddress}`);
       router.push(`/pool-detail/${poolAddress}`);
       return;
     }
 
-    if (createPoolConfig) {
-      createPool(createPoolConfig?.request);
+    if (createPoolConfig && createPoolConfig.request) {
+      console.log('Creating pool with config:', createPoolConfig.request);
+      createPool(createPoolConfig.request);
+    } else if (calldata && value !== undefined) {
+      // Directly call createPool if we have calldata but simulation failed
+      console.log('Creating pool directly with calldata:', { calldata, value });
+      createPool({
+        address: currentChain.contracts?.algebraPositionManager as Address,
+        abi: algebraPositionManagerABI,
+        functionName: 'multicall',
+        args: Array.isArray(calldata) ? [calldata as Address[]] : [[calldata] as Address[]],
+        value: BigInt(value || 0),
+      });
+    } else {
+      console.error('Cannot create pool: missing config or calldata', {
+        hasCalldata: !!calldata,
+        hasValue: value !== undefined,
+        hasConfig: !!createPoolConfig,
+        startPriceTypedValue,
+        mintInfo
+      });
+      alert('Please enter an initial price for the pool before creating it.');
     }
   };
 

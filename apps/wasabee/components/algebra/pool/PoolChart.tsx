@@ -90,7 +90,7 @@ const PoolChart = observer(({ pool }: PoolChartProps) => {
   }, [pool, selectedChartType, selectedTimeRange]);
 
   return (
-    <div className="w-full h-[400px] bg-white rounded-[24px] p-4 border border-black shadow-[4px_4px_0px_0px_#D29A0D]">
+    <div className="w-full h-[400px] bg-[#271A0C] rounded-[24px] p-4 border border-black shadow-[4px_4px_0px_0px_#D29A0D]">
       <div className="flex flex-col sm:flex-row sm:justify-between gap-4 mb-4">
         <div className="flex flex-wrap gap-2">
           {[
@@ -101,7 +101,7 @@ const PoolChart = observer(({ pool }: PoolChartProps) => {
             <button
               key={key}
               className={cn(
-                'px-4 py-2 rounded-lg bg-[#F5F5F5] text-sm flex-1 sm:flex-none',
+                'px-4 py-2 rounded-lg bg-[#86715B] text-sm flex-1 sm:flex-none',
                 selectedChartType === key && 'bg-black text-white'
               )}
               onClick={() => setSelectedChartType(key as chartType)}
@@ -116,7 +116,7 @@ const PoolChart = observer(({ pool }: PoolChartProps) => {
             <button
               key={range}
               className={cn(
-                'px-3 py-1 rounded-lg bg-[#F5F5F5] text-xs flex-1 sm:flex-none',
+                'px-3 py-1 rounded-lg bg-[#86715B] text-xs flex-1 sm:flex-none',
                 selectedTimeRange === range && 'bg-black text-white'
               )}
               onClick={() => setSelectedTimeRange(range)}
