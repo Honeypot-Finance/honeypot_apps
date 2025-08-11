@@ -35,10 +35,10 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
         <div key={m.title} className="w-full">
           <div
             className={cn(
-              'p-3 text-white text-lg font-medium w-full',
+              'p-3 text-gray-300 text-base font-medium w-full rounded-lg transition-colors',
               m.path.some((p) => router.pathname.includes(p.path))
-                ? 'bg-[rgba(225,138,32,0.40)] border-2 border-solid border-[rgba(225,138,32,0.60)] rounded-lg'
-                : '',
+                ? 'text-[#F59E0B] bg-[#271A0C]'
+                : 'hover:bg-[#271A0C] hover:text-white',
               isSub ? 'pl-8' : ''
             )}
             onClick={() => setIsMenuOpen(false)}
@@ -52,10 +52,10 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
           key={m.title}
           href={m.path as string}
           className={cn(
-            'block p-3 text-white text-lg font-medium w-full',
+            'block p-3 text-gray-300 text-base font-medium w-full rounded-lg transition-colors',
             router.pathname === m.path
-              ? 'bg-[rgba(225,74,32,0.40)] border-2 border-solid border-[rgba(225,74,32,0.6)] rounded-lg'
-              : '',
+              ? 'text-[#F59E0B] bg-[#271A0C]'
+              : 'hover:bg-[#271A0C] hover:text-white',
             isSub ? 'pl-8' : ''
           )}
           onClick={() => setIsMenuOpen(false)}
@@ -72,44 +72,42 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
         classNames={{
-          base: 'bg-transparent',
+          base: 'bg-[#140D06]/80 backdrop-blur-md border-b border-[#333333] mb-5 sm:mb-10',
           wrapper:
-            'max-w-full px-2 sm:px-4 md:px-8 xl:px-0 xl:max-w-[1200px] 2xl:max-w-[1500px] !h-auto mb-5 sm:mb-10',
+            'max-w-full px-2 sm:px-4 md:px-8 xl:px-0 xl:max-w-[1200px] 2xl:max-w-[1500px] !h-auto py-4 ',
         }}
       >
-        {isXl && (
-          <NavbarBrand className="flex gap-4 items-start !flex-grow-0 xl:min-w-[200px]">
-            <Link
-              href={DOMAIN_MAP.MAIN}
-              className="pointer-events-none md:pointer-events-auto cursor-pointer"
-            >
+        <NavbarContent className="flex gap-2 md:gap-8" justify="start">
+          <NavbarMenuToggle
+            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            className="text-white md:hidden h-8 w-8"
+          />
+          <NavbarBrand className="hidden md:flex gap-4 items-center !flex-grow-0">
+            <Link href="/" className="flex items-center gap-2 cursor-pointer">
               <Image
-                width={200}
-                height={100}
-                alt="Honeypot Finance"
-                src="/images/header/project-name.svg"
+                width={40}
+                height={40}
+                alt="Wasabee"
+                src="/favicon.ico"
+                className="rounded-full w-8 h-8 md:w-10 md:h-10"
               />
+              <span className="text-lg md:text-xl font-bold text-white">
+                Honeypot DEX
+              </span>
             </Link>
           </NavbarBrand>
-        )}
-
-        <NavbarContent justify="center" className="hidden md:flex">
-          <CustomNavbar menuList={menuList} />
+          <div className="hidden md:flex">
+            <CustomNavbar menuList={menuList} />
+          </div>
         </NavbarContent>
 
-        <NavbarMenuToggle
-          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-          className={cn(
-            'text-white will-change-transform transform-gpu transition-all duration-200 ease-out md:hidden h-16 w-16',
-            isMenuOpen ? 'fixed top-6 left-0' : '-ml-4'
-          )}
-        />
-
-        {!isMenuOpen && <WalletConnect />}
+        <NavbarContent justify="end">
+          <WalletConnect />
+        </NavbarContent>
 
         <NavbarMenu
           className={cn(
-            'lg:hidden pt-24 bg-black/95 backdrop-blur-md',
+            'lg:hidden pt-20 bg-[#140D06]/95 backdrop-blur-md border-t border-[#333333]',
             'will-change-transform transform-gpu transition-all duration-200 ease-out',
             isMenuOpen
               ? 'opacity-100 translate-y-0'

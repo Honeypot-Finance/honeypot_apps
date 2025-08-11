@@ -269,14 +269,14 @@ const XSwapParams = ({
     </div>
   ) : trade !== undefined || tradeState.state === TradeState.LOADING ? (
     <div className="flex justify-center mb-1 bg-card-dark py-3 px-3 rounded-lg">
-      <Loader size={17} className="text-black" color="black" />
+      <Loader size={17} className="text-white" color="black" />
     </div>
-  ) : Number(typedValue) !== 0 && routeNotFound ?  (
-    <div className="text-sm mb-1 text-center text-black bg-card-dark py-2 px-3 rounded-lg">
+  ) : Number(typedValue) !== 0 && routeNotFound ? (
+    <div className="text-sm mb-1 text-center text-white bg-card-dark py-2 px-3 rounded-lg">
       Insufficient liquidity for this trade.
     </div>
   ) : (
-    <div className="text-sm mb-1 text-center text-black bg-card-dark py-2 px-3 rounded-lg">
+    <div className="text-sm mb-1 text-center text-white bg-card-dark py-2 px-3 rounded-lg">
       Select an amount
     </div>
   );

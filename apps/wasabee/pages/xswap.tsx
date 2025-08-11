@@ -64,7 +64,7 @@ const XSwapPage = observer(() => {
     <div className="w-full px-4 py-4 flex gap-4 justify-start items-start text-xs">
       <HoneyContainer className="w-full max-w-[1024px] mx-auto">
         {!isMobile && (
-          <div className="md:grid hidden w-full  grid-cols-12  bg-white p-2 rounded-lg items-center justify-center text-center">
+          <div className="md:grid hidden w-full  grid-cols-12 p-2 rounded-lg items-center justify-center text-center">
             <div className="col-span-1">
               <Button
                 onPress={() => xSwap.selectAllTokens()}

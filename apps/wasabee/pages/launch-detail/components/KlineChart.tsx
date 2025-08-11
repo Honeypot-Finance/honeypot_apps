@@ -690,13 +690,14 @@ const KlineChartComponent = observer(
           {/* Token Info */}
           <div className="flex items-center gap-2">
             <div className="flex items-center">
-              {chart.TargetLogoDisplay.map((token: Token) => {
-                if (!token) {
-                  return <></>;
-                }
+              {chart.TargetLogoDisplay && chart.TargetLogoDisplay.length > 0 && 
+                chart.TargetLogoDisplay.map((token: Token) => {
+                  if (!token) {
+                    return <></>;
+                  }
 
-                return <TokenLogo key={token.address} token={token} />;
-              })}
+                  return <TokenLogo key={token.address} token={token} />;
+                })}
             </div>
             <span className="text-white text-base sm:text-lg font-bold">
               {chart.chartLabel}

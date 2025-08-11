@@ -385,7 +385,7 @@ const XSwapPair = observer(
     }, [baseCurrency, quoteCurrency, isUpdatingPriceChart]);
 
     return (
-      <div className="flex flex-col gap-1 relative bg-white custom-dashed px-[18px] py-6 w-full">
+      <div className="flex flex-col gap-1 relative bg-[#1a1410] rounded-xl border border-[#2a2522] custom-dashed px-[18px] py-6 w-full">
         {!isMobile && (
           <div className="grid grid-cols-12 gap-4 justify-between items-center">
             <div className="w-full flex justify-center items-center">

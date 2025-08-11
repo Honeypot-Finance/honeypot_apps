@@ -5,7 +5,7 @@ import StargateBridgeSelectToken from '../../../components/Bridge/StargateBridge
 export default function StargateBridge() {
   return (
     <div className="w-full flex justify-center items-center mt-5">
-      <div className="flex flex-col gap-1 justify-center items-center relative bg-white custom-dashed px-[18px] py-6 max-w-[512px] w-full">
+      <div className="flex flex-col gap-1 justify-center items-center relative custom-dashed px-[18px] py-6 max-w-[512px] w-full">
         <StargateBridgeSelectToken />
         {/* <div className="flex w-full gap-1 justify-between items-center">
           <StargateBridgeSelectNetwork type="from" />

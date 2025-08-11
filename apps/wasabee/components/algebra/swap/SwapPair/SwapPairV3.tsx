@@ -386,7 +386,7 @@ const SwapPairV3 = ({
   }, [baseCurrency, quoteCurrency, isUpdatingPriceChart]);
 
   return (
-    <div className="flex flex-col gap-1 relative bg-white custom-dashed px-[18px] py-6 w-full">
+    <div className="flex flex-col gap-1 relative bg-[#1a1410] rounded-xl border border-[#2a2522] custom-dashed px-[18px] py-6 w-full">
       <TokenCardV3
         staticTokenList={staticFromTokenList}
         value={formattedAmounts[SwapField.INPUT] || ''}

@@ -69,7 +69,7 @@ const PoolsTable = observer(
     const walletClient = useObserver(() => {
       return wallet.walletClient;
     });
-    const zeroAddress="0x0000000000000000000000000000000000000000";
+    const zeroAddress = '0x0000000000000000000000000000000000000000';
     const [selectedFilter, setSelectedFilter] = useState<string>(defaultFilter);
     const [search, setSearch] = useState('');
     const [sortField, setSortField] = useState<SortField>('tvl');
@@ -159,7 +159,7 @@ const PoolsTable = observer(
       align?: 'left' | 'right' | 'center';
     }) => (
       <th
-        className={`py-4 px-6 cursor-pointer transition-colors text-[#4D4D4D]`}
+        className={`py-4 px-6 bg-transparent cursor-pointer transition-colors text-[#4D4D4D]`}
         onClick={() => handleSort(field)}
       >
         <div
@@ -265,7 +265,7 @@ const PoolsTable = observer(
                         shouldCloseOnInteractOutside: false,
                       });
                     }}
-                    disabled={wallet?.account===zeroAddress}
+                    disabled={wallet?.account === zeroAddress}
                   >
                     Create Pool
                   </Button>
@@ -339,7 +339,7 @@ const PoolsTable = observer(
                       shouldCloseOnInteractOutside: false,
                     })
                   }
-                  disabled={wallet?.account===zeroAddress}
+                  disabled={wallet?.account === zeroAddress}
                 >
                   <Plus className="text-black" />
                   <span className="text-black">Create Pool</span>
@@ -483,7 +483,7 @@ const PoolsTable = observer(
         </div>
 
         {/* Desktop view - table layout for medium screens and up */}
-        <div className="hidden md:block custom-dashed-3xl w-full p-6 bg-white overflow-x-auto">
+        <div className="hidden md:block custom-dashed-3xl w-full p-6 bg-[#271A0C] overflow-x-auto">
           {!loading ? (
             <table className="w-full">
               <thead>
@@ -529,7 +529,7 @@ const PoolsTable = observer(
                     (pool: Pool & { userTVLUSD: number }) => (
                       <tr
                         key={pool.id}
-                        className="transition-colors bg-white text-black  hover:bg-gray-50 cursor-pointer"
+                        className="transition-colors bg-[#86715B] text-black  hover:bg-gray-50 cursor-pointer"
                         onClick={() => {
                           if (action) {
                             action(pool.id);

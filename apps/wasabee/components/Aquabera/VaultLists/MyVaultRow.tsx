@@ -92,7 +92,7 @@ export const MyVaultRow = observer(
 
     return (
       <tr
-        className="transition-colors bg-white text-black hover:bg-gray-50 cursor-pointer"
+        className="transition-colors bg-[#86715B] text-black hover:bg-gray-50 cursor-pointer"
         onClick={() => (window.location.href = `/vault/${vault.address}`)}
       >
         {/* Token pair */}
