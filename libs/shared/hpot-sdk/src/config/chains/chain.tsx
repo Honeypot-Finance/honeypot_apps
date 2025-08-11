@@ -158,6 +158,28 @@ export class Network {
 
     return `${explorer.url}/token/${token.address}`;
   }
+
+  getAddressExplorerUrl(address: string): string {
+    const explorer = this.chain.blockExplorers?.default;
+    if (!explorer) {
+      return '#';
+    }
+    
+    // Remove trailing slash from explorer URL if present
+    const baseUrl = explorer.url.endsWith('/') ? explorer.url.slice(0, -1) : explorer.url;
+    return `${baseUrl}/address/${address}`;
+  }
+
+  getTransactionExplorerUrl(txHash: string): string {
+    const explorer = this.chain.blockExplorers?.default;
+    if (!explorer) {
+      return '#';
+    }
+    
+    // Remove trailing slash from explorer URL if present
+    const baseUrl = explorer.url.endsWith('/') ? explorer.url.slice(0, -1) : explorer.url;
+    return `${baseUrl}/tx/${txHash}`;
+  }
 }
 
 export const bscMainnetNetwork = new Network({
