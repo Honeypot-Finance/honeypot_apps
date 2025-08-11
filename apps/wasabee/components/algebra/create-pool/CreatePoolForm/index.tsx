@@ -201,7 +201,7 @@ const CreatePoolForm = () => {
           </div> */}
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm text-black">
+              <label className="text-sm text-white">
                 Initial price ({currencyB?.symbol} per {currencyA?.symbol} )
               </label>
               <Input
@@ -217,7 +217,7 @@ const CreatePoolForm = () => {
                   input: '!text-black',
                 }}
               />
-              <p className="text-xs text-black">
+              <p className="text-xs text-white">
                 {startPriceTypedValue
                   ? `1 ${currencyB?.symbol} = ${
                       1 / Number(startPriceTypedValue)

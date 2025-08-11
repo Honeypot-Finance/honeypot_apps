@@ -3,7 +3,8 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/wasabee",
   "projectType": "application",
-  "tags": [],
+  "tags": ["type:app", "scope:wasabee"],
+  "implicitDependencies": ["hpot-sdk"],
   "// targets": "to see all targets run: nx show project wasabee --web",
   "targets": {
     "build": {
@@ -11,6 +12,13 @@
       "options": {
         "outputPath": "apps/wasabee/",
         "postcssConfig": "apps/wasabee/postcss.config.js"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["apps/wasabee/**/*.{ts,tsx,js,jsx}"],
+        "ignorePath": "apps/wasabee/.eslintignore"
       }
     }
   }

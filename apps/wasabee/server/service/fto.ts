@@ -1,6 +1,6 @@
 import { MUBAI_FTO_PAIR_ABI } from '@/lib/abis/ftoPair';
 import { MemePairABI } from '@/lib/abis/MemePair';
-import { chains, chainsMap } from '@/lib/chain';
+import { chains, chainsMap } from '@honeypot/shared/config/chains/chain';
 import { createPublicClientByChain } from '@/lib/client';
 import { pg } from '@/lib/db';
 import DataLoader from 'dataloader';

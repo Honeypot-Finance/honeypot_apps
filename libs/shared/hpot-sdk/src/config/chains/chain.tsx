@@ -211,6 +211,7 @@ export const bscMainnetNetwork = new Network({
       decimals: 18,
       logoURI: 'https://bscscan.com/token/images/centre-usdc_28.png',
       isRouterToken: true,
+      isStableCoin: true,
     },
   },
 });
