@@ -19,7 +19,7 @@ import {
 import {
   useReadAlgebraPoolToken0,
   useReadAlgebraPoolToken1,
-} from '@/wagmi-generated';
+} from '@honeypot/shared/wagmi-generated';
 import { DynamicFormatAmount } from '@honeypot/shared';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Button } from '@nextui-org/react';

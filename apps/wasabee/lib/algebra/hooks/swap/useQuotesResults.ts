@@ -61,6 +61,17 @@ export function useQuotesResults({
     // cacheTime: 5_000,
   });
 
+  // Debug logging
+  if (quotesResults && quotesResults.length > 0) {
+    console.log('Quote results:', {
+      routes: routes.map(r => r.pools.map(p => `${p.token0.symbol}/${p.token1.symbol}`).join(' -> ')),
+      quotesResults,
+      exactInput,
+      amountIn: amountIn?.toSignificant(),
+      amountOut: amountOut?.toSignificant(),
+    });
+  }
+
   return {
     data: quotesResults,
     isLoading: isLoading || routesLoading,

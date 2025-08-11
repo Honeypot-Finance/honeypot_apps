@@ -58,6 +58,15 @@ export function useBestTradeExactIn(
       };
     }
 
+    console.log('Finding best trade:', {
+      amountIn: amountIn?.toSignificant(),
+      currencyIn: amountIn?.currency.symbol,
+      currencyOut: currencyOut.symbol,
+      routesCount: routes.length,
+      quotesCount: quotesResults?.length,
+      routes: routes.map(r => r.pools.map(p => `${p.token0.symbol}/${p.token1.symbol}`).join(' -> ')),
+    });
+
     const { bestRoute, amountOut, fee, priceAfterSwap } = (
       quotesResults || []
     ).reduce(

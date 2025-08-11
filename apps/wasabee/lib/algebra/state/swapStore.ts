@@ -9,7 +9,7 @@ import { TradeStateType } from '@/types/algebra/types/trade-state';
 import {
   useReadAlgebraPoolGlobalState,
   useReadAlgebraPoolTickSpacing,
-} from '@/wagmi-generated';
+} from '@honeypot/shared/wagmi-generated';
 import {
   ADDRESS_ZERO,
   Currency,
@@ -218,15 +218,26 @@ export function tryParseAmount<T extends Currency>(
   currency?: T
 ): CurrencyAmount<T> | undefined {
   if (!value || !currency) {
+    console.log('tryParseAmount: Missing value or currency', { value, currency });
     return undefined;
   }
   try {
+    console.log('tryParseAmount: Parsing', {
+      value,
+      currency: currency.symbol,
+      decimals: currency.decimals,
+      chainId: currency.chainId,
+    });
     const typedValueParsed = parseUnits(value, currency.decimals).toString();
+    console.log('tryParseAmount: Parsed raw amount', typedValueParsed);
     if (typedValueParsed !== '0') {
-      return CurrencyAmount.fromRawAmount(currency, typedValueParsed);
+      const result = CurrencyAmount.fromRawAmount(currency, typedValueParsed);
+      console.log('tryParseAmount: Created CurrencyAmount', result.toSignificant());
+      return result;
     }
+    console.log('tryParseAmount: Parsed to zero');
   } catch (error) {
-    console.debug(`Failed to parse input amount: "${value}"`, error);
+    console.error(`Failed to parse input amount: "${value}"`, error);
   }
   return undefined;
 }
@@ -260,16 +271,16 @@ export function useDerivedSwapInfo(): {
 
   const inputCurrency = useCurrency(inputCurrencyId);
   const outputCurrency = useCurrency(outputCurrencyId);
+  
+  // Remove debug logging to prevent loops
 
   const isExactIn: boolean = independentField === SwapField.INPUT;
-  const parsedAmount = useMemo(
-    () =>
-      tryParseAmount(
-        typedValue,
-        (isExactIn ? inputCurrency : outputCurrency) ?? undefined
-      ),
-    [typedValue, isExactIn, inputCurrency, outputCurrency]
-  );
+  const parsedAmount = useMemo(() => {
+    const currency = (isExactIn ? inputCurrency : outputCurrency) ?? undefined;
+    const result = tryParseAmount(typedValue, currency);
+    // Remove debug log
+    return result;
+  }, [typedValue, isExactIn, inputCurrency, outputCurrency]);
 
   const bestTradeExactIn = useBestTradeExactIn(
     isExactIn ? parsedAmount : undefined,
@@ -326,12 +337,26 @@ export function useDerivedSwapInfo(): {
     inputError = `Connect Wallet`;
   }
 
-  if (!parsedAmount) {
-    inputError = inputError ?? `Enter an amount`;
-  }
-
   if (!currencies[SwapField.INPUT] || !currencies[SwapField.OUTPUT]) {
     inputError = inputError ?? `Select a token`;
+    console.log('Currency selection error:', {
+      inputCurrency: currencies[SwapField.INPUT]?.symbol,
+      outputCurrency: currencies[SwapField.OUTPUT]?.symbol,
+      inputCurrencyId,
+      outputCurrencyId,
+    });
+  }
+
+  if (!parsedAmount && typedValue && typedValue !== '') {
+    inputError = inputError ?? `Enter an amount`;
+    console.log('Parse amount error despite typed value:', {
+      typedValue,
+      inputCurrency: currencies[SwapField.INPUT]?.symbol,
+      outputCurrency: currencies[SwapField.OUTPUT]?.symbol,
+      isExactIn,
+    });
+  } else if (!typedValue || typedValue === '') {
+    inputError = inputError ?? `Enter an amount`;
   }
 
   const toggledTrade = trade.trade ?? undefined;
@@ -500,12 +525,26 @@ export function useDerivedSwapInfoWithoutSwapState({
     inputError = `Connect Wallet`;
   }
 
-  if (!parsedAmount) {
-    inputError = inputError ?? `Enter an amount`;
-  }
-
   if (!currencies[SwapField.INPUT] || !currencies[SwapField.OUTPUT]) {
     inputError = inputError ?? `Select a token`;
+    console.log('Currency selection error:', {
+      inputCurrency: currencies[SwapField.INPUT]?.symbol,
+      outputCurrency: currencies[SwapField.OUTPUT]?.symbol,
+      inputCurrencyId,
+      outputCurrencyId,
+    });
+  }
+
+  if (!parsedAmount && typedValue && typedValue !== '') {
+    inputError = inputError ?? `Enter an amount`;
+    console.log('Parse amount error despite typed value:', {
+      typedValue,
+      inputCurrency: currencies[SwapField.INPUT]?.symbol,
+      outputCurrency: currencies[SwapField.OUTPUT]?.symbol,
+      isExactIn,
+    });
+  } else if (!typedValue || typedValue === '') {
+    inputError = inputError ?? `Enter an amount`;
   }
 
   const toggledTrade = trade.trade ?? undefined;

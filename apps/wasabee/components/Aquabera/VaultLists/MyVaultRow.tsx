@@ -11,7 +11,7 @@ import { wallet } from '@honeypot/shared/lib/wallet';
 import {
   useReadIchiVaultAllowToken0,
   useReadIchiVaultAllowToken1,
-} from '@/wagmi-generated';
+} from '@honeypot/shared/wagmi-generated';
 import { Skeleton, Tooltip } from '@nextui-org/react';
 import { InfoIcon } from 'lucide-react';
 import { observer } from 'mobx-react-lite';

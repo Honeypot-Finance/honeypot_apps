@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import { makeAutoObservable } from 'mobx';
 import { get } from 'http';
 import { getContract } from 'viem';
-import { algebraBasePluginAbi } from '@/wagmi-generated';
+import { algebraBasePluginAbi } from '@honeypot/shared/wagmi-generated';
 import { ContractWrite } from '@honeypot/shared';
 import { usePublicClient } from 'wagmi';
 

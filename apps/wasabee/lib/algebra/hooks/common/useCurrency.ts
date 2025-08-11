@@ -5,6 +5,17 @@ import { useAlgebraToken } from './useAlgebraToken';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { useObserver } from 'mobx-react-lite';
 
+// Add WBNB support for BSC if not in SDK
+if (!WNATIVE[56]) {
+  WNATIVE[56] = new Token(
+    56,
+    '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+    18,
+    'WBNB',
+    'Wrapped BNB'
+  );
+}
+
 export function useCurrency(
   address: Address | undefined,
   withNative?: boolean
@@ -15,8 +26,10 @@ export function useCurrency(
       currentChain: wallet.currentChain,
     };
   });
-  // Get the actual wrapped native token address from WNATIVE
-  const wrappedNativeAddress = WNATIVE[currentChainId]?.address;
+  // Get the actual wrapped native token address from WNATIVE or fallback to chain config
+  const wrappedNativeAddress = WNATIVE[currentChainId]?.address || 
+    (currentChainId === 56 ? '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c' : // WBNB on BSC
+     currentChain.wrappedNativeToken?.address);
   
   const isWNative =
     address && wrappedNativeAddress && 
@@ -26,12 +39,29 @@ export function useCurrency(
   
 
   const token = useAlgebraToken(isNative ? ADDRESS_ZERO : address);
+  
+  // Currency loading check
 
   const extendedEther = ExtendedNative.onChain(
     currentChainId,
     currentChain.nativeToken.symbol,
     currentChain.nativeToken.name
   );
+  
+  // For BSC, ensure the wrapped property points to WBNB
+  if (currentChainId === 56 && extendedEther) {
+    const wbnb = new Token(
+      56,
+      '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c',
+      18,
+      'WBNB',
+      'Wrapped BNB'
+    );
+    Object.defineProperty(extendedEther, 'wrapped', {
+      get() { return wbnb; },
+      configurable: true
+    });
+  }
   
 
   if (withNative) return isNative || isWNative ? extendedEther : token;

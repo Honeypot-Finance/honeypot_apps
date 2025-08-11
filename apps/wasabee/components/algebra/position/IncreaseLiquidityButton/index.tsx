@@ -23,7 +23,7 @@ import { Address } from 'viem';
 import JSBI from 'jsbi';
 import { useEffect, useMemo } from 'react';
 import { useAccount, useContractWrite } from 'wagmi';
-import { useSimulateAlgebraPositionManagerMulticall } from '@/wagmi-generated';
+import { useSimulateAlgebraPositionManagerMulticall } from '@honeypot/shared/wagmi-generated';
 import { useObserver } from 'mobx-react-lite';
 import { wallet } from '@honeypot/shared/lib/wallet';
 interface IncreaseLiquidityButtonProps {

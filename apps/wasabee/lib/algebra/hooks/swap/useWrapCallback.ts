@@ -14,7 +14,7 @@ import { DEFAULT_NATIVE_SYMBOL } from '@/config/algebra/default-chain-id';
 import {
   useSimulateWrappedNativeDeposit,
   useSimulateWrappedNativeWithdraw,
-} from '@/wagmi-generated';
+} from '@honeypot/shared/wagmi-generated';
 import { TransactionType } from '../../state/pendingTransactionsStore';
 import { useToastify } from '@/lib/hooks/useContractToastify';
 import { wallet } from '@honeypot/shared/lib/wallet';

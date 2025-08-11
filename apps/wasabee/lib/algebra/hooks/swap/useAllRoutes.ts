@@ -50,11 +50,24 @@ function computeAllRoutes(
 
   if (!tokenIn || !tokenOut) throw new Error('Missing tokenIn/tokenOut');
 
+  // Log once at the start
+  if (currentPath.length === 0) {
+    console.log('Starting route computation:', {
+      tokenIn: `${tokenIn.symbol} (${tokenIn.address})`,
+      tokenOut: `${tokenOut.symbol} (${tokenOut.address})`,
+      poolsToCheck: pools.length
+    });
+  }
+
   for (const pool of pools) {
     const [tokenA, tokenB] = pool.tokens;
 
     const { liquidity, price, tick, fee } = pool.pool;
-    if (price === '0' || liquidity === '0') continue;
+    
+    if (!price || price === '0' || !liquidity || liquidity === '0') {
+      console.log(`Skipping pool ${tokenA.symbol}/${tokenB.symbol} - price: ${price}, liquidity: ${liquidity}`);
+      continue;
+    }
 
     const newPool = new Pool(
       tokenA,
@@ -67,17 +80,28 @@ function computeAllRoutes(
       Number(DEFAULT_TICK_SPACING)
     );
 
-    if (
-      !newPool ||
-      !newPool.involvesToken(tokenIn) ||
-      currentPath.find((pathPool) => poolEquals(newPool, pathPool))
-    )
+    const involvesTokenIn = newPool.involvesToken(tokenIn);
+    
+    if (!involvesTokenIn) {
+      // Log why pool was skipped
+      if (currentPath.length === 0) {
+        console.log(`Pool ${tokenA.symbol}/${tokenB.symbol} doesn't involve ${tokenIn.symbol}`);
+      }
       continue;
+    }
+
+    if (currentPath.find((pathPool) => poolEquals(newPool, pathPool))) {
+      continue;
+    }
 
     const outputToken = newPool.token0.equals(tokenIn)
       ? newPool.token1
       : newPool.token0;
+      
+    console.log(`Pool ${tokenA.symbol}/${tokenB.symbol} routes ${tokenIn.symbol} to ${outputToken.symbol}`);
+    
     if (outputToken.equals(tokenOut)) {
+      console.log(`Found direct route: ${tokenIn.symbol} -> ${outputToken.symbol}`);
       allPaths.push(
         new Route([...currentPath, newPool], startCurrencyIn, currencyOut)
       );
@@ -131,6 +155,17 @@ export function useAllRoutes(
         routes: [],
       };
 
+    console.log('Computing routes:', {
+      currencyIn: currencyIn.symbol,
+      currencyOut: currencyOut.symbol,
+      poolsCount: pools.length,
+      pools: pools.map(p => ({
+        tokens: `${p.tokens[0].symbol}/${p.tokens[1].symbol}`,
+        liquidity: p.pool.liquidity,
+        hasLiquidity: p.pool.liquidity !== '0'
+      }))
+    });
+
     // Hack
     // const singleIfWrapped = (currencyIn.isNative || currencyOut.isNative)
 
@@ -144,6 +179,13 @@ export function useAllRoutes(
       currencyIn,
       isMultihop ? 3 : 1
     );
+
+    console.log(`Generated ${routes.length} routes`);
+    if (routes.length > 0) {
+      console.log('Routes:', routes.map(r => 
+        r.pools.map(p => `${p.token0.symbol}/${p.token1.symbol}`).join(' -> ')
+      ));
+    }
 
     return { loading: false, routes };
   }, [

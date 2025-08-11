@@ -15,7 +15,7 @@ import {
   useReadErc20BalanceOf,
   useReadIchiVaultAllowToken0,
   useReadIchiVaultAllowToken1,
-} from '@/wagmi-generated';
+} from '@honeypot/shared/wagmi-generated';
 import { ContractWrite } from '@honeypot/shared';
 import BigNumber from 'bignumber.js';
 import { observer } from 'mobx-react-lite';

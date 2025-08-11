@@ -345,7 +345,7 @@ export function AllAquaberaVaults({
           <tbody className="divide-y divide-[#4D4D4D]">
             {!sortedVaults.length ? (
               <tr className="hover:bg-white border-white h-full">
-                <td colSpan={5} className="h-24 text-center text-black">
+                <td colSpan={6} className="h-24 text-center text-black">
                   No results.
                 </td>
               </tr>

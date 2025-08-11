@@ -24,7 +24,7 @@ import { NonfungiblePositionManager } from '@cryptoalgebra/sdk';
 import { usePositionFees } from '@/lib/algebra/hooks/positions/usePositionFees';
 import { useAccount, useContractWrite } from 'wagmi';
 import { Address } from 'viem';
-import { useSimulateAlgebraPositionManagerMulticall } from '@/wagmi-generated';
+import { useSimulateAlgebraPositionManagerMulticall } from '@honeypot/shared/wagmi-generated';
 import { TransactionType } from '@/lib/algebra/state/pendingTransactionsStore';
 import { useState, useMemo } from 'react';
 
