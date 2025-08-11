@@ -61,16 +61,22 @@ export function useQuotesResults({
     // cacheTime: 5_000,
   });
 
-  // Debug logging
-  if (quotesResults && quotesResults.length > 0) {
-    console.log('Quote results:', {
-      routes: routes.map(r => r.pools.map(p => `${p.token0.symbol}/${p.token1.symbol}`).join(' -> ')),
-      quotesResults,
-      exactInput,
-      amountIn: amountIn?.toSignificant(),
-      amountOut: amountOut?.toSignificant(),
-    });
-  }
+  // Debug logging - only log errors once
+  useMemo(() => {
+    if (quotesResults && quotesResults.length > 0 && !isLoading) {
+      const failedQuotes = quotesResults.filter((r) => r.status === 'failure');
+      if (failedQuotes.length > 0) {
+        console.error('Quote failed:', {
+          failedCount: failedQuotes.length,
+          errors: failedQuotes.map((r) => r.error?.message || r.error),
+          quoterAddress: ALGEBRA_QUOTER_V2,
+          functionName,
+          amountIn: amountIn?.toSignificant(),
+          quoteInputs: quoteInputs[0], // Log first quote input for debugging
+        });
+      }
+    }
+  }, [quotesResults?.[0]?.status, isLoading]); // Only re-log if first quote status changes
 
   return {
     data: quotesResults,
