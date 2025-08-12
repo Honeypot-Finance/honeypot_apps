@@ -63,10 +63,12 @@ export const useSwapState = create<SwapState>((set, get) => ({
   lastFocusedField: SwapField.INPUT,
   actions: {
     selectCurrency: (field, currencyId) => {
+      console.log('[swapStore.selectCurrency] Called:', { field, currencyId });
       const otherField =
         field === SwapField.INPUT ? SwapField.OUTPUT : SwapField.INPUT;
 
       if (currencyId && currencyId === get()[otherField].currencyId) {
+        console.log('[swapStore.selectCurrency] Same currency, switching');
         set({
           independentField:
             get().independentField === SwapField.INPUT
@@ -80,10 +82,15 @@ export const useSwapState = create<SwapState>((set, get) => ({
           [otherField]: { currencyId: get()[field].currencyId },
         });
       } else {
+        console.log('[swapStore.selectCurrency] Setting currency for field:', field);
         set({
           [field]: { currencyId },
         });
       }
+      console.log('[swapStore.selectCurrency] New state:', {
+        INPUT: get()[SwapField.INPUT].currencyId,
+        OUTPUT: get()[SwapField.OUTPUT].currencyId,
+      });
     },
     switchCurrencies: () =>
       set({
@@ -98,12 +105,18 @@ export const useSwapState = create<SwapState>((set, get) => ({
         [SwapField.INPUT]: { currencyId: get()[SwapField.OUTPUT].currencyId },
         [SwapField.OUTPUT]: { currencyId: get()[SwapField.INPUT].currencyId },
       }),
-    typeInput: (field, typedValue) =>
+    typeInput: (field, typedValue) => {
+      console.log('[swapStore.typeInput] Called:', { field, typedValue });
       set({
         independentField: field,
         lastFocusedField: field,
         typedValue,
-      }),
+      });
+      console.log('[swapStore.typeInput] New state:', {
+        independentField: field,
+        typedValue,
+      });
+    },
   },
 }));
 
@@ -118,12 +131,22 @@ export function useSwapActionHandlers(): {
 
   const onCurrencySelection = useCallback(
     (field: SwapFieldType, currency: Currency) => {
+      console.log('[onCurrencySelection] Called:', {
+        field,
+        currency: {
+          symbol: currency?.symbol,
+          isToken: currency?.isToken,
+          isNative: currency?.isNative,
+          address: currency?.isToken ? currency.address : 'N/A'
+        }
+      });
       const currencyId = currency.isToken
         ? currency.address
         : currency.isNative
           ? ADDRESS_ZERO
           : "";
       
+      console.log('[onCurrencySelection] Computed currencyId:', currencyId);
       selectCurrency(field, currencyId);
     },
     [selectCurrency]
@@ -195,13 +218,39 @@ export function useDerivedSwapInfo(): {
   const inputCurrency = useCurrency(inputCurrencyId);
   const outputCurrency = useCurrency(outputCurrencyId);
 
+  console.log('[useDerivedSwapInfo] State:', {
+    inputCurrencyId,
+    outputCurrencyId,
+    inputCurrency: inputCurrency ? {
+      symbol: inputCurrency.symbol,
+      isNative: inputCurrency.isNative,
+      address: inputCurrency.isToken ? inputCurrency.address : 'native'
+    } : null,
+    outputCurrency: outputCurrency ? {
+      symbol: outputCurrency.symbol,
+      isNative: outputCurrency.isNative,
+      address: outputCurrency.isToken ? outputCurrency.address : 'native'
+    } : null,
+    typedValue,
+    independentField
+  });
+
   const isExactIn: boolean = independentField === SwapField.INPUT;
   const parsedAmount = useMemo(
-    () =>
-      tryParseAmount(
+    () => {
+      const result = tryParseAmount(
         typedValue,
         (isExactIn ? inputCurrency : outputCurrency) ?? undefined
-      ),
+      );
+      console.log('[useDerivedSwapInfo] parsedAmount:', {
+        typedValue,
+        isExactIn,
+        currency: isExactIn ? inputCurrency?.symbol : outputCurrency?.symbol,
+        parsedAmount: result?.toExact(),
+        rawAmount: result?.quotient?.toString()
+      });
+      return result;
+    },
     [typedValue, isExactIn, inputCurrency, outputCurrency]
   );
 
@@ -259,13 +308,26 @@ export function useDerivedSwapInfo(): {
     inputError = `Connect Wallet`;
   }
 
-  if (!parsedAmount) {
-    inputError = inputError ?? `Enter an amount`;
-  }
-
   if (!currencies[SwapField.INPUT] || !currencies[SwapField.OUTPUT]) {
     inputError = inputError ?? `Select a token`;
   }
+
+  // Only show "Enter an amount" if tokens are selected but no amount is entered
+  if (!parsedAmount && currencies[SwapField.INPUT] && currencies[SwapField.OUTPUT]) {
+    inputError = inputError ?? `Enter an amount`;
+  }
+
+  console.log('[useDerivedSwapInfo] Error check:', {
+    account: !!account,
+    hasInputCurrency: !!currencies[SwapField.INPUT],
+    hasOutputCurrency: !!currencies[SwapField.OUTPUT],
+    inputCurrencySymbol: currencies[SwapField.INPUT]?.symbol,
+    outputCurrencySymbol: currencies[SwapField.OUTPUT]?.symbol,
+    hasParsedAmount: !!parsedAmount,
+    parsedAmountValue: parsedAmount?.toExact(),
+    typedValue,
+    inputError
+  });
 
   const toggledTrade = trade.trade ?? undefined;
 

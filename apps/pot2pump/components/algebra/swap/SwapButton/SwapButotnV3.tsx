@@ -36,6 +36,19 @@ const SwapButtonV3 = ({ onSwapSuccess }: { onSwapSuccess?: () => void }) => {
     inputError: swapInputError,
   } = useDerivedSwapInfo();
 
+  console.log('[SwapButtonV3] State:', {
+    swapInputError,
+    typedValue,
+    independentField,
+    hasInputCurrency: !!currencies[SwapField.INPUT],
+    hasOutputCurrency: !!currencies[SwapField.OUTPUT],
+    inputSymbol: currencies[SwapField.INPUT]?.symbol,
+    outputSymbol: currencies[SwapField.OUTPUT]?.symbol,
+    hasParsedAmount: !!parsedAmount,
+    parsedAmountValue: parsedAmount?.toExact(),
+    hasTrade: !!trade
+  });
+
   const { onSwitchTokens, onCurrencySelection, onUserInput } =
     useSwapActionHandlers();
 

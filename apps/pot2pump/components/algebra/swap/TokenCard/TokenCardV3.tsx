@@ -343,10 +343,11 @@ const TokenCardV3 = ({
   const handleInput = useMemo(
     () =>
       debounce((value: string) => {
+        console.log('[TokenCardV3.handleInput] Debounced value:', value);
         if (value === '.') value = '0.';
         handleValueChange?.(value);
       }, 200),
-    []
+    [handleValueChange]
   );
 
   const handleTokenSelect = (newCurrency: Currency) => {

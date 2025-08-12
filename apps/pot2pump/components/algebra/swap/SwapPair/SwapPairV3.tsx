@@ -98,12 +98,14 @@ const SwapPairV3 = ({
 
   const handleTypeInput = useCallback(
     (value: string) => {
+      console.log('[SwapPairV3.handleTypeInput] Called with value:', value);
       onUserInput(SwapField.INPUT, value);
     },
     [onUserInput]
   );
   const handleTypeOutput = useCallback(
     (value: string) => {
+      console.log('[SwapPairV3.handleTypeOutput] Called with value:', value);
       onUserInput(SwapField.OUTPUT, value);
     },
     [onUserInput]
