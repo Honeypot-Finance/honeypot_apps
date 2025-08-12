@@ -36,49 +36,13 @@ function CardContainer({
   return (
     <div
       className={cn(
-        'flex flex-col w-full gap-y-4 justify-center items-center rounded-2xl text-[#202020]',
+        'flex flex-col w-full gap-y-4 justify-center items-center rounded-2xl text-white',
         type === 'primary'
-          ? 'bg-[#FFCD4D]'
+          ? 'bg-[#140D06] border border-[#333333]'
           : bordered
-          ? 'border-3 border-[#F2C34A] bg-transparent'
-          : 'bg-transparent',
-        bordered &&
-          [
-            'px-2 sm:px-4 md:px-8 bg-repeat-x',
-            showTopBorder && showBottomBorder
-              ? [
-                  'py-12 sm:py-20',
-                  'bg-[length:auto_40px,auto_40px] sm:bg-[length:auto_70px,auto_70px]',
-                  topOffset
-                    ? `bg-[position:-65px_top,left_bottom]`
-                    : `bg-[position:left_top,left_bottom]`,
-                  variant === 'default'
-                    ? "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]"
-                    : "bg-[url('/images/card-container/dark/top-border.svg'),url('/images/card-container/dark/bottom-border.svg')]",
-                ]
-              : showTopBorder
-              ? [
-                  'pt-12 sm:pt-20 pb-2 sm:pb-4',
-                  'bg-[length:auto_40px] sm:bg-[length:auto_70px]',
-                  topOffset
-                    ? `bg-[position:-65px_top]`
-                    : `bg-[position:left_top]`,
-                  variant === 'default'
-                    ? "bg-[url('/images/card-container/honey/honey-border.png')]"
-                    : "bg-[url('/images/card-container/dark/top-border.svg')]",
-                ]
-              : showBottomBorder
-              ? [
-                  'pb-12 sm:pb-20 pt-2 sm:pt-4',
-                  'bg-left-bottom',
-                  'bg-[length:auto_40px] sm:bg-[length:auto_70px]',
-                  "bg-[url('/images/card-container/dark/bottom-border.svg')]",
-                ]
-              : 'py-2 sm:py-4',
-          ]
-            .flat()
-            .filter(Boolean)
-            .join(' '),
+          ? 'bg-[#140D06] border border-[#333333]'
+          : 'bg-[#140D06]',
+        bordered && 'px-2 sm:px-4 md:px-8 py-4 sm:py-6',
         className
       )}
     >

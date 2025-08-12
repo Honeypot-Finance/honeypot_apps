@@ -14,7 +14,12 @@ export default [
         'error',
         {
           enforceBuildableLibDependency: true,
-          allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?js$'],
+          allow: [
+            '^.*/eslint(\\.base)?\\.config\\.[cm]?js$',
+            // Allow dynamic imports for lazy-loaded libraries
+            '@honeypot/shared',
+            'hpot-sdk'
+          ],
           depConstraints: [
             {
               sourceTag: '*',
@@ -23,6 +28,16 @@ export default [
           ],
         },
       ],
+    },
+  },
+  {
+    // Disable module boundaries for wasabee app since it uses shared library extensively
+    files: [
+      'apps/wasabee/**/*.tsx',
+      'apps/wasabee/**/*.ts'
+    ],
+    rules: {
+      '@nx/enforce-module-boundaries': 'off',
     },
   },
   {

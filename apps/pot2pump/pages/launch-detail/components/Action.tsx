@@ -36,14 +36,8 @@ const SuccessAction = observer(
           pair.raiseToken?.address.toLowerCase() ===
           wallet.currentChain.nativeToken.address.toLowerCase()
         }
-        disableFromSelection={
-          pair.launchedToken?.address.toLowerCase() ===
-          currencies[SwapField.INPUT]?.wrapped.address.toLowerCase()
-        }
-        disableToSelection={
-          pair.launchedToken?.address.toLowerCase() ===
-          currencies[SwapField.OUTPUT]?.wrapped.address.toLowerCase()
-        }
+        disableFromSelection={false}
+        disableToSelection={false}
       />
     );
   }

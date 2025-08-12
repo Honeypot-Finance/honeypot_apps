@@ -1,7 +1,7 @@
 import { Input } from '@/components/algebra/ui/input';
 import { formatBalance } from '@/lib/algebra/utils/common/formatBalance';
 import { formatUSD } from '@/lib//algebra/utils/common/formatUSD';
-import { Currency, Percent } from '@cryptoalgebra/sdk';
+import { Currency, Percent, ExtendedNative } from '@cryptoalgebra/sdk';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useAccount, useBalance, useWatchBlockNumber } from 'wagmi';
 import { Address, zeroAddress } from 'viem';
@@ -139,10 +139,10 @@ const SlippageTolerance = () => {
               setSlippageInput('');
               setSlippageError(false);
             }}
-            className={`text-right border-none text-md font-semibold bg-card-dark rounded-l-xl rounded-r-none w-[70px]`}
+            className={`text-right border-none text-md font-semibold bg-[#271A0C] rounded-l-xl rounded-r-none w-[70px]`}
             placeholder={'0.0'}
           />
-          <div className="bg-card-dark text-sm p-2 pt-2.5 rounded-r-xl select-none">
+          <div className="bg-[#271A0C] text-sm p-2 pt-2.5 rounded-r-xl select-none">
             %
           </div>
         </div>
@@ -216,9 +216,9 @@ const TransactionDeadline = () => {
             setDeadlineError(false);
           }}
           color={deadlineError ? 'red' : ''}
-          className={`text-left border-none text-md font-semibold bg-card-dark rounded-l-xl rounded-r-none w-full`}
+          className={`text-left border-none text-md font-semibold bg-[#271A0C] rounded-l-xl rounded-r-none w-full`}
         />
-        <div className="bg-card-dark text-sm p-2 pt-2.5 rounded-r-xl select-none">
+        <div className="bg-[#271A0C] text-sm p-2 pt-2.5 rounded-r-xl select-none">
           minutes
         </div>
       </div>
@@ -355,7 +355,7 @@ const TokenCardV3 = ({
 
   return (
     <div className="flex-1 w-full flex flex-col gap-y-3">
-      <div className="text-black flex items-center justify-between px-2">
+      <div className="text-gray-300 flex items-center justify-between px-2">
         <span>{label}</span>
         <div className="flex items-center gap-x-2">
           {currency && account && showBalance && (
@@ -378,38 +378,101 @@ const TokenCardV3 = ({
         </div>
       </div>
 
-      <div className="w-full  rounded-2xl border bg-card-dark shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] flex items-center justify-between px-4 py-2.5 gap-x-2">
+      <div className="w-full rounded-2xl border border-[#333333] bg-[#271A0C] shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] flex items-center justify-between px-4 py-2.5 gap-x-2">
         <div className="grid grid-cols-[max-content_auto] w-full">
           <div className="flex-grow">
             <TokenSelector
               staticTokenList={staticTokenList}
               value={
-                currency?.wrapped?.address
-                  ? Token.getToken({
-                      address: currency?.wrapped.address,
-                      isNative: currency.isNative,
-                      chainId: wallet.currentChainId.toString(),
-                    })
+                currency
+                  ? (() => {
+                      // For wrapped native tokens, check if address matches wrapped native token
+                      const currencyAddress = currency.isNative ? undefined : (currency.isToken ? (currency as any).address : undefined);
+                      const isWrappedNative = !currency.isNative && 
+                        currencyAddress?.toLowerCase() === wallet.currentChain?.wrappedNativeToken?.address?.toLowerCase();
+                      
+                      
+                      // Find the token in the validated tokens list first
+                      const validatedToken = currency.isNative 
+                        ? wallet.currentChain.validatedTokens?.find(t => t.isNative)
+                        : wallet.currentChain.validatedTokens?.find(
+                            t => !t.isNative && t.address.toLowerCase() === currencyAddress?.toLowerCase()
+                          );
+                      
+                      if (validatedToken) {
+                        // If it's the wrapped native token, ensure it has the correct symbol
+                        if (!currency.isNative && isWrappedNative && wallet.currentChain?.wrappedNativeToken) {
+                          // Create a new token with the correct symbol for wrapped native
+                          const correctedToken = Token.getToken({
+                            ...validatedToken,
+                            symbol: wallet.currentChain.wrappedNativeToken.symbol || validatedToken.symbol,
+                            name: wallet.currentChain.wrappedNativeToken.name || validatedToken.name,
+                          });
+                          return correctedToken;
+                        }
+                        
+                        return validatedToken;
+                      }
+                      
+                      // Create a new token if not found
+                      // Override symbol for wrapped native tokens since SDK has wrong symbol
+                      let tokenSymbol = currency.symbol;
+                      let tokenName = currency.name;
+                      if (isWrappedNative && wallet.currentChain?.wrappedNativeToken) {
+                        tokenSymbol = wallet.currentChain.wrappedNativeToken.symbol || currency.symbol;
+                        tokenName = wallet.currentChain.wrappedNativeToken.name || currency.name;
+                      }
+                      
+                      
+                      const token = Token.getToken({
+                        address: currency.isNative 
+                          ? "0x0000000000000000000000000000000000000000" 
+                          : currencyAddress || "",
+                        isNative: currency.isNative,
+                        chainId: wallet.currentChainId.toString(),
+                        symbol: tokenSymbol,
+                        name: tokenName,
+                        decimals: currency.decimals,
+                        // For native tokens or wrapped native, use appropriate logo
+                        logoURI: currency.isNative 
+                          ? wallet.currentChain?.nativeToken?.logoURI || wallet.currentChain?.wrappedNativeToken?.logoURI
+                          : isWrappedNative
+                          ? wallet.currentChain?.wrappedNativeToken?.logoURI
+                          : undefined,
+                      });
+                      return token;
+                    })()
                   : undefined
               }
               disableSelection={disableSelection}
               onSelect={async (token) => {
                 await token.init();
+                
+                // Check if this is the wrapped native token
+                const isWrappedNative = !token.isNative && 
+                  token.address?.toLowerCase() === wallet.currentChain?.wrappedNativeToken?.address?.toLowerCase();
+                
+                // Use the correct symbol for wrapped native tokens
+                const tokenSymbol = isWrappedNative && wallet.currentChain?.wrappedNativeToken?.symbol
+                  ? wallet.currentChain.wrappedNativeToken.symbol
+                  : token.symbol;
+                const tokenName = isWrappedNative && wallet.currentChain?.wrappedNativeToken?.name
+                  ? wallet.currentChain.wrappedNativeToken.name
+                  : token.name;
+                
                 handleTokenSelect(
                   token.isNative
-                    ? new AlgebraToken(
+                    ? ExtendedNative.onChain(
                         wallet.currentChainId,
-                        zeroAddress,
-                        wallet.currentChain.nativeToken.decimals,
                         wallet.currentChain.nativeToken.symbol,
                         wallet.currentChain.nativeToken.name
-                      ) && ({ isNative: true } as Currency)
+                      )
                     : new AlgebraToken(
                         wallet.currentChainId,
                         token.address,
                         Number(token.decimals),
-                        token.symbol,
-                        token.name
+                        tokenSymbol,
+                        tokenName
                       )
                 );
               }}
@@ -442,7 +505,7 @@ const TokenCardV3 = ({
                   ),
                   input: cn(
                     '!bg-transparent',
-                    '!text-[#202020]',
+                    '!text-white',
                     'text-right',
                     'text-xl',
                     '!pr-0',
@@ -454,7 +517,7 @@ const TokenCardV3 = ({
                   clearButton: cn(
                     'opacity-70',
                     'hover:opacity-100',
-                    '!text-black',
+                    '!text-gray-400',
                     '!p-0',
                     'end-0 start-auto'
                   ),

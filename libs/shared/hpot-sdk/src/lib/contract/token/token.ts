@@ -187,6 +187,11 @@ export class Token implements BaseContract {
     if (!!this.logoURI || !wallet.isInit) {
       return;
     }
+    
+    // Check if address is valid before proceeding
+    if (!this.address || this.address === '' || this.address === zeroAddress) {
+      return;
+    }
 
     if (!force) {
       //cache the logoURI
@@ -269,6 +274,13 @@ export class Token implements BaseContract {
     if (this.isInit && !force) {
       return;
     }
+    
+    // Skip initialization for invalid addresses (but not zero address for native tokens)
+    if (!this.address || (this.address === '' || this.address === '0x') && !this.isNative) {
+      console.warn('Skipping token init for invalid address:', this.address);
+      return this;
+    }
+    
     const loadName = options?.loadName ?? true;
     const loadSymbol = options?.loadSymbol ?? true;
     const loadDecimals = options?.loadDecimals ?? true;
@@ -366,6 +378,11 @@ export class Token implements BaseContract {
   }
 
   async loadDecimals(force?: boolean) {
+    if (this.isNative || this.address === zeroAddress) {
+      this.decimals = wallet.currentChain.nativeToken.decimals;
+      return;
+    }
+    
     if (!force) {
       const cachedDecimals = localStorage.getItem(
         `token-decimals-${wallet.currentChainId}-${this.address.toLowerCase()}`
@@ -413,6 +430,12 @@ export class Token implements BaseContract {
   }
 
   async getPot2PumpAddress() {
+    // Check if address is valid before proceeding
+    if (!this.address || this.address === '' || this.address === zeroAddress) {
+      this.pot2pumpAddress = null;
+      return null;
+    }
+    
     if (this.pot2pumpAddress !== undefined) {
       return this.pot2pumpAddress;
     }
@@ -455,6 +478,13 @@ export class Token implements BaseContract {
   }
 
   async getBalance() {
+    // Check for invalid address (but allow zero address for native tokens)
+    if (!this.address || ((this.address === '' || this.address === '0x') && !this.isNative)) {
+      console.warn('Cannot get balance for invalid address:', this.address);
+      this.balanceWithoutDecimals = new BigNumber(0);
+      return;
+    }
+    
     try {
       const balance =
         this.isNative || this.address === zeroAddress

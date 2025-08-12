@@ -118,10 +118,10 @@ export const Profile = observer(() => {
                 classNames={{
                   base: 'relative w-full',
                   tabList:
-                    'flex rounded-2xl border border-[#202020] bg-white p-2 md:p-4 shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] py-1 md:py-2 px-2 md:px-3.5 absolute left-1/2 -translate-x-1/2 z-10 -top-5',
+                    'flex rounded-2xl border border-[#202020] bg-[#271A0C] p-2 md:p-4 shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] py-1 md:py-2 px-2 md:px-3.5 absolute left-1/2 -translate-x-1/2 z-10 -top-5 text-white',
                   tab: 'text-sm md:text-base px-2 md:px-3 py-1 md:py-2',
                   panel: cn(
-                    'flex flex-col h-full w-full gap-y-4 justify-center items-center bg-[#FFCD4D] rounded-2xl text-[#202020]',
+                    'flex flex-col h-full w-full gap-y-4 justify-center items-center bg-[#140D06] rounded-2xl text-white',
                     'px-4 md:px-8 pt-[70px] pb-[70px]',
                     "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]",
                     'bg-[position:-65px_top,_-85px_bottom]',

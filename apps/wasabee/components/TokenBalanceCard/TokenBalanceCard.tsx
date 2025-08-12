@@ -48,14 +48,14 @@ export const TokenBalanceCard = observer(({ token }: TokenBalanceCardProps) => {
   });
 
   return (
-    <tr className="transition-colors bg-white text-black">
+    <tr className="transition-colors bg-transparent text-black">
       {/* Asset Column */}
       <td className="py-4 px-6">
         <div className="flex items-center gap-3">
           <TokenLogo token={token} />
           <div className="flex flex-col">
-            <p className="text-black font-medium">{token.displayName}</p>
-            <p className="text-black/60 text-sm">{token.name}</p>
+            <p className="text-white font-medium">{token.displayName}</p>
+            <p className="text-white/60 text-sm">{token.name}</p>
           </div>
         </div>
       </td>
@@ -80,13 +80,13 @@ export const TokenBalanceCard = observer(({ token }: TokenBalanceCardProps) => {
       {/* Balance Column */}
       <td className="py-4 px-6 text-right">
         <div className="flex flex-col">
-          <span className="text-black">
+          <span className="text-white">
             {DynamicFormatAmount({
               amount: token.balance.toString(),
               decimals: 4,
             })}
           </span>
-          <span className="text-xs text-black/60">${tokenValue}</span>
+          <span className="text-xs text-white/60">${tokenValue}</span>
         </div>
       </td>
 
@@ -99,7 +99,7 @@ export const TokenBalanceCard = observer(({ token }: TokenBalanceCardProps) => {
               style={{ width: `${proportion}%` }}
             />
           </div>
-          <span className="text-black w-[60px] text-right">{proportion}%</span>
+          <span className="text-white w-[60px] text-right">{proportion}%</span>
         </div>
       </td>
 

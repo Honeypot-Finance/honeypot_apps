@@ -16,7 +16,7 @@ import {
 import { ICHIVaultABI } from './lib/abis/aquabera/ICHIVault';
 import { ICHIVaultFactoryABI } from './lib/abis/aquabera/ICHIVaultFactory';
 import { ERC20ABI } from './lib/abis/erc20';
-import { contractAddresses } from './config/contractAddresses';
+import { contractAddresses } from '@honeypot/shared/config/contractAddresses';
 import { Address } from 'viem';
 
 const contracts: ContractConfig[] = [

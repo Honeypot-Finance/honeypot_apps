@@ -7,7 +7,12 @@ import { Layout } from '@/components/layout';
 import { NextLayoutPage } from '@/types/nextjs';
 import { WagmiProvider, useWalletClient } from 'wagmi';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { AvatarComponent, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import {
+  AvatarComponent,
+  darkTheme,
+  RainbowKitProvider,
+  Theme,
+} from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -27,6 +32,7 @@ import { deserialize, serialize } from 'wagmi';
 import { useSubgraphClient } from '@honeypot/shared';
 import { createWagmiConfig } from '@honeypot/shared/config/wagmi';
 import { NextUIProvider } from '@nextui-org/react';
+import { merge } from 'lodash';
 import { useVaultDataPrefetch } from '@/hooks/useVaultDataPrefetch';
 
 const config = createWagmiConfig();
@@ -75,6 +81,56 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
   return children;
 };
 
+const myTheme: Theme = merge(darkTheme(), {
+  colors: {
+    modalBackground: '#271A0C',
+    modalText: '#ffffff',
+    modalTextSecondary: '#999999',
+    profileForeground: '#140D06',
+    accentColor: '#F59E0B',
+    accentColorForeground: '#ffffff',
+    actionButtonBorder: '#333333',
+    actionButtonBorderMobile: '#333333',
+    actionButtonSecondaryBackground: '#1a1410',
+    closeButton: '#666666',
+    closeButtonBackground: '#271A0C',
+    connectButtonBackground: '#271A0C',
+    connectButtonBackgroundError: '#FF494A',
+    connectButtonInnerBackground: '#1a1410',
+    connectButtonText: '#ffffff',
+    connectButtonTextError: '#ffffff',
+    connectionIndicator: '#4BB543',
+    downloadBottomCardBackground: '#140D06',
+    downloadTopCardBackground: '#271A0C',
+    error: '#FF494A',
+    generalBorder: '#333333',
+    generalBorderDim: '#2a2522',
+    menuItemBackground: '#1a1410',
+    modalBackdrop: 'rgba(0, 0, 0, 0.7)',
+    modalBorder: '#333333',
+    modalTextDim: '#999999',
+    profileAction: '#271A0C',
+    profileActionHover: '#1a1410',
+    selectedOptionBorder: '#F59E0B',
+    standby: '#FFD641',
+  },
+  radii: {
+    actionButton: '12px',
+    connectButton: '12px',
+    menuButton: '12px',
+    modal: '20px',
+    modalMobile: '20px',
+  },
+  shadows: {
+    connectButton: '0 4px 12px rgba(0, 0, 0, 0.4)',
+    dialog: '0 8px 32px rgba(0, 0, 0, 0.5)',
+    profileDetailsAction: '0 2px 6px rgba(0, 0, 0, 0.3)',
+    selectedOption: '0 2px 6px rgba(0, 0, 0, 0.3)',
+    selectedWallet: '0 2px 6px rgba(0, 0, 0, 0.3)',
+    walletLogo: '0 2px 16px rgba(0, 0, 0, 0.3)',
+  },
+});
+
 const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
   return (
     <Image
@@ -111,7 +167,7 @@ export default function App({
           >
             <ApolloProvider client={infoClient}>
               <trpc.Provider client={trpcQueryClient} queryClient={queryClient}>
-                <RainbowKitProvider avatar={CustomAvatar}>
+                <RainbowKitProvider avatar={CustomAvatar} theme={myTheme}>
                   <NextUIProvider>
                     <ToastContainer />
                     <Provider>
@@ -128,7 +184,9 @@ export default function App({
                           );
                         }}
                       ></Inspector>
-                      <ComponentLayout className={`${dmSans.className} ${bebasNeue.variable} ${inter.variable}`}>
+                      <ComponentLayout
+                        className={`${dmSans.className} ${bebasNeue.variable} ${inter.variable}`}
+                      >
                         <Component {...pageProps} />
                       </ComponentLayout>
                     </Provider>

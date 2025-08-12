@@ -14,6 +14,8 @@ import dayjs from "dayjs";
 import BigNumber from "bignumber.js";
 import { MemePairContract } from "@/services/contract/launches/pot2pump/memepair-contract";
 import { DedicatedPot2Pump } from "@/config/dedicatedPot2pump";
+import { wallet } from '@honeypot/shared';
+import { observer } from 'mobx-react-lite';
 
 interface TransactionHistoryProps {
   pairAddress: string;
@@ -26,7 +28,7 @@ interface DedicatedTransactionHistoryProps {
   refreshTrigger?: number;
 }
 
-const TransactionHistory: React.FC<TransactionHistoryProps> = ({
+const TransactionHistory: React.FC<TransactionHistoryProps> = observer(({
   pairAddress,
   pair,
   refreshTrigger,
@@ -182,7 +184,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                     <td className="py-2 sm:py-4 px-3 sm:px-6 text-xs sm:text-base font-mono">
                       <div className="flex items-center gap-1 sm:gap-2">
                         <a
-                          href={`https://berascan.com/tx/${tx.id}`}
+                          href={wallet.currentChain?.getTransactionExplorerUrl(tx.id) || '#'}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="hover:text-[#FFCD4D] flex items-center gap-1"
@@ -202,7 +204,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                     <td className="py-2 sm:py-4 px-3 sm:px-6 text-xs sm:text-base font-mono">
                       <div className="flex items-center gap-1 sm:gap-2">
                         <a
-                          href={`https://berascan.com/address/${tx.account.id}`}
+                          href={wallet.currentChain?.getAddressExplorerUrl(tx.account.id) || '#'}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="hover:text-[#FFCD4D] flex items-center gap-1"
@@ -333,7 +335,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
       </div>
     </div>
   );
-};
+});
 
 export const DedicatedTransactionHistory: React.FC<
   DedicatedTransactionHistoryProps
@@ -462,7 +464,7 @@ export const DedicatedTransactionHistory: React.FC<
                     <td className="py-2 sm:py-4 px-3 sm:px-6 text-xs sm:text-base font-mono">
                       <div className="flex items-center gap-1 sm:gap-2">
                         <a
-                          href={`https://berascan.com/tx/${tx.id}`}
+                          href={wallet.currentChain?.getTransactionExplorerUrl(tx.id) || '#'}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="hover:text-[#FFCD4D] flex items-center gap-1"
@@ -482,7 +484,7 @@ export const DedicatedTransactionHistory: React.FC<
                     <td className="py-2 sm:py-4 px-3 sm:px-6 text-xs sm:text-base font-mono">
                       <div className="flex items-center gap-1 sm:gap-2">
                         <a
-                          href={`https://berascan.com/address/${tx.account.id}`}
+                          href={wallet.currentChain?.getAddressExplorerUrl(tx.account.id) || '#'}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="hover:text-[#FFCD4D] flex items-center gap-1"

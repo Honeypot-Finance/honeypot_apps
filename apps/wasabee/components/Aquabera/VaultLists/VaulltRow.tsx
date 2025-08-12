@@ -4,8 +4,8 @@ import { ICHIVaultContract } from '@honeypot/shared';
 import {
   useReadIchiVaultAllowToken0,
   useReadIchiVaultAllowToken1,
-} from '@/wagmi-generated';
-import { Tooltip } from '@nextui-org/react';
+} from '@honeypot/shared/wagmi-generated';
+import { Skeleton, Tooltip } from '@nextui-org/react';
 import { InfoIcon } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import { VaultTag } from '../VaultTag';
@@ -28,7 +28,7 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
 
   return (
     <tr
-      className="transition-colors bg-white text-black hover:bg-gray-50 cursor-pointer"
+      className="transition-colors bg-[#86715B] text-black hover:bg-gray-50 cursor-pointer"
       onClick={() => (window.location.href = `/vault/${vault.address}`)}
     >
       {/* Token pair */}

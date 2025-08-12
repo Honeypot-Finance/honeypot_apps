@@ -8,7 +8,8 @@ import {
 } from './../../lib/priceFeed/priceFeedTypes';
 
 const definedApiKey = process.env['DEFINED_API_KEY'] || '';
-const priceFeed = new TokenPriceDataFeed(new DefinedPriceFeed(definedApiKey));
+console.log('🔑 Defined API Key configured:', definedApiKey ? 'Yes' : 'No (will fail!)');
+const priceFeed = new TokenPriceDataFeed(new DefinedPriceFeed(definedApiKey), true); // Enable debug mode
 
 export const priceFeedRouter = router({
   getSingleTokenPrice: publicProcedure

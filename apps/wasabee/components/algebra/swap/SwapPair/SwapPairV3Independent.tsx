@@ -312,6 +312,9 @@ const SwapPairV3Independent = ({
         address: computePoolAddress({
           tokenA: baseCurrency.wrapped,
           tokenB: quoteCurrency.wrapped,
+          initCodeHashManualOverride:
+            wallet.currentChain.contracts.algebraPoolInitCodeHash,
+          poolDeployer: wallet.currentChain.contracts.algebraPoolDeployer,
         }),
       });
       pairContract.init().then((pair) => {
@@ -351,7 +354,7 @@ const SwapPairV3Independent = ({
   }, [baseCurrency, quoteCurrency, isUpdatingPriceChart]);
 
   return (
-    <div className="flex flex-col gap-1 relative bg-white custom-dashed px-[18px] py-6 w-full">
+    <div className="flex flex-col gap-1 relative bg-[#1a1410] rounded-xl border border-[#2a2522] custom-dashed px-[18px] py-6 w-full">
       <TokenCardV3Independent
         staticTokenList={staticFromTokenList}
         value={formattedAmounts[SwapField.INPUT] || ''}

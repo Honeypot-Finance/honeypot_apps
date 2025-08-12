@@ -8,8 +8,9 @@ import { MemePairContract } from '@/services/contract/launches/pot2pump/memepair
 import Image from 'next/image';
 import pot2pumpIcon from '@/public/images/bera/smoking_bera.png';
 import poolIcon from '@/public/images/bera/beekeeperBear.png';
-import { poolExists } from '@honeypot/shared';
+import { poolExists, wallet } from '@honeypot/shared';
 import { shortenAddressString } from '@/lib/utils';
+import { observer } from 'mobx-react-lite';
 interface Holder {
   rank: string;
   address: string;
@@ -91,7 +92,7 @@ const HolderAddressDisplay = ({
   }
 };
 
-const TopHoldersTable = ({
+const TopHoldersTable = observer(({
   projectPool,
   launchedToken,
   depositedLaunchedTokenWithoutDecimals,
@@ -172,7 +173,7 @@ const TopHoldersTable = ({
                   </td>
                   <td className="py-4 px-6">
                     <a
-                      href={`https://berascan.com/address/${holder.address}`}
+                      href={wallet.currentChain?.getAddressExplorerUrl(holder.address) || '#'}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-3"
@@ -210,6 +211,6 @@ const TopHoldersTable = ({
       )}
     </div>
   );
-};
+});
 
 export default TopHoldersTable;

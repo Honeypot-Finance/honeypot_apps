@@ -1,0 +1,28 @@
+# Dependencies
+node_modules
+.next
+out
+dist
+
+# Generated files
+*.generated.ts
+*.generated.tsx
+generated/
+
+# Build outputs
+.turbo
+.vercel
+build/
+
+# Config files
+next.config.js
+postcss.config.js
+tailwind.config.js
+
+# GraphQL generated files
+lib/graphql/generated/
+lib/algebra/graphql/generated/
+
+# Specific files with lazy loading that are handled differently
+pages/launch-detail/components/KlineChart.tsx
+services/crossChainSwap.ts

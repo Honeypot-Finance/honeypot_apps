@@ -14,8 +14,8 @@ import {
   SinglePoolDocument,
 } from '../generated/graphql';
 import { Address, getContract } from 'viem';
-import { algebraPositionManagerAddress } from '@/wagmi-generated';
-import { algebraPositionManagerAbi } from '@/wagmi-generated';
+import { algebraPositionManagerAddress } from '@honeypot/shared/wagmi-generated';
+import { algebraPositionManagerAbi } from '@honeypot/shared/wagmi-generated';
 import { useEffect, useState } from 'react';
 import { MAX_UINT128 } from '@/config/algebra/max-uint128';
 import { wallet } from '@honeypot/shared/lib/wallet';

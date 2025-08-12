@@ -14,7 +14,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { createWagmiConfig } from '@honeypot/shared';
 import { trpc, trpcQueryClient } from '../lib/trpc';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { DM_Sans, Inter } from 'next/font/google';
 import { Inspector, InspectParams } from 'react-dev-inspector';
@@ -28,6 +28,7 @@ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persist
 import { deserialize, serialize } from 'wagmi';
 import { useSubgraphClient } from '@honeypot/shared';
 
+// Create wagmi config (handles SSR internally)
 const config = createWagmiConfig();
 
 // enableStaticRendering(true)
@@ -49,9 +50,7 @@ const dmSans = DM_Sans({
 });
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
-  const { data: walletClient } = useWalletClient({
-    config,
-  });
+  const { data: walletClient } = useWalletClient();
 
   useEffect(() => {
     wallet.initWallet(walletClient);
@@ -99,9 +98,12 @@ export default function App({
     deserialize,
   });
 
+  // Use the config directly since it now handles SSR
+  const wagmiConfig = config;
+
   return (
     <ErrorBoundary>
-      <WagmiProvider config={config}>
+      <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={queryClient}>
           <PersistQueryClientProvider
             client={queryClient}

@@ -24,7 +24,7 @@ import { NonfungiblePositionManager } from '@cryptoalgebra/sdk';
 import { usePositionFees } from '@/lib/algebra/hooks/positions/usePositionFees';
 import { useAccount, useContractWrite } from 'wagmi';
 import { Address } from 'viem';
-import { useSimulateAlgebraPositionManagerMulticall } from '@/wagmi-generated';
+import { useSimulateAlgebraPositionManagerMulticall } from '@honeypot/shared/wagmi-generated';
 import { TransactionType } from '@/lib/algebra/state/pendingTransactionsStore';
 import { useState, useMemo } from 'react';
 
@@ -130,7 +130,7 @@ const PositionCard = ({
   if (!selectedPosition || loading)
     return (
       <div className="flex flex-col gap-4 rounded-3xl p-4 bg-white border border-[#F7931A20] w-full h-full">
-        <div className="flex flex-col gap-2 text-center justify-center items-center h-full">
+        <div className="text-black flex flex-col gap-2 text-center justify-center items-center h-full">
           Select a position to view details
         </div>
       </div>

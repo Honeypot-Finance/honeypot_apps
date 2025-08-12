@@ -6,8 +6,11 @@ import {
 import { useMemo } from "react";
 import { useContractReads } from "wagmi";
 import { useAllRoutes } from "./useAllRoutes";
-import { ALGEBRA_QUOTER_V2 } from "@/config/algebra/addresses";
 import { algebraQuoterV2ABI } from "@/lib/abis/algebra-contracts/ABIs";
+import { wallet } from "@honeypot/shared/lib/wallet";
+import { useObserver } from "mobx-react-lite";
+import { contractAddresses } from "@honeypot/shared";
+import { Address } from "viem";
 
 export function useQuotesResults({
   exactInput,
@@ -22,10 +25,28 @@ export function useQuotesResults({
   currencyIn?: Currency;
   currencyOut?: Currency;
 }) {
+  const { currentChainId } = useObserver(() => ({
+    currentChainId: wallet.currentChainId,
+  }));
+
   const { routes, loading: routesLoading } = useAllRoutes(
     exactInput ? amountIn?.currency : currencyIn,
     !exactInput ? amountOut?.currency : currencyOut
   );
+
+  const quoterAddress = useMemo(() => {
+    const chainConfig = contractAddresses[currentChainId.toString()];
+    const address = chainConfig?.algebraQuoterV2 || contractAddresses.default?.algebraQuoterV2;
+    
+    console.log('[useQuotesResults] Quoter address:', {
+      currentChainId,
+      quoterAddress: address,
+      chainConfig: !!chainConfig,
+      hasAlgebraQuoterV2: !!chainConfig?.algebraQuoterV2
+    });
+    
+    return address as Address;
+  }, [currentChainId]);
 
   const quoteInputs = useMemo(() => {
     return routes.map((route) => [
@@ -48,7 +69,7 @@ export function useQuotesResults({
     refetch,
   } = useContractReads({
     contracts: quoteInputs.map((quote: any) => ({
-      address: ALGEBRA_QUOTER_V2,
+      address: quoterAddress,
       abi: algebraQuoterV2ABI,
       functionName: functionName,
       args: quote,

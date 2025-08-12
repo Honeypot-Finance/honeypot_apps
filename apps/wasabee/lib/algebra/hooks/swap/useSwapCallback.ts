@@ -11,7 +11,7 @@ import { formatBalance } from '../../utils/common/formatBalance';
 import {
   algebraRouterAbi,
   useSimulateAlgebraRouterMulticall,
-} from '@/wagmi-generated';
+} from '@honeypot/shared/wagmi-generated';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { SwapField } from '@/types/algebra/types/swap-field';
 import { useSwapActionHandlers } from '../../state/swapStore';

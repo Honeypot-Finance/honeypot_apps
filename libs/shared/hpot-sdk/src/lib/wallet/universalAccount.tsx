@@ -60,21 +60,48 @@ export class UniversalAccount {
 
   async loadUniversalAccountInfo() {
     if (this.universalAccount) {
-      const primaryAssetsResponse =
-        await this.universalAccount.getPrimaryAssets();
-      const smartAccountOptionsResponse =
-        await this.universalAccount.getSmartAccountOptions();
+      try {
+        const primaryAssetsResponse =
+          await this.universalAccount.getPrimaryAssets();
+        
+        // getSmartAccountOptions can fail with "System error" if the account isn't ready
+        let smartAccountOptionsResponse;
+        try {
+          smartAccountOptionsResponse =
+            await this.universalAccount.getSmartAccountOptions();
+        } catch (optionsError: any) {
+          console.warn('Failed to get smart account options:', optionsError.message);
+          // If it fails, try to use cached address if available
+          if (this.evmSmartAccountAddress) {
+            smartAccountOptionsResponse = {
+              name: 'UniversalAccount',
+              version: '1.0',
+              ownerAddress: wallet.account || '',
+              smartAccountAddress: this.evmSmartAccountAddress,
+              solanaSmartAccountAddress: this.solanaSmartAccountAddress,
+            } as ISmartAccountOptions;
+          } else {
+            // If we can't get any info, skip the update
+            console.error('Universal Account not fully initialized');
+            return;
+          }
+        }
 
-      runInAction(() => {
-        this.universalAccountAssetValueUSD = primaryAssetsResponse;
-        this.universalAccountInfo = smartAccountOptionsResponse;
+        runInAction(() => {
+          this.universalAccountAssetValueUSD = primaryAssetsResponse;
+          this.universalAccountInfo = smartAccountOptionsResponse;
 
-        this.evmSmartAccountAddress =
-          smartAccountOptionsResponse.smartAccountAddress as Address;
-        this.solanaSmartAccountAddress =
-          smartAccountOptionsResponse.solanaSmartAccountAddress as Address;
-        this.accountUsdValue = primaryAssetsResponse.totalAmountInUSD;
-      });
+          this.evmSmartAccountAddress =
+            smartAccountOptionsResponse.smartAccountAddress as Address;
+          this.solanaSmartAccountAddress =
+            smartAccountOptionsResponse.solanaSmartAccountAddress as Address;
+          this.accountUsdValue = primaryAssetsResponse.totalAmountInUSD;
+        });
+      } catch (error: any) {
+        console.error('Failed to load Universal Account info:', error);
+        // Don't throw the error, just log it
+        // This allows the app to continue functioning even if Universal Account has issues
+      }
     }
   }
 
@@ -139,18 +166,63 @@ export class UniversalAccount {
 
   async deposit(token: Token, amount: string) {
     try {
-      token.transfer.call([
-        this.evmSmartAccountAddress,
-        BigInt(
-          new BigNumber(amount).multipliedBy(10 ** token.decimals).toFixed()
-        ),
-      ]);
+      // Original implementation - but let's fix it
+      // The issue is that token.transfer doesn't exist as a function
+      // We need to use the contract's write method properly
+      
+      const amountInSmallestUnit = BigInt(
+        new BigNumber(amount).multipliedBy(10 ** token.decimals).toFixed()
+      );
+
+      console.log('Depositing:', {
+        token: token.symbol,
+        amount,
+        amountInSmallestUnit: amountInSmallestUnit.toString(),
+        to: this.evmSmartAccountAddress,
+      });
+
+      // Based on the pattern from buyToken and withdraw methods,
+      // we should directly use wallet.walletClient for the transaction
+      if (token.isNative) {
+        // Send native token
+        const hash = await wallet.walletClient.sendTransaction({
+          to: this.evmSmartAccountAddress as `0x${string}`,
+          value: amountInSmallestUnit,
+          account: wallet.account as `0x${string}`,
+          chain: wallet.currentChain.chain,
+        });
+        
+        console.log('Native deposit hash:', hash);
+        return { hash };
+      } else {
+        // Send ERC20 token using transfer function
+        const hash = await wallet.walletClient.writeContract({
+          address: token.address as `0x${string}`,
+          abi: [{
+            name: 'transfer',
+            type: 'function',
+            inputs: [
+              { name: 'recipient', type: 'address' },
+              { name: 'amount', type: 'uint256' },
+            ],
+            outputs: [{ name: '', type: 'bool' }],
+          }],
+          functionName: 'transfer',
+          args: [this.evmSmartAccountAddress as `0x${string}`, amountInSmallestUnit],
+          account: wallet.account as `0x${string}`,
+          chain: wallet.currentChain.chain,
+        });
+        
+        console.log('ERC20 deposit hash:', hash);
+        return { hash };
+      }
     } catch (error: any) {
       console.log({ error });
       WrappedToastify.error({
         title: 'Error depositing token',
         message: error.message,
       });
+      throw error; // Re-throw to handle in the caller
     }
   }
 

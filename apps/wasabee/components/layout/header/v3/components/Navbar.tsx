@@ -31,16 +31,8 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col items-center font-gliker">
-      <Image
-        width={139}
-        height={66}
-        alt="hanging rope"
-        className="mb-[-20px]"
-        src="/images/header/hanging-rope.svg"
-      />
-      <div className="bg-[#FFCD4D] rounded-xl flex flex-col py-4 px-3 border-[1.5px] border-[#010101] shadow-[2px_4px_0px_0px_#FFF]">
-        <div className="flex gap-2 py-1">
+    <nav className="flex items-center">
+      <div className="flex items-center gap-2">
           {menuList.map((menu) =>
             Array.isArray(menu.path) ? (
               <Dropdown
@@ -53,11 +45,11 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 <DropdownTrigger>
                   <Button
                     className={cn(
-                      'min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020] hover:text-white',
+                      'min-h-[40px] h-10 px-4 py-2 font-medium bg-transparent text-gray-300 hover:text-[#F59E0B] rounded-lg transition-colors',
                       (menu.path as SubMenu[]).some(
                         (item) => item.routePath === router.pathname
                       )
-                        ? 'bg-[#202020] text-white'
+                        ? 'text-[#F59E0B]'
                         : ''
                     )}
                   >
@@ -66,7 +58,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 </DropdownTrigger>
                 <DropdownMenu
                   aria-label={menu.title}
-                  className="bg-[#FFCD4D] rounded-lg p-2"
+                  className="bg-[#1a1410] rounded-lg p-1 border border-[#333333] mt-2"
                   onAction={(key: Key) => {
                     const subMenu = (menu.path as SubMenu[]).find(
                       (item: SubMenu) => item.routePath === key
@@ -80,10 +72,10 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                     <DropdownItem
                       key={subMenu.routePath}
                       className={cn(
-                        'font-bold data-[hover=true]:bg-[#202020] data-[hover=true]:text-white p-2',
+                        'font-medium data-[hover=true]:bg-[#271A0C] data-[hover=true]:text-[#F59E0B] p-2 text-gray-300 rounded-md',
                         router.pathname === subMenu.routePath
-                          ? 'bg-[#202020] text-white'
-                          : 'text-[#202020]'
+                          ? 'text-[#F59E0B]'
+                          : 'text-gray-300'
                       )}
                       startContent={
                         subMenu.icon && (
@@ -109,9 +101,9 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 <Button
                 key={menu.title}
                   className={cn(
-                  'h-8 py-0 font-bold bg-transparent text-sm lg:text-base text-black hover:bg-[#202020]/80 hover:text-white',
+                  'h-10 px-4 py-2 font-medium bg-transparent text-sm lg:text-base text-gray-300 hover:text-[#F59E0B] rounded-lg transition-colors',
                   menu.routePath === router.pathname
-                    ? 'bg-[#202020] text-white'
+                    ? 'text-[#F59E0B]'
                     : ''
                   )}
                 onPress={() => {
@@ -125,56 +117,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
             )
           )}
 
-          <Dropdown>
-            <DropdownTrigger
-              className={cn(
-                'min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020]/70 hover:text-white rounded-full'
-              )}
-            >
-              <Button isIconOnly variant="light" className="p-0 w-8 h-8">
-                <FaPlusCircle className="w-6 h-6" />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu>
-              <DropdownItem
-                href={DOMAIN_MAP.POT2PUMP}
-                onPress={() => window.open(DOMAIN_MAP.POT2PUMP, '_self')}
-                className="font-bold data-[hover=true]:bg-[#202020] data-[hover=true]:text-white p-2"
-                startContent={
-                  <Image
-                    src="/images/blueAstro.8533943d.svg"
-                    alt="pot2pump"
-                    width={16}
-                    height={16}
-                    className="w-4 h-4"
-                  />
-                }
-                key="pot2pump"
-              >
-                Pot2Pump
-              </DropdownItem>
-
-              <DropdownItem
-                href={DOMAIN_MAP.ALL_IN_ONE}
-                onPress={() => window.open(DOMAIN_MAP.ALL_IN_ONE, '_self')}
-                className="font-bold data-[hover=true]:bg-[#202020] data-[hover=true]:text-white p-2"
-                startContent={
-                  <Image
-                    src="/images/honey.png"
-                    alt="all-in-one"
-                    width={16}
-                    height={16}
-                    className="w-4 h-4"
-                  />
-                }
-                key="all-in-one"
-              >
-                All In One
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </div>
       </div>
-    </div>
+    </nav>
   );
 };

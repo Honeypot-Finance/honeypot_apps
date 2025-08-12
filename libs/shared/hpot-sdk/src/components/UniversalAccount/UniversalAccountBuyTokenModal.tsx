@@ -43,7 +43,7 @@ export const UniversalAccountBuyTokenModal = observer(() => {
   }
 
   return (
-    <div className="flex flex-col relative bg-white custom-dashed px-[18px] py-6 w-full gap-y-4">
+    <div className="flex flex-col relative  custom-dashed px-[18px] py-6 w-full gap-y-4">
       <div className="w-full flex items-center justify-between gap-x-2">
         <h2 className="font-bold">Universal Account</h2>
         <div className="flex items-center gap-x-2">

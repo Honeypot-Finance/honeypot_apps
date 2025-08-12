@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test BSC Swap Fix</title>
+</head>
+<body>
+    <h1>BSC Swap Fix Verification</h1>
+    <p>The following changes have been made to fix the BSC swap issue:</p>
+    
+    <h2>Problem Identified:</h2>
+    <ul>
+        <li>The ALGEBRA_QUOTER_V2 address was hardcoded to Berachain's address (0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)</li>
+        <li>This caused quote calls to fail on BSC, preventing trade creation despite finding valid routes</li>
+    </ul>
+    
+    <h2>Solution Implemented:</h2>
+    <ul>
+        <li>Modified <code>/apps/pot2pump/lib/algebra/hooks/swap/useQuotesResults.ts</code></li>
+        <li>Now dynamically fetches the quoter address from contractAddresses based on current chain ID</li>
+        <li>BSC will now use its own algebraQuoterV2 address from the shared SDK configuration</li>
+    </ul>
+    
+    <h2>Key Changes:</h2>
+    <ol>
+        <li>Added currentChainId from wallet observer</li>
+        <li>Created quoterAddress useMemo that fetches chain-specific address</li>
+        <li>Uses contractAddresses[currentChainId].algebraQuoterV2</li>
+        <li>Falls back to default if chain config not found</li>
+    </ol>
+    
+    <h2>Expected Result:</h2>
+    <p>The swap component should now work correctly on BSC:</p>
+    <ul>
+        <li>✅ Tokens can be selected</li>
+        <li>✅ Amounts can be entered</li>
+        <li>✅ Routes are found</li>
+        <li>✅ Quotes are fetched using correct BSC quoter address</li>
+        <li>✅ Trade object is created successfully</li>
+        <li>✅ Swap button shows "Swap" instead of "Select an amount"</li>
+    </ul>
+    
+    <h2>Testing Instructions:</h2>
+    <ol>
+        <li>Clear Nx cache: <code>sudo rm -rf .nx</code></li>
+        <li>Start the app: <code>pnpm p</code> or <code>npx nx dev pot2pump --port 9001</code></li>
+        <li>Connect wallet to BSC (Chain ID 56)</li>
+        <li>Select tokens (e.g., BNB to USDT)</li>
+        <li>Enter an amount</li>
+        <li>Verify swap button is enabled and shows "Swap"</li>
+    </ol>
+</body>
+</html>

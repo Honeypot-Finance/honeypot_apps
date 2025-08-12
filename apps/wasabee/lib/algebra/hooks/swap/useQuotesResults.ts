@@ -61,6 +61,23 @@ export function useQuotesResults({
     // cacheTime: 5_000,
   });
 
+  // Debug logging - only log errors once
+  useMemo(() => {
+    if (quotesResults && quotesResults.length > 0 && !isLoading) {
+      const failedQuotes = quotesResults.filter((r) => r.status === 'failure');
+      if (failedQuotes.length > 0) {
+        console.error('Quote failed:', {
+          failedCount: failedQuotes.length,
+          errors: failedQuotes.map((r) => r.error?.message || r.error),
+          quoterAddress: ALGEBRA_QUOTER_V2,
+          functionName,
+          amountIn: amountIn?.toSignificant(),
+          quoteInputs: quoteInputs[0], // Log first quote input for debugging
+        });
+      }
+    }
+  }, [quotesResults?.[0]?.status, isLoading]); // Only re-log if first quote status changes
+
   return {
     data: quotesResults,
     isLoading: isLoading || routesLoading,

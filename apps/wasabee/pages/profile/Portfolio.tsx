@@ -88,14 +88,14 @@ export const PortfolioTab = observer(() => {
           <ChevronUpIcon
             className={`h-3 w-3 ${
               sortField === field && sortDirection === 'asc'
-                ? 'text-black'
+                ? 'text-white'
                 : 'text-[#4D4D4D]'
             }`}
           />
           <ChevronDownIcon
             className={`h-3 w-3 ${
               sortField === field && sortDirection === 'desc'
-                ? 'text-black'
+                ? 'text-white'
                 : 'text-[#4D4D4D]'
             }`}
           />
@@ -105,14 +105,14 @@ export const PortfolioTab = observer(() => {
   );
 
   return (
-    <div className="custom-dashed-3xl w-full p-2 sm:p-6 bg-white">
+    <div className="custom-dashed-3xl w-full p-2 sm:p-6 bg-[#271A0C]">
       <div className="flex justify-between items-center mb-4">
         <Link
           href="https://app.rhino.fi/bridge/?refId=DeFi_HPOT&token=USDC&chainOut=BERACHAIN&chainIn=ETHEREUM"
           target="_blank"
           className="md:mb-4 md:w-full md:justify-end"
         >
-          <Button className="bg-white text-xs md:text-base px-2 md:px-4">
+          <Button className="bg-[#271A0C] text-xs md:text-base px-2 md:px-4">
             <div className="flex items-center gap-2">
               <Image
                 src={rhinoLogo}
@@ -133,8 +133,8 @@ export const PortfolioTab = observer(() => {
           <Dropdown>
             <DropdownTrigger>
               <Button
-                className="bg-white border border-[#2D2D2D] rounded-xl shadow-[2px_2px_0px_0px_#000] px-3 py-1.5 text-xs text-black"
-                endContent={<ChevronDown className="h-4 w-4 text-black" />}
+                className="bg-[#271A0C] border border-[#2D2D2D] rounded-xl shadow-[2px_2px_0px_0px_#000] px-3 py-1.5 text-xs text-white"
+                endContent={<ChevronDown className="h-4 w-4 text-white" />}
               >
                 Sort by:{' '}
                 {sortOptions.find((option) => option.key === sortField)?.label}
@@ -142,7 +142,7 @@ export const PortfolioTab = observer(() => {
             </DropdownTrigger>
             <DropdownMenu
               aria-label="Sort options"
-              className="bg-white border border-[#2D2D2D] rounded-xl shadow-[2px_2px_0px_0px_#000] p-1"
+              className="bg-[#271A0C] border border-[#2D2D2D] rounded-xl shadow-[2px_2px_0px_0px_#000] p-1"
               onAction={(key) => {
                 setSortField(key.toString() as SortField);
                 setSortDirection('desc');
@@ -151,7 +151,7 @@ export const PortfolioTab = observer(() => {
               {sortOptions.map((option) => (
                 <DropdownItem
                   key={option.key}
-                  className={`text-black text-sm p-2 ${
+                  className={` text-sm p-2 ${
                     sortField === option.key ? 'bg-[#FFCD4D]' : ''
                   }`}
                 >
@@ -171,13 +171,16 @@ export const PortfolioTab = observer(() => {
               .map((_, index) => (
                 <div
                   key={index}
-                  className="mb-4 p-4 bg-white rounded-lg shadow border border-[#4D4D4D]/20"
+                  className="mb-4 p-4 bg-[#271A0C] rounded-lg shadow border border-[#4D4D4D]/20"
                 >
                   <Skeleton className="h-12 w-full rounded-lg" />
                 </div>
               ))
           : getSortedTokens.map((token, index) => (
-              <div key={index} className="mb-4 p-4 bg-white custom-dashed-3xl">
+              <div
+                key={index}
+                className="mb-4 p-4 bg-[#271A0C] custom-dashed-3xl"
+              >
                 <div className="flex justify-between items-center mb-3">
                   <div className="font-medium">Asset</div>
                   <div className="flex items-center gap-2">
@@ -217,7 +220,7 @@ export const PortfolioTab = observer(() => {
 
                 <div className="mt-4 flex justify-center">
                   <Button
-                    className="w-full border border-[#2D2D2D] bg-[#FFCD4D] hover:bg-[#FFD56A] text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-4 py-2"
+                    className="w-full border border-[#2D2D2D] bg-[#FFCD4D] hover:bg-[#FFD56A] text-white rounded-2xl shadow-[2px_2px_0px_0px_#000] px-4 py-2"
                     onClick={() => {
                       window.location.href = `/swap?inputCurrency=${token.address}`;
                     }}
@@ -244,14 +247,14 @@ export const PortfolioTab = observer(() => {
                     <ChevronUpIcon
                       className={`h-3 w-3 ${
                         sortField === 'name' && sortDirection === 'asc'
-                          ? 'text-black'
+                          ? 'text-white'
                           : 'text-[#4D4D4D]'
                       }`}
                     />
                     <ChevronDownIcon
                       className={`h-3 w-3 ${
                         sortField === 'name' && sortDirection === 'desc'
-                          ? 'text-black'
+                          ? 'text-white'
                           : 'text-[#4D4D4D]'
                       }`}
                     />
@@ -296,11 +299,11 @@ export const PortfolioTab = observer(() => {
 
       <div className="p-4 border-t border-[#2D2D2D] mt-4">
         <div className="flex justify-between items-center">
-          <span className="text-black">Total Portfolio Value:</span>
+          <span className="text-white">Total Portfolio Value:</span>
           {portfolio.isLoading ? (
             <Skeleton className="h-8 w-32 rounded-lg" />
           ) : (
-            <span className="text-black font-bold">
+            <span className="text-white font-bold">
               ${portfolio.totalBalanceFormatted}
             </span>
           )}

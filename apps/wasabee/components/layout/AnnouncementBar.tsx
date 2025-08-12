@@ -73,7 +73,7 @@ const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="w-full bg-[#FFCD4D]/80 relative p-2 h-[66px]"
+          className="w-full bg-[#271A0C] relative p-2 h-[66px] border-b border-[#333333]"
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

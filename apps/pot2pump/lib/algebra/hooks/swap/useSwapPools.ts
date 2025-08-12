@@ -2,7 +2,8 @@ import { Currency, Token, computePoolAddress } from "@cryptoalgebra/sdk";
 import { useEffect, useMemo, useState } from "react";
 import { useAllCurrencyCombinations } from "./useAllCurrencyCombinations";
 import { Address } from "viem";
-import { DEFAULT_CHAIN_ID } from "@/config/algebra/default-chain-id";
+import { wallet } from "@honeypot/shared/lib/wallet";
+import { useObserver } from "mobx-react-lite";
 import {
   TokenFieldsFragment,
   useMultiplePoolsLazyQuery,
@@ -32,6 +33,10 @@ export function useSwapPools(
   loading: boolean;
 } {
   const [existingPools, setExistingPools] = useState<any[]>();
+  
+  const { currentChainId } = useObserver(() => ({
+    currentChainId: wallet.currentChainId,
+  }));
 
   const allCurrencyCombinations = useAllCurrencyCombinations(
     currencyIn,
@@ -94,14 +99,14 @@ export function useSwapPools(
         .map((pool) => ({
           tokens: [
             new Token(
-              DEFAULT_CHAIN_ID,
+              currentChainId,
               pool.token0.id,
               Number(pool.token0.decimals),
               pool.token0.symbol,
               pool.token0.name
             ),
             new Token(
-              DEFAULT_CHAIN_ID,
+              currentChainId,
               pool.token1.id,
               Number(pool.token1.decimals),
               pool.token1.symbol,
@@ -115,5 +120,5 @@ export function useSwapPools(
         }),
       loading: false,
     };
-  }, [existingPools]);
+  }, [existingPools, currentChainId]);
 }

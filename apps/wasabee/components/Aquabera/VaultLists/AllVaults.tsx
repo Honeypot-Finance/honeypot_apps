@@ -455,7 +455,7 @@ export function AllAquaberaVaults({
       </div>
 
       {/* Desktop view - table layout for medium screens and up */}
-      <div className="hidden sm:block w-full overflow-x-auto custom-dashed-3xl sm:p-6 sm:bg-white">
+      <div className="hidden sm:block w-full overflow-x-auto custom-dashed-3xl sm:p-6 sm:bg-[#271A0C]">
         <table className="w-full">
           <thead>
             <tr>
