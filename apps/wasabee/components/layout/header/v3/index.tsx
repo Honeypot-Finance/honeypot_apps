@@ -82,26 +82,30 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
             className="text-white md:hidden h-8 w-8"
           />
-          <NavbarBrand className="hidden md:flex gap-4 items-center !flex-grow-0">
+          <NavbarBrand className="hidden md:flex gap-4 items-center flex-shrink-0">
             <Link href="/" className="flex items-center gap-2 cursor-pointer">
               <Image
                 width={40}
                 height={40}
                 alt="Wasabee"
-                src="/favicon.ico"
+                src="/honeypot-icon.svg"
                 className="rounded-full w-8 h-8 md:w-10 md:h-10"
               />
-              <span className="text-lg md:text-xl font-bold text-white">
-                Honeypot DEX
+              <span className="text-lg md:text-[28.93px] font-bebas-neue font-[300] text-white">
+                HONEYPOT DEX
               </span>
             </Link>
           </NavbarBrand>
-          <div className="hidden md:flex">
-            <CustomNavbar menuList={menuList} />
-          </div>
         </NavbarContent>
 
-        <NavbarContent justify="end">
+        <NavbarContent
+          className="hidden md:flex font-bold flex-1"
+          justify="center"
+        >
+          <CustomNavbar menuList={menuList} />
+        </NavbarContent>
+
+        <NavbarContent className="flex-shrink-0" justify="end">
           <WalletConnect />
         </NavbarContent>
 

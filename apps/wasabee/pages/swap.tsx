@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { observe } from 'mobx';
 import { motion } from 'framer-motion';
 import { chart } from '@honeypot/shared/services';
 import { observer } from 'mobx-react-lite';

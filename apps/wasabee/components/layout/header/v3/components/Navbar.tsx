@@ -45,7 +45,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 <DropdownTrigger>
                   <Button
                     className={cn(
-                      'min-h-[40px] h-10 px-4 py-2 font-medium bg-transparent text-gray-300 hover:text-[#F59E0B] rounded-lg transition-colors',
+                      'h-10 px-4 py-2 font-medium bg-transparent text-base text-gray-300 hover:text-[#F59E0B] rounded-lg transition-colors',
                       (menu.path as SubMenu[]).some(
                         (item) => item.routePath === router.pathname
                       )
@@ -101,7 +101,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 <Button
                 key={menu.title}
                   className={cn(
-                  'h-10 px-4 py-2 font-medium bg-transparent text-sm lg:text-base text-gray-300 hover:text-[#F59E0B] rounded-lg transition-colors',
+                  'h-10 px-4 py-2 font-medium bg-transparent text-base text-gray-300 hover:text-[#F59E0B] rounded-lg transition-colors',
                   menu.routePath === router.pathname
                     ? 'text-[#F59E0B]'
                     : ''
