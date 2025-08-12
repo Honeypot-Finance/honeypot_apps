@@ -97,7 +97,7 @@ export default function AITokenGenerator({
               'Generate Meme Token'
             )}
           </Button>
-          <PoweredByAlphaKek />
+          {/* <PoweredByAlphaKek /> */}
         </div>
       </div>
       <p

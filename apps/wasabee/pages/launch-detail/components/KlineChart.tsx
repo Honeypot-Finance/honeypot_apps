@@ -662,7 +662,9 @@ const KlineChartComponent = observer(
               }`}
             >
               {chart.chartPricePercentageChange >= 0 ? '▲' : '▼'}{' '}
-              {isNaN(chart.chartPricePercentageChange) ? "This pair has no activity yet. Graph is not available" : `${chart.chartPricePercentageChange.toFixed(2)}%`}
+              {isNaN(chart.chartPricePercentageChange)
+                ? 'This pair has no activity yet. Graph is not available'
+                : `${chart.chartPricePercentageChange.toFixed(2)}%`}
             </span>
           </div>
         </div>
@@ -901,14 +903,14 @@ const KlineChartComponent = observer(
             </div>
           </div>
         )}
-        <Link
+        {/* <Link
           href="https://www.codex.io/"
           target="_blank"
           className="text-center text-sm text-[#808080] hover:text-[#FFCD4D] transition-colors flex items-center  gap-1"
         >
           price feed powered by{' '}
           <Image src={codexIcon} alt="Codex" width={50} height={50} />
-        </Link>
+        </Link> */}
       </div>
     );
   }

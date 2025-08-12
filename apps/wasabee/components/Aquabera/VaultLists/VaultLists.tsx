@@ -156,12 +156,6 @@ export function AquaberaList() {
           />
         )}
       </div>
-      <p className="flex text-center text-sm text-[#4D4D4D]/70 justify-center">
-        Powered by{' '}
-        <Link href="https://aquabera.com/" target="_blank">
-          <Image src={aquabera} alt="Aquabera" width={100} height={100} />
-        </Link>
-      </p>
     </div>
   );
 }

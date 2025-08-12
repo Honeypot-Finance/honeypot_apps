@@ -52,7 +52,7 @@ export function V3SwapCard({
       />
       <SwapParamsV3 />
       <SwapButtonV3 onSwapSuccess={onSwapSuccess} />
-      <PoweredByAlgebra />
+      {/* <PoweredByAlgebra /> */}
     </CardContainer>
   );
 }

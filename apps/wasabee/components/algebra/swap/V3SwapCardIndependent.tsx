@@ -116,7 +116,7 @@ export function V3SwapCardIndependent({
         onUserInput={onUserInput}
         setBestCall={setBestCall}
       />
-      <PoweredByAlgebra />
+      {/* <PoweredByAlgebra /> */}
     </CardContainer>
   );
 }
