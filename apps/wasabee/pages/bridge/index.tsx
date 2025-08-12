@@ -6,6 +6,7 @@ import { Tab } from '@nextui-org/react';
 import Image from 'next/image';
 import OrbiterBridge from './OrbiterBridge';
 import StargateBridge from './StargateBridge';
+import SwapWidget from '@ensofinance/shortcuts-widget';
 
 export default function Bridge() {
   return (
@@ -23,7 +24,7 @@ export default function Bridge() {
             'flex flex-col h-full w-full gap-y-4 items-center bg-[#140D06] rounded-2xl text-white',
             'px-8 pt-[70px] pb-[70px]',
             'border-2 border-[#3B2712]',
-            'bg-[#140D06]',
+            'bg-[#86715B]',
             // "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]",
             'bg-[position:-65px_top,_-85px_bottom]',
             'bg-[size:auto_65px,_auto_65px]',
@@ -34,13 +35,22 @@ export default function Bridge() {
           tabContent: 'text-[#202020]',
         }}
       >
-        <Tab key="orbiter" title="Orbiter" className=" ">
+        {/* <Tab key="orbiter" title="Orbiter" className=" ">
           <OrbiterBridge />
+        </Tab> */}
+
+        <Tab key="enso" title="Enso" className="*:text-black">
+          <SwapWidget
+            apiKey="ce445d5b-f9ee-453b-87ba-e672b927f44b"
+            // Optional configuration
+            enableShare={true}
+            adaptive={true}
+          />
         </Tab>
         {/* <Tab key="stargate" title="Stargate">
           <StargateBridge />
         </Tab> */}
-        <Tab
+        {/* <Tab
           key="rhino"
           href="https://app.rhino.fi/bridge/?refId=DeFi_HPOT&token=USDC&chainOut=BERACHAIN&chainIn=ETHEREUM"
           target="_blank"
@@ -50,7 +60,7 @@ export default function Bridge() {
               <span>Rhino</span>
             </div>
           }
-        ></Tab>
+        ></Tab> */}
       </Tabs>
     </div>
   );
