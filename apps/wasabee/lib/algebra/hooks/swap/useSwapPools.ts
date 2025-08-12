@@ -8,7 +8,7 @@ import {
 } from '../../graphql/generated/graphql';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { useObserver } from 'mobx-react-lite';
-import { algebraPoolABI } from '@honeypot/shared/wagmi-generated';
+import { algebraPoolAbi } from '@honeypot/shared/wagmi-generated';
 
 /**
  * Returns all the existing pools that should be considered for swapping between an input currency and an output currency
@@ -111,7 +111,7 @@ export function useSwapPools(
                 
                 const poolContract = getContract({
                   address: pool.address as Address,
-                  abi: algebraPoolABI,
+                  abi: algebraPoolAbi,
                   client: wallet.publicClient,
                 });
                 

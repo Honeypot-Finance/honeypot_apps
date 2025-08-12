@@ -37,14 +37,6 @@ export function useQuotesResults({
   const quoterAddress = useMemo(() => {
     const chainConfig = contractAddresses[currentChainId.toString()];
     const address = chainConfig?.algebraQuoterV2 || contractAddresses.default?.algebraQuoterV2;
-    
-    console.log('[useQuotesResults] Quoter address:', {
-      currentChainId,
-      quoterAddress: address,
-      chainConfig: !!chainConfig,
-      hasAlgebraQuoterV2: !!chainConfig?.algebraQuoterV2
-    });
-    
     return address as Address;
   }, [currentChainId]);
 
