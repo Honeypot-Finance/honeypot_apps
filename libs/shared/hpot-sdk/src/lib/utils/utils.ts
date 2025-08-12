@@ -189,7 +189,7 @@ export class ContractWrite<T extends (...args: any) => any> {
         confirmations: 2,
         hash,
         pollingInterval: 5000,
-        timeout: undefined,
+        timeout: 1000 * 60 * 15, // 15 minutes timeout for less Gas Price: as like OKX estimates very tiny gas Price 
       });
       console.log('transaction', transaction);
       toast.dismiss(pendingPopup);

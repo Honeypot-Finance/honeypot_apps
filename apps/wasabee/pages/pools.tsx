@@ -3,12 +3,26 @@ import { observer } from 'mobx-react-lite';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { Tab, Tabs } from '@nextui-org/react';
 import { NextLayoutPage } from '@/types/nextjs';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import PoolsList from '@/components/algebra/pools/PoolsList';
 import AquaberaList from '@/components/Aquabera/VaultLists/VaultLists';
+import { useVaultDataPrefetch } from '@/hooks/useVaultDataPrefetch';
 
 const PoolsPage: NextLayoutPage = observer(() => {
-  const [currentTab, setCurrentTab] = useState<'all' | 'my'>('all');
+  const [currentTab, setCurrentTab] = useState<'aquabera' | 'algebra'>('aquabera');
+  const [shouldPrefetch, setShouldPrefetch] = useState(false);
+  
+  // Prefetch vault data immediately when page loads
+  const vaultData = useVaultDataPrefetch();
+
+  // Start prefetching the tab after a delay to prioritize current tab loading
+  useEffect(() => {
+    const prefetchTimer = setTimeout(() => {
+      setShouldPrefetch(true);
+    }, 1500); 
+
+    return () => clearTimeout(prefetchTimer);
+  }, []);
 
   if (!wallet.currentChain.supportDEX) {
     return (
@@ -24,6 +38,8 @@ const PoolsPage: NextLayoutPage = observer(() => {
     <div className="max-w-[1200px] mx-auto px-4 xl:px-0 font-gliker w-full mt-5">
       {/* TODO: Add pool bg img */}
       <Tabs
+        selectedKey={currentTab}
+        onSelectionChange={(key) => setCurrentTab(key as 'aquabera' | 'algebra')}
         classNames={{
           tab: 'px-2 sm:px-3 sm:h-10 text-xs sm:text-sm',
           base: 'relative w-full',
@@ -48,7 +64,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
           key="aquabera"
           title={<span className="text-xs sm:text-base">Automateds Vault</span>}
         >
-          <AquaberaList />
+          <AquaberaList prefetchedData={vaultData} />
         </Tab>
         <Tab
           key="algebra"
@@ -59,6 +75,13 @@ const PoolsPage: NextLayoutPage = observer(() => {
           <PoolsList />
         </Tab>
       </Tabs>
+      
+      {/* Prefetch the other tab's component in background after initial load */}
+      {shouldPrefetch && (
+        <div style={{ position: 'absolute', left: '-9999px', top: '-9999px', visibility: 'hidden', pointerEvents: 'none' }}>
+          {currentTab === 'aquabera' ? <PoolsList /> : <AquaberaList prefetchedData={vaultData} />}
+        </div>
+      )}
     </div>
   );
 });

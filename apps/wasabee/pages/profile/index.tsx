@@ -130,11 +130,6 @@ export const Profile = observer(() => {
                     '!mt-0'
                   ),
                 }}
-                onSelectionChange={(key) => {
-                  if (key === 'portfolio') {
-                    portfolio.initPortfolio();
-                  }
-                }}
               >
                 <Tab key="portfolio" title="Portfolio">
                   <PortfolioTab />
