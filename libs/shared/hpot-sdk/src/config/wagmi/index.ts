@@ -116,29 +116,71 @@ const createCustomStorage = () => {
 };
 
 export const createWagmiConfig = (overrideConfig?: Partial<Config>) => {
+  // Return a mock config for server-side rendering that mimics the shape
+  if (typeof window === 'undefined') {
+    return {
+      _internal: {
+        chains: { setUp: false },
+        connectors: { setUp: false, value: [] },
+        transports: {},
+        current: null,
+        setup: false,
+      },
+      chains: [],
+      connectors: [],
+      state: {
+        chainId: 1,
+        connections: new Map(),
+        current: null,
+        status: 'disconnected',
+      },
+      storage: null,
+      ssr: true,
+    } as any;
+  }
+  
   // Set  wallet states to disconnected when creating new config
   shouldSetAllWalletsDisconnectedInStorage();
 
+  // Safe access to networks - ensure it's an array even if undefined
+  const safeNetworks = Array.isArray(networks) ? networks : [];
+  
   return getDefaultConfig({
     connectors: connectors(),
     appName: 'honeypot-finance',
     projectId: pId,
     transports: {
       ...Object.fromEntries(
-        networks
-          .filter((network) => network.chain?.rpcUrls?.default?.http?.[0])
+        safeNetworks
+          .filter((network) => {
+            try {
+              return network?.chain?.rpcUrls?.default?.http?.[0];
+            } catch (e) {
+              console.warn(`Network ${network?.chainId} has invalid chain config:`, e);
+              return false;
+            }
+          })
           .map((network) => [
             network.chainId,
             http(network.chain.rpcUrls.default.http[0]),
           ])
       ),
-      [berachainMainnet.id]: http(
-        'https://api.henlo-winnie.dev/v1/mainnet/08c3ed43-6326-4be6-9dc2-78a5f77b7382'
-      ),
+      ...(berachainMainnet ? {
+        [berachainMainnet.id]: http(
+          'https://api.henlo-winnie.dev/v1/mainnet/08c3ed43-6326-4be6-9dc2-78a5f77b7382'
+        ),
+      } : {}),
     },
-    // @ts-ignore
-    chains: networks
-      .filter((network) => network.chain)
+    // @ts-expect-error - chains type mismatch with RainbowKit
+    chains: safeNetworks
+      .filter((network) => {
+        try {
+          return network?.chain;
+        } catch (e) {
+          console.warn(`Network ${network?.chainId} has no chain config:`, e);
+          return false;
+        }
+      })
       .map((network) => network.chain),
     ssr: false,
     storage: createStorage({

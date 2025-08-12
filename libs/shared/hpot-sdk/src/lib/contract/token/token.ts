@@ -275,8 +275,8 @@ export class Token implements BaseContract {
       return;
     }
     
-    // Skip initialization for invalid addresses
-    if (!this.address || this.address === '' || this.address === '0x') {
+    // Skip initialization for invalid addresses (but not zero address for native tokens)
+    if (!this.address || (this.address === '' || this.address === '0x') && !this.isNative) {
       console.warn('Skipping token init for invalid address:', this.address);
       return this;
     }
@@ -319,12 +319,6 @@ export class Token implements BaseContract {
   }
 
   async loadName(force?: boolean) {
-    // Check for invalid address
-    if (!this.address || this.address === '' || this.address === '0x') {
-      console.warn('Cannot load name for invalid address:', this.address);
-      return;
-    }
-    
     if (this.address === zeroAddress || this.isNative) {
       this.name = wallet.currentChain.nativeToken.name;
       return;
@@ -353,12 +347,6 @@ export class Token implements BaseContract {
   }
 
   async loadSymbol(force?: boolean) {
-    // Check for invalid address
-    if (!this.address || this.address === '' || this.address === '0x') {
-      console.warn('Cannot load symbol for invalid address:', this.address);
-      return;
-    }
-    
     if (this.isNative || this.address === zeroAddress) {
       this.symbol = wallet.currentChain.nativeToken.symbol;
       return;
@@ -390,6 +378,11 @@ export class Token implements BaseContract {
   }
 
   async loadDecimals(force?: boolean) {
+    if (this.isNative || this.address === zeroAddress) {
+      this.decimals = wallet.currentChain.nativeToken.decimals;
+      return;
+    }
+    
     if (!force) {
       const cachedDecimals = localStorage.getItem(
         `token-decimals-${wallet.currentChainId}-${this.address.toLowerCase()}`
@@ -485,8 +478,8 @@ export class Token implements BaseContract {
   }
 
   async getBalance() {
-    // Check for invalid address
-    if (!this.address || this.address === '' || this.address === '0x') {
+    // Check for invalid address (but allow zero address for native tokens)
+    if (!this.address || ((this.address === '' || this.address === '0x') && !this.isNative)) {
       console.warn('Cannot get balance for invalid address:', this.address);
       this.balanceWithoutDecimals = new BigNumber(0);
       return;

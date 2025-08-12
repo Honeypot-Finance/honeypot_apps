@@ -92,11 +92,16 @@ export class Network {
   }
 
   init() {
+    console.log('[Network.init] Starting for chain:', this.chainId, 'displayName:', this.displayName);
+    console.log('[Network.init] validatedTokensInfo count:', Object.keys(this.validatedTokensInfo).length);
+    console.log('[Network.init] validatedTokensInfo keys:', Object.keys(this.validatedTokensInfo));
+    
     this.nativeToken = Token.getToken({
       ...this.nativeToken,
       isNative: true,
       chainId: this.chainId.toString(),
     });
+    console.log('[Network.init] Native token created:', this.nativeToken.symbol, this.nativeToken.address);
 
     this.validatedTokens = [];
     this.validatedTokens.push(this.nativeToken);
@@ -107,9 +112,13 @@ export class Network {
         address,
         chainId: this.chainId.toString(),
       });
+      console.log('[Network.init] Created token:', token.symbol, 'at', address);
       this.validatedTokensInfo[address] = token;
       this.validatedTokens.push(token);
     });
+    
+    console.log('[Network.init] Final validatedTokens count:', this.validatedTokens.length);
+    console.log('[Network.init] Final validatedTokens symbols:', this.validatedTokens.map(t => t.symbol));
 
     if (this.supportDEX) {
       getMultipleTokensData(
@@ -191,7 +200,7 @@ export const bscMainnetNetwork = new Network({
   iconUrl: 'https://bscscan.com/token/images/bnbchain2_32.png',
   chain: bscMainnet,
   nativeToken: {
-    address: '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c',
+    address: '0x0000000000000000000000000000000000000000',
     name: 'BNB',
     symbol: 'BNB',
     decimals: 18,
@@ -223,7 +232,7 @@ export const bscMainnetNetwork = new Network({
       name: 'Wrapped BNB',
       symbol: 'WBNB',
       decimals: 18,
-      logoURI: 'https://bscscan.com/token/images/bnbchain2_32.png',
+      logoURI: 'https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png',
       isRouterToken: true,
       isPopular: true,
     },
@@ -234,6 +243,40 @@ export const bscMainnetNetwork = new Network({
       logoURI: 'https://bscscan.com/token/images/centre-usdc_28.png',
       isRouterToken: true,
       isStableCoin: true,
+      isPopular: true,
+    },
+    '0x55d398326f99059ff775485246999027b3197955': {
+      name: 'Binance-Peg BSC-USD',
+      symbol: 'USDT',
+      decimals: 18,
+      logoURI: 'https://bscscan.com/token/images/busdt_32.png',
+      isRouterToken: true,
+      isStableCoin: true,
+      isPopular: true,
+    },
+    '0xe9e7cea3dedca5984780bafc599bd69add087d56': {
+      name: 'Binance-Peg BUSD Token',
+      symbol: 'BUSD',
+      decimals: 18,
+      logoURI: 'https://bscscan.com/token/images/busd_32.png',
+      isRouterToken: true,
+      isStableCoin: true,
+    },
+    '0x2170ed0880ac9a755fd29b2688956bd959f933f8': {
+      name: 'Binance-Peg Ethereum Token',
+      symbol: 'ETH',
+      decimals: 18,
+      logoURI: 'https://bscscan.com/token/images/ethereum_32.png',
+      isRouterToken: true,
+      isPopular: true,
+    },
+    '0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c': {
+      name: 'Binance-Peg BTCB Token',
+      symbol: 'BTCB',
+      decimals: 18,
+      logoURI: 'https://bscscan.com/token/images/btcb_32.png',
+      isRouterToken: true,
+      isPopular: true,
     },
   },
 });
@@ -1350,3 +1393,8 @@ export const networksMap = networks.reduce((acc, network) => {
   acc[network.chainId] = network;
   return acc;
 }, {} as Record<number | string, Network>);
+
+// Only initialize networks on client side
+if (typeof window !== 'undefined') {
+  // Networks will be initialized when wallet.initWallet() is called
+}

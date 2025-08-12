@@ -117,15 +117,15 @@ export function useSwapActionHandlers(): {
   } = useSwapState();
 
   const onCurrencySelection = useCallback(
-    (field: SwapFieldType, currency: Currency) =>
-      selectCurrency(
-        field,
-        currency.isToken
-          ? currency.address
-          : currency.isNative
-            ? ADDRESS_ZERO
-            : ""
-      ),
+    (field: SwapFieldType, currency: Currency) => {
+      const currencyId = currency.isToken
+        ? currency.address
+        : currency.isNative
+          ? ADDRESS_ZERO
+          : "";
+      
+      selectCurrency(field, currencyId);
+    },
     [selectCurrency]
   );
 

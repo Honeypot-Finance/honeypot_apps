@@ -88,9 +88,12 @@ export class Wallet {
   }
 
   async initWallet(walletClient?: WalletClient) {
-    console.log('initWallet');
+    console.log('[Wallet.initWallet] Starting');
+    console.log('[Wallet.initWallet] networks from import:', networks);
+    console.log('[Wallet.initWallet] networks count:', networks?.length);
     this.networks = networks;
     this.currentChainId = walletClient?.chain?.id || DEFAULT_CHAIN_ID;
+    console.log('[Wallet.initWallet] currentChainId:', this.currentChainId);
     const mockAccount = localStorage.getItem('mockAccount');
     this.account = mockAccount || walletClient?.account?.address || zeroAddress;
     this.contracts = {
@@ -131,7 +134,12 @@ export class Wallet {
         id: this.currentChainId,
       });
     }
+    console.log('[Wallet.initWallet] About to call currentChain.init()');
+    console.log('[Wallet.initWallet] currentChain:', this.currentChain);
+    console.log('[Wallet.initWallet] currentChain chainId:', this.currentChain?.chainId);
     this.currentChain.init();
+    console.log('[Wallet.initWallet] After currentChain.init()');
+    console.log('[Wallet.initWallet] currentChain.validatedTokens:', this.currentChain?.validatedTokens);
     await StorageState.sync();
 
     if (this.account && this.account !== zeroAddress) {

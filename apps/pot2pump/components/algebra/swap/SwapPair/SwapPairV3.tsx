@@ -3,6 +3,7 @@ import {
   computePoolAddress,
   Currency,
   CurrencyAmount,
+  ExtendedNative,
   maxAmountSpend,
   tryParseAmount,
 } from '@cryptoalgebra/sdk';
@@ -194,21 +195,25 @@ const SwapPairV3 = ({
           return;
         }
 
-        handleInputSelect(
-          Object.assign(
+        if (isInputNative) {
+          handleInputSelect(
+            ExtendedNative.onChain(
+              wallet.currentChainId,
+              wallet.currentChain.nativeToken.symbol,
+              wallet.currentChain.nativeToken.name
+            )
+          );
+        } else {
+          handleInputSelect(
             new AlgebraToken(
               wallet.currentChainId,
               token.address,
               Number(token.decimals),
               token.symbol,
               token.name
-            ),
-            {
-              isNative: isInputNative,
-              isToken: !isInputNative,
-            }
-          )
-        );
+            )
+          );
+        }
       }
 
       if (toTokenAddress) {
@@ -225,21 +230,25 @@ const SwapPairV3 = ({
           return;
         }
 
-        handleOutputSelect(
-          Object.assign(
+        if (isOutputNative) {
+          handleOutputSelect(
+            ExtendedNative.onChain(
+              wallet.currentChainId,
+              wallet.currentChain.nativeToken.symbol,
+              wallet.currentChain.nativeToken.name
+            )
+          );
+        } else {
+          handleOutputSelect(
             new AlgebraToken(
               wallet.currentChainId,
               token.address,
               Number(token.decimals),
               token.symbol,
               token.name
-            ),
-            {
-              isNative: isOutputNative,
-              isToken: !isOutputNative,
-            }
-          )
-        );
+            )
+          );
+        }
       }
     };
 
@@ -326,34 +335,34 @@ const SwapPairV3 = ({
               key={index}
               onClick={() => {
                 handleInputSelect(
-                  Object.assign(
-                    new AlgebraToken(
-                      wallet.currentChainId,
-                      pair.fromToken.address,
-                      Number(pair.fromToken.decimals),
-                      pair.fromToken.symbol,
-                      pair.fromToken.name
-                    ),
-                    {
-                      isNative: pair.fromToken.isNative,
-                      isToken: !pair.fromToken.isNative,
-                    }
-                  )
+                  pair.fromToken.isNative
+                    ? ExtendedNative.onChain(
+                        wallet.currentChainId,
+                        wallet.currentChain.nativeToken.symbol,
+                        wallet.currentChain.nativeToken.name
+                      )
+                    : new AlgebraToken(
+                        wallet.currentChainId,
+                        pair.fromToken.address,
+                        Number(pair.fromToken.decimals),
+                        pair.fromToken.symbol,
+                        pair.fromToken.name
+                      )
                 );
                 handleOutputSelect(
-                  Object.assign(
-                    new AlgebraToken(
-                      wallet.currentChainId,
-                      pair.toToken.address,
-                      Number(pair.toToken.decimals),
-                      pair.toToken.symbol,
-                      pair.toToken.name
-                    ),
-                    {
-                      isNative: pair.toToken.isNative,
-                      isToken: !pair.toToken.isNative,
-                    }
-                  )
+                  pair.toToken.isNative
+                    ? ExtendedNative.onChain(
+                        wallet.currentChainId,
+                        wallet.currentChain.nativeToken.symbol,
+                        wallet.currentChain.nativeToken.name
+                      )
+                    : new AlgebraToken(
+                        wallet.currentChainId,
+                        pair.toToken.address,
+                        Number(pair.toToken.decimals),
+                        pair.toToken.symbol,
+                        pair.toToken.name
+                      )
                 );
               }}
             >

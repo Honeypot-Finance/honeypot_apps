@@ -57,8 +57,14 @@ export const TokenSelector = observer(
       },
       filterLoading: false,
       filterTokensBySearch: async function () {
+        if (!wallet.currentChain) {
+          state.tokens = [];
+          return;
+        }
+        
         if (!state.search) {
-          state.tokens = wallet.currentChain.validatedTokens;
+          const tokens = wallet.currentChain.validatedTokens || [];
+          state.tokens = tokens;
           return;
         }
         state.filterLoading = true;
@@ -92,7 +98,7 @@ export const TokenSelector = observer(
                 token.symbol?.toLowerCase().includes(state.search.toLowerCase())
               );
             }
-          );
+          ) || [];
         }
         state.filterLoading = false;
       },
