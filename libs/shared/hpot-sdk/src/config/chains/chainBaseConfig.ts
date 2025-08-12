@@ -10,7 +10,45 @@ import {
   berachain,
   berachainBepolia,
   arbitrumSepolia,
+  bsc,
+  optimism,
+  polygon,
+  avalanche,
+  linea,
+  blast,
+  manta,
+  mode,
 } from 'viem/chains';
+
+export const bscMainnet: Chain = {
+  ...bsc,
+  rpcUrls: {
+    default: {
+      http: [
+        'https://bsc-dataseed1.binance.org',
+        'https://bsc-dataseed2.binance.org',
+        'https://bsc-dataseed3.binance.org',
+        'https://bsc-dataseed4.binance.org',
+        'https://bsc-dataseed1.defibit.io',
+        'https://bsc-dataseed2.defibit.io',
+      ],
+    },
+    public: {
+      http: [
+        'https://bsc-dataseed1.binance.org',
+        'https://bsc-dataseed2.binance.org',
+        'https://bsc-dataseed3.binance.org',
+        'https://bsc-dataseed4.binance.org',
+      ],
+    },
+  },
+  contracts: {
+    ...bsc.contracts,
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    },
+  },
+};
 
 export const arbitrumSepoliaTestnet: Chain = {
   ...arbitrumSepolia,
@@ -145,6 +183,79 @@ export const berachainMainnet: Chain = {
 export const sepoliaTestnet: Chain = {
   ...sepolia,
   testnet: true,
+};
+
+// Export chains from viem
+export const optimismMainnet = optimism;
+export const polygonMainnet = polygon;
+export const avalancheMainnet = avalanche;
+export const lineaMainnet = linea;
+export const blastMainnet = blast;
+export const mantaMainnet = manta;
+export const modeMainnet = mode;
+
+// Custom chains not in viem
+export const sonicMainnet: Chain = {
+  id: 146,
+  name: 'Sonic',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Sonic',
+    symbol: 'S',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.soniclabs.com'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Sonic Explorer',
+      url: 'https://sonicscan.io',
+    },
+  },
+};
+
+export const confluxESpaceMainnet: Chain = {
+  id: 1030,
+  name: 'Conflux eSpace',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Conflux',
+    symbol: 'CFX',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://evm.confluxrpc.com'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Conflux Scan',
+      url: 'https://evm.confluxscan.net',
+    },
+  },
+};
+
+export const merlinMainnet: Chain = {
+  id: 4200,
+  name: 'Merlin',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Bitcoin',
+    symbol: 'BTC',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.merlinchain.io'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Merlin Scan',
+      url: 'https://scan.merlinchain.io',
+    },
+  },
 };
 
 export const chains = [

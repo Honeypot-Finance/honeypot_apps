@@ -52,14 +52,38 @@ body {
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
+  background: rgb(20, 13, 6);
   background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-  @apply bg-default text-default;
+    180deg,
+    rgba(20, 13, 6, 1) 0%,
+    rgba(20, 13, 6, 1) 100%
+  );
+  min-height: 100vh;
+  color: white;
+}
+
+/* Ensure all text elements are white by default */
+* {
+  color: inherit;
+}
+
+h1, h2, h3, h4, h5, h6, p, span, div, label, td, th, li, a {
+  color: white;
+}
+
+/* Ensure input and select text is visible */
+input, select, textarea {
+  color: white;
+}
+
+/* Placeholder text */
+input::placeholder, textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Ensure buttons text is white */
+button {
+  color: white;
 }
 
 [aria-label="clear input"] {
@@ -132,7 +156,7 @@ input[type="number"] {
 }
 
 .honeypot-input {
-  @apply border-[#E18A20]/40 bg-[#E18A20]/40 placeholder:text-[#9E9DA3];
+  @apply border-[#E18A20]/40 bg-[#E18A20]/40 placeholder:text-[#9E9DA3] text-white;
 }
 
 .honeypot-button {
@@ -173,13 +197,33 @@ input[type="number"] {
   background-color: #b66e16;
 }
 
+/* Custom scrollbar for transaction history */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  background-color: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #2a2a2a;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4a4a4a;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #5a5a5a;
+}
+
 /* Date picker */
 .date-picker-wrapper div[data-slot="input-wrapper"] {
-  background-color: #ffffff;
-  color: #202020;
+  background-color: #271A0C;
+  color: white;
   border-radius: 16px;
-  border: 1px solid #000;
-  background: #fff;
+  border: 1px solid #333333;
+  background: #271A0C;
   box-shadow:
     0px 332px 93px 0px rgba(0, 0, 0, 0),
     0px 212px 85px 0px rgba(0, 0, 0, 0.01),
@@ -191,7 +235,7 @@ input[type="number"] {
 }
 
 .date-picker-wrapper div[data-slot="segment"] {
-  color: #202020;
+  color: white;
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
@@ -201,17 +245,17 @@ input[type="number"] {
 .date-picker-wrapper
   div[data-slot="input-wrapper"]
   button[data-slot="selector-button"] {
-  color: #202020;
+  color: white;
   padding: 8px;
   border-radius: 4px;
-  border: 0.667px solid #202020;
-  background: #fff;
+  border: 0.667px solid #333333;
+  background: #271A0C;
   box-shadow: 1.5px 1.5px 0px 0px #000;
   right: 12px;
 }
 
 .date-picker-wrapper span[data-slot="label"] {
-  color: #202020;
+  color: white;
   opacity: 50%;
   font-size: 12px;
 }
@@ -219,8 +263,8 @@ input[type="number"] {
 /* Calendar */
 .date-picker-calendar {
   border-radius: 12px;
-  border: 3px solid #f5c54c;
-  background: #fff;
+  border: 3px solid #F59E0B;
+  background: #271A0C;
   box-shadow: 2px 2px 0px 0px #000;
   width: 100%;
 }
@@ -230,13 +274,13 @@ input[type="number"] {
 }
 
 .date-picker-calendar thead[data-slot="grid-header"] {
-  background-color: white;
-  color: #202020;
+  background-color: #271A0C;
+  color: white;
 }
 
 .date-picker-calendar tr[data-slot="grid-header-row"] {
   background-color: transparent;
-  color: #202020;
+  color: white;
   padding-top: 4px;
   padding-bottom: 0px;
 }
@@ -244,27 +288,27 @@ input[type="number"] {
 .date-picker-calendar
   div[data-slot="header-wrapper"]
   button[data-slot="prev-button"] {
-  color: #202020;
+  color: white;
 }
 
 .date-picker-calendar
   div[data-slot="header-wrapper"]
   button[data-slot="next-button"] {
-  color: #202020;
+  color: white;
 }
 
 .date-picker-calendar
   div[data-slot="header-wrapper"]
   button[data-slot="header"] {
-  background-color: white;
-  color: #202020;
+  background-color: #271A0C;
+  color: white;
 }
 
 .date-picker-calendar
   div[data-slot="header-wrapper"]
   button[data-slot="header"]
   span[data-slot="title"] {
-  color: #202020;
+  color: white;
 }
 
 .date-picker-calendar div[data-slot="grid-wrapper"] {
@@ -276,7 +320,7 @@ input[type="number"] {
 }
 
 .date-picker-calendar div[data-slot="base"] span[data-slot="label"] {
-  color: #202020;
+  color: white;
 }
 
 .date-picker-calendar div[data-slot="header-wrapper"]::after {
@@ -285,7 +329,7 @@ input[type="number"] {
 
 .date-picker-calendar div[data-slot="base"] div[data-slot="input-wrapper"] {
   background-color: transparent;
-  color: #202020;
+  color: white;
 }
 
 .date-picker-calendar
@@ -294,7 +338,7 @@ input[type="number"] {
   div[data-slot="inner-wrapper"]
   div[data-slot="input"]
   div[data-slot="segment"] {
-  color: #202020;
+  color: white;
 }
 
 .date-picker-calendar
@@ -303,22 +347,22 @@ input[type="number"] {
   span[role="button"]
   > span {
   padding-top: 4px;
-  color: #39260f;
+  color: white;
 }
 
 .date-picker-calendar
   tbody[data-slot="grid-body"]
   td[data-slot="cell"]
   span[data-selected="true"] {
-  background-color: #f7931a;
-  color: #39260f;
+  background-color: #F59E0B;
+  color: white;
 }
 
 .date-picker-calendar
   tbody[data-slot="grid-body"]
   td[data-slot="cell"]
   span[data-disabled="true"] {
-  color: #39260f;
+  color: white;
   opacity: 0.5;
 }
 
@@ -326,8 +370,8 @@ input[type="number"] {
   tbody[data-slot="grid-body"]
   td[data-slot="cell"]
   span[data-hover="true"] {
-  background-color: #f7931a;
-  color: #39260f;
+  background-color: #F59E0B;
+  color: white;
 }
 
 .date-picker-calendar
@@ -343,8 +387,8 @@ input[type="number"] {
   div[data-slot="inner-wrapper"]
   div[data-slot="input"]
   div[data-slot="segment"]:focus {
-  background-color: #f7931a4d;
-  color: #202020;
+  background-color: #F59E0B4d;
+  color: white;
   opacity: 0.8;
 }
 

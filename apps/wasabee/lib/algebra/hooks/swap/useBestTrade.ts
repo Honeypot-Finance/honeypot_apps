@@ -58,6 +58,28 @@ export function useBestTradeExactIn(
       };
     }
 
+    console.log('Finding best trade:', {
+      amountIn: amountIn?.toSignificant(),
+      currencyIn: amountIn?.currency.symbol,
+      currencyOut: currencyOut.symbol,
+      routesCount: routes.length,
+      quotesCount: quotesResults?.length,
+      routes: routes.map(r => r.pools.map(p => `${p.token0.symbol}/${p.token1.symbol}`).join(' -> ')),
+    });
+
+    // Debug quote results for BSC
+    if (quotesResults && quotesResults.length > 0) {
+      console.log('Processing quote results:', {
+        count: quotesResults.length,
+        results: quotesResults.map((r, i) => ({
+          index: i,
+          status: r.status,
+          result: r.result,
+          route: routes[i] ? `${routes[i].input.symbol} -> ${routes[i].output.symbol}` : 'no route'
+        }))
+      });
+    }
+
     const { bestRoute, amountOut, fee, priceAfterSwap } = (
       quotesResults || []
     ).reduce(
@@ -73,17 +95,23 @@ export function useBestTradeExactIn(
       ) => {
         if (!result) return currentBest;
 
+        const outputAmount = result[0] ? result[0][result[0].length - 1] : null;
+        
+        if (outputAmount) {
+          console.log(`Route ${i} output:`, outputAmount.toString());
+        }
+
         if (currentBest.amountOut === null) {
           return {
             bestRoute: routes[i],
-            amountOut: result[0][result[0].length - 1],
+            amountOut: outputAmount,
             fee: result[5],
             priceAfterSwap: result[2],
           };
-        } else if (currentBest.amountOut < result[0][result[0].length - 1]) {
+        } else if (outputAmount && currentBest.amountOut < outputAmount) {
           return {
             bestRoute: routes[i],
-            amountOut: result[0][result[0].length - 1],
+            amountOut: outputAmount,
             fee: result[5],
             priceAfterSwap: result[2],
           };

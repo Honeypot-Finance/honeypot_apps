@@ -25,7 +25,7 @@ import { NonfungiblePositionManager, Percent } from '@cryptoalgebra/sdk';
 import { Address } from 'viem';
 import { useEffect, useMemo, useState } from 'react';
 import { useAccount, useContractWrite } from 'wagmi';
-import { useSimulateAlgebraPositionManagerMulticall } from '@/wagmi-generated';
+import { useSimulateAlgebraPositionManagerMulticall } from '@honeypot/shared/wagmi-generated';
 import { HoneyContainer } from '@/components/CardContianer';
 import { useSubgraphClient } from '@honeypot/shared';
 

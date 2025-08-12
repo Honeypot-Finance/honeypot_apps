@@ -25,14 +25,19 @@ interface AllAquaberaVaultsProps {
   searchString?: string;
   sortBy?: string;
   onDataLoaded?: () => void;
+  prefetchedData?: VaultsSortedByHoldersQuery | null;
+  prefetchedContracts?: ICHIVaultContract[] | null;
 }
 
 export function AllAquaberaVaults({
   searchString = '',
   sortBy = 'apr',
   onDataLoaded,
+  prefetchedData,
+  prefetchedContracts,
 }: AllAquaberaVaultsProps) {
-  const [vaults, setVaults] = useState<VaultsSortedByHoldersQuery>();
+  const [vaults, setVaults] = useState<VaultsSortedByHoldersQuery | undefined>(prefetchedData || undefined);
+  const [vaultsContracts, setVaultsContracts] = useState<ICHIVaultContract[]>(prefetchedContracts || []);
 
   // Cache configuration
   const CACHE_KEY_PREFIX = 'vault-cache-';
@@ -46,9 +51,7 @@ export function AllAquaberaVaults({
       .join('-')}`;
   }, [vaults]);
 
-  const [vaultsContracts, setVaultsContracts] = useState<ICHIVaultContract[]>(
-    []
-  );
+
 
   // Load vault contracts from localStorage cache
   const getVaultsFromLocalStorage = () => {
@@ -123,6 +126,15 @@ export function AllAquaberaVaults({
     const initVaults = async () => {
       if (!wallet.isInit || !infoClient) return;
 
+      // If we have prefetched data and no search string
+      if (prefetchedData && !searchString) {
+        setVaults(prefetchedData);
+        if (onDataLoaded) {
+          onDataLoaded();
+        }
+        return;
+      }
+
       try {
         // Load data regardless of searchString
         const res = await getVaultPageData(infoClient, searchString);
@@ -137,10 +149,19 @@ export function AllAquaberaVaults({
     };
 
     initVaults();
-  }, [searchString, onDataLoaded, infoClient]);
+  }, [searchString, onDataLoaded, infoClient, prefetchedData]);
 
   useEffect(() => {
     if (!vaults?.ichiVaults?.length || !infoClient || !cacheKey) {
+      return;
+    }
+
+
+
+    // Skip if we already have prefetched contract data
+    if (prefetchedContracts && prefetchedContracts.length > 0) {
+     
+      setVaultsContracts(prefetchedContracts);
       return;
     }
 
@@ -302,14 +323,15 @@ export function AllAquaberaVaults({
 
   const isLoading = useMemo(() => {
     const hasData = vaultsContracts.length > 0;
-    const shouldShowLoading = !hasData && isLoadingFromCache;
-
-    if (hasData) {
+    const hasPrefetchedData = prefetchedContracts && prefetchedContracts.length > 0;
+    
+    // If we have prefetched data or actual data, never show loading
+    if (hasData || hasPrefetchedData) {
       return false;
     }
 
     return isLoadingFromCache;
-  }, [vaultsContracts.length, isLoadingFromCache]);
+  }, [vaultsContracts.length, isLoadingFromCache, prefetchedContracts]);
 
   // Handle search changes - reset page and show loading state
   useEffect(() => {
@@ -433,7 +455,7 @@ export function AllAquaberaVaults({
       </div>
 
       {/* Desktop view - table layout for medium screens and up */}
-      <div className="hidden sm:block w-full overflow-x-auto custom-dashed-3xl sm:p-6 sm:bg-white">
+      <div className="hidden sm:block w-full overflow-x-auto custom-dashed-3xl sm:p-6 sm:bg-[#271A0C]">
         <table className="w-full">
           <thead>
             <tr>

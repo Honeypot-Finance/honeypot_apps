@@ -157,16 +157,16 @@ const SwapParamsV3 = () => {
 
   return trade ? (
     <div className="flex flex-col w-full rounded-2xl cursor-pointer">
-      <div className="w-full custom-dashed p-4">
+      <div className="w-full bg-[#1a1410] border border-[#2a2a2a] rounded-2xl p-4">
         <div
           className="flex flex-col w-full"
           onClick={() => toggleExpanded(!isExpanded)}
         >
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-2 w-full justify-between text-black font-bold text-base">
+            <div className="flex items-center gap-2 w-full justify-between text-white font-bold text-base">
               <div className="flex items-center gap-2 ">
-                <div className="bg-[#FFB800] p-2 rounded-lg">
-                  <ZapIcon className="w-4 h-4 text-black" />
+                <div className="bg-[#F59E0B] p-2 rounded-lg">
+                  <ZapIcon className="w-4 h-4 text-white" />
                 </div>
                 <span className="">
                   {slidingFee && `${slidingFee?.toFixed(4)}% fee`}
@@ -179,26 +179,26 @@ const SwapParamsV3 = () => {
               </div>
             </div>
             <ChevronDownIcon
-              className={`w-6 h-6 text-black transition-transform duration-300 ${
+              className={`w-6 h-6 text-white transition-transform duration-300 ${
                 isExpanded ? 'rotate-180' : ''
               }`}
             />
           </div>
 
           {isExpanded && (
-            <div className="flex flex-col divide-y divide-black/10">
+            <div className="flex flex-col divide-y divide-[#333333]">
               <div className="flex items-center py-3 justify-between">
-                <span className="text-black text-sm font-medium">Route</span>
+                <span className="text-gray-400 text-sm font-medium">Route</span>
                 <SwapRoute trade={trade} />
               </div>
 
               <div className="flex items-center py-3 justify-between">
-                <span className="text-black text-sm font-medium">
+                <span className="text-gray-400 text-sm font-medium">
                   {trade.tradeType === TradeType.EXACT_INPUT
                     ? 'Minimum received'
                     : 'Maximum sent'}
                 </span>
-                <span className="text-black text-sm font-medium">
+                <span className="text-gray-400 text-sm font-medium">
                   {trade.tradeType === TradeType.EXACT_INPUT
                     ? `${trade
                         .minimumAmountOut(allowedSlippage)
@@ -214,17 +214,17 @@ const SwapParamsV3 = () => {
               </div>
 
               <div className="flex items-center py-3 justify-between">
-                <span className="text-black text-sm font-medium">LP Fee</span>
-                <span className="text-black text-sm font-medium">
+                <span className="text-gray-400 text-sm font-medium">LP Fee</span>
+                <span className="text-gray-400 text-sm font-medium">
                   {LPFeeString}
                 </span>
               </div>
 
               <div className="flex items-center py-3 justify-between">
-                <span className="text-black text-sm font-medium">
+                <span className="text-gray-400 text-sm font-medium">
                   Slippage tolerance
                 </span>
-                <span className="text-black text-sm font-medium">
+                <span className="text-gray-400 text-sm font-medium">
                   {allowedSlippage.toFixed(2)}%
                 </span>
               </div>
@@ -234,11 +234,11 @@ const SwapParamsV3 = () => {
       </div>
     </div>
   ) : trade !== undefined || tradeState.state === TradeState.LOADING ? (
-    <div className="flex justify-center mb-1 bg-card-dark py-3 px-3 rounded-lg">
+    <div className="flex justify-center mb-1 bg-[#271A0C] border border-[#333333] py-3 px-3 rounded-lg">
       <Loader size={17} />
     </div>
   ) : (
-    <div className="text-md mb-1 text-center text-white/70 bg-card-dark py-2 px-3 rounded-lg">
+    <div className="text-md mb-1 text-center text-gray-400 bg-[#271A0C] border border-[#333333] py-2 px-3 rounded-lg">
       Select an amount for swap
     </div>
   );
@@ -283,7 +283,7 @@ const PriceImpact = ({ priceImpact }: { priceImpact: Percent | undefined }) => {
       ? 'text-[#FF5449]'
       : severity === 2
       ? 'text-orange-600'
-      : 'text-black';
+      : 'text-white';
 
   return (
     <span className={`${color} text-sm font-medium`}>

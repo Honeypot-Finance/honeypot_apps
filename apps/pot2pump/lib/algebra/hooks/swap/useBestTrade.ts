@@ -32,6 +32,14 @@ export function useBestTradeExactIn(
     currencyOut
   );
 
+  console.log('[useBestTradeExactIn] Input:', {
+    amountIn: amountIn?.toExact(),
+    currencyIn: amountIn?.currency?.symbol,
+    currencyOut: currencyOut?.symbol,
+    routesCount: routes.length,
+    routesLoading
+  });
+
   const {
     data: quotesResults,
     isLoading: isQuotesLoading,
@@ -43,7 +51,16 @@ export function useBestTradeExactIn(
   });
 
   const trade = useMemo(() => {
+    console.log('[useBestTradeExactIn.trade] Computing trade:', {
+      hasAmountIn: !!amountIn,
+      hasCurrencyOut: !!currencyOut,
+      quotesResults: quotesResults,
+      isQuotesLoading,
+      routesLoading
+    });
+    
     if (!amountIn || !currencyOut) {
+      console.log('[useBestTradeExactIn.trade] Missing input or output');
       return {
         state: TradeState.INVALID,
         trade: null,

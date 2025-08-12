@@ -15,7 +15,6 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { defichainEvm, mainnet } from 'viem/chains';
-import { berachainBartioTestnet } from '@/lib/chain';
 import { z } from 'zod';
 
 const ethPublicClient = createPublicClientByChain({
@@ -32,7 +31,6 @@ const ethPublicClient = createPublicClientByChain({
     },
   },
 });
-const beraPublicClient = createPublicClientByChain(berachainBartioTestnet);
 // const account = privateKeyToAccount(
 //   process.env.FAUCET_PRIVATE_KEY! as `0x${string}`,
 //   {

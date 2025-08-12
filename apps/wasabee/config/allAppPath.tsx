@@ -58,14 +58,24 @@ export const appPathsList: Menu[] = [
   //   title: "Navigation",
   // },
   {
-    path: `/swap`,
-    title: 'Swap',
-    routePath: '/swap',
-  },
-  {
-    path: `/xswap`,
-    title: 'XSwap',
-    routePath: '/xswap',
+    path: [
+      {
+        path: `/swap`,
+        title: 'Swap',
+        routePath: '/swap',
+      },
+      {
+        path: `/xswap`,
+        title: 'XSwap',
+        routePath: '/xswap',
+      },
+      {
+        path: `/cross-chain-swap`,
+        title: 'Cross Chain Swap',
+        routePath: '/cross-chain-swap',
+      },
+    ],
+    title: 'Trade',
   },
   {
     path: `/pools`,

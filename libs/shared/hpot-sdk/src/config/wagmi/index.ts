@@ -10,7 +10,6 @@ import { injected, safe } from 'wagmi/connectors';
 import { cookieStorage, createStorage, Config, http } from 'wagmi';
 import { berachainMainnet, networks } from '../chains';
 
-
 const pId = '23b1ff4e22147bdf7cab13c0ee4bed90';
 
 // Check if wallet needs to be disconnected
@@ -39,14 +38,14 @@ const setAllWalletsDisconnectedInStorage = () => {
 // Set all wallet states to disconnected
 const shouldSetAllWalletsDisconnectedInStorage = () => {
   if (typeof window === 'undefined') return;
-  
+
   // Only set disconnected states if needed
   if (!setAllWalletsDisconnectedInStorage()) return;
 
   // Set wagmi states
   localStorage.setItem('wagmi.connected', 'false');
   localStorage.setItem('wagmi.injected.shimDisconnect', 'true');
-  
+
   // Set specific wallet states to disconnected
   localStorage.setItem('wagmi.okx.disconnected', 'true');
   localStorage.setItem('wagmi.metaMask.disconnected', 'true');
@@ -55,19 +54,18 @@ const shouldSetAllWalletsDisconnectedInStorage = () => {
   localStorage.setItem('wagmi.bitget.disconnected', 'true');
   localStorage.setItem('wagmi.com.okex.wallet.disconnected', 'true');
   localStorage.setItem('wagmi.app.phantom.disconnected', 'true');
-  localStorage.setItem('wagmi.io.metamask.disconnected','true');
+  localStorage.setItem('wagmi.io.metamask.disconnected', 'true');
 };
 
-let customWallets = () => {
-    
+const customWallets = () => {
   return [
     metaMaskWallet,
-  rainbowWallet,
-  walletConnectWallet,
-  bitgetWallet,
-  okxWallet,
-  // holdstationWallet,
-  // berasigWallet,
+    rainbowWallet,
+    walletConnectWallet,
+    bitgetWallet,
+    okxWallet,
+    // holdstationWallet,
+    // berasigWallet,
   ];
 };
 
@@ -102,11 +100,11 @@ const connectors = () => [
 //   );
 // }
 
-
-//  persistent storage 
+//  persistent storage
 const createCustomStorage = () => {
-  const storage = typeof window !== 'undefined' ? window.localStorage : cookieStorage;
-  
+  const storage =
+    typeof window !== 'undefined' ? window.localStorage : cookieStorage;
+
   return {
     ...storage,
     setItem: (key: string, value: string) => {
@@ -118,8 +116,34 @@ const createCustomStorage = () => {
 };
 
 export const createWagmiConfig = (overrideConfig?: Partial<Config>) => {
+  // Return a mock config for server-side rendering that mimics the shape
+  if (typeof window === 'undefined') {
+    return {
+      _internal: {
+        chains: { setUp: false },
+        connectors: { setUp: false, value: [] },
+        transports: {},
+        current: null,
+        setup: false,
+      },
+      chains: [],
+      connectors: [],
+      state: {
+        chainId: 1,
+        connections: new Map(),
+        current: null,
+        status: 'disconnected',
+      },
+      storage: null,
+      ssr: true,
+    } as any;
+  }
+  
   // Set  wallet states to disconnected when creating new config
-shouldSetAllWalletsDisconnectedInStorage();
+  shouldSetAllWalletsDisconnectedInStorage();
+
+  // Safe access to networks - ensure it's an array even if undefined
+  const safeNetworks = Array.isArray(networks) ? networks : [];
   
   return getDefaultConfig({
     connectors: connectors(),
@@ -127,18 +151,38 @@ shouldSetAllWalletsDisconnectedInStorage();
     projectId: pId,
     transports: {
       ...Object.fromEntries(
-        networks.map((network) => [
-          network.chainId,
-          http(network.chain.rpcUrls.default.http[0]),
-        ])
+        safeNetworks
+          .filter((network) => {
+            try {
+              return network?.chain?.rpcUrls?.default?.http?.[0];
+            } catch (e) {
+              console.warn(`Network ${network?.chainId} has invalid chain config:`, e);
+              return false;
+            }
+          })
+          .map((network) => [
+            network.chainId,
+            http(network.chain.rpcUrls.default.http[0]),
+          ])
       ),
-      [berachainMainnet.id]: http(
-        'https://api.henlo-winnie.dev/v1/mainnet/08c3ed43-6326-4be6-9dc2-78a5f77b7382'
-      ),
+      ...(berachainMainnet ? {
+        [berachainMainnet.id]: http(
+          'https://api.henlo-winnie.dev/v1/mainnet/08c3ed43-6326-4be6-9dc2-78a5f77b7382'
+        ),
+      } : {}),
     },
-    // @ts-ignore
-    chains: networks.map((network) => network.chain),
-    ssr: false, 
+    // @ts-expect-error - chains type mismatch with RainbowKit
+    chains: safeNetworks
+      .filter((network) => {
+        try {
+          return network?.chain;
+        } catch (e) {
+          console.warn(`Network ${network?.chainId} has no chain config:`, e);
+          return false;
+        }
+      })
+      .map((network) => network.chain),
+    ssr: false,
     storage: createStorage({
       storage: createCustomStorage(),
     }),

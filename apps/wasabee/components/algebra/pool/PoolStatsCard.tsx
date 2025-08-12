@@ -236,7 +236,7 @@ export default function PoolStatsCard({ pool }: PoolStatsCardProps) {
   if (!pool || !derivedPoolInfo) return null;
 
   return (
-    <div className="h-[400px] p-6 flex flex-col gap-6 bg-white border border-black rounded-[24px] shadow-[4px_4px_0px_0px_#D29A0D] text-[#202020] animate-fade-in">
+    <div className="h-[400px] p-6 flex flex-col gap-6 bg-[#271A0C] border border-black rounded-[24px] shadow-[4px_4px_0px_0px_#D29A0D] text-[#202020] animate-fade-in">
       <div className="flex items-center">
         <h2 className="text-xl font-bold">Pool Stats</h2>
         <div className="ml-auto px-3 py-1 bg-[#FFCD4D] text-xs font-semibold rounded-full border border-[#202020] shadow-[1px_1px_0px_0px_#000]">
@@ -252,7 +252,7 @@ export default function PoolStatsCard({ pool }: PoolStatsCardProps) {
           <div className="grid grid-cols-2 gap-2">
             <div
               key={derivedPoolInfo.pair.token0.symbol}
-              className="flex items-center p-3 rounded-xl bg-gray-50 border border-gray-200"
+              className="flex items-center p-3 rounded-xl bg-[#86715B] border border-gray-200"
             >
               <TokenLogo
                 token={derivedPoolInfo.pair.token0}
@@ -265,7 +265,7 @@ export default function PoolStatsCard({ pool }: PoolStatsCardProps) {
             </div>
             <div
               key={derivedPoolInfo.pair.token1.symbol}
-              className="flex items-center p-3 rounded-xl bg-gray-50 border border-gray-200"
+              className="flex items-center p-3 rounded-xl bg-[#86715B] border border-gray-200"
             >
               <TokenLogo
                 token={derivedPoolInfo.pair.token1}

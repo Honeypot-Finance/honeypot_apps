@@ -2,10 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { chart } from '@honeypot/shared/services';
-import { TokenLogo } from '@honeypot/shared';
-
-import { Token } from '@honeypot/shared';
 import { RotateCcw } from 'lucide-react';
 import { getBaseUrl } from '@/lib/trpc';
 import { strParams } from '@/lib/advancedChart.util';
@@ -13,8 +9,63 @@ import { TbChartArea, TbChartHistogram } from 'react-icons/tb';
 import Link from 'next/link';
 import Image from 'next/image';
 import codexIcon from '@/public/images/partners/codex_white.png';
-import { wallet } from '@honeypot/shared/lib/wallet';
 import dynamic from 'next/dynamic';
+
+// Lazy load the shared library components
+let sharedLib: any = null;
+let chartService: any = null;
+let walletService: any = null;
+let TokenLogoComponent: any = null;
+
+const loadSharedLib = async () => {
+  if (!sharedLib) {
+    const [mainLib, walletLib] = await Promise.all([
+      import('@honeypot/shared'),
+      import('@honeypot/shared/lib/wallet')
+    ]);
+    sharedLib = mainLib;
+    walletService = walletLib.wallet;
+    TokenLogoComponent = mainLib.TokenLogo;
+    
+    // Load chart service from shared/services
+    const servicesLib = await import('@honeypot/shared/services');
+    chartService = servicesLib.chart;
+  }
+  return { chart: chartService, wallet: walletService, TokenLogo: TokenLogoComponent };
+};
+
+// Create proxy objects that will lazy-load on first access
+const chart = new Proxy({} as any, {
+  get(target, prop) {
+    if (!chartService) {
+      console.warn('Chart service not loaded yet');
+      return undefined;
+    }
+    return chartService[prop];
+  }
+});
+
+const wallet = new Proxy({} as any, {
+  get(target, prop) {
+    if (!walletService) {
+      console.warn('Wallet service not loaded yet');
+      return undefined;
+    }
+    return walletService[prop];
+  }
+});
+
+// Type definitions for TypeScript
+type Token = any;
+
+// Dynamic import of TokenLogo component
+const TokenLogo = dynamic(
+  () => import('@honeypot/shared').then(mod => mod.TokenLogo),
+  { 
+    ssr: false,
+    loading: () => <div className="w-6 h-6 rounded-full bg-gray-200 animate-pulse" />
+  }
+);
 
 // 为 Window 对象添加 TradingView 相关的类型定义
 declare global {
@@ -101,6 +152,9 @@ const KlineChartComponent = observer(
     useEffect(() => {
       setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
       setIsMobile(window.innerWidth < 640);
+      
+      // Initialize shared library services
+      loadSharedLib().catch(console.error);
     }, []);
 
     const intervals = [
@@ -636,13 +690,14 @@ const KlineChartComponent = observer(
           {/* Token Info */}
           <div className="flex items-center gap-2">
             <div className="flex items-center">
-              {chart.TargetLogoDisplay.map((token: Token) => {
-                if (!token) {
-                  return <></>;
-                }
+              {chart.TargetLogoDisplay && chart.TargetLogoDisplay.length > 0 && 
+                chart.TargetLogoDisplay.map((token: Token) => {
+                  if (!token) {
+                    return <></>;
+                  }
 
-                return <TokenLogo key={token.address} token={token} />;
-              })}
+                  return <TokenLogo key={token.address} token={token} />;
+                })}
             </div>
             <span className="text-white text-base sm:text-lg font-bold">
               {chart.chartLabel}

@@ -21,11 +21,8 @@ export function DarkContainer({
           } as React.CSSProperties
         }
         className={cn(
-          'w-full bg-[#FFCD4D] rounded-2xl overflow-hidden px-2 md:px-4 py-6',
-          "bg-[url('/images/card-container/dark/top-border.svg'),_url('/images/card-container/dark/bottom-border.svg')]",
-          'bg-[position:left_top,_left_calc(100%+1px)]',
-          'bg-[size:auto_var(--dark-container-border-height)]',
-          'bg-repeat-x bg-clip-padding'
+          'w-full bg-[#140D06] rounded-2xl overflow-hidden px-2 md:px-4 py-6',
+          'border border-[#333333]'
         )}
       >
         {children}

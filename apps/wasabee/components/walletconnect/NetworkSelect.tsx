@@ -33,7 +33,11 @@ const NetworkSelect: React.FC = () => {
         }}
       >
         {Object.values(networksMap).map((network) => (
-          <option key={network.chainId} value={network.chainId}>
+          <option
+            key={network.chainId}
+            value={network.chainId}
+            className="text-black"
+          >
             {network.chain.name}
           </option>
         ))}

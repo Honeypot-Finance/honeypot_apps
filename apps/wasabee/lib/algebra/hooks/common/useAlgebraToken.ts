@@ -16,9 +16,12 @@ export function useAlgebraToken(address: Address | undefined) {
     };
   });
 
-  const { data: tokenData, isLoading } = useToken({
+  const { data: tokenData, isLoading, error } = useToken({
     address: isETH ? undefined : address,
     chainId: currentChainId,
+    query: {
+      enabled: !!address && address !== ADDRESS_ZERO,
+    },
   });
 
   return useMemo(() => {
@@ -31,10 +34,64 @@ export function useAlgebraToken(address: Address | undefined) {
         currentChain.nativeToken.name
       );
 
-    if (isLoading || !tokenData) return undefined;
+    // Log for debugging
+    if (error) {
+      console.error('Failed to load token data:', { address, chainId: currentChainId, error });
+    }
 
-    const { symbol, name, decimals } = tokenData;
+    // If still loading on BSC, create a temporary token to prevent infinite loops
+    if (isLoading) {
+      // Token data loading
+      if (currentChainId === 56) {
+        // For BSC, create a temporary token while loading to prevent UI issues
+        const validatedToken = currentChain.validatedTokensInfo[address.toLowerCase()];
+        if (validatedToken) {
+          return new Token(
+            currentChainId,
+            address,
+            validatedToken.decimals || 18,
+            validatedToken.symbol || 'Loading...',
+            validatedToken.name || 'Loading Token'
+          );
+        }
+        // Return a temporary token to prevent null issues
+        return new Token(currentChainId, address, 18, 'Loading...', 'Loading Token');
+      }
+      return undefined;
+    }
 
-    return new Token(currentChainId, address, decimals, symbol, name);
-  }, [address, tokenData, isLoading]);
+    // If we have token data, use it
+    if (tokenData) {
+      const { symbol, name, decimals } = tokenData;
+      return new Token(currentChainId, address, decimals, symbol, name);
+    }
+
+    // Fallback: Try to create token with default values if on BSC
+    // This helps when the RPC doesn't return token data immediately
+    if (currentChainId === 56) {
+      // Using fallback for BSC token
+      // Try to get from validated tokens first
+      const validatedToken = currentChain.validatedTokensInfo[address.toLowerCase()];
+      if (validatedToken && 'decimals' in validatedToken) {
+        // Found validated token
+        return new Token(
+          currentChainId,
+          address,
+          validatedToken.decimals || 18,
+          validatedToken.symbol || 'Unknown',
+          validatedToken.name || 'Unknown Token'
+        );
+      }
+      // Check if it's USDC specifically
+      if (address.toLowerCase() === '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d') {
+        // Creating USDC token manually
+        return new Token(currentChainId, address, 18, 'USDC', 'USD Coin');
+      }
+      // Last resort: return a default token (common for BSC tokens)
+      // Using generic fallback for token
+      return new Token(currentChainId, address, 18, 'Unknown', 'Unknown Token');
+    }
+
+    return undefined;
+  }, [address, tokenData, isLoading, error, currentChainId, currentChain]);
 }

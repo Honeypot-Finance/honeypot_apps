@@ -97,22 +97,19 @@ const SwapPage = observer(() => {
           <Tabs
             destroyInactiveTabPanel={false}
             classNames={{
-              tab: 'px-2 sm:px-3 sm:h-10 text-xs sm:text-sm',
+              tab: 'px-2 sm:px-3 sm:h-10 text-xs sm:text-sm text-gray-400 data-[selected=true]:text-[#F59E0B]',
               base: 'relative w-full',
-              cursor: 'bg-[#202020] !text-white/80 px-2 py-3',
+              cursor: 'bg-transparent border-b-2 border-[#F59E0B]',
               tabList:
-                'flex rounded-[16px] border border-[#202020] bg-white shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] p-2 sm:p-3 absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 max-w-[90%] sm:max-w-none',
+                'flex rounded-[16px] border border-[#333333] bg-[#271A0C] p-2 sm:p-3 absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 max-w-[90%] sm:max-w-none',
               panel: cn(
-                'flex flex-col h-full w-full gap-y-4 items-center bg-[#FFCD4D] rounded-2xl text-[#202020]',
+                'flex flex-col h-full w-full gap-y-4 items-center bg-[#140D06] rounded-2xl text-white',
                 'px-4 sm:px-8 pt-[70px] pb-[70px]',
-                "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]",
-                'bg-[position:-65px_top,_-85px_bottom]',
-                'bg-[size:auto_65px,_auto_65px]',
-                'bg-repeat-x',
+                'border border-[#333333]',
                 '!mt-0',
                 'h-auto'
               ),
-              tabContent: 'text-[#202020] text-sm sm:text-base',
+              tabContent: 'text-inherit text-sm sm:text-base',
             }}
           >
             <Tab key="swap" title="Swap">

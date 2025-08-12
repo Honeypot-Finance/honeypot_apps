@@ -19,7 +19,7 @@ import { Address, getContract } from 'viem';
 import JSBI from 'jsbi';
 import { useMemo } from 'react';
 import { useAccount, useContractWrite } from 'wagmi';
-import { useSimulateAlgebraPositionManagerMulticall } from '@/wagmi-generated';
+import { useSimulateAlgebraPositionManagerMulticall } from '@honeypot/shared/wagmi-generated';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { ContractWrite } from '@honeypot/shared';
 import { useObserver } from 'mobx-react-lite';
@@ -54,12 +54,16 @@ export const AddLiquidityButton = ({
 
   const { calldata, value } = useMemo(() => {
     console.log('mintInfo', mintInfo);
-    if (
-      !account ||
-      !mintInfo.position ||
-      JSBI.EQ(mintInfo.position.liquidity, ZERO)
-    )
+    console.log('ALGEBRA_POSITION_MANAGER', ALGEBRA_POSITION_MANAGER);
+    if (!account || !mintInfo.position) {
+      console.log('Missing account or position:', { account, position: mintInfo.position });
       return { calldata: undefined, value: undefined };
+    }
+    
+    if (JSBI.EQ(mintInfo.position.liquidity, ZERO)) {
+      console.log('Position liquidity is zero');
+      return { calldata: undefined, value: undefined };
+    }
 
     return NonfungiblePositionManager.addCallParameters(mintInfo.position, {
       slippageTolerance: mintInfo.outOfRange
@@ -177,7 +181,31 @@ export const AddLiquidityButton = ({
       disabled={!isReady}
       onPress={async () => {
         console.log('addLiquidityConfig', addLiquidityConfig);
-        addLiquidityConfig && addLiquidity(addLiquidityConfig.request);
+        console.log('calldata', calldata);
+        console.log('value', value);
+        console.log('error', error);
+        
+        if (addLiquidityConfig && addLiquidityConfig.request) {
+          addLiquidity(addLiquidityConfig.request);
+        } else if (calldata && value !== undefined && isReady) {
+          // Fallback: directly call the contract when simulation fails
+          console.log('Using fallback for liquidity addition');
+          addLiquidity({
+            address: ALGEBRA_POSITION_MANAGER as Address,
+            abi: algebraPositionManagerABI,
+            functionName: 'multicall',
+            args: [calldata as `0x${string}`[]],
+            value: BigInt(value || 0),
+          });
+        } else {
+          console.error('Cannot add liquidity: missing config or calldata', {
+            hasCalldata: !!calldata,
+            hasValue: value !== undefined,
+            isReady,
+            hasConfig: !!addLiquidityConfig,
+            error
+          });
+        }
       }}
       className="whitespace-nowrap w-full border-[0] h-[56px] rounded-[12px] !text-[18px]"
     >

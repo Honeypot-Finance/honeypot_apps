@@ -12,6 +12,17 @@ import {
   berachainBepoliaTestnet,
   arbitrumSepoliaTestnet,
   sepoliaTestnet,
+  bscMainnet,
+  optimismMainnet,
+  polygonMainnet,
+  avalancheMainnet,
+  lineaMainnet,
+  blastMainnet,
+  mantaMainnet,
+  modeMainnet,
+  sonicMainnet,
+  confluxESpaceMainnet,
+  merlinMainnet,
 } from './chainBaseConfig';
 import { ICHIVaultContract } from '../../lib/contract/aquabera/ICHIVault-contract';
 import { getMultipleTokensData } from '../../lib/graphql/clients/token';
@@ -21,14 +32,15 @@ import { contractAddresses, ContractAddresses } from '../contractAddresses';
 import { subgraphAddresses, SubgraphAddresses } from '../subgraphEndPoint';
 
 export class Network {
-  supportDEX: boolean = false;
-  supportVault: boolean = false;
-  supportBridge: boolean = false;
-  supportLBP: boolean = false;
-  supportPot2Pump: boolean = false;
-  supportUniversalAccount: boolean = false;
-  isActive: boolean = true;
-  iconUrl: string = '';
+  supportDEX = false;
+  supportVault = false;
+  supportBridge = false;
+  supportLBP = false;
+  supportPot2Pump = false;
+  supportUniversalAccount = false;
+  isActive = true;
+  iconUrl = '';
+  displayName?: string;
   get chainId() {
     return this.chain.id;
   }
@@ -38,6 +50,7 @@ export class Network {
   contracts!: ContractAddresses;
   subgraphAddresses!: SubgraphAddresses;
   nativeToken!: Token;
+  wrappedNativeToken?: Partial<Token>;
   raisedTokenData!: {
     symbol: string;
     address: string;
@@ -76,16 +89,19 @@ export class Network {
     }
   ) {
     Object.assign(this, args);
-    if (args) {
-    }
   }
 
   init() {
+    console.log('[Network.init] Starting for chain:', this.chainId, 'displayName:', this.displayName);
+    console.log('[Network.init] validatedTokensInfo count:', Object.keys(this.validatedTokensInfo).length);
+    console.log('[Network.init] validatedTokensInfo keys:', Object.keys(this.validatedTokensInfo));
+    
     this.nativeToken = Token.getToken({
       ...this.nativeToken,
       isNative: true,
       chainId: this.chainId.toString(),
     });
+    console.log('[Network.init] Native token created:', this.nativeToken.symbol, this.nativeToken.address);
 
     this.validatedTokens = [];
     this.validatedTokens.push(this.nativeToken);
@@ -96,9 +112,13 @@ export class Network {
         address,
         chainId: this.chainId.toString(),
       });
+      console.log('[Network.init] Created token:', token.symbol, 'at', address);
       this.validatedTokensInfo[address] = token;
       this.validatedTokens.push(token);
     });
+    
+    console.log('[Network.init] Final validatedTokens count:', this.validatedTokens.length);
+    console.log('[Network.init] Final validatedTokens symbols:', this.validatedTokens.map(t => t.symbol));
 
     if (this.supportDEX) {
       getMultipleTokensData(
@@ -124,7 +144,142 @@ export class Network {
       const vaultContract = ICHIVaultContract.getVault(vault);
     });
   }
+
+  getTokenExplorerUrl(token: Token): string {
+    const explorer = this.chain.blockExplorers?.default;
+    if (!explorer) {
+      return '#';
+    }
+
+    // For native tokens, show the wrapped token if available
+    if (token.isNative || token.address === zeroAddress) {
+      if (this.wrappedNativeToken && this.wrappedNativeToken.address) {
+        // Use the wrapped token address for native tokens
+        const wrappedAddress = this.wrappedNativeToken.address;
+        // Don't show zero address in explorer
+        if (wrappedAddress && wrappedAddress !== zeroAddress) {
+          return `${explorer.url}/token/${wrappedAddress}`;
+        }
+      }
+      // Fallback to general explorer URL
+      return explorer.url;
+    }
+
+    return `${explorer.url}/token/${token.address}`;
+  }
+
+  getAddressExplorerUrl(address: string): string {
+    const explorer = this.chain.blockExplorers?.default;
+    if (!explorer) {
+      return '#';
+    }
+    
+    // Remove trailing slash from explorer URL if present
+    const baseUrl = explorer.url.endsWith('/') ? explorer.url.slice(0, -1) : explorer.url;
+    return `${baseUrl}/address/${address}`;
+  }
+
+  getTransactionExplorerUrl(txHash: string): string {
+    const explorer = this.chain.blockExplorers?.default;
+    if (!explorer) {
+      return '#';
+    }
+    
+    // Remove trailing slash from explorer URL if present
+    const baseUrl = explorer.url.endsWith('/') ? explorer.url.slice(0, -1) : explorer.url;
+    return `${baseUrl}/tx/${txHash}`;
+  }
 }
+
+export const bscMainnetNetwork = new Network({
+  supportDEX: true,
+  supportPot2Pump: true,
+  supportUniversalAccount: true,
+  supportVault: true,
+  displayName: 'BNB Chain',
+  iconUrl: 'https://bscscan.com/token/images/bnbchain2_32.png',
+  chain: bscMainnet,
+  nativeToken: {
+    address: '0x0000000000000000000000000000000000000000',
+    name: 'BNB',
+    symbol: 'BNB',
+    decimals: 18,
+    isNative: true,
+    logoURI:
+      'https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png',
+    chainId: '56',
+  },
+  wrappedNativeToken: {
+    address: '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c',
+    name: 'Wrapped BNB',
+    symbol: 'WBNB',
+    decimals: 18,
+    chainId: '56',
+  },
+  raisedTokenData: [
+    {
+      symbol: 'WBNB',
+      address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'.toLowerCase(),
+      amount: BigInt('100000000000000'),
+    },
+  ],
+  faucetTokens: [],
+  contracts: contractAddresses['56'],
+  subgraphAddresses: subgraphAddresses['56'],
+  validatedTokensInfo: {
+    //when adding a new token, make sure to add the address as lowercase
+    '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c': {
+      name: 'Wrapped BNB',
+      symbol: 'WBNB',
+      decimals: 18,
+      logoURI: 'https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png',
+      isRouterToken: true,
+      isPopular: true,
+    },
+    '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d': {
+      name: 'Binance-Peg USD Coin',
+      symbol: 'USDC',
+      decimals: 18,
+      logoURI: 'https://bscscan.com/token/images/centre-usdc_28.png',
+      isRouterToken: true,
+      isStableCoin: true,
+      isPopular: true,
+    },
+    '0x55d398326f99059ff775485246999027b3197955': {
+      name: 'Binance-Peg BSC-USD',
+      symbol: 'USDT',
+      decimals: 18,
+      logoURI: 'https://bscscan.com/token/images/busdt_32.png',
+      isRouterToken: true,
+      isStableCoin: true,
+      isPopular: true,
+    },
+    '0xe9e7cea3dedca5984780bafc599bd69add087d56': {
+      name: 'Binance-Peg BUSD Token',
+      symbol: 'BUSD',
+      decimals: 18,
+      logoURI: 'https://bscscan.com/token/images/busd_32.png',
+      isRouterToken: true,
+      isStableCoin: true,
+    },
+    '0x2170ed0880ac9a755fd29b2688956bd959f933f8': {
+      name: 'Binance-Peg Ethereum Token',
+      symbol: 'ETH',
+      decimals: 18,
+      logoURI: 'https://bscscan.com/token/images/ethereum_32.png',
+      isRouterToken: true,
+      isPopular: true,
+    },
+    '0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c': {
+      name: 'Binance-Peg BTCB Token',
+      symbol: 'BTCB',
+      decimals: 18,
+      logoURI: 'https://bscscan.com/token/images/btcb_32.png',
+      isRouterToken: true,
+      isPopular: true,
+    },
+  },
+});
 
 export const berachainBepoliaNetwork = new Network({
   supportDEX: true,
@@ -136,12 +291,19 @@ export const berachainBepoliaNetwork = new Network({
     'https://cdn.prod.website-files.com/633c67ced5457aa4dec572be/67b845abe842d21521095c26_667ac3022260a22071b3cf37_u_b_f51944d0-b527-11ee-be26-a5e0a0cc15ce.png',
   chain: berachainBepoliaTestnet,
   nativeToken: {
-    address: '0x6969696969696969696969696969696969696969',
+    address: '0x0000000000000000000000000000000000000000',
     name: 'Bera',
     symbol: 'BERA',
     decimals: 18,
     isNative: true,
     logoURI: '/images/icons/tokens/wbera-token-icon.png',
+    chainId: '80069',
+  },
+  wrappedNativeToken: {
+    address: '0x6969696969696969696969696969696969696969',
+    name: 'Wrapped BERA',
+    symbol: 'WBERA',
+    decimals: 18,
     chainId: '80069',
   },
   raisedTokenData: [
@@ -205,13 +367,20 @@ export const berachainNetwork = new Network({
     },
   ],
   nativeToken: {
-    address: '0x6969696969696969696969696969696969696969',
+    address: '0x0000000000000000000000000000000000000000',
     name: 'Bera',
     symbol: 'BERA',
     decimals: 18,
     isNative: true,
     logoURI: '/images/icons/tokens/wbera-token-icon.png',
     isPopular: true,
+    chainId: '80094',
+  },
+  wrappedNativeToken: {
+    address: '0x6969696969696969696969696969696969696969',
+    name: 'Wrapped BERA',
+    symbol: 'WBERA',
+    decimals: 18,
     chainId: '80094',
   },
   raisedTokenData: [
@@ -820,7 +989,7 @@ export const ethNetwork = new Network({
   iconUrl: '/images/icons/chains/ethereum.png',
   officialFaucets: [],
   nativeToken: {
-    address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
+    address: '0x0000000000000000000000000000000000000000',
     name: 'ETH',
     symbol: 'ETH',
     decimals: 18,
@@ -828,14 +997,20 @@ export const ethNetwork = new Network({
     logoURI: '/images/icons/tokens/weth-token-icon.png',
     chainId: '1',
   },
-
+  wrappedNativeToken: {
+    address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+    name: 'Wrapped Ether',
+    symbol: 'WETH',
+    decimals: 18,
+    chainId: '1',
+  },
   contracts: contractAddresses['default'],
   subgraphAddresses: subgraphAddresses['default'],
   faucetTokens: [],
   blacklist: {},
   validatedTokensInfo: {
-    '0x82af49447d8a07e3bd95bd0d56f35241523fbab1': {
-      address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
+    '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': {
+      address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
       name: 'WETH',
       symbol: 'WETH',
       decimals: 18,
@@ -883,6 +1058,314 @@ export const sprotoNetWork = new Network({
   validatedMemeAddresses: [],
 });
 
+// Optimism Network
+export const optimismNetwork = new Network({
+  supportDEX: true,
+  supportUniversalAccount: true,
+  chain: optimismMainnet,
+  displayName: 'Optimism',
+  iconUrl:
+    'https://assets.coingecko.com/coins/images/25244/standard/Optimism.png',
+  nativeToken: {
+    address: '0x4200000000000000000000000000000000000006',
+    name: 'Ethereum',
+    symbol: 'ETH',
+    decimals: 18,
+    isNative: true,
+    logoURI: 'https://optimistic.etherscan.io/token/images/weth_28.png',
+    chainId: '10',
+  },
+  wrappedNativeToken: {
+    address: '0x4200000000000000000000000000000000000006',
+    name: 'Wrapped Ether',
+    symbol: 'WETH',
+    decimals: 18,
+    chainId: '10',
+  },
+  contracts: contractAddresses['10'] || contractAddresses['default'],
+  subgraphAddresses: subgraphAddresses['10'] || subgraphAddresses['default'],
+  faucetTokens: [],
+  raisedTokenData: [],
+  validatedTokensInfo: {},
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
+
+// Polygon Network
+export const polygonNetwork = new Network({
+  supportDEX: true,
+  supportUniversalAccount: true,
+  chain: polygonMainnet,
+  iconUrl:
+    'https://assets.coingecko.com/coins/images/4713/standard/polygon.png',
+  nativeToken: {
+    address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
+    name: 'MATIC',
+    symbol: 'MATIC',
+    decimals: 18,
+    isNative: true,
+    logoURI: 'https://polygonscan.com/token/images/polygon.png',
+    chainId: '137',
+  },
+  wrappedNativeToken: {
+    address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
+    name: 'Wrapped Matic',
+    symbol: 'WMATIC',
+    decimals: 18,
+    chainId: '137',
+  },
+  contracts: contractAddresses['137'] || contractAddresses['default'],
+  subgraphAddresses: subgraphAddresses['137'] || subgraphAddresses['default'],
+  faucetTokens: [],
+  raisedTokenData: [],
+  validatedTokensInfo: {},
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
+
+// Avalanche Network
+export const avalancheNetwork = new Network({
+  supportDEX: true,
+  supportUniversalAccount: true,
+  chain: avalancheMainnet,
+  iconUrl:
+    'https://assets.coingecko.com/coins/images/12559/standard/Avalanche_Circle_RedWhite_Trans.png',
+  nativeToken: {
+    address: '0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7',
+    name: 'AVAX',
+    symbol: 'AVAX',
+    decimals: 18,
+    isNative: true,
+    logoURI: 'https://snowtrace.io/token/images/avax_28.png',
+    chainId: '43114',
+  },
+  wrappedNativeToken: {
+    address: '0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7',
+    name: 'Wrapped AVAX',
+    symbol: 'WAVAX',
+    decimals: 18,
+    chainId: '43114',
+  },
+  contracts: contractAddresses['43114'] || contractAddresses['default'],
+  subgraphAddresses: subgraphAddresses['43114'] || subgraphAddresses['default'],
+  faucetTokens: [],
+  raisedTokenData: [],
+  validatedTokensInfo: {},
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
+
+// Linea Network
+export const lineaNetwork = new Network({
+  supportDEX: true,
+  supportUniversalAccount: true,
+  chain: lineaMainnet,
+  iconUrl: 'https://lineascan.build/images/svg/brands/main.svg',
+  nativeToken: {
+    address: '0xe5d7c2a44ffddf6b295a15c148167daaaf5cf34f',
+    name: 'ETH',
+    symbol: 'ETH',
+    decimals: 18,
+    isNative: true,
+    logoURI: 'https://lineascan.build/token/images/linea-ether_28.png',
+    chainId: '59144',
+  },
+  wrappedNativeToken: {
+    address: '0xe5d7c2a44ffddf6b295a15c148167daaaf5cf34f',
+    name: 'Wrapped Ether',
+    symbol: 'WETH',
+    decimals: 18,
+    chainId: '59144',
+  },
+  contracts: contractAddresses['59144'] || contractAddresses['default'],
+  subgraphAddresses: subgraphAddresses['59144'] || subgraphAddresses['default'],
+  faucetTokens: [],
+  raisedTokenData: [],
+  validatedTokensInfo: {},
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
+
+// Blast Network
+export const blastNetwork = new Network({
+  supportDEX: true,
+  supportUniversalAccount: true,
+  chain: blastMainnet,
+  iconUrl: 'https://blastscan.io/images/svg/brands/main.svg',
+  nativeToken: {
+    address: '0x4300000000000000000000000000000000000004',
+    name: 'ETH',
+    symbol: 'ETH',
+    decimals: 18,
+    isNative: true,
+    logoURI: 'https://blastscan.io/token/images/weth_28.png',
+    chainId: '81457',
+  },
+  wrappedNativeToken: {
+    address: '0x4300000000000000000000000000000000000004',
+    name: 'Wrapped Ether',
+    symbol: 'WETH',
+    decimals: 18,
+    chainId: '81457',
+  },
+  contracts: contractAddresses['81457'] || contractAddresses['default'],
+  subgraphAddresses: subgraphAddresses['81457'] || subgraphAddresses['default'],
+  faucetTokens: [],
+  raisedTokenData: [],
+  validatedTokensInfo: {},
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
+
+// Manta Pacific Network
+export const mantaNetwork = new Network({
+  supportDEX: true,
+  supportUniversalAccount: true,
+  chain: mantaMainnet,
+  iconUrl: 'https://icons.llamao.fi/icons/chains/rsz_manta.jpg',
+  nativeToken: {
+    address: '0x0dc808adce2099a9f62aa87d9670745aba741746',
+    name: 'ETH',
+    symbol: 'ETH',
+    decimals: 18,
+    isNative: true,
+    logoURI: 'https://pacific-explorer.manta.network/images/manta-pacific.svg',
+    chainId: '169',
+  },
+  wrappedNativeToken: {
+    address: '0x0dc808adce2099a9f62aa87d9670745aba741746',
+    name: 'Wrapped Ether',
+    symbol: 'WETH',
+    decimals: 18,
+    chainId: '169',
+  },
+  contracts: contractAddresses['169'] || contractAddresses['default'],
+  subgraphAddresses: subgraphAddresses['169'] || subgraphAddresses['default'],
+  faucetTokens: [],
+  raisedTokenData: [],
+  validatedTokensInfo: {},
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
+
+// Mode Network
+export const modeNetwork = new Network({
+  supportDEX: true,
+  supportUniversalAccount: true,
+  chain: modeMainnet,
+  iconUrl: 'https://avatars.githubusercontent.com/u/126394483',
+  nativeToken: {
+    address: '0x4200000000000000000000000000000000000006',
+    name: 'ETH',
+    symbol: 'ETH',
+    decimals: 18,
+    isNative: true,
+    logoURI: 'https://explorer.mode.network/token/images/ether_28.png',
+    chainId: '34443',
+  },
+  wrappedNativeToken: {
+    address: '0x4200000000000000000000000000000000000006',
+    name: 'Wrapped Ether',
+    symbol: 'WETH',
+    decimals: 18,
+    chainId: '34443',
+  },
+  contracts: contractAddresses['34443'] || contractAddresses['default'],
+  subgraphAddresses: subgraphAddresses['34443'] || subgraphAddresses['default'],
+  faucetTokens: [],
+  raisedTokenData: [],
+  validatedTokensInfo: {},
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
+
+// Sonic Network
+export const sonicNetwork = new Network({
+  supportDEX: true,
+  supportUniversalAccount: true,
+  chain: sonicMainnet,
+  iconUrl: 'https://explorer.soniclabs.com/favicon.ico',
+  nativeToken: {
+    address: '0x0000000000000000000000000000000000000000',
+    name: 'S',
+    symbol: 'S',
+    decimals: 18,
+    isNative: true,
+    logoURI: 'https://sonicscan.io/images/svg/brands/main.svg',
+    chainId: '146',
+  },
+  contracts: contractAddresses['146'] || contractAddresses['default'],
+  subgraphAddresses: subgraphAddresses['146'] || subgraphAddresses['default'],
+  faucetTokens: [],
+  raisedTokenData: [],
+  validatedTokensInfo: {},
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
+
+// Conflux eSpace Network
+export const confluxNetwork = new Network({
+  supportDEX: true,
+  supportUniversalAccount: true,
+  chain: confluxESpaceMainnet,
+  iconUrl:
+    'https://s1.coincarp.com/logo/1/confluxtoken.png?style=200&v=1674808025',
+  nativeToken: {
+    address: '0x14b2d3bc65e74dae1030eafd8ac30c533c976a9b',
+    name: 'CFX',
+    symbol: 'CFX',
+    decimals: 18,
+    isNative: true,
+    logoURI: 'https://evm.confluxscan.net/images/conflux.svg',
+    chainId: '1030',
+  },
+  wrappedNativeToken: {
+    address: '0x14b2d3bc65e74dae1030eafd8ac30c533c976a9b',
+    name: 'Wrapped CFX',
+    symbol: 'WCFX',
+    decimals: 18,
+    chainId: '1030',
+  },
+  contracts: contractAddresses['1030'] || contractAddresses['default'],
+  subgraphAddresses: subgraphAddresses['1030'] || subgraphAddresses['default'],
+  faucetTokens: [],
+  raisedTokenData: [],
+  validatedTokensInfo: {},
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
+
+// Merlin Network
+export const merlinNetwork = new Network({
+  supportDEX: true,
+  supportUniversalAccount: true,
+  chain: merlinMainnet,
+  iconUrl: 'https://icons.llamao.fi/icons/chains/rsz_merlin.jpg',
+  nativeToken: {
+    address: '0xf6d226f9dc15d9bb51182815b320d3fbe324e1ba',
+    name: 'BTC',
+    symbol: 'BTC',
+    decimals: 18,
+    isNative: true,
+    logoURI: 'https://scan.merlinchain.io/images/bitcoin.png',
+    chainId: '4200',
+  },
+  wrappedNativeToken: {
+    address: '0xf6d226f9dc15d9bb51182815b320d3fbe324e1ba',
+    name: 'Wrapped BTC',
+    symbol: 'WBTC',
+    decimals: 18,
+    chainId: '4200',
+  },
+  contracts: contractAddresses['4200'] || contractAddresses['default'],
+  subgraphAddresses: subgraphAddresses['4200'] || subgraphAddresses['default'],
+  faucetTokens: [],
+  raisedTokenData: [],
+  validatedTokensInfo: {},
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
+
 export const networks = [
   berachainNetwork,
   arbitrumOneNetwork,
@@ -891,7 +1374,17 @@ export const networks = [
   berachainBepoliaNetwork,
   arbitrumSepoliaNetwork,
   sepoliaNetwork,
-  // berachainBartioTestnetNetwork,
+  bscMainnetNetwork,
+  optimismNetwork,
+  polygonNetwork,
+  avalancheNetwork,
+  lineaNetwork,
+  blastNetwork,
+  mantaNetwork,
+  modeNetwork,
+  sonicNetwork,
+  confluxNetwork,
+  merlinNetwork,
   // movementNetWork,
   // sprotoNetWork,
 ];
@@ -900,3 +1393,8 @@ export const networksMap = networks.reduce((acc, network) => {
   acc[network.chainId] = network;
   return acc;
 }, {} as Record<number | string, Network>);
+
+// Only initialize networks on client side
+if (typeof window !== 'undefined') {
+  // Networks will be initialized when wallet.initWallet() is called
+}

@@ -178,7 +178,77 @@ class LaunchPad {
       logoUrl: string;
       bannerUrl: string;
     }): Promise<string> => {
+      // First simulate the transaction to check for errors
+      const simulateTransaction = async () => {
+        try {
+          console.log('Simulating transaction with params:', {
+            launchType,
+            provider,
+            raisedToken,
+            tokenName,
+            tokenSymbol,
+            tokenAmount,
+            poolHandler,
+            raisingCycle,
+          });
+
+          if (launchType === 'fto') {
+            // Use the contract's simulate method directly from viem
+            const simulateResult = await this.ftofactoryContract.contract.simulate.createFTO([
+              provider as `0x${string}`,
+              raisedToken as `0x${string}`,
+              tokenName,
+              tokenSymbol,
+              BigInt(new BigNumber(tokenAmount).multipliedBy(1e18).toFixed()),
+              wallet.currentChain.contracts.algebraSwapRouter as `0x${string}`,
+              BigInt(raisingCycle),
+            ], {
+              account: wallet.account as `0x${string}`,
+            });
+            console.log('FTO simulation successful:', simulateResult);
+          } else {
+            // Use the contract's simulate method directly from viem
+            const simulateResult = await this.memeFactoryContract.contract.simulate.createPair([
+              {
+                raisedToken: raisedToken as `0x${string}`,
+                name: tokenName,
+                symbol: tokenSymbol,
+                swapHandler: wallet.currentChain.contracts
+                  .algebraPositionManager as `0x${string}`,
+              },
+            ], {
+              account: wallet.account as `0x${string}`,
+            });
+            console.log('Meme pair simulation successful:', simulateResult);
+          }
+        } catch (error) {
+          console.error('Transaction simulation failed:', error);
+          console.error('Error details:', {
+            message: (error as any)?.message,
+            cause: (error as any)?.cause,
+            data: (error as any)?.data,
+            shortMessage: (error as any)?.shortMessage,
+            details: (error as any)?.details,
+            args: (error as any)?.args,
+            functionName: (error as any)?.functionName,
+            contractAddress: (error as any)?.contractAddress,
+          });
+          
+          // Provide more detailed error message
+          const errorMessage = (error as any)?.shortMessage || 
+                              (error as any)?.message || 
+                              'Transaction simulation failed. Please check your inputs and try again.';
+          
+          throw new Error(`Transaction simulation failed: ${errorMessage}`);
+        }
+      };
+
+      // Simulate first
+      await simulateTransaction();
+
+      // If simulation succeeds, execute the actual transaction
       const targetLaunchContractFunc = async () => {
+        console.log('Executing actual transaction after successful simulation');
         if (launchType === 'fto') {
           return this.ftofactoryContract.createFTO.call([
             provider as `0x${string}`,

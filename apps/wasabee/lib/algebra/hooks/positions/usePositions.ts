@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { useAccount, useContractReads, useReadContracts } from 'wagmi';
 import { Address } from 'viem';
 import { useDepositsQuery } from '../../graphql/generated/graphql';
-import { useReadAlgebraPositionManagerBalanceOf } from '@/wagmi-generated';
+import { useReadAlgebraPositionManagerBalanceOf } from '@honeypot/shared/wagmi-generated';
 import { useObserver } from 'mobx-react-lite';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { useSubgraphClient } from '@honeypot/shared';

@@ -50,11 +50,17 @@ function computeAllRoutes(
 
   if (!tokenIn || !tokenOut) throw new Error('Missing tokenIn/tokenOut');
 
+  // Start route computation
+
   for (const pool of pools) {
     const [tokenA, tokenB] = pool.tokens;
 
     const { liquidity, price, tick, fee } = pool.pool;
-    if (price === '0' || liquidity === '0') continue;
+    
+    if (!price || price === '0' || !liquidity || liquidity === '0') {
+      // Skipping pool - no price or liquidity
+      continue;
+    }
 
     const newPool = new Pool(
       tokenA,
@@ -67,17 +73,25 @@ function computeAllRoutes(
       Number(DEFAULT_TICK_SPACING)
     );
 
-    if (
-      !newPool ||
-      !newPool.involvesToken(tokenIn) ||
-      currentPath.find((pathPool) => poolEquals(newPool, pathPool))
-    )
+    const involvesTokenIn = newPool.involvesToken(tokenIn);
+    
+    if (!involvesTokenIn) {
+      // Pool doesn't involve tokenIn
       continue;
+    }
+
+    if (currentPath.find((pathPool) => poolEquals(newPool, pathPool))) {
+      continue;
+    }
 
     const outputToken = newPool.token0.equals(tokenIn)
       ? newPool.token1
       : newPool.token0;
+      
+    // Found routing path
+    
     if (outputToken.equals(tokenOut)) {
+      // Found direct route
       allPaths.push(
         new Route([...currentPath, newPool], startCurrencyIn, currencyOut)
       );

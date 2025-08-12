@@ -3,9 +3,9 @@ import {
   publicProcedure,
   rateLimitMiddleware,
   router,
-} from "../trpc";
-import z from "zod";
-import { discussionService } from "../service/discussion";
+} from '../trpc';
+import z from 'zod';
+import { discussionService } from '../service/discussion';
 import {
   Address,
   createWalletClient,
@@ -14,17 +14,17 @@ import {
   maxUint256,
   parseEther,
   publicActions,
-} from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { berachainTestnetbArtio } from "viem/chains";
-import { chainsMap } from "@/lib/chain";
-import { ADDRESS_ZERO } from "@cryptoalgebra/sdk";
+} from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
+import { berachainTestnetbArtio } from 'viem/chains';
+import { chainsMap } from '@honeypot/shared/config/chains/chainBaseConfig';
+import { ADDRESS_ZERO } from '@cryptoalgebra/sdk';
 
 if (!process.env.OOGABOOGA_ZAP_PRIVATE_KEY)
-  throw new Error("PRIVATE_KEY is required");
+  throw new Error('PRIVATE_KEY is required');
 if (!process.env.OOGABOOGA_ZAP_PUBLIC_API_URL)
-  throw new Error("PUBLIC_API_URL is required");
-if (!process.env.OOGABOOGA_ZAP_API_KEY) throw new Error("API_KEY is required");
+  throw new Error('PUBLIC_API_URL is required');
+if (!process.env.OOGABOOGA_ZAP_API_KEY) throw new Error('API_KEY is required');
 
 const OOGABOOGA_ZAP_PRIVATE_KEY = process.env
   .OOGABOOGA_ZAP_PRIVATE_KEY as Address;
@@ -44,10 +44,10 @@ export const zapRouter = router({
       z.object({
         from: z
           .string()
-          .refine((value) => isAddress(value), { message: "Invalid address" }),
+          .refine((value) => isAddress(value), { message: 'Invalid address' }),
         to: z
           .string()
-          .refine((value) => isAddress(value), { message: "Invalid address" }),
+          .refine((value) => isAddress(value), { message: 'Invalid address' }),
         amount: z.string(), // in real amount instead of bigint
         slippage: z.number().optional(),
         chainId: z.number(),
@@ -73,8 +73,8 @@ export const zapRouter = router({
         const publicApiUrl = new URL(
           `${OOGABOOGA_ZAP_PUBLIC_API_URL}/v1/approve/allowance`
         );
-        publicApiUrl.searchParams.set("token", token);
-        publicApiUrl.searchParams.set("from", from);
+        publicApiUrl.searchParams.set('token', token);
+        publicApiUrl.searchParams.set('from', from);
 
         const res = await fetch(publicApiUrl, {
           headers,

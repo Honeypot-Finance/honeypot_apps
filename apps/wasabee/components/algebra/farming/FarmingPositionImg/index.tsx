@@ -1,5 +1,5 @@
 import { cn } from '@nextui-org/theme';
-import { useReadAlgebraPositionManagerTokenUri } from '@/wagmi-generated';
+import { useReadAlgebraPositionManagerTokenUri } from '@honeypot/shared/wagmi-generated';
 import { useEffect, useRef } from 'react';
 
 export const FarmingPositionImg = ({

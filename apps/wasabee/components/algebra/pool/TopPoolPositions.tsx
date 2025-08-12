@@ -149,8 +149,8 @@ export default function TopPoolPositions({
             <thead>
               <tr>
                 <th className="py-4 px-6 text-[#4D4D4D]">
-                  <div className="flex items-center gap-2">
-                    <span>OWNER</span>
+                  <div className="flex items-center gap-2 ">
+                    <span className="text-black">OWNER</span>
                   </div>
                 </th>
                 <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
@@ -158,7 +158,7 @@ export default function TopPoolPositions({
                     className="flex items-center gap-2"
                     onClick={() => handleSort(Position_OrderBy.TickUpperPrice0)}
                   >
-                    <span>RANGE</span>
+                    <span className="text-black">RANGE</span>
                     <div className="flex flex-col">
                       <ChevronUp
                         className={`h-3 w-3 ${
@@ -184,7 +184,7 @@ export default function TopPoolPositions({
                     className="flex items-center gap-2"
                     onClick={() => handleSort(Position_OrderBy.Liquidity)}
                   >
-                    <span>LIQUIDITY</span>
+                    <span className="text-black">LIQUIDITY</span>
                     <div className="flex flex-col">
                       <ChevronUp
                         className={`h-3 w-3 ${
@@ -207,12 +207,12 @@ export default function TopPoolPositions({
                 </th>
                 <th className="py-4 px-6 text-center text-[#4D4D4D]">
                   <div className="flex items-center gap-2 justify-center">
-                    <span>APR</span>
+                    <span className="text-black">APR</span>
                   </div>
                 </th>
                 <th className="py-4 px-6 text-center text-[#4D4D4D]">
                   <div className="flex items-center gap-2 justify-center">
-                    <span>COPY POSITION</span>
+                    <span className="text-black">COPY POSITION</span>
                   </div>
                 </th>
               </tr>

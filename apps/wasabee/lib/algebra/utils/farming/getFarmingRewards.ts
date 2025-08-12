@@ -1,5 +1,5 @@
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { farmingCenterAbi, farmingCenterAddress } from '@/wagmi-generated';
+import { farmingCenterAbi, farmingCenterAddress } from '@honeypot/shared/wagmi-generated';
 import { Address, getContract } from 'viem';
 
 export async function getFarmingRewards({

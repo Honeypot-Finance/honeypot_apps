@@ -8,7 +8,7 @@ import {
   useReadAlgebraPoolLiquidity,
   useReadAlgebraPoolToken0,
   useReadAlgebraPoolToken1,
-} from '@/wagmi-generated';
+} from '@honeypot/shared/wagmi-generated';
 import { getCode } from 'viem/actions';
 import { wallet } from '@honeypot/shared/lib/wallet';
 

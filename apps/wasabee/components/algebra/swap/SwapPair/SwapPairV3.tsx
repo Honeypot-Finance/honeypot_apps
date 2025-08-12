@@ -62,6 +62,7 @@ const SwapPairV3 = ({
 
   const baseCurrency = currencies[SwapField.INPUT];
   const quoteCurrency = currencies[SwapField.OUTPUT];
+  
 
   const { independentField, typedValue } = useSwapState();
   const dependentField: SwapFieldType =
@@ -75,13 +76,14 @@ const SwapPairV3 = ({
       onCurrencySelection(SwapField.INPUT, inputCurrency);
       // Save input token address to localStorage
       if (typeof window !== 'undefined' && inputCurrency) {
-
-        if(inputCurrency?.wrapped?.address){
-        localStorage.setItem('swapInputToken', inputCurrency?.wrapped?.address);
-      }
-        else
-        {
-          localStorage.removeItem('swapInputToken')
+        if (inputCurrency.isNative) {
+          // For native tokens, remove from localStorage (will use ADDRESS_ZERO)
+          localStorage.removeItem('swapInputToken');
+        } else if (inputCurrency.isToken && inputCurrency.address) {
+          // For regular tokens, save the address
+          localStorage.setItem('swapInputToken', inputCurrency.address);
+        } else {
+          localStorage.removeItem('swapInputToken');
         }
       }
     },
@@ -93,12 +95,14 @@ const SwapPairV3 = ({
       onCurrencySelection(SwapField.OUTPUT, outputCurrency);
       // Save output token address to localStorage
       if (typeof window !== 'undefined' && outputCurrency) {
-
-        if(outputCurrency?.wrapped?.address){
-          localStorage.setItem('swapOutputToken', outputCurrency?.wrapped?.address)
-        }else
-        {
-          localStorage.removeItem('swapOutputToken')
+        if (outputCurrency.isNative) {
+          // For native tokens, remove from localStorage (will use ADDRESS_ZERO)
+          localStorage.removeItem('swapOutputToken');
+        } else if (outputCurrency.isToken && outputCurrency.address) {
+          // For regular tokens, save the address
+          localStorage.setItem('swapOutputToken', outputCurrency.address);
+        } else {
+          localStorage.removeItem('swapOutputToken');
         }
       }
     },
@@ -210,23 +214,27 @@ const SwapPairV3 = ({
                 wallet.currentChain.nativeToken.name
               )
             );
-          }
-
-          handleInputSelect(
-            Object.assign(
+          } else {
+            // Check if this is the wrapped native token
+            const isWrappedNative = token.address?.toLowerCase() === wallet.currentChain?.wrappedNativeToken?.address?.toLowerCase();
+            const tokenSymbol = isWrappedNative && wallet.currentChain?.wrappedNativeToken?.symbol
+              ? wallet.currentChain.wrappedNativeToken.symbol
+              : token.symbol;
+            const tokenName = isWrappedNative && wallet.currentChain?.wrappedNativeToken?.name
+              ? wallet.currentChain.wrappedNativeToken.name
+              : token.name;
+            
+            
+            handleInputSelect(
               new AlgebraToken(
                 Number(wallet.currentChainId),
                 token.address,
                 Number(token.decimals),
-                token.symbol,
-                token.name
-              ),
-              {
-                isNative: isInputNative,
-                isToken: !isInputNative,
-              }
-            )
-          );
+                tokenSymbol,
+                tokenName
+              )
+            );
+          }
         }
       }
 
@@ -245,22 +253,27 @@ const SwapPairV3 = ({
                 wallet.currentChain.nativeToken.name
               )
             );
-          }
-          handleOutputSelect(
-            Object.assign(
+          } else {
+            // Check if this is the wrapped native token
+            const isWrappedNative = token.address?.toLowerCase() === wallet.currentChain?.wrappedNativeToken?.address?.toLowerCase();
+            const tokenSymbol = isWrappedNative && wallet.currentChain?.wrappedNativeToken?.symbol
+              ? wallet.currentChain.wrappedNativeToken.symbol
+              : token.symbol;
+            const tokenName = isWrappedNative && wallet.currentChain?.wrappedNativeToken?.name
+              ? wallet.currentChain.wrappedNativeToken.name
+              : token.name;
+            
+            
+            handleOutputSelect(
               new AlgebraToken(
                 Number(wallet.currentChainId),
                 token.address,
                 Number(token.decimals),
-                token.symbol,
-                token.name
-              ),
-              {
-                isNative: isOutputNative,
-                isToken: !isOutputNative,
-              }
-            )
-          );
+                tokenSymbol,
+                tokenName
+              )
+            );
+          }
         }
       }
     };
@@ -276,11 +289,12 @@ const SwapPairV3 = ({
       baseCurrency &&
       quoteCurrency &&
       (baseCurrency?.isNative || quoteCurrency?.isNative) &&
-      baseCurrency?.wrapped.address == quoteCurrency?.wrapped.address
+      (baseCurrency?.wrapped || baseCurrency)?.address == (quoteCurrency?.wrapped || quoteCurrency)?.address
     ) {
-      chart.setChartLabel(`${baseCurrency.wrapped.symbol}`);
+      const wrappedToken = baseCurrency.wrapped || baseCurrency;
+      chart.setChartLabel(`${wrappedToken.symbol}`);
       Token.getToken({
-        address: baseCurrency.wrapped.address,
+        address: wrappedToken.address,
         chainId: wallet.currentChainId.toString(),
       })
         .init()
@@ -289,17 +303,51 @@ const SwapPairV3 = ({
           chart.setCurrencyCode('USD');
         });
     } else if (baseCurrency && quoteCurrency) {
+      // Get the actual tokens for pool computation
+      let tokenA, tokenB;
+      
+      if (baseCurrency.isNative) {
+        if (!baseCurrency.wrapped) {
+          return;
+        }
+        tokenA = baseCurrency.wrapped;
+      } else if (baseCurrency.isToken) {
+        tokenA = baseCurrency;
+      } else {
+        return;
+      }
+      
+      if (quoteCurrency.isNative) {
+        if (!quoteCurrency.wrapped) {
+          return;
+        }
+        tokenB = quoteCurrency.wrapped;
+      } else if (quoteCurrency.isToken) {
+        tokenB = quoteCurrency;
+      } else {
+        return;
+      }
+      
+      // Skip if tokens don't have addresses
+      if (!tokenA?.address || !tokenB?.address) {
+        return;
+      }
+      
       const pairContract = new AlgebraPoolContract({
         address: computePoolAddress({
-          tokenA: baseCurrency.wrapped,
-          tokenB: quoteCurrency.wrapped,
+          tokenA: tokenA,
+          tokenB: tokenB,
+          initCodeHashManualOverride:
+            wallet.currentChain.contracts.algebraPoolInitCodeHash,
+          poolDeployer: wallet.currentChain.contracts.algebraPoolDeployer,
         }),
       });
+      
       pairContract.init().then((pair) => {
         chart.setChartLabel(`${baseCurrency.symbol}/${quoteCurrency.symbol}`);
         chart.setCurrencyCode('TOKEN');
         chart.setTokenNumber(
-          baseCurrency.wrapped.address.toLowerCase() ===
+          tokenA.address.toLowerCase() ===
             pair?.token0.value?.address.toLowerCase()
             ? 0
             : 1
@@ -308,10 +356,11 @@ const SwapPairV3 = ({
       });
     } else if (baseCurrency) {
       chart.setChartLabel(`${baseCurrency.symbol}`);
-      console.log('baseCurrency', baseCurrency);
-      console.log('WNATIVE', WNATIVE);
+      const tokenAddress = baseCurrency.wrapped?.address || (baseCurrency.isToken ? baseCurrency.address : null);
+      if (!tokenAddress) return;
+      
       Token.getToken({
-        address: baseCurrency.wrapped.address,
+        address: tokenAddress,
         chainId: wallet.currentChainId.toString(),
       })
         .init()
@@ -321,8 +370,11 @@ const SwapPairV3 = ({
         });
     } else if (quoteCurrency) {
       chart.setChartLabel(`${quoteCurrency.symbol}`);
+      const tokenAddress = quoteCurrency.wrapped?.address || (quoteCurrency.isToken ? quoteCurrency.address : null);
+      if (!tokenAddress) return;
+      
       Token.getToken({
-        address: quoteCurrency.wrapped.address,
+        address: tokenAddress,
         chainId: wallet.currentChainId.toString(),
       })
         .init()
@@ -334,7 +386,7 @@ const SwapPairV3 = ({
   }, [baseCurrency, quoteCurrency, isUpdatingPriceChart]);
 
   return (
-    <div className="flex flex-col gap-1 relative bg-white custom-dashed px-[18px] py-6 w-full">
+    <div className="flex flex-col gap-1 relative bg-[#1a1410] rounded-xl border border-[#2a2522] custom-dashed px-[18px] py-6 w-full">
       <TokenCardV3
         staticTokenList={staticFromTokenList}
         value={formattedAmounts[SwapField.INPUT] || ''}
