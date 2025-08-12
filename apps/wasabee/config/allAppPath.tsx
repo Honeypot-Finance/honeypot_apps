@@ -66,12 +66,12 @@ export const appPathsList: Menu[] = [
       },
       {
         path: `/xswap`,
-        title: 'XSwap',
+        title: 'Multi-Token Swap',
         routePath: '/xswap',
       },
       {
         path: `/cross-chain-swap`,
-        title: 'Cross Chain Swap',
+        title: 'Cross-Chain Swap',
         routePath: '/cross-chain-swap',
       },
     ],
