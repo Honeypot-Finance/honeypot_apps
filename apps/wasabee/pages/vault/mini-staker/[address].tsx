@@ -138,7 +138,7 @@ export const VaultDetail = observer(() => {
             {vault?.bgtVaultAddress && (
               <div className="rounded-[24px] border border-black bg-orange-300 px-4 md:px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D] sm:col-span-2 md:col-span-3">
                 <div className="flex  gap-2 justify-between items-center">
-                  <h3 className="text-base text-[#202020] mb-2">
+                  <h3 className="text-base text-white mb-2">
                     <span className="text-sm text-black rounded-full bg-white px-2 py-1">
                       Mini Vault Staker
                     </span>
@@ -233,8 +233,8 @@ export const VaultDetail = observer(() => {
               </div>
             )}
 
-            <div className="rounded-[24px] border border-black bg-white px-4 md:px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
-              <h3 className="text-base text-[#202020] mb-2">Total Supply</h3>
+            <div className="rounded-[24px] border border-black bg-[#271A0C] px-4 md:px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
+              <h3 className="text-base text-white mb-2">Total Supply</h3>
               <div className="space-y-1">
                 <p className="text-xs md:text-xl font-bold text-[#202020]">
                   {DynamicFormatAmount({
@@ -252,8 +252,8 @@ export const VaultDetail = observer(() => {
                 </p>
               </div>
             </div>
-            <div className="rounded-[24px] border border-black bg-white px-4 md:px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
-              <h3 className="text-base text-[#202020] mb-2">
+            <div className="rounded-[24px] border border-black bg-[#271A0C] px-4 md:px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
+              <h3 className="text-base text-white mb-2">
                 Your Asset{' '}
                 <span>
                   (
@@ -286,8 +286,8 @@ export const VaultDetail = observer(() => {
                 </p>
               </div>
             </div>
-            <div className="rounded-[24px] border border-black bg-white px-4 md:px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
-              <h3 className="text-base text-[#202020] mb-2">
+            <div className="rounded-[24px] border border-black bg-[#271A0C] px-4 md:px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
+              <h3 className="text-base text-white mb-2">
                 Your Share Percentage
               </h3>
               <p className="text-xs md:text-xl font-bold text-[#202020]">
