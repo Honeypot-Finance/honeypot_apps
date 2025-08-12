@@ -13,6 +13,7 @@ import { ApprovalState } from '@/types/algebra/types/approve-state';
 import { AllInOneVaultABI } from '@/lib/abis';
 import { waitForTransactionReceipt } from '@wagmi/core';
 import { config } from '@/config/wagmi';
+import { MINIMUM_DEPOSIT_AMOUNT } from '../../utils/helper-function';
 
 interface ApproveAndBurnButtonProps {
   tokenAddress: Address;
@@ -22,6 +23,7 @@ interface ApproveAndBurnButtonProps {
   onSuccess?: () => void;
   onError?: (error: string) => void;
   insufficientBalance?: boolean;
+  belowMinimum?: boolean;
 }
 
 export function ApproveAndBurnButton({
@@ -32,6 +34,7 @@ export function ApproveAndBurnButton({
   onSuccess,
   onError,
   insufficientBalance = false,
+  belowMinimum = false,
 }: ApproveAndBurnButtonProps) {
   const { address: userAddress } = useAccount();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -83,20 +86,28 @@ export function ApproveAndBurnButton({
   };
 
   const getButtonConfig = () => {
-    if (insufficientBalance) {
-      return {
-        text: 'Insufficient Balance',
-        disabled: true,
-        onClick: () => {},
-      };
-    }
-
     if (!userAddress) {
       return { text: 'Connect Wallet', disabled: true, onClick: () => {} };
     }
 
     if (!userAmount || userAmount === BigInt(0)) {
       return { text: 'Enter Amount', disabled: true, onClick: () => {} };
+    }
+
+    if (belowMinimum) {
+      return {
+        text: `Min. ${MINIMUM_DEPOSIT_AMOUNT.toLocaleString()} Tokens`,
+        disabled: true,
+        onClick: () => {},
+      };
+    }
+
+    if (insufficientBalance) {
+      return {
+        text: 'Insufficient Balance',
+        disabled: true,
+        onClick: () => {},
+      };
     }
 
     // if (!hasSufficientBalance) {

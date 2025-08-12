@@ -1,6 +1,9 @@
 import { toast } from 'react-toastify';
 import { ReceiptTableData } from '@/components/Table/table.config';
 
+// Minimum deposit amount (before decimals multiplication)
+export const MINIMUM_DEPOSIT_AMOUNT = 10000;
+
 export const calculateSummaryData = (
   token: string,
   amountStr: string,
@@ -88,7 +91,8 @@ export const handleAmountChange = (
   tokenBalance: bigint | null | undefined,
   setAmount: (amount: string) => void,
   setInsufficientBalance: (insufficient: boolean) => void,
-  setSummaryData: (data: any) => void
+  setSummaryData: (data: any) => void,
+  setBelowMinimum?: (belowMin: boolean) => void
 ) => {
   setAmount(newAmount);
 
@@ -103,11 +107,30 @@ export const handleAmountChange = (
     if (newSummaryData) {
       setSummaryData(newSummaryData);
 
-      // Check balance only if amount is provided and valid
+      // Check balance and minimum amount only if amount is provided and valid
       if (newAmount && newAmount.trim() !== '') {
         const amountValue = parseFloat(newAmount);
         const balanceValue = parseFloat(newSummaryData.balance);
 
+        // Check if amount is below minimum
+        if (!isNaN(amountValue) && amountValue > 0 && amountValue < MINIMUM_DEPOSIT_AMOUNT) {
+          if (setBelowMinimum) setBelowMinimum(true);
+          toast.error(
+            `Minimum deposit amount is ${MINIMUM_DEPOSIT_AMOUNT.toLocaleString()} tokens!`,
+            {
+              position: 'top-right',
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            }
+          );
+        } else if (setBelowMinimum) {
+          setBelowMinimum(false);
+        }
+
+        // Check if amount exceeds balance
         if (
           !isNaN(amountValue) &&
           amountValue > 0 &&
@@ -130,10 +153,12 @@ export const handleAmountChange = (
         }
       } else {
         setInsufficientBalance(false);
+        if (setBelowMinimum) setBelowMinimum(false);
       }
     }
   } else {
     setInsufficientBalance(false);
+    if (setBelowMinimum) setBelowMinimum(false);
   }
 };
 
@@ -228,3 +253,9 @@ export function formatSmallScientific(num: number): string | number {
   }
   return num;
 }
+
+export const isAmountBelowMinimum = (amount: string): boolean => {
+  if (!amount || amount.trim() === '') return false;
+  const amountValue = parseFloat(amount);
+  return !isNaN(amountValue) && amountValue > 0 && amountValue < MINIMUM_DEPOSIT_AMOUNT;
+};

@@ -33,6 +33,7 @@ import { useSubgraphClient } from '@honeypot/shared';
 import { createWagmiConfig } from '@honeypot/shared/config/wagmi';
 import { NextUIProvider } from '@nextui-org/react';
 import { merge } from 'lodash';
+import { useVaultDataPrefetch } from '@/hooks/useVaultDataPrefetch';
 
 const config = createWagmiConfig();
 
@@ -65,6 +66,9 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
   const { data: walletClient } = useWalletClient({
     config,
   });
+
+  // Initialize vault data prefetching for instant pools page loading
+  useVaultDataPrefetch();
 
   useEffect(() => {
     wallet.initWallet(walletClient);

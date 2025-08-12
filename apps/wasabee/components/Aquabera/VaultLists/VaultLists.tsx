@@ -11,11 +11,16 @@ import {
 import MyAquaberaVaults from './MyVaults';
 import AllAquaberaVaults from './AllVaults';
 import { Search, ChevronDown } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import aquabera from '@/public/images/partners/aquabera.svg';
 import Image from 'next/image';
+import { VaultDataPrefetchReturn } from '@/hooks/useVaultDataPrefetch';
 
-export function AquaberaList() {
+interface AquaberaListProps {
+  prefetchedData?: VaultDataPrefetchReturn;
+}
+
+export function AquaberaList({ prefetchedData }: AquaberaListProps) {
   const [search, setSearch] = useState('');
   const [selectedTab, setSelectedTab] = useState('all');
   const [sortField, setSortField] = useState('apr');
@@ -145,14 +150,16 @@ export function AquaberaList() {
           <AllAquaberaVaults
             searchString={search}
             sortBy={sortField}
-            key={`all-${sortField}`}
+            key={`all-${sortField}-${search}`}
             onDataLoaded={handleDataLoaded}
+            prefetchedData={prefetchedData?.allVaults}
+            prefetchedContracts={prefetchedData?.allVaultContracts}
           />
         ) : (
           <MyAquaberaVaults
             searchString={search}
             sortBy={sortField}
-            key={`my-${sortField}`}
+            key={`my-${sortField}-${search}`}
           />
         )}
       </div>
