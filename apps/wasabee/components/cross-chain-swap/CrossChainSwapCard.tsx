@@ -672,7 +672,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
           );
           
           // Show warning notification for funds in Universal Account
-          WrappedToastify.warning({
+          WrappedToastify.warn({
             title: 'Swap Failed - Manual Recovery Needed',
             message: errorMessage,
             options: {

@@ -19,7 +19,9 @@ export function useAlgebraToken(address: Address | undefined) {
   const { data: tokenData, isLoading, error } = useToken({
     address: isETH ? undefined : address,
     chainId: currentChainId,
-    enabled: !!address && address !== ADDRESS_ZERO,
+    query: {
+      enabled: !!address && address !== ADDRESS_ZERO,
+    },
   });
 
   return useMemo(() => {
