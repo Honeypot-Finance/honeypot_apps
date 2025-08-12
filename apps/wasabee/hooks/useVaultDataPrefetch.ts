@@ -204,13 +204,39 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
     }
   };
 
+  // Clear data when chain changes
+  const clearDataOnChainChange = () => {
+    const clearedData = {
+      allVaults: null,
+      allVaultContracts: null,
+      isAllVaultsLoading: false,
+      isContractsLoading: false,
+      lastFetched: 0,
+    };
+    globalVaultData = clearedData;
+    setData(clearedData);
+  };
+
+  // Track current chain to detect changes
+  const [currentChainId, setCurrentChainId] = useState(wallet.currentChainId);
+
+  // Clear data when chain changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return; // Skip during SSR/build
+    
+    if (currentChainId !== wallet.currentChainId && wallet.currentChainId !== -1) {
+      clearDataOnChainChange();
+      setCurrentChainId(wallet.currentChainId);
+    }
+  }, [wallet.currentChainId, currentChainId]);
+
   // Auto-prefetch when wallet is ready (only in browser, not during build)
   useEffect(() => {
     if (typeof window === 'undefined') return; // Skip during SSR/build
     if (!wallet.isInit || !infoClient) return;
 
     prefetchVaultData();
-  }, [wallet.isInit, infoClient]);
+  }, [wallet.isInit, infoClient, data.allVaults]);
 
   return {
     allVaults: data.allVaults,

@@ -135,6 +135,11 @@ export function AllAquaberaVaults({
         return;
       }
 
+      // If prefetched data is null (cleared), reset vaults state
+      if (prefetchedData === null && !searchString) {
+        setVaults(undefined);
+      }
+
       try {
         // Load data regardless of searchString
         const res = await getVaultPageData(infoClient, searchString);
@@ -150,6 +155,16 @@ export function AllAquaberaVaults({
 
     initVaults();
   }, [searchString, onDataLoaded, infoClient, prefetchedData]);
+
+  // Update vault contracts when prefetched contracts change
+  useEffect(() => {
+    if (prefetchedContracts && prefetchedContracts.length > 0) {
+      setVaultsContracts(prefetchedContracts);
+    } else if (prefetchedContracts === null) {
+      // Clear contracts when prefetched data is cleared (chain change)
+      setVaultsContracts([]);
+    }
+  }, [prefetchedContracts]);
 
   useEffect(() => {
     if (!vaults?.ichiVaults?.length || !infoClient || !cacheKey) {
