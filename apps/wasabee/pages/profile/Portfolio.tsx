@@ -107,28 +107,6 @@ export const PortfolioTab = observer(() => {
   return (
     <div className="custom-dashed-3xl w-full p-2 sm:p-6 bg-[#271A0C]">
       <div className="flex justify-between items-center mb-4">
-        <Link
-          href="https://app.rhino.fi/bridge/?refId=DeFi_HPOT&token=USDC&chainOut=BERACHAIN&chainIn=ETHEREUM"
-          target="_blank"
-          className="md:mb-4 md:w-full md:justify-end"
-        >
-          <Button className="bg-[#271A0C] text-xs md:text-base px-2 md:px-4">
-            <div className="flex items-center gap-2">
-              <Image
-                src={rhinoLogo}
-                alt="rhino"
-                width={20}
-                height={20}
-                className="md:w-6 md:h-6"
-              />
-              <span className="hidden sm:inline">
-                Bridge your assets with Rhino finance
-              </span>
-              <span className="sm:hidden">Bridge assets</span>
-            </div>
-          </Button>
-        </Link>
-
         <div className="md:hidden">
           <Dropdown>
             <DropdownTrigger>

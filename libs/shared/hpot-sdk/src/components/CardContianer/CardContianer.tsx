@@ -51,9 +51,9 @@ function CardContainer({
                   topOffset
                     ? `bg-[position:-65px_top,left_bottom]`
                     : `bg-[position:left_top,left_bottom]`,
-                  variant === 'default'
-                    ? "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]"
-                    : "bg-[url('/images/card-container/dark/top-border.svg'),url('/images/card-container/dark/bottom-border.svg')]",
+                  // variant === 'default'
+                  //   ? "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]"
+                  //   : "bg-[url('/images/card-container/dark/top-border.svg'),url('/images/card-container/dark/bottom-border.svg')]",
                 ]
               : showTopBorder
               ? [
@@ -62,9 +62,9 @@ function CardContainer({
                   topOffset
                     ? `bg-[position:-65px_top]`
                     : `bg-[position:left_top]`,
-                  variant === 'default'
-                    ? "bg-[url('/images/card-container/honey/honey-border.png')]"
-                    : "bg-[url('/images/card-container/dark/top-border.svg')]",
+                  // variant === 'default'
+                  //   ? "bg-[url('/images/card-container/honey/honey-border.png')]"
+                  //   : "bg-[url('/images/card-container/dark/top-border.svg')]",
                 ]
               : showBottomBorder
               ? [

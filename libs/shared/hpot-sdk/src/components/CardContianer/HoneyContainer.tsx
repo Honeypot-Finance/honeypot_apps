@@ -28,13 +28,13 @@ export function HoneyContainer({
             '--honey-container-border-height': borderHeight,
             '--honey-container-bottom-height': bottomHeight,
 
-            backgroundImage: noNoneyDrop
-              ? ''
-              : `url('/images/card-container/honey/honey-border.png'), url('${
-                  variant === 'wide'
-                    ? '/images/card-container/honey/bottom-border.svg'
-                    : '/images/card-container/dark/bottom-border.svg'
-                }')`,
+            // backgroundImage: noNoneyDrop
+            //   ? ''
+            //   : `url('/images/card-container/honey/honey-border.png'), url('${
+            //       variant === 'wide'
+            //         ? '/images/card-container/honey/bottom-border.svg'
+            //         : '/images/card-container/dark/bottom-border.svg'
+            //     }')`,
           } as React.CSSProperties
         }
         className={cn(

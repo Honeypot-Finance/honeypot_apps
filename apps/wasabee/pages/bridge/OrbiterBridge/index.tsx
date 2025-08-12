@@ -20,7 +20,7 @@ export const OrbiterBridge = observer(() => {
 
   return (
     <div className="w-full flex justify-center items-center mt-5">
-      <div className="flex flex-col gap-1 justify-center items-center relative custom-dashed px-[18px] py-6 max-w-[512px] w-full">
+      <div className="flex flex-col gap-1 justify-center items-center relative custom-dashed px-[18px] py-6 max-w-[512px] w-full bg-[#271A0C]">
         <OrbiterBridgeSelectToken />
         <div className="flex w-full gap-1 justify-between items-center">
           <OrbiterBridgeSelectNetwork type="from" />

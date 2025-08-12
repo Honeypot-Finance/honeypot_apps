@@ -9,9 +9,11 @@ import AquaberaList from '@/components/Aquabera/VaultLists/VaultLists';
 import { useVaultDataPrefetch } from '@/hooks/useVaultDataPrefetch';
 
 const PoolsPage: NextLayoutPage = observer(() => {
-  const [currentTab, setCurrentTab] = useState<'aquabera' | 'algebra'>('aquabera');
+  const [currentTab, setCurrentTab] = useState<'aquabera' | 'algebra'>(
+    'aquabera'
+  );
   const [shouldPrefetch, setShouldPrefetch] = useState(false);
-  
+
   // Prefetch vault data immediately when page loads
   const vaultData = useVaultDataPrefetch();
 
@@ -19,7 +21,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
   useEffect(() => {
     const prefetchTimer = setTimeout(() => {
       setShouldPrefetch(true);
-    }, 1500); 
+    }, 1500);
 
     return () => clearTimeout(prefetchTimer);
   }, []);
@@ -39,7 +41,9 @@ const PoolsPage: NextLayoutPage = observer(() => {
       {/* TODO: Add pool bg img */}
       <Tabs
         selectedKey={currentTab}
-        onSelectionChange={(key) => setCurrentTab(key as 'aquabera' | 'algebra')}
+        onSelectionChange={(key) =>
+          setCurrentTab(key as 'aquabera' | 'algebra')
+        }
         classNames={{
           tab: 'px-2 sm:px-3 sm:h-10 text-xs sm:text-sm',
           base: 'relative w-full',
@@ -49,7 +53,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
           panel: cn(
             'flex flex-col h-full w-full gap-y-4 items-center bg-[#140D06] rounded-2xl text-white',
             'px-4 sm:px-8 pt-[70px] pb-[70px]',
-            "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]",
+            // "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]",
             'bg-[position:-65px_top,_-85px_bottom]',
             'bg-[size:auto_65px,_auto_65px]',
             'bg-repeat-x',
@@ -75,11 +79,23 @@ const PoolsPage: NextLayoutPage = observer(() => {
           <PoolsList />
         </Tab>
       </Tabs>
-      
+
       {/* Prefetch the other tab's component in background after initial load */}
       {shouldPrefetch && (
-        <div style={{ position: 'absolute', left: '-9999px', top: '-9999px', visibility: 'hidden', pointerEvents: 'none' }}>
-          {currentTab === 'aquabera' ? <PoolsList /> : <AquaberaList prefetchedData={vaultData} />}
+        <div
+          style={{
+            position: 'absolute',
+            left: '-9999px',
+            top: '-9999px',
+            visibility: 'hidden',
+            pointerEvents: 'none',
+          }}
+        >
+          {currentTab === 'aquabera' ? (
+            <PoolsList />
+          ) : (
+            <AquaberaList prefetchedData={vaultData} />
+          )}
         </div>
       )}
     </div>

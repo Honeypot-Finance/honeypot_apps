@@ -22,7 +22,9 @@ export default function Bridge() {
           panel: cn(
             'flex flex-col h-full w-full gap-y-4 items-center bg-[#140D06] rounded-2xl text-white',
             'px-8 pt-[70px] pb-[70px]',
-            "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]",
+            'border-2 border-[#3B2712]',
+            'bg-[#140D06]',
+            // "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]",
             'bg-[position:-65px_top,_-85px_bottom]',
             'bg-[size:auto_65px,_auto_65px]',
             'bg-repeat-x',
@@ -32,7 +34,7 @@ export default function Bridge() {
           tabContent: 'text-[#202020]',
         }}
       >
-        <Tab key="orbiter" title="Orbiter">
+        <Tab key="orbiter" title="Orbiter" className=" ">
           <OrbiterBridge />
         </Tab>
         {/* <Tab key="stargate" title="Stargate">
