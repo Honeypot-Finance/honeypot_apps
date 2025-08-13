@@ -53,12 +53,12 @@ export const appPathsList: Menu[] = [
   },
   {
     path: '/potting',
-    title: 'Potting',
+    title: 'Launch Meme',
     routePath: '/potting',
   },
   {
     path: '/pumping',
-    title: 'Pumping',
+    title: 'Trade Meme',
     routePath: '/pumping',
   },
   {

@@ -32,12 +32,12 @@ import { useSubgraphClient, wallet } from '@honeypot/shared';
 // 在组件外部定义常量
 
 const POT_TABS = {
-  NEW: 'New POTs',
+  NEW: 'New Meme',
   ALMOST: 'Almost',
   MOON: 'Moon 🚀',
   TRENDING: 'Trending',
   POPULAR: 'Popular',
-  NEW_PUMPS: 'New Pumps',
+  NEW_PUMPS: 'Success',
 } as const;
 
 type TabType = (typeof POT_TABS)[keyof typeof POT_TABS];
@@ -607,7 +607,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
           ),
         }}
       >
-        <Tab key="new" title="New POTs">
+        <Tab key="new" title="New Meme">
           <div className="bg-white rounded-3xl p-4 border border-black shadow-[4px_4px_0px_0px_#D29A0D] w-full  max-h-[600px] flex flex-col">
             <CardContainer
               className="h-full flex-1"
@@ -753,7 +753,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
             </CardContainer>
           </div>
         </Tab>
-        <Tab key="new-pumps" title="New Pumps">
+        <Tab key="new-pumps" title="Success">
           <div className="bg-white rounded-3xl p-4 border border-black shadow-[4px_4px_0px_0px_#D29A0D] w-full  max-h-[600px] flex flex-col">
             <CardContainer
               className="h-full flex-1"
