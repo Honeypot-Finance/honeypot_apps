@@ -93,39 +93,15 @@ const SwapPage = observer(() => {
           animate="visible"
           className="relative w-full flex flex-col items-center justify-start col-span-2 lg:col-span-1 overflow-visible"
         >
-          <Tabs
-            destroyInactiveTabPanel={false}
-            classNames={{
-              tab: 'px-2 sm:px-3 sm:h-10 text-xs sm:text-sm text-gray-400 data-[selected=true]:text-[#F59E0B]',
-              base: 'relative w-full',
-              cursor: 'bg-transparent border-b-2 border-[#F59E0B]',
-              tabList:
-                'flex rounded-[16px] border border-[#333333] bg-[#271A0C] p-2 sm:p-3 absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 max-w-[90%] sm:max-w-none',
-              panel: cn(
-                'flex flex-col h-full w-full gap-y-4 items-center bg-[#140D06] rounded-2xl text-white',
-                'px-4 sm:px-8 pt-[70px] pb-[70px]',
-                'border border-[#333333]',
-                '!mt-0',
-                'h-auto'
-              ),
-              tabContent: 'text-inherit text-sm sm:text-base',
-            }}
-          >
-            <Tab key="swap" title="Swap">
-              <V3SwapCard
-                bordered={false}
-                fromTokenAddress={inputCurrency ?? undefined}
-                toTokenAddress={outputCurrency ?? undefined}
-                isInputNative={!inputCurrency}
-                isOutputNative={!outputCurrency}
-                isUpdatingPriceChart={true}
-                onSwapSuccess={() => setKlineRefreshKey((k) => k + 1)}
-              />
-            </Tab>
-            <Tab key="universal" title="Universal Account">
-              <UniversalAccountBuyTokenModal />
-            </Tab>
-          </Tabs>
+          <V3SwapCard
+            bordered={false}
+            fromTokenAddress={inputCurrency ?? undefined}
+            toTokenAddress={outputCurrency ?? undefined}
+            isInputNative={!inputCurrency}
+            isOutputNative={!outputCurrency}
+            isUpdatingPriceChart={true}
+            onSwapSuccess={() => setKlineRefreshKey((k) => k + 1)}
+          />
         </motion.div>
 
         <motion.div
