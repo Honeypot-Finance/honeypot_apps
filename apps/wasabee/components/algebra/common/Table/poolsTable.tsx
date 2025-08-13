@@ -265,7 +265,9 @@ const PoolsTable = observer(
                         shouldCloseOnInteractOutside: false,
                       });
                     }}
-                    disabled={!wallet?.account || wallet?.account === zeroAddress}
+                    disabled={
+                      !wallet?.account || wallet?.account === zeroAddress
+                    }
                   >
                     Create Pool
                   </Button>
@@ -279,7 +281,7 @@ const PoolsTable = observer(
                       const dropdownState = !showSortDropdown;
                       setShowSortDropdown(dropdownState);
                     }}
-                    className="bg-white border border-[#2D2D2D] rounded-xl shadow-[2px_2px_0px_0px_#000] px-3 py-1.5 text-xs text-black w-full flex justify-between items-center"
+                    className="bg-[#271A0C] border border-[#2D2D2D] rounded-xl shadow-[2px_2px_0px_0px_#000] px-3 py-1.5 text-xs text-black w-full flex justify-between items-center"
                   >
                     <span>
                       Sort by:{' '}
@@ -362,7 +364,7 @@ const PoolsTable = observer(
               getSortedPools().map((pool: Pool & { userTVLUSD: number }) => (
                 <div
                   key={pool.id}
-                  className="mb-4 p-4 bg-white rounded-lg custom-dashed-3xl"
+                  className="mb-4 p-4 bg-[#271A0C] rounded-lg custom-dashed-3xl"
                   onClick={() => {
                     if (action) {
                       action(pool.id);
