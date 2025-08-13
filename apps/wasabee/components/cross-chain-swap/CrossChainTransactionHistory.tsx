@@ -74,9 +74,9 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
           selectedKey={selectedTab}
           onSelectionChange={(key) => setSelectedTab(key as string)}
           classNames={{
-            tabList: 'bg-[#141414] rounded-lg p-1',
+            tabList: 'bg-[#141414] rounded-lg p-1 flex flex-nowrap overflow-x-auto',
             cursor: 'bg-[#2a2a2a]',
-            tab: 'text-sm text-gray-400 data-[selected=true]:text-white',
+            tab: 'text-xs sm:text-sm text-gray-400 data-[selected=true]:text-white min-w-fit whitespace-nowrap px-2 sm:px-3',
             tabContent: 'group-data-[selected=true]:text-white',
           }}
         >
@@ -114,67 +114,67 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
                 )}
 
                 {/* Swap Details */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3 overflow-hidden">
                     {/* From */}
-                    <div className="flex items-center gap-2">
-                      <div className="relative">
+                    <div className="flex items-center gap-1 sm:gap-2 min-w-0">
+                      <div className="relative flex-shrink-0">
                         <Image
                           src={
                             tx.fromToken.logoURI ||
                             '/images/icons/tokens/unknown.png'
                           }
                           alt={tx.fromToken.symbol}
-                          width={32}
-                          height={32}
-                          className="rounded-full"
+                          width={24}
+                          height={24}
+                          className="rounded-full sm:w-8 sm:h-8"
                         />
                         <Image
                           src={tx.fromChain.iconUrl}
                           alt={tx.fromChain.name}
-                          width={14}
-                          height={14}
-                          className="absolute -bottom-1 -right-1 rounded-full border-2 border-[#141414]"
+                          width={12}
+                          height={12}
+                          className="absolute -bottom-1 -right-1 rounded-full border border-[#141414] sm:w-[14px] sm:h-[14px]"
                         />
                       </div>
-                      <div>
-                        <div className="text-sm font-medium text-white">
+                      <div className="min-w-0">
+                        <div className="text-xs sm:text-sm font-medium text-white truncate">
                           {tx.fromToken.amount} {tx.fromToken.symbol}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-[10px] sm:text-xs text-gray-500 truncate">
                           {tx.fromChain.name}
                         </div>
                       </div>
                     </div>
 
-                    <ArrowRight className="w-4 h-4 text-gray-600" />
+                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600 flex-shrink-0" />
 
                     {/* To */}
-                    <div className="flex items-center gap-2">
-                      <div className="relative">
+                    <div className="flex items-center gap-1 sm:gap-2 min-w-0">
+                      <div className="relative flex-shrink-0">
                         <Image
                           src={
                             tx.toToken.logoURI ||
                             '/images/icons/tokens/unknown.png'
                           }
                           alt={tx.toToken.symbol}
-                          width={32}
-                          height={32}
-                          className="rounded-full"
+                          width={24}
+                          height={24}
+                          className="rounded-full sm:w-8 sm:h-8"
                         />
                         <Image
                           src={tx.toChain.iconUrl}
                           alt={tx.toChain.name}
-                          width={14}
-                          height={14}
-                          className="absolute -bottom-1 -right-1 rounded-full border-2 border-[#141414]"
+                          width={12}
+                          height={12}
+                          className="absolute -bottom-1 -right-1 rounded-full border border-[#141414] sm:w-[14px] sm:h-[14px]"
                         />
                       </div>
-                      <div>
-                        <div className="text-sm font-medium text-white">
+                      <div className="min-w-0">
+                        <div className="text-xs sm:text-sm font-medium text-white truncate">
                           {tx.toToken.amount} {tx.toToken.symbol}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-[10px] sm:text-xs text-gray-500 truncate">
                           {tx.toChain.name}
                         </div>
                       </div>

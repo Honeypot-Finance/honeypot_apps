@@ -75,7 +75,7 @@ function ChainSelector<T extends ChainInfo = ChainInfo>({
             variant="flat"
             size="sm"
             className={`${
-              compact ? 'min-w-[80px] px-2' : 'min-w-[140px]'
+              compact ? 'min-w-[80px] px-2' : 'w-full sm:w-auto sm:min-w-[140px]'
             } justify-between ${
               isDark
                 ? 'bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white border-[#3a3a3a]'
@@ -83,7 +83,7 @@ function ChainSelector<T extends ChainInfo = ChainInfo>({
             }`}
             endContent={<ChevronDown className="w-3 h-3" />}
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               <Image
                 src={value.iconUrl}
                 alt={value.chain.name}
@@ -92,7 +92,7 @@ function ChainSelector<T extends ChainInfo = ChainInfo>({
                 className="rounded-full"
               />
               {!compact && (
-                <span className="text-sm font-medium">
+                <span className="text-xs sm:text-sm font-medium truncate">
                   {value.displayName || value.chain.name}
                 </span>
               )}

@@ -126,7 +126,7 @@ const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, 
       <Button
         variant="flat"
         size="sm"
-        className={`${compact ? 'min-w-[80px] px-2' : 'min-w-[120px]'} justify-between ${
+        className={`${compact ? 'min-w-[80px] px-2' : 'w-full sm:w-auto sm:min-w-[120px]'} justify-between ${
           isDark 
             ? 'bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white border-[#3a3a3a]' 
             : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'
@@ -135,15 +135,15 @@ const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, 
         onPress={() => setIsOpen(true)}
       >
         {value ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <UniversalTokenLogo 
               token={value}
               size={20}
             />
-            <span className="text-sm font-medium">{value.symbol}</span>
+            <span className="text-xs sm:text-sm font-medium">{value.symbol}</span>
           </div>
         ) : (
-          <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{compact ? 'Token' : 'Select Token'}</span>
+          <span className={`text-xs sm:text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{compact ? 'Token' : 'Select Token'}</span>
         )}
       </Button>
 

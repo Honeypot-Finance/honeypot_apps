@@ -837,12 +837,12 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
     }
 
     return (
-      <div className="w-full max-w-[400px] lg:w-[400px]">
+      <div className="w-full max-w-full sm:max-w-[400px] lg:w-[400px] px-2 sm:px-0">
         {/* Main Card */}
-        <div className="bg-[#140D06] rounded-2xl border border-[#333333] shadow-xl h-fit">
+        <div className="bg-[#140D06] rounded-xl sm:rounded-2xl border border-[#333333] shadow-xl h-fit">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 pb-3">
-            <h2 className="text-lg font-medium text-white">Cross-Chain Swap</h2>
+          <div className="flex items-center justify-between p-3 sm:p-4 pb-2 sm:pb-3">
+            <h2 className="text-base sm:text-lg font-medium text-white">Cross-Chain Swap</h2>
             <Button
               isIconOnly
               size="sm"
@@ -854,12 +854,12 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
             </Button>
           </div>
 
-          <div className="px-4 pb-4 space-y-2">
+          <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-2">
             {/* From Section */}
-            <div className="bg-[#271A0C] rounded-xl p-3 border border-[#333333]">
-              <div className="flex items-center justify-between mb-2">
+            <div className="bg-[#271A0C] rounded-lg sm:rounded-xl p-2.5 sm:p-3 border border-[#333333]">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
                 <span className="text-xs text-gray-500">From</span>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2">
                   <TokenSelector
                     chainId={fromChain?.chainId || 0}
                     value={fromToken || undefined}
@@ -873,14 +873,14 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                   />
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <div className="flex-1">
                   <input
                     type="number"
                     value={fromAmount}
                     onChange={(e) => handleFromAmountChange(e.target.value)}
                     placeholder="0.00"
-                    className="w-full text-2xl font-medium bg-transparent outline-none text-white placeholder-gray-600"
+                    className="w-full text-xl sm:text-2xl font-medium bg-transparent outline-none text-white placeholder-gray-600"
                   />
                   <div className="text-xs text-gray-500 mt-1">
                     {isPriceLoading ? (
@@ -942,10 +942,10 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
             </div>
 
             {/* To Section */}
-            <div className="bg-[#271A0C] rounded-xl p-3 border border-[#333333]">
-              <div className="flex items-center justify-between mb-2">
+            <div className="bg-[#271A0C] rounded-lg sm:rounded-xl p-2.5 sm:p-3 border border-[#333333]">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
                 <span className="text-xs text-gray-500">To</span>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2">
                   <TokenSelector
                     chainId={toChain?.chainId || 0}
                     value={toToken || undefined}
@@ -959,14 +959,14 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                   />
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <div className="flex-1">
                   <input
                     type="number"
                     value={toAmount}
                     readOnly
                     placeholder="0.00"
-                    className="w-full text-2xl font-medium bg-transparent outline-none text-white placeholder-gray-600"
+                    className="w-full text-xl sm:text-2xl font-medium bg-transparent outline-none text-white placeholder-gray-600"
                   />
                   <div className="text-xs text-gray-500 mt-1">
                     {isPriceLoading ? (

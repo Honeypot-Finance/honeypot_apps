@@ -29,27 +29,38 @@ const CrossChainSwapPage = observer(() => {
       <div className="w-full min-h-[80vh] flex items-center justify-center">
         <div className="bg-[#1a1a1a] rounded-3xl border border-[#2a2a2a] shadow-2xl p-8">
           <LoadingDisplay />
-          <p className="text-center text-gray-400 mt-4">Loading supported chains...</p>
+          <p className="text-center text-gray-400 mt-4">
+            Loading supported chains...
+          </p>
         </div>
       </div>
     );
   }
 
   // Check if current chain supports Universal Account
-  const isCurrentChainSupported = universalAccountService.isChainSupported(wallet.currentChain?.chainId || 0);
-  
-  if (!isCurrentChainSupported && universalAccountService.availableChains.length > 0) {
+  const isCurrentChainSupported = universalAccountService.isChainSupported(
+    wallet.currentChain?.chainId || 0
+  );
+
+  if (
+    !isCurrentChainSupported &&
+    universalAccountService.availableChains.length > 0
+  ) {
     return (
       <div className="w-full min-h-[80vh] flex items-center justify-center pb-6 sm:pb-12 overflow-x-hidden">
         <div className="bg-[#1a1a1a] rounded-3xl border border-[#2a2a2a] shadow-2xl p-8 max-w-[600px] mx-auto">
           <div className="text-center">
-            <p className="text-xl font-bold mb-4 text-white">Cross-Chain Swap Not Available</p>
-            <p className="text-base text-gray-300">Universal Account is not supported on this chain.</p>
+            <p className="text-xl font-bold mb-4 text-white">
+              Cross-Chain Swap Not Available
+            </p>
+            <p className="text-base text-gray-300">
+              Universal Account is not supported on this chain.
+            </p>
             <p className="text-sm mt-2 text-gray-400">
               Please switch to one of these supported chains:
             </p>
             <div className="flex flex-wrap justify-center gap-2 mt-3">
-              {universalAccountService.availableChains.map(chain => (
+              {universalAccountService.availableChains.map((chain) => (
                 <Button
                   key={chain.chainId}
                   size="sm"
@@ -73,7 +84,9 @@ const CrossChainSwapPage = observer(() => {
         <div className="bg-[#1a1a1a] rounded-3xl border border-[#2a2a2a] shadow-2xl p-8 max-w-[600px] mx-auto">
           <div className="text-center">
             <p className="text-xl font-bold mb-4 text-white">Connect Wallet</p>
-            <p className="text-base text-gray-300">Please connect your wallet to use cross-chain swap.</p>
+            <p className="text-base text-gray-300">
+              Please connect your wallet to use cross-chain swap.
+            </p>
           </div>
         </div>
       </div>
