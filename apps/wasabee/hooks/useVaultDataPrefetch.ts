@@ -7,7 +7,7 @@ import {
 } from '@/lib/algebra/graphql/clients/vaults';
 import { VaultsSortedByHoldersQuery } from '@/lib/algebra/graphql/generated/graphql';
 import { ICHIVaultContract } from '@honeypot/shared';
-
+import { Wallet } from '@honeypot/shared';
 interface VaultDataStore {
   allVaults: VaultsSortedByHoldersQuery | null;
   allVaultContracts: ICHIVaultContract[] | null;
@@ -19,6 +19,7 @@ interface VaultDataStore {
 export interface VaultDataPrefetchReturn extends VaultDataStore {
   isLoading: boolean;
   isDataFresh: boolean;
+  chainId: number | undefined;
 }
 
 const DATA_DURATION = 5 * 60 * 1000; // 5 minutes
@@ -246,5 +247,6 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
     lastFetched: data.lastFetched,
     isLoading: data.isAllVaultsLoading || data.isContractsLoading,
     isDataFresh: isDataFresh(),
+    chainId: wallet.currentChainId,
   };
 };

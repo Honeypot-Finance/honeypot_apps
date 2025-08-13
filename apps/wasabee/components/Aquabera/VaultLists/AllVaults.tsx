@@ -10,6 +10,7 @@ import VaultRow from './VaulltRow';
 import { useSubgraphClient } from '@honeypot/shared';
 import VaultCard from './VaultCard';
 import { Skeleton } from '@nextui-org/react';
+import { useAccount } from 'wagmi';
 
 type SortField =
   | 'pair'
@@ -27,6 +28,7 @@ interface AllAquaberaVaultsProps {
   onDataLoaded?: () => void;
   prefetchedData?: VaultsSortedByHoldersQuery | null;
   prefetchedContracts?: ICHIVaultContract[] | null;
+  ChainId: number | undefined;
 }
 
 export function AllAquaberaVaults({
@@ -35,30 +37,53 @@ export function AllAquaberaVaults({
   onDataLoaded,
   prefetchedData,
   prefetchedContracts,
+  ChainId
 }: AllAquaberaVaultsProps) {
-  const [vaults, setVaults] = useState<VaultsSortedByHoldersQuery | undefined>(prefetchedData || undefined);
-  const [vaultsContracts, setVaultsContracts] = useState<ICHIVaultContract[]>(prefetchedContracts || []);
+  const { chainId } = useAccount()
+  const [vaults, setVaults] = useState<VaultsSortedByHoldersQuery | undefined>(undefined);
+  const [vaultsContracts, setVaultsContracts] = useState<ICHIVaultContract[]>([]);
 
   // Cache configuration
-  const CACHE_KEY_PREFIX = 'vault-cache-';
+  const CACHE_KEY_PREFIX = chainId;
   const CACHE_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
 
   // Generate cache key based on vaults data
   const cacheKey = useMemo(() => {
     if (!vaults?.ichiVaults?.length) return '';
-    return `${wallet.currentChainId}-${vaults.ichiVaults
+    return `${chainId}-${vaults.ichiVaults
       .map((v) => v.id)
       .join('-')}`;
   }, [vaults]);
 
+  useEffect(() => {
 
+
+    setVaults(undefined)
+    setVaultsContracts([])
+    if (prefetchedContracts && ChainId === chainId && prefetchedContracts.length > 0) {
+
+      setVaultsContracts(prefetchedContracts);
+      return;
+    }
+
+    // If we have prefetched data and no search string
+    if (prefetchedData && ChainId === chainId && !searchString) {
+      setVaults(prefetchedData);
+      if (onDataLoaded) {
+        onDataLoaded();
+      }
+      return;
+    }
+    getVaultsFromLocalStorage();
+
+  }, [chainId])
 
   // Load vault contracts from localStorage cache
   const getVaultsFromLocalStorage = () => {
     if (!cacheKey) return;
 
     try {
-      const storageKey = `${CACHE_KEY_PREFIX}${cacheKey}`;
+      const storageKey = `${chainId}${cacheKey}`;
       const cached = localStorage.getItem(storageKey);
 
       if (cached) {
@@ -71,7 +96,7 @@ export function AllAquaberaVaults({
             const token0 = cached.token0
               ? Token.getToken({
                 address: cached.token0.address,
-                chainId: wallet.currentChainId.toString(),
+                chainId: chainId?.toString()!,
                 name: cached.token0.name,
                 symbol: cached.token0.symbol,
                 decimals: cached.token0.decimals,
@@ -81,7 +106,7 @@ export function AllAquaberaVaults({
             const token1 = cached.token1
               ? Token.getToken({
                 address: cached.token1.address,
-                chainId: wallet.currentChainId.toString(),
+                chainId: chainId?.toString()!,
                 name: cached.token1.name,
                 symbol: cached.token1.symbol,
                 decimals: cached.token1.decimals,
@@ -127,13 +152,7 @@ export function AllAquaberaVaults({
       if (!wallet.isInit || !infoClient) return;
 
       // If we have prefetched data and no search string
-      if (prefetchedData && !searchString) {
-        setVaults(prefetchedData);
-        if (onDataLoaded) {
-          onDataLoaded();
-        }
-        return;
-      }
+
 
       // If prefetched data is null (cleared), reset vaults state
       if (prefetchedData === null && !searchString) {
@@ -154,7 +173,7 @@ export function AllAquaberaVaults({
     };
 
     initVaults();
-  }, [searchString, onDataLoaded, infoClient, prefetchedData]);
+  }, [searchString, onDataLoaded, infoClient, prefetchedData, chainId]);
 
   // Update vault contracts when prefetched contracts change
   useEffect(() => {
@@ -173,12 +192,7 @@ export function AllAquaberaVaults({
 
 
 
-    // Skip if we already have prefetched contract data
-    if (prefetchedContracts && prefetchedContracts.length > 0) {
-     
-      setVaultsContracts(prefetchedContracts);
-      return;
-    }
+
 
     // Skip if we already have loaded data
     if (vaultsContracts.length > 0) {
@@ -187,8 +201,8 @@ export function AllAquaberaVaults({
 
     const storageKey = `${CACHE_KEY_PREFIX}${cacheKey}`;
 
-    getVaultsFromLocalStorage();
-    
+
+
     setIsLoadingFromCache(true);
 
     const initializeVaultsWithDetailsFromSubgraph = async () => {
@@ -339,7 +353,7 @@ export function AllAquaberaVaults({
   const isLoading = useMemo(() => {
     const hasData = vaultsContracts.length > 0;
     const hasPrefetchedData = prefetchedContracts && prefetchedContracts.length > 0;
-    
+
     // If we have prefetched data or actual data, never show loading
     if (hasData || hasPrefetchedData) {
       return false;
