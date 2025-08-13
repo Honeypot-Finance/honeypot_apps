@@ -9,14 +9,14 @@ interface VaultCardProps {
 }
 
 const VaultCard = observer(({ vault }: VaultCardProps) => {
-  console.log(vault,"#[vaultreinit vault")
-  
+  console.log(vault, '#[vaultreinit vault');
+
   // Use fully initialized tokens from parent - no additional setup needed!
   const tokenA = vault.token0;
   const tokenB = vault.token1;
 
   return (
-    <div className="mb-4 p-4 bg-white custom-dashed-3xl">
+    <div className="mb-4 p-4 bg-[#271A0C] custom-dashed-3xl">
       {vault?.vaultTag && (
         <VaultTag
           tag={vault.vaultTag.tag}
@@ -29,16 +29,20 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
         <div className="font-medium">Token Pair</div>
         <div className="flex items-center">
           <div className="flex items-center">
-            {tokenA && <TokenLogo
-              token={tokenA}
-              addtionalClasses="translate-x-[25%]"
-              size={20}
-            />}
-            {tokenB && <TokenLogo
-              token={tokenB}
-              addtionalClasses="translate-x-[-25%]"
-              size={20}
-            />}
+            {tokenA && (
+              <TokenLogo
+                token={tokenA}
+                addtionalClasses="translate-x-[25%]"
+                size={20}
+              />
+            )}
+            {tokenB && (
+              <TokenLogo
+                token={tokenB}
+                addtionalClasses="translate-x-[-25%]"
+                size={20}
+              />
+            )}
           </div>
           <span className="font-bold">
             {tokenA?.symbol || 'Token'}/{tokenB?.symbol || 'Token'}
@@ -76,10 +80,9 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
         <div className="font-medium">24h Volume</div>
         <div>
           $
-          {Number(vault.pool?.volume_24h_USD || 0).toLocaleString(
-            'en-US',
-            { maximumFractionDigits: 2 }
-          )}
+          {Number(vault.pool?.volume_24h_USD || 0).toLocaleString('en-US', {
+            maximumFractionDigits: 2,
+          })}
         </div>
       </div>
 
@@ -87,10 +90,9 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
         <div className="font-medium">24h Fees</div>
         <div>
           $
-          {Number(vault.pool?.fees_24h_USD || 0).toLocaleString(
-            'en-US',
-            { maximumFractionDigits: 2 }
-          )}
+          {Number(vault.pool?.fees_24h_USD || 0).toLocaleString('en-US', {
+            maximumFractionDigits: 2,
+          })}
         </div>
       </div>
 

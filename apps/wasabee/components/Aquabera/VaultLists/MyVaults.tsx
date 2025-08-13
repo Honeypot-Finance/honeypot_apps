@@ -35,11 +35,18 @@ interface MyAquaberaVaultsProps {
 }
 
 export const MyAquaberaVaults = observer(
-  ({ searchString = '', sortBy = 'apr', prefetchedData, prefetchedContracts }: MyAquaberaVaultsProps) => {
+  ({
+    searchString = '',
+    sortBy = 'apr',
+    prefetchedData,
+    prefetchedContracts,
+  }: MyAquaberaVaultsProps) => {
     const [vaultsContracts, setVaultsContracts] = useState<ICHIVaultContract[]>(
       prefetchedContracts || []
     );
-    const [myVaults, setMyVaults] = useState<AccountVaultSharesQuery | undefined>(prefetchedData || undefined);
+    const [myVaults, setMyVaults] = useState<
+      AccountVaultSharesQuery | undefined
+    >(prefetchedData || undefined);
     const [sortField, setSortField] = useState<SortField>('tvl');
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const infoClient = useSubgraphClient('algebra_info');
@@ -55,7 +62,6 @@ export const MyAquaberaVaults = observer(
 
       // Skip if we already have prefetched contracts
       if (prefetchedContracts && prefetchedContracts.length > 0) {
-      
         return;
       }
 
@@ -83,13 +89,13 @@ export const MyAquaberaVaults = observer(
 
     useEffect(() => {
       if (!wallet.isInit) return;
-      
+
       // If we have prefetched data, use it
       if (prefetchedData) {
         setMyVaults(prefetchedData);
         return;
       }
-      
+
       loadMyVaults(wallet.account);
     }, [wallet.isInit, wallet.account, prefetchedData]);
 
@@ -236,7 +242,7 @@ export const MyAquaberaVaults = observer(
             sortedVaults.map((vault) => (
               <div
                 key={vault.address}
-                className="mb-4 p-4 bg-white custom-dashed-3xl"
+                className="mb-4 p-4 bg-[#271A0C] custom-dashed-3xl"
               >
                 <div className="flex justify-between items-center mb-3">
                   <div className="font-medium">Token Pair</div>
