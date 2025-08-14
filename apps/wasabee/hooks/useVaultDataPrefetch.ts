@@ -229,7 +229,7 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
       clearDataOnChainChange();
       setCurrentChainId(wallet.currentChainId);
     }
-  }, [wallet.currentChainId, currentChainId]);
+  }, [wallet.currentChainId]);
 
   // Auto-prefetch when wallet is ready (only in browser, not during build)
   useEffect(() => {
@@ -237,7 +237,7 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
     if (!wallet.isInit || !infoClient) return;
 
     prefetchVaultData();
-  }, [wallet.isInit, infoClient, data.allVaults]);
+  }, [wallet.isInit, infoClient]);
 
   return {
     allVaults: data.allVaults,

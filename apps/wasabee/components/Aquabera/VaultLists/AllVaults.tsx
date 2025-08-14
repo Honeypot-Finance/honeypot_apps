@@ -83,7 +83,7 @@ export function AllAquaberaVaults({
     if (!cacheKey) return;
 
     try {
-      const storageKey = `${chainId}${cacheKey}`;
+      const storageKey = `${CACHE_KEY_PREFIX}${cacheKey}`;
       const cached = localStorage.getItem(storageKey);
 
       if (cached) {
@@ -137,9 +137,7 @@ export function AllAquaberaVaults({
     }
   };
 
-  useEffect(() => {
-    getVaultsFromLocalStorage();
-  }, [cacheKey]);
+
 
   const [sortField, setSortField] = useState<SortField>(sortBy as SortField);
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
