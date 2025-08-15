@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Tab, Tabs } from '@nextui-org/react';
 import {
-  Clock,
-  CheckCircle,
-  XCircle,
+  ChevronLeft,
+  ChevronRight,
+  Copy,
   ExternalLink,
-  ArrowRight,
 } from 'lucide-react';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import Image from 'next/image';
 import {
   crossChainTransactionService,
   CrossChainTransaction,
@@ -21,206 +18,265 @@ interface CrossChainTransactionHistoryProps {
 
 const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> =
   observer(({ inModal = false }) => {
-    const [selectedTab, setSelectedTab] = useState('all');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
 
-    // Get real transactions from the service - directly use observable data
-    const userTransactions = wallet.account
-      ? crossChainTransactionService.getTransactionsByUser(wallet.account)
-      : [];
+    // Get real transactions from the service
+    const allTransactions = crossChainTransactionService.getAllTransactions();
+    
+    // Sort by timestamp (most recent first) - use slice() to avoid mutating observable array
+    const sortedTransactions = allTransactions
+      .slice()
+      .sort((a, b) => b.timestamp - a.timestamp);
 
-    // Sort by timestamp (most recent first) and filter by selected tab
-    const filteredTransactions = userTransactions
-      .sort((a, b) => b.timestamp - a.timestamp)
-      .filter((tx) => {
-        if (selectedTab === 'all') return true;
-        return tx.status === selectedTab;
-      });
-
-    const getStatusIcon = (status: CrossChainTransaction['status']) => {
-      switch (status) {
-        case 'pending':
-          return <Clock className="w-4 h-4 text-yellow-500" />;
-        case 'completed':
-          return <CheckCircle className="w-4 h-4 text-green-500" />;
-        case 'failed':
-          return <XCircle className="w-4 h-4 text-red-500" />;
-      }
-    };
-
-    const getStatusText = (status: CrossChainTransaction['status']) => {
-      switch (status) {
-        case 'pending':
-          return 'Pending';
-        case 'completed':
-          return 'Completed';
-        case 'failed':
-          return 'Failed';
-      }
-    };
-
-    const formatTime = (timestamp: number) => {
+    const formatTimeAgo = (timestamp: number): string => {
       const now = Date.now();
       const diff = now - timestamp;
-
-      if (diff < 60000) return 'Just now';
-      if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
-      if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
-      return `${Math.floor(diff / 86400000)}d ago`;
+      
+      if (diff < 60000) return `${Math.floor(diff / 1000)} secs ago`;
+      if (diff < 3600000) return `${Math.floor(diff / 60000)} mins ago`;
+      if (diff < 86400000) return `${Math.floor(diff / 3600000)} hours ago`;
+      return `${Math.floor(diff / 86400000)} days ago`;
     };
 
-    const content = (
-      <>
-        <Tabs
-          selectedKey={selectedTab}
-          onSelectionChange={(key) => setSelectedTab(key as string)}
-          classNames={{
-            tabList: 'bg-[#141414] rounded-lg p-1 flex flex-nowrap overflow-x-auto',
-            cursor: 'bg-[#2a2a2a]',
-            tab: 'text-xs sm:text-sm text-gray-400 data-[selected=true]:text-white min-w-fit whitespace-nowrap px-2 sm:px-3',
-            tabContent: 'group-data-[selected=true]:text-white',
-          }}
-        >
-          <Tab key="all" title="All" />
-          <Tab key="pending" title="Pending" />
-          <Tab key="completed" title="Completed" />
-          <Tab key="failed" title="Failed" />
-        </Tabs>
+    const formatAddress = (address: string): string => {
+      if (!address) return '0x...';
+      return `${address.slice(0, 6)}...${address.slice(-4)}`;
+    };
 
-        <div className="mt-6 space-y-4">
-          {filteredTransactions.length > 0 ? (
-            filteredTransactions.map((tx) => (
-              <div
-                key={`${tx.id}-${tx.status}-${tx.timestamp}`}
-                className="bg-[#141414] border border-[#2a2a2a] rounded-2xl p-4 space-y-3"
-              >
-                {/* Status and Time */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {getStatusIcon(tx.status)}
-                    <span className="text-sm font-medium text-white">
-                      {getStatusText(tx.status)}
-                    </span>
-                  </div>
-                  <span className="text-xs text-gray-500">
-                    {formatTime(tx.timestamp)}
-                  </span>
-                </div>
+    const copyToClipboard = (text: string) => {
+      navigator.clipboard.writeText(text);
+      // Could add a toast notification here
+    };
 
-                {/* Error Message for Failed Transactions */}
-                {tx.status === 'failed' && tx.errorMessage && (
-                  <div className="bg-red-900/20 border border-red-800/30 rounded-lg p-2 mb-3">
-                    <p className="text-xs text-red-400">{tx.errorMessage}</p>
-                  </div>
-                )}
+    const openInExplorer = (txHash: string, chainId?: number) => {
+      if (!txHash || txHash === '0x...') return;
+      
+      // Map chain IDs to explorer URLs
+      const explorers: Record<number, string> = {
+        1: 'https://etherscan.io',
+        56: 'https://bscscan.com',
+        137: 'https://polygonscan.com',
+        42161: 'https://arbiscan.io',
+        10: 'https://optimistic.etherscan.io',
+        8453: 'https://basescan.org',
+      };
+      
+      const explorerUrl = explorers[chainId || 1] || 'https://etherscan.io';
+      window.open(`${explorerUrl}/tx/${txHash}`, '_blank');
+    };
 
-                {/* Swap Details */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <div className="flex items-center gap-2 sm:gap-3 overflow-hidden">
-                    {/* From */}
-                    <div className="flex items-center gap-1 sm:gap-2 min-w-0">
-                      <div className="relative flex-shrink-0">
-                        <Image
-                          src={
-                            tx.fromToken.logoURI ||
-                            '/images/icons/tokens/unknown.png'
-                          }
-                          alt={tx.fromToken.symbol}
-                          width={24}
-                          height={24}
-                          className="rounded-full sm:w-8 sm:h-8"
-                        />
-                        <Image
-                          src={tx.fromChain.iconUrl}
-                          alt={tx.fromChain.name}
-                          width={12}
-                          height={12}
-                          className="absolute -bottom-1 -right-1 rounded-full border border-[#141414] sm:w-[14px] sm:h-[14px]"
-                        />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-xs sm:text-sm font-medium text-white truncate">
-                          {tx.fromToken.amount} {tx.fromToken.symbol}
-                        </div>
-                        <div className="text-[10px] sm:text-xs text-gray-500 truncate">
-                          {tx.fromChain.name}
-                        </div>
-                      </div>
-                    </div>
+    // Calculate value (approximate USD value)
+    const calculateValue = (tx: CrossChainTransaction): number => {
+      // This is a simplified calculation - in production you'd use real price data
+      const amount = parseFloat(tx.fromToken?.amount || '0');
+      const tokenPrices: Record<string, number> = {
+        'ETH': 3000,
+        'WETH': 3000,
+        'BNB': 600,
+        'USDT': 1,
+        'USDC': 1,
+        'MATIC': 0.8,
+      };
+      const price = tokenPrices[tx.fromToken?.symbol?.toUpperCase() || ''] || 100;
+      return amount * price;
+    };
 
-                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600 flex-shrink-0" />
+    // Pagination
+    const totalPages = Math.ceil(sortedTransactions.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentTransactions = sortedTransactions.slice(startIndex, endIndex);
 
-                    {/* To */}
-                    <div className="flex items-center gap-1 sm:gap-2 min-w-0">
-                      <div className="relative flex-shrink-0">
-                        <Image
-                          src={
-                            tx.toToken.logoURI ||
-                            '/images/icons/tokens/unknown.png'
-                          }
-                          alt={tx.toToken.symbol}
-                          width={24}
-                          height={24}
-                          className="rounded-full sm:w-8 sm:h-8"
-                        />
-                        <Image
-                          src={tx.toChain.iconUrl}
-                          alt={tx.toChain.name}
-                          width={12}
-                          height={12}
-                          className="absolute -bottom-1 -right-1 rounded-full border border-[#141414] sm:w-[14px] sm:h-[14px]"
-                        />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-xs sm:text-sm font-medium text-white truncate">
-                          {tx.toToken.amount} {tx.toToken.symbol}
-                        </div>
-                        <div className="text-[10px] sm:text-xs text-gray-500 truncate">
-                          {tx.toChain.name}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+    const goToPage = (page: number) => {
+      if (page >= 1 && page <= totalPages) {
+        setCurrentPage(page);
+      }
+    };
 
-                  {/* View Transaction */}
-                  {(tx.universalTxId || tx.txHash) && (
-                    <a
-                      href={`https://universalx.app/activity/details?id=${
-                        tx.universalTxId || tx.txHash
-                      }`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-sm text-purple-400 hover:text-purple-300"
-                    >
-                      <span>View</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  )}
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-lg font-medium mb-2 text-gray-300">
-                No transactions yet
-              </p>
-              <p className="text-sm text-gray-500">
-                Your cross-chain swaps will appear here
-              </p>
-            </div>
-          )}
-        </div>
-      </>
-    );
+    const renderPageNumbers = () => {
+      const pages = [];
+      const maxVisible = 5;
+      let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+      let end = Math.min(totalPages, start + maxVisible - 1);
+      
+      if (end - start < maxVisible - 1) {
+        start = Math.max(1, end - maxVisible + 1);
+      }
 
-    if (inModal) {
-      return content;
-    }
+      for (let i = start; i <= end; i++) {
+        pages.push(
+          <button
+            key={i}
+            onClick={() => goToPage(i)}
+            className={`w-8 h-8 rounded ${
+              currentPage === i
+                ? 'bg-[#F59E0B] text-black font-semibold'
+                : 'bg-transparent text-gray-400 hover:text-white hover:bg-[#2a2a2a]'
+            } transition-colors`}
+          >
+            {i}
+          </button>
+        );
+      }
+
+      if (start > 1) {
+        pages.unshift(
+          <span key="dots-start" className="text-gray-400 px-2">
+            ...
+          </span>
+        );
+      }
+
+      if (end < totalPages) {
+        pages.push(
+          <span key="dots-end" className="text-gray-400 px-2">
+            ...
+          </span>
+        );
+        pages.push(
+          <button
+            key={totalPages}
+            onClick={() => goToPage(totalPages)}
+            className="w-8 h-8 rounded bg-transparent text-gray-400 hover:text-white hover:bg-[#2a2a2a] transition-colors"
+          >
+            {totalPages}
+          </button>
+        );
+      }
+
+      return pages;
+    };
+
+    const containerClass = inModal 
+      ? "w-full bg-transparent" 
+      : "w-full bg-[#0D0D0D] rounded-2xl border border-[#2a2a2a] p-6";
 
     return (
-      <div className="w-full">
-        <div className="bg-[#271A0C] rounded-3xl border border-[#2a2a2a] shadow-2xl p-6">
-          {content}
+      <div className={containerClass}>
+        {!inModal && (
+          <h2 className="text-xl font-semibold text-white mb-6">Latest Transactions</h2>
+        )}
+        
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-[#2a2a2a]">
+                <th className="text-left text-sm text-gray-400 font-normal pb-4">Time</th>
+                <th className="text-left text-sm text-gray-400 font-normal pb-4">
+                  <div className="flex items-center gap-1">
+                    Value
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </th>
+                <th className="text-left text-sm text-gray-400 font-normal pb-4">From</th>
+                <th className="text-left text-sm text-gray-400 font-normal pb-4">To</th>
+                <th className="text-left text-sm text-gray-400 font-normal pb-4">Status</th>
+                <th className="text-left text-sm text-gray-400 font-normal pb-4">User</th>
+                <th className="text-left text-sm text-gray-400 font-normal pb-4">TX Hash</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentTransactions.length > 0 ? (
+                currentTransactions.map((tx) => (
+                  <tr key={tx.id} className="border-b border-[#1a1a1a] hover:bg-[#141414] transition-colors">
+                    <td className="py-4 text-sm text-gray-300">
+                      {formatTimeAgo(tx.timestamp)}
+                    </td>
+                    <td className="py-4 text-sm text-white font-medium">
+                      ${calculateValue(tx).toFixed(2)}
+                    </td>
+                    <td className="py-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-white">
+                          {tx.fromToken?.amount || '0'} {tx.fromToken?.symbol || 'Unknown'}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          ({tx.fromChain?.name || 'Chain'})
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-[#4ADE80]">
+                          {tx.toToken?.amount || '...'} {tx.toToken?.symbol || 'Unknown'}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          ({tx.toChain?.name || 'Chain'})
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-4">
+                      <span className={`text-sm px-2 py-1 rounded-full ${
+                        tx.status === 'completed' 
+                          ? 'bg-green-500/20 text-green-500'
+                          : tx.status === 'failed'
+                          ? 'bg-red-500/20 text-red-500'
+                          : 'bg-yellow-500/20 text-yellow-500'
+                      }`}>
+                        {tx.status}
+                      </span>
+                    </td>
+                    <td className="py-4">
+                      <button
+                        onClick={() => copyToClipboard(tx.userAddress)}
+                        className="text-sm text-[#F59E0B] hover:text-[#DC8A09] flex items-center gap-1 transition-colors"
+                      >
+                        {formatAddress(tx.userAddress)}
+                        <Copy className="w-3 h-3" />
+                      </button>
+                    </td>
+                    <td className="py-4">
+                      {tx.txHash && tx.txHash !== '0x...' ? (
+                        <button
+                          onClick={() => openInExplorer(tx.txHash!, tx.fromChain?.chainId)}
+                          className="text-sm text-[#F59E0B] hover:text-[#DC8A09] flex items-center gap-1 transition-colors"
+                        >
+                          {formatAddress(tx.txHash)}
+                          <ExternalLink className="w-3 h-3" />
+                        </button>
+                      ) : (
+                        <span className="text-sm text-gray-500">Pending...</span>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className="py-8 text-center text-gray-400">
+                    No transactions yet
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
+
+        {/* Pagination - only show if there are transactions */}
+        {sortedTransactions.length > itemsPerPage && (
+          <div className="flex items-center justify-center gap-2 mt-6">
+            <button
+              onClick={() => goToPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="w-8 h-8 rounded bg-transparent text-gray-400 hover:text-white hover:bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            
+            {renderPageNumbers()}
+            
+            <button
+              onClick={() => goToPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="w-8 h-8 rounded bg-transparent text-gray-400 hover:text-white hover:bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
     );
   });

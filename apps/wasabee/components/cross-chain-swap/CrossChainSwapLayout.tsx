@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { motion } from 'framer-motion';
-import { Tab, Tabs } from '@nextui-org/react';
 import CrossChainSwapCard from './CrossChainSwapCard';
 import CrossChainKlineChart from './CrossChainKlineChart';
 import CrossChainTransactionHistory from './CrossChainTransactionHistory';
 import { itemPopUpVariants } from '@/lib/animation';
-import { cn } from '@/lib/tailwindcss';
 
 const CrossChainSwapLayout: React.FC = observer(() => {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -47,43 +45,15 @@ const CrossChainSwapLayout: React.FC = observer(() => {
             </motion.div>
           </div>
 
-          {/* Transaction History Section - Responsive height */}
+          {/* Transaction History Section - Table Style Design */}
           <motion.div
             variants={itemPopUpVariants}
             initial="hidden"
             animate="visible"
             transition={{ duration: 0.5 }}
-            className="w-full h-[400px] sm:h-[350px]"
+            className="w-full"
           >
-            <div className="bg-[#140D06] rounded-xl sm:rounded-2xl border border-[#333333] p-2 sm:p-4 h-full flex flex-col overflow-hidden">
-              <Tabs
-                classNames={{
-                  tabList: cn(
-                    'bg-transparent rounded-none p-0 gap-6 flex-shrink-0',
-                    'border-b border-[#333333]'
-                  ),
-                  cursor: 'bg-transparent shadow-none',
-                  tab: cn(
-                    'bg-transparent px-0 h-12',
-                    'data-[selected=true]:bg-transparent',
-                    'data-[selected=true]:border-b-2 data-[selected=true]:border-[#F59E0B]',
-                    'data-[hover-unselected=true]:opacity-70'
-                  ),
-                  tabContent: cn(
-                    'text-gray-400 group-data-[selected=true]:text-white',
-                    'text-base font-medium'
-                  ),
-                  panel: 'flex-1 overflow-hidden flex flex-col pt-4 min-h-0',
-                }}
-                variant="underlined"
-              >
-                <Tab key="history" title="Transaction History">
-                  <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar min-h-0">
-                    <CrossChainTransactionHistory inModal={false} />
-                  </div>
-                </Tab>
-              </Tabs>
-            </div>
+            <CrossChainTransactionHistory inModal={false} />
           </motion.div>
         </div>
       </div>

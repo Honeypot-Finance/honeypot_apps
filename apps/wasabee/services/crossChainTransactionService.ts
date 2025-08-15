@@ -141,6 +141,10 @@ class CrossChainTransactionService {
     );
   }
   
+  getAllTransactions(): CrossChainTransaction[] {
+    return this.transactions;
+  }
+  
   clearTransactions() {
     this.transactions = [];
     this.saveTransactions();

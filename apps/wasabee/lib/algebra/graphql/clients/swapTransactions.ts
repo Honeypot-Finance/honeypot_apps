@@ -1,5 +1,6 @@
 import { ApolloClient, gql } from '@apollo/client';
 import { useSubgraphClient } from '@honeypot/shared';
+import { zeroAddress } from 'viem';
 
 type SwapTransaction = {
   id: string;
@@ -97,6 +98,76 @@ export async function fetchSwapTransactions(
   };
 }
 
+export async function fetchAllSwapTransactions(
+  client: ApolloClient<any>,
+  page: number = 1,
+  pageSize: number = 10
+): Promise<SwapTransactionsResponse> {
+  const skip = (page - 1) * pageSize;
+
+  const query = `
+    query GetAllSwaps {
+      swaps(
+        first: ${pageSize}
+        skip: ${skip}
+        orderBy: timestamp
+        orderDirection: desc
+      ) {
+        id
+        timestamp
+        transaction {
+          id
+          from: id
+        }
+        sender
+        recipient
+        origin
+        token0 {
+          symbol
+        }
+        token1 {
+          symbol
+        }
+        amount0
+        amount1
+        amountUSD
+      }
+    }
+  `;
+
+  try {
+    const { data } = await client.query<SwapsResponse>({
+      query: gql(query),
+      fetchPolicy: 'network-only',
+    });
+
+    return {
+      status: 'success',
+      message: 'Success',
+      data: data.swaps.map(swap => ({
+        ...swap,
+        transaction: {
+          ...swap.transaction,
+          from: swap.sender || swap.origin || swap.transaction.from
+        }
+      })),
+      pageInfo: {
+        hasNextPage: data.swaps.length === pageSize,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching all swaps:', error);
+    return {
+      status: 'error',
+      message: 'Failed to fetch transactions',
+      data: [],
+      pageInfo: {
+        hasNextPage: false,
+      },
+    };
+  }
+}
+
 export function useSwapTransactions() {
   const infoClient = useSubgraphClient('algebra_info');
 
@@ -107,6 +178,11 @@ export function useSwapTransactions() {
       token1Address: string,
       token2Address: string
     ) => {
+      // If both addresses are zero address, fetch all transactions
+      if (token1Address === zeroAddress && token2Address === zeroAddress) {
+        return fetchAllSwapTransactions(infoClient, page, pageSize);
+      }
+      
       return fetchSwapTransactions(
         infoClient,
         page,
@@ -114,6 +190,12 @@ export function useSwapTransactions() {
         token1Address,
         token2Address
       );
+    },
+    fetchAllTransactions: async (
+      page: number = 1,
+      pageSize: number = 10
+    ) => {
+      return fetchAllSwapTransactions(infoClient, page, pageSize);
     },
   };
 }
