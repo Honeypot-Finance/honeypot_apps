@@ -594,7 +594,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
 
         // Get transaction hash from result
         const txHash =
-          result.transactionHash || result.depositTxHash || '0x...';
+          result.transactionHash || (result as any).depositTxHash || '0x...';
 
         // Dismiss the loading toast only after the transaction completes
         if (pendingToastId) {
