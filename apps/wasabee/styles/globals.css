@@ -49,15 +49,11 @@ body {
   min-height: 100vh;
   overflow: auto;
   font-family: "MEMEP";
+  background: #0C0804;
 }
 
 body {
-  background: rgb(20, 13, 6);
-  background: linear-gradient(
-    180deg,
-    rgba(20, 13, 6, 1) 0%,
-    rgba(20, 13, 6, 1) 100%
-  );
+  background-image: url(./honey-bg-shade.svg);
   min-height: 100vh;
   color: white;
 }

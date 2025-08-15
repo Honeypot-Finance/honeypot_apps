@@ -28,6 +28,7 @@ import { Token as AlgebraToken } from '@cryptoalgebra/sdk';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { AlgebraPoolContract } from '@/services/contract/algebra/algebra-pool-contract';
 import Image from 'next/image';
+import TokenCardMultichain from '../TokenCard/TokenCardMultichain';
 
 interface SwapPairV3Props {
   fromTokenAddress?: string;
@@ -152,10 +153,6 @@ const SwapPairV3 = ({
 
   const maxInputAmount: CurrencyAmount<Currency> | undefined = maxAmountSpend(
     currencyBalances[SwapField.INPUT]
-  );
-  const showMaxButton = Boolean(
-    maxInputAmount?.greaterThan(0) &&
-      !parsedAmounts[SwapField.INPUT]?.equalTo(maxInputAmount)
   );
 
   const handleMaxInput = useCallback(() => {
@@ -397,8 +394,8 @@ const SwapPairV3 = ({
   }, [baseCurrency, quoteCurrency, isUpdatingPriceChart]);
 
   return (
-    <div className="flex flex-col gap-1 relative rounded-xl px-[18px] py-6 w-full">
-      <TokenCardV3
+    <div className="flex flex-col gap-1 relative rounded-xl w-full">
+      <TokenCardMultichain
         staticTokenList={staticFromTokenList}
         value={formattedAmounts[SwapField.INPUT] || ''}
         currency={baseCurrency}
@@ -407,18 +404,14 @@ const SwapPairV3 = ({
         handleValueChange={handleTypeInput}
         handleMaxValue={handleMaxInput}
         fiatValue={fiatValueInputFormatted}
-        showMaxButton={showMaxButton}
+        showMaxButton={true}
         showBalance={true}
         label="From"
         disableSelection={disableSelection || disableFromSelection}
       />
 
-      <div className="flex w-full items-center gap-[5px]">
-        <div className=" h-px flex-[1_0_0] bg-[#363636]/30 rounded-[100px]"></div>
-        <div
-          className=" cursor-pointer hover:rotate-180 transition-all rounded-[10px] border border-black text-black p-2.5 shadow-[1.25px_2.5px_0px_0px_#000]"
-          onClick={onSwitchTokens}
-        >
+      <div className="h-1 flex w-full items-center justify-center z-10">
+        <div className=" cursor-pointer " onClick={onSwitchTokens}>
           <Image
             src={'/images/icons/swap_arrow.png'}
             alt="switch tokens"
@@ -426,10 +419,8 @@ const SwapPairV3 = ({
             height={50}
           />
         </div>
-        <div className=" h-px flex-[1_0_0] bg-[#363636]/30 rounded-[100px]"></div>
       </div>
-
-      <TokenCardV3
+      <TokenCardMultichain
         staticTokenList={staticToTokenList}
         value={formattedAmounts[SwapField.OUTPUT] || ''}
         currency={quoteCurrency}

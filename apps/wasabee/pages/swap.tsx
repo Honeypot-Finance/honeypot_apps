@@ -6,13 +6,10 @@ import { wallet } from '@honeypot/shared/lib/wallet';
 import { useSearchParams } from 'next/navigation';
 import { itemPopUpVariants } from '@/lib/animation';
 import { DarkContainer } from '@/components/CardContianer';
-import V3SwapCard from '@/components/algebra/swap/V3SwapCard';
 import KlineChart from './launch-detail/components/KlineChart';
 import { LoadingDisplay } from '@/components/LoadingDisplay/LoadingDisplay';
 import SwapTransactionHistory from '@/components/SwapTransactionHistory';
-import { Tab, Tabs } from '@nextui-org/react';
-import { cn } from '@/lib/tailwindcss';
-import { UniversalAccountBuyTokenModal } from '@honeypot/shared';
+import SwapCardMultichainDesign from '@/components/multichain-design/swap/SwapCard';
 
 const SwapPage = observer(() => {
   const searchParams = useSearchParams();
@@ -93,7 +90,7 @@ const SwapPage = observer(() => {
           animate="visible"
           className="relative w-full flex flex-col items-center justify-start col-span-2 lg:col-span-1 overflow-visible"
         >
-          <V3SwapCard
+          <SwapCardMultichainDesign
             bordered={false}
             fromTokenAddress={inputCurrency ?? undefined}
             toTokenAddress={outputCurrency ?? undefined}

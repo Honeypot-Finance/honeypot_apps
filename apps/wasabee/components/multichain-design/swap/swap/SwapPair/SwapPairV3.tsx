@@ -19,7 +19,7 @@ import {
   useSwapActionHandlers,
 } from '@/lib/algebra/state/swapStore';
 import { SwapField, SwapFieldType } from '@/types/algebra/types/swap-field';
-import TokenCardV3 from '../TokenCard/TokenCardV3';
+import TokenCardV3 from '../../TokenCard/TokenCardV3';
 import { ExchangeSvg } from '@/components/svg/exchange';
 import { chart } from '@honeypot/shared/services';
 

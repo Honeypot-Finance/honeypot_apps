@@ -133,7 +133,7 @@ const myTheme: Theme = merge(darkTheme(), {
 const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
   return (
     <Image
-      src={'/images/empty-logo.png'}
+      src={'/honeypot-icon.svg'}
       alt="User avatar"
       width={size}
       height={size}
