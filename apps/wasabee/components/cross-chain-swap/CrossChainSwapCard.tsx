@@ -418,6 +418,77 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
       fetchTokenPrices();
     }, [fetchTokenPrices]);
 
+    const handleSimulateSwap = async () => {
+      if (!wallet.account) {
+        WrappedToastify.error({
+          title: 'Wallet not connected',
+          message: 'Please connect your wallet to simulate',
+        });
+        return;
+      }
+
+      if (!fromAmount || parseFloat(fromAmount) === 0) {
+        WrappedToastify.error({
+          title: 'Invalid amount',
+          message: 'Please enter a valid amount to simulate',
+        });
+        return;
+      }
+
+      const loadingToast = toast.loading('Simulating swap...');
+      
+      try {
+        // Debug current state
+        crossChainSwapService.debugState();
+        
+        // Run simulation
+        const simulation = await crossChainSwapService.simulateSwap(fromAmount);
+        
+        toast.dismiss(loadingToast);
+        
+        if (simulation.success) {
+          WrappedToastify.success({
+            title: 'Simulation Successful',
+            message: (
+              <div>
+                <p>✅ Swap can proceed</p>
+                {simulation.estimatedFees && <p>Estimated fees: ${simulation.estimatedFees}</p>}
+                {simulation.warnings.length > 0 && (
+                  <div className="mt-2">
+                    <p className="font-semibold">Warnings:</p>
+                    {simulation.warnings.map((w, i) => (
+                      <p key={i} className="text-sm">⚠️ {w}</p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ),
+            options: { autoClose: 8000 }
+          });
+        } else {
+          WrappedToastify.error({
+            title: 'Simulation Failed',
+            message: (
+              <div>
+                {simulation.errors.map((e, i) => (
+                  <p key={i}>❌ {e}</p>
+                ))}
+              </div>
+            ),
+            options: { autoClose: 10000 }
+          });
+        }
+        
+        console.log('Simulation details:', simulation.details);
+      } catch (error) {
+        toast.dismiss(loadingToast);
+        WrappedToastify.error({
+          title: 'Simulation Error',
+          message: error instanceof Error ? error.message : 'Failed to simulate swap',
+        });
+      }
+    };
+
     const handleSwap = async () => {
       if (
         !wallet.universalAccount ||
@@ -429,6 +500,20 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
       ) {
         return;
       }
+      
+      // Add enhanced logging
+      console.log('\n🚀 STARTING CROSS-CHAIN SWAP');
+      console.log('=====================================');
+      crossChainSwapService.debugState();
+      console.log('Swap parameters:', {
+        fromAmount,
+        toAmount,
+        fromToken: fromToken.symbol,
+        toToken: toToken.symbol,
+        fromChain: fromChain?.chainId,
+        toChain: toChain?.chainId
+      });
+      console.log('=====================================\n');
       
       // Check if Universal Account is properly initialized
       if (!wallet.universalAccount.universalAccount) {
@@ -557,6 +642,39 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
             title: 'Cross-Chain Swap Completed!',
             message: successMessage,
           });
+        } else if (result.status === 'refunded') {
+          // Handle refund case
+          crossChainTransactionService.updateTransactionStatus(
+            transactionId,
+            'failed',
+            txHash,
+            `Refunded due to ${(result as any).originalError || 'high gas fees'}`
+          );
+
+          WrappedToastify.info({
+            title: 'Swap Cancelled - Funds Refunded',
+            message: (
+              <div>
+                <p>{result.message}</p>
+                <p className="text-sm mt-2 text-gray-400">
+                  Reason: {(result as any).originalError || 'High gas fees'}
+                </p>
+                <p className="text-sm mt-1 text-gray-400">
+                  Try again with a smaller amount or when gas fees are lower.
+                </p>
+              </div>
+            ),
+            options: {
+              autoClose: 10000, // Keep visible longer
+            }
+          });
+          
+          // Reset form after refund
+          setFromAmount('');
+          setToAmount('');
+          
+          // Reload balances to reflect refund
+          await crossChainSwapService.reloadTokenBalances();
         } else if (result.status === 'deposit_complete') {
           crossChainTransactionService.updateTransactionStatus(
             transactionId,
@@ -577,63 +695,85 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
             txHash
           );
 
+          const pendingMessage = (
+            <div>
+              <p>{result.message}</p>
+              {(result as { universalTxUrl?: string }).universalTxUrl && (
+                <a
+                  href={(result as { universalTxUrl?: string }).universalTxUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 underline mt-2 inline-block"
+                >
+                  Check status on Universal Account
+                </a>
+              )}
+              <p className="text-sm mt-2 text-gray-400">
+                💡 Tip: The conversion usually takes 1-3 minutes. You can withdraw manually from the Universal Account once complete.
+              </p>
+            </div>
+          );
+
           WrappedToastify.info({
-            title: 'Processing Cross-Chain Transfer',
-            message:
-              result.message ||
-              'Please wait while the cross-chain transfer is processed',
+            title: '⏳ Conversion in Progress',
+            message: pendingMessage,
+            options: {
+              autoClose: 15000, // Keep visible longer for important info
+            }
+          });
+        } else {
+          // For any other status, still update transaction and show generic success
+          // This shouldn't happen with current logic but acts as a fallback
+          const universalTxId =
+            (result as { tx?: { id?: string }; transactionId?: string })?.tx?.id || 
+            (result as { tx?: { id?: string }; transactionId?: string })?.transactionId;
+          crossChainTransactionService.updateTransactionStatus(
+            transactionId,
+            'completed',
+            txHash,
+            undefined,
+            universalTxId
+          );
+
+          WrappedToastify.success({
+            title: 'Swap Completed!',
+            message: `Successfully swapped ${fromAmount} ${
+              fromToken.symbol || 'Unknown'
+            } to ${toToken.symbol || 'Unknown'}`,
           });
         }
 
-        // Dismiss the pending toast
-        if (pendingToastId) {
-          toast.dismiss(pendingToastId);
+        // Common cleanup for all successful cases (including refunds and pending)
+        if (result.status === 'completed' || result.status === 'refunded' || result.status === 'pending_withdrawal') {
+          // Reset form for all cases
+          setFromAmount('');
+          setToAmount('');
+          
+          // Call success callback for completed cases
+          if (result.status === 'completed') {
+            onSwapSuccess?.();
+          }
+
+          // Force clear cache and reload all token balances
+          crossChainSwapService.clearBalanceCache();
+          await crossChainSwapService.reloadTokenBalances();
+
+          // Wait a bit for blockchain state to update
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+
+          // Update the UI with fresh balances for both tokens
+          const [newFromBalance, newToBalance] = await Promise.all([
+            fromToken
+              ? crossChainSwapService.getCrossChainTokenBalance(fromToken)
+              : Promise.resolve('0'),
+            toToken
+              ? crossChainSwapService.getCrossChainTokenBalance(toToken)
+              : Promise.resolve('0'),
+          ]);
+
+          setFromTokenBalance(newFromBalance);
+          setToTokenBalance(newToBalance);
         }
-
-        // Update transaction status to completed with Universal transaction ID
-        const universalTxId =
-          (result as { tx?: { id?: string }; transactionId?: string })?.tx?.id || 
-          (result as { tx?: { id?: string }; transactionId?: string })?.transactionId;
-        crossChainTransactionService.updateTransactionStatus(
-          transactionId,
-          'completed',
-          txHash,
-          undefined,
-          universalTxId
-        );
-
-        // Show success notification
-        WrappedToastify.success({
-          title: 'Swap Completed!',
-          message: `Successfully swapped ${fromAmount} ${
-            fromToken.symbol || 'Unknown'
-          } to ${toToken.symbol || 'Unknown'}`,
-        });
-
-        // Reset form
-        setFromAmount('');
-        setToAmount('');
-        onSwapSuccess?.();
-
-        // Force clear cache and reload all token balances
-        crossChainSwapService.clearBalanceCache();
-        await crossChainSwapService.reloadTokenBalances();
-
-        // Wait a bit for blockchain state to update
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        // Update the UI with fresh balances for both tokens
-        const [newFromBalance, newToBalance] = await Promise.all([
-          fromToken
-            ? crossChainSwapService.getCrossChainTokenBalance(fromToken)
-            : Promise.resolve('0'),
-          toToken
-            ? crossChainSwapService.getCrossChainTokenBalance(toToken)
-            : Promise.resolve('0'),
-        ]);
-
-        setFromTokenBalance(newFromBalance);
-        setToTokenBalance(newToBalance);
       } catch (error) {
         // Dismiss the loading toast if it exists
         if (pendingToastId) {
@@ -1085,21 +1225,33 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
               </div>
             )}
 
-            {/* Swap Button */}
-            <Button
-              className="w-full h-12 bg-[#F59E0B] hover:bg-[#DC8A09] text-black font-semibold text-base rounded-xl mt-3"
-              isDisabled={isSwapDisabled || isProcessingSwap}
-              onPress={isWrongChain ? handleSwitchChain : handleSwap}
-              isLoading={isProcessingSwap}
-            >
-              {isProcessingSwap
-                ? 'Processing Swap...'
-                : isLoadingQuote
-                ? 'Getting Quote...'
-                : isWrongChain
-                ? `Switch to ${fromChain?.displayName || fromChain?.chain.name}`
-                : 'Swap'}
-            </Button>
+            {/* Action Buttons */}
+            <div className="flex gap-2 mt-3">
+              {/* Simulate Button */}
+              <Button
+                className="flex-1 h-12 bg-[#1e1e1e] hover:bg-[#2a2a2a] text-gray-300 font-semibold text-base rounded-xl border border-[#333333]"
+                isDisabled={!fromAmount || parseFloat(fromAmount) === 0 || !fromToken || !toToken}
+                onPress={handleSimulateSwap}
+              >
+                Simulate
+              </Button>
+              
+              {/* Swap Button */}
+              <Button
+                className="flex-1 h-12 bg-[#F59E0B] hover:bg-[#DC8A09] text-black font-semibold text-base rounded-xl"
+                isDisabled={isSwapDisabled || isProcessingSwap}
+                onPress={isWrongChain ? handleSwitchChain : handleSwap}
+                isLoading={isProcessingSwap}
+              >
+                {isProcessingSwap
+                  ? 'Processing...'
+                  : isLoadingQuote
+                  ? 'Getting Quote...'
+                  : isWrongChain
+                  ? `Switch Chain`
+                  : 'Swap'}
+              </Button>
+            </div>
           </div>
         </div>
       </div>

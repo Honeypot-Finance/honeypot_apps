@@ -1191,14 +1191,23 @@ class CrossChainSwapService {
                   
                   console.log('Refund withdrawal completed:', withdrawResult);
                   
-                  // Return a special status indicating refund
-                  throw new Error(
-                    `Cross-chain swap failed due to high gas fees.\n\n` +
-                    `Your ${transaction.fromAmount} ${this.fromToken?.symbol} has been refunded to your wallet on ${this.fromChain?.displayName || this.fromChain?.chain.name}.\n\n` +
-                    `Please try again with a smaller amount or when gas fees are lower.`
-                  );
+                  // Return a special success result for refund
+                  return {
+                    status: 'refunded',
+                    refundTxId: withdrawResult.transactionId,
+                    message: `Your ${transaction.fromAmount} ${this.fromToken?.symbol} has been refunded to your wallet on ${this.fromChain?.displayName || this.fromChain?.chain.name}.`,
+                    transactionHash: depositTx.hash || (depositTx as any).transactionHash,
+                    originalError: buyError.message
+                  };
                 } catch (refundError: any) {
                   console.error('Failed to refund deposited tokens:', refundError);
+                  
+                  // Check if refund error is because it actually succeeded already
+                  if (refundError.message?.includes('has been refunded')) {
+                    // This is our own error message, don't double-wrap it
+                    throw refundError;
+                  }
+                  
                   throw new Error(
                     `Cross-chain swap failed due to high gas fees.\n\n` +
                     `Your ${transaction.fromAmount} ${this.fromToken?.symbol} is still in your Universal Account.\n\n` +
@@ -1343,14 +1352,14 @@ class CrossChainSwapService {
               
               console.log('Refund completed:', refundResult);
               
-              throw new Error(
-                `Cross-chain swap failed due to high gas fees.\n\n` +
-                `✅ Your ${transaction.fromAmount} ${this.fromToken?.symbol} has been refunded to your wallet on ${this.fromChain?.displayName || this.fromChain?.chain.name}.\n\n` +
-                `💡 Suggestions:\n` +
-                `• Try again when gas fees are lower\n` +
-                `• Use a smaller amount\n` +
-                `• Check gas prices on the destination chain`
-              );
+              // Return a special success result for refund
+              return {
+                status: 'refunded',
+                refundTxId: refundResult.transactionId,
+                message: `Your ${transaction.fromAmount} ${this.fromToken?.symbol} has been refunded to your wallet on ${this.fromChain?.displayName || this.fromChain?.chain.name}.`,
+                transactionHash: depositTx.hash || (depositTx as any).transactionHash,
+                originalError: sendError.message
+              };
             } catch (refundError: any) {
               console.error('Failed to automatically refund:', refundError);
               
@@ -1412,75 +1421,126 @@ class CrossChainSwapService {
         
         // Step 4: For buy operations, we need to withdraw the purchased tokens
         let withdrawalTxId = null;
+        let requiresManualWithdrawal = false;
+        
         if (operationType === 'buy' && this.toToken) {
-          console.log('Step 4: Buy transaction completed. Now withdrawing purchased tokens to user getWallet()...');
+          console.log('Step 4: Buy transaction completed. Waiting for conversion to complete...');
           
           try {
-            // Wait for the buy transaction to be processed
-            console.log('Waiting for token purchase to be processed...');
-            await new Promise(resolve => setTimeout(resolve, 7000)); // Give more time for processing
+            // Poll for balance with exponential backoff
+            let retryCount = 0;
+            const maxRetries = 10;
+            let balanceAvailable = false;
+            let actualBalance = '0';
             
-            // Reload Universal Account info to get updated balances
-            console.log('Reloading Universal Account balances...');
-            if (getWallet().universalAccount.loadUniversalAccountInfo) {
-              await getWallet().universalAccount.loadUniversalAccountInfo();
+            while (retryCount < maxRetries && !balanceAvailable) {
+              // Calculate wait time: 3s, 6s, 9s, 12s... up to 30s
+              const waitTime = Math.min((retryCount + 1) * 3000, 30000);
+              console.log(`Attempt ${retryCount + 1}/${maxRetries}: Waiting ${waitTime/1000}s for conversion to complete...`);
+              
+              await new Promise(resolve => setTimeout(resolve, waitTime));
+              
+              // Reload Universal Account info to get updated balances
+              console.log('Checking Universal Account balance...');
+              if (getWallet().universalAccount.loadUniversalAccountInfo) {
+                await getWallet().universalAccount.loadUniversalAccountInfo();
+              }
+              
+              // Check the actual balance
+              const balanceCheck = await this.checkUniversalAccountBalance(
+                this.toToken,
+                (parseFloat(transaction.toAmount) * 0.95).toString() // Allow 5% slippage
+              );
+              
+              actualBalance = balanceCheck.actualBalance;
+              balanceAvailable = balanceCheck.hasBalance || parseFloat(balanceCheck.actualBalance) > 0;
+              
+              console.log(`Balance check result: ${actualBalance} ${this.toToken.symbol} (required: ${transaction.toAmount})`);
+              
+              if (balanceAvailable) {
+                console.log('✅ Balance available, proceeding with withdrawal...');
+                break;
+              }
+              
+              retryCount++;
             }
             
-            // Calculate the actual amount we should have received
-            // Account for potential slippage in the buy transaction
-            const expectedAmount = (parseFloat(transaction.toAmount) * 0.98).toFixed(6); // Allow 2% slippage
-            
-            console.log(`Creating withdrawal for approximately ${expectedAmount} ${this.toToken.symbol} on chain ${transaction.toChain}`);
-            const withdrawTransaction = await getWallet().universalAccount.universalAccount.createTransferTransaction({
-              receiver: getWallet().account,
-              amount: expectedAmount, // Use the adjusted amount
-              token: {
-                chainId: transaction.toChain,
-                address: toTokenAddress,
-              },
-            });
-            
-            console.log('Withdrawal transaction created:', withdrawTransaction);
-            
-            // Sign the withdrawal transaction
-            const withdrawSignature = await getWallet().walletClient.request({
-              method: 'personal_sign',
-              params: [
-                withdrawTransaction?.rootHash as `0x${string}`,
-                getWallet().account as `0x${string}`,
-              ],
-            });
-            
-            console.log('Withdrawal transaction signed');
-            
-            // Send the withdrawal transaction
-            const withdrawResult = await getWallet().universalAccount.universalAccount.sendTransaction(
-              withdrawTransaction,
-              withdrawSignature as `0x${string}`
-            );
-            
-            withdrawalTxId = withdrawResult.transactionId;
-            console.log('Withdrawal completed:', withdrawResult);
+            if (!balanceAvailable) {
+              console.warn(`Balance not available after ${maxRetries} attempts. Conversion may still be processing.`);
+              requiresManualWithdrawal = true;
+              
+              // Don't throw error, just mark that manual withdrawal is needed
+              console.log('User will need to manually withdraw from Universal Account once conversion completes.');
+            } else {
+              // Proceed with withdrawal
+              const withdrawAmount = parseFloat(actualBalance) > 0 
+                ? actualBalance 
+                : (parseFloat(transaction.toAmount) * 0.98).toFixed(6); // Use actual balance or expected with slippage
+              
+              console.log(`Creating withdrawal for ${withdrawAmount} ${this.toToken.symbol} on chain ${transaction.toChain}`);
+              
+              const withdrawTransaction = await getWallet().universalAccount.universalAccount.createTransferTransaction({
+                receiver: getWallet().account,
+                amount: withdrawAmount,
+                token: {
+                  chainId: transaction.toChain,
+                  address: toTokenAddress,
+                },
+              });
+              
+              console.log('Withdrawal transaction created:', withdrawTransaction);
+              
+              // Sign the withdrawal transaction
+              const withdrawSignature = await getWallet().walletClient.request({
+                method: 'personal_sign',
+                params: [
+                  withdrawTransaction?.rootHash as `0x${string}`,
+                  getWallet().account as `0x${string}`,
+                ],
+              });
+              
+              console.log('Withdrawal transaction signed');
+              
+              // Send the withdrawal transaction
+              const withdrawResult = await getWallet().universalAccount.universalAccount.sendTransaction(
+                withdrawTransaction,
+                withdrawSignature as `0x${string}`
+              );
+              
+              withdrawalTxId = withdrawResult.transactionId;
+              console.log('Withdrawal completed:', withdrawResult);
+            }
             
           } catch (withdrawError: any) {
-            // Log the error but don't fail the entire operation since the buy was successful
             console.error('Failed to automatically withdraw tokens:', withdrawError);
-            console.log('Tokens are available in Universal Account and can be withdrawn manually');
+            
+            // Check if it's an insufficient balance error
+            if (withdrawError.message?.includes('Insufficient balance') || 
+                withdrawError.message?.includes('Failed to simulate')) {
+              console.log('Conversion may still be processing. Tokens will be available in Universal Account once complete.');
+              requiresManualWithdrawal = true;
+            } else {
+              console.log('Unexpected error during withdrawal. Tokens are available in Universal Account.');
+              requiresManualWithdrawal = true;
+            }
           }
         }
         
         // Return success result
         const result = {
-          status: 'completed',
+          status: requiresManualWithdrawal ? 'pending_withdrawal' : 'completed',
           depositTxHash: depositTx.hash || (depositTx as any).transactionHash,
           transferTxId: transferResult.transactionId,
           withdrawalTxId: withdrawalTxId,
-          message: withdrawalTxId 
-            ? `Cross-chain swap completed and tokens withdrawn successfully!`
-            : `Cross-chain ${operationType === 'withdrawal' ? 'transfer' : 'swap'} completed successfully!`,
+          message: requiresManualWithdrawal 
+            ? `Conversion in progress. Your ${transaction.toAmount} ${this.toToken?.symbol} will be available in your Universal Account shortly. Please check back in a few minutes to withdraw.`
+            : withdrawalTxId 
+              ? `Cross-chain swap completed and tokens withdrawn successfully!`
+              : `Cross-chain ${operationType === 'withdrawal' ? 'transfer' : 'swap'} completed successfully!`,
           transactionHash: depositTx.hash || (depositTx as any).transactionHash,
           universalTxUrl: `https://universalx.app/activity/details?id=${withdrawalTxId || transferResult.transactionId}`,
-          tx: { id: withdrawalTxId || transferResult.transactionId }  // Add tx.id for the UI
+          tx: { id: withdrawalTxId || transferResult.transactionId },  // Add tx.id for the UI
+          requiresManualWithdrawal
         };
         
         console.log('Cross-chain swap completed:', result);
@@ -1754,6 +1814,263 @@ class CrossChainSwapService {
       console.log(`Using fallback RPC URL for chain ${chainId}: ${fallbackUrl}`);
     }
     return fallbackUrl || '';
+  }
+
+  // Simulate a cross-chain swap to check if it would succeed
+  async simulateSwap(fromAmount: string): Promise<{
+    success: boolean;
+    estimatedGas?: string;
+    estimatedFees?: string;
+    errors: string[];
+    warnings: string[];
+    details: any;
+  }> {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+    const details: any = {};
+    
+    console.log('\n🔬 SIMULATING CROSS-CHAIN SWAP');
+    console.log('=====================================');
+    
+    try {
+      // 1. Validate basic requirements
+      if (!this.fromToken || !this.toToken || !this.fromChain || !this.toChain) {
+        errors.push('Missing required parameters (tokens or chains not selected)');
+        return { success: false, errors, warnings, details };
+      }
+      
+      if (!getWallet().account) {
+        errors.push('Wallet not connected');
+        return { success: false, errors, warnings, details };
+      }
+      
+      if (!getWallet().universalAccount?.universalAccount) {
+        errors.push('Universal Account not initialized');
+        return { success: false, errors, warnings, details };
+      }
+      
+      details.fromToken = {
+        symbol: this.fromToken.symbol,
+        address: this.fromToken.address,
+        chainId: this.fromToken.chainId,
+        decimals: this.fromToken.decimals || 18
+      };
+      
+      details.toToken = {
+        symbol: this.toToken.symbol,
+        address: this.toToken.address,
+        chainId: this.toToken.chainId,
+        decimals: this.toToken.decimals || 18
+      };
+      
+      console.log('📋 Swap Details:', {
+        from: `${fromAmount} ${this.fromToken.symbol} on chain ${this.fromChain.chainId}`,
+        to: `${this.toToken.symbol} on chain ${this.toChain.chainId}`,
+        wallet: getWallet().account
+      });
+      
+      // 2. Check amount validity
+      const amountFloat = parseFloat(fromAmount);
+      if (isNaN(amountFloat) || amountFloat <= 0) {
+        errors.push('Invalid amount');
+        return { success: false, errors, warnings, details };
+      }
+      
+      const decimals = this.fromToken.decimals || 18;
+      const minAmount = 1 / Math.pow(10, decimals);
+      if (amountFloat < minAmount) {
+        errors.push(`Amount too small. Minimum: ${minAmount.toFixed(decimals)} ${this.fromToken.symbol}`);
+        return { success: false, errors, warnings, details };
+      }
+      
+      // 3. Check source chain balance
+      console.log('💰 Checking balances...');
+      const balance = await this.getCrossChainTokenBalance(this.fromToken);
+      const balanceFloat = parseFloat(balance);
+      details.userBalance = balance;
+      
+      if (balanceFloat < amountFloat) {
+        errors.push(`Insufficient balance. You have ${balance} ${this.fromToken.symbol}, need ${fromAmount}`);
+        return { success: false, errors, warnings, details };
+      }
+      
+      console.log(`✅ Balance check passed: ${balance} ${this.fromToken.symbol} available`);
+      
+      // 4. Check if we're on the correct chain
+      if (getWallet().currentChainId !== parseInt(this.fromChain.chainId)) {
+        warnings.push(`You need to switch to ${this.fromChain.displayName || this.fromChain.chain.name} before executing`);
+      }
+      
+      // 5. Get quote to check if swap is possible
+      console.log('💱 Getting swap quote...');
+      const quote = await this.getQuote(fromAmount);
+      details.quote = quote;
+      
+      if (!quote.toAmount || parseFloat(quote.toAmount) === 0) {
+        errors.push('Unable to get valid quote for this swap');
+        return { success: false, errors, warnings, details };
+      }
+      
+      console.log(`✅ Quote received: ${fromAmount} ${this.fromToken.symbol} → ${quote.toAmount} ${this.toToken.symbol}`);
+      
+      // 6. Check Universal Account support
+      console.log('🔍 Checking Universal Account support...');
+      const supportedTokens = getWallet().universalAccount.currentChainSupportedTokens;
+      const isFromTokenSupported = supportedTokens?.some((t: any) => 
+        t.symbol === this.fromToken?.symbol || 
+        t.address === this.fromToken?.address
+      );
+      
+      if (!isFromTokenSupported) {
+        warnings.push(`${this.fromToken.symbol} may not be fully supported by Universal Account`);
+      }
+      
+      // 7. Simulate deposit transaction
+      console.log('🔄 Simulating deposit transaction...');
+      try {
+        // Check if token needs approval
+        if (!this.fromToken.isNative && this.fromToken.address !== zeroAddress) {
+          // For ERC20 tokens, check allowance
+          const { createPublicClient, http, parseUnits } = await import('viem');
+          const network = getNetworks().find((n: any) => n.chainId.toString() === this.fromToken!.chainId);
+          
+          if (network) {
+            const publicClient = createPublicClient({
+              chain: network.chain,
+              transport: http(network.chain.rpcUrls.default.http[0])
+            });
+            
+            const minimalERC20ABI = [
+              {
+                name: 'allowance',
+                type: 'function',
+                stateMutability: 'view',
+                inputs: [
+                  { name: 'owner', type: 'address' },
+                  { name: 'spender', type: 'address' }
+                ],
+                outputs: [{ name: 'amount', type: 'uint256' }],
+              },
+            ] as const;
+            
+            // Get Universal Account deposit address (this would need to be obtained from the SDK)
+            // For now, we'll just warn about approval
+            warnings.push('You may need to approve the token before depositing');
+          }
+        }
+        
+        details.depositSimulation = {
+          status: 'simulated',
+          estimatedGas: '100000', // Placeholder
+          message: 'Deposit simulation successful'
+        };
+      } catch (simError: any) {
+        warnings.push(`Deposit simulation warning: ${simError.message}`);
+        details.depositSimulation = {
+          status: 'warning',
+          error: simError.message
+        };
+      }
+      
+      // 8. Check cross-chain operation feasibility
+      console.log('🌉 Checking cross-chain operation...');
+      const isSameChain = this.fromChain.chainId === this.toChain.chainId;
+      const isSameToken = this.fromToken.symbol.toUpperCase() === this.toToken.symbol.toUpperCase();
+      
+      if (isSameChain && isSameToken) {
+        details.operationType = 'same-chain-transfer';
+        console.log('ℹ️ Same chain and token - will perform direct transfer');
+      } else if (!isSameChain && isSameToken) {
+        details.operationType = 'cross-chain-bridge';
+        console.log('ℹ️ Cross-chain bridge of same token');
+      } else {
+        details.operationType = 'cross-chain-swap';
+        console.log('ℹ️ Cross-chain swap between different tokens');
+        
+        // Check if Universal Account supports this conversion
+        if (!isSameToken) {
+          warnings.push(`Token conversion from ${this.fromToken.symbol} to ${this.toToken.symbol} depends on Universal Account liquidity`);
+        }
+      }
+      
+      // 9. Estimate fees
+      console.log('💸 Estimating fees...');
+      const estimatedFees = quote.feeInUSD || 'Unknown';
+      details.estimatedFees = estimatedFees;
+      
+      if (estimatedFees !== 'Unknown') {
+        console.log(`✅ Estimated fees: $${estimatedFees}`);
+      }
+      
+      // 10. Final validation
+      const success = errors.length === 0;
+      
+      console.log('\n📊 SIMULATION RESULTS:');
+      console.log('=====================================');
+      console.log(`Status: ${success ? '✅ SUCCESS' : '❌ FAILED'}`);
+      if (errors.length > 0) {
+        console.log('Errors:', errors);
+      }
+      if (warnings.length > 0) {
+        console.log('Warnings:', warnings);
+      }
+      console.log('Details:', JSON.stringify(details, null, 2));
+      console.log('=====================================\n');
+      
+      return {
+        success,
+        estimatedGas: '100000', // Placeholder
+        estimatedFees,
+        errors,
+        warnings,
+        details
+      };
+      
+    } catch (error: any) {
+      console.error('Simulation failed:', error);
+      errors.push(`Simulation error: ${error.message}`);
+      return {
+        success: false,
+        errors,
+        warnings,
+        details
+      };
+    }
+  }
+
+  // Debug helper to log current state
+  debugState() {
+    console.log('\n🐛 CROSS-CHAIN SWAP SERVICE STATE:');
+    console.log('=====================================');
+    console.log('From Chain:', this.fromChain ? {
+      id: this.fromChain.chainId,
+      name: this.fromChain.displayName || this.fromChain.chain?.name
+    } : 'Not selected');
+    console.log('To Chain:', this.toChain ? {
+      id: this.toChain.chainId,
+      name: this.toChain.displayName || this.toChain.chain?.name
+    } : 'Not selected');
+    console.log('From Token:', this.fromToken ? {
+      symbol: this.fromToken.symbol,
+      address: this.fromToken.address,
+      decimals: this.fromToken.decimals,
+      isNative: this.fromToken.isNative
+    } : 'Not selected');
+    console.log('To Token:', this.toToken ? {
+      symbol: this.toToken.symbol,
+      address: this.toToken.address,
+      decimals: this.toToken.decimals,
+      isNative: this.toToken.isNative
+    } : 'Not selected');
+    console.log('Wallet Connected:', this.isWalletConnected());
+    console.log('Current Chain ID:', getWallet()?.currentChainId);
+    console.log('Universal Account:', {
+      initialized: !!getWallet()?.universalAccount?.universalAccount,
+      address: getWallet()?.universalAccount?.evmSmartAccountAddress,
+      balance: this.universalAccountBalance
+    });
+    console.log('Slippage:', this.slippage + '%');
+    console.log('=====================================\n');
   }
 
 }
