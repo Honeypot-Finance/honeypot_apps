@@ -7,9 +7,11 @@ type SwapTransaction = {
   timestamp: string;
   transaction: {
     id: string;
+    from?: string;
   };
   sender: string;
   recipient: string;
+  origin?: string;
   token0: {
     symbol: string;
   };
@@ -148,7 +150,7 @@ export async function fetchAllSwapTransactions(
         ...swap,
         transaction: {
           ...swap.transaction,
-          from: swap.sender || swap.origin || swap.transaction.from
+          from: swap.sender || swap.origin || swap.transaction.from || swap.transaction.id
         }
       })),
       pageInfo: {

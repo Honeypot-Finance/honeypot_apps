@@ -57,7 +57,8 @@ const SwapTransactionHistory = () => {
   };
 
   const openInExplorer = (txHash: string) => {
-    const explorerUrl = wallet.currentChain?.blockExplorers?.default?.url || 'https://etherscan.io';
+    // For now, use a default explorer URL
+    const explorerUrl = 'https://etherscan.io';
     window.open(`${explorerUrl}/tx/${txHash}`, '_blank');
   };
 
@@ -142,7 +143,7 @@ const SwapTransactionHistory = () => {
   };
 
   return (
-    <div className="w-full bg-[#0D0A06] rounded-2xl border border-[#2a2318] p-6">
+    <div className="w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-6">
       <h2 className="text-xl font-semibold text-white mb-6">Latest Transactions</h2>
       
       {/* Table */}
@@ -184,18 +185,18 @@ const SwapTransactionHistory = () => {
                   key={tx.id} 
                   className={`border-b border-[#2a2318] transition-colors ${
                     index % 2 === 0 
-                      ? 'bg-transparent hover:bg-[#15120D]' // Even rows - darker (transparent on brownish bg)
-                      : 'bg-[#1A1611] hover:bg-[#1F1A14]'   // Odd rows - lighter brownish background
+                      ? 'bg-transparent hover:bg-[#0A0704]' // Even rows - darker (transparent shows #140D06 bg)
+                      : 'bg-[#1F1409] hover:bg-[#241809]'   // Odd rows - lighter background
                   }`}
                 >
-                  <td className="py-4 text-sm text-gray-400 pl-2">{formatTimeAgo(tx.timestamp)}</td>
+                  <td className="py-4 text-sm text-white pl-2">{formatTimeAgo(tx.timestamp)}</td>
                   <td className="py-4 text-sm text-white font-medium">${tx.value}</td>
                   <td className="py-4 text-sm text-green-500">{tx.amount0}</td>
                   <td className="py-4 text-sm text-red-500">{tx.amount1}</td>
                   <td className="py-4">
                     <button
                       onClick={() => copyToClipboard(tx.transaction.from)}
-                      className="text-sm text-[#D4A574] hover:text-[#E5B685] flex items-center gap-1 transition-colors"
+                      className="text-sm text-[#FFA931] hover:text-[#FFB951] flex items-center gap-1 transition-colors"
                     >
                       {tx.transaction.from}
                       <VscCopy className="w-3 h-3" />
@@ -204,7 +205,7 @@ const SwapTransactionHistory = () => {
                   <td className="py-4">
                     <button
                       onClick={() => openInExplorer(tx.transaction.id)}
-                      className="text-sm text-[#D4A574] hover:text-[#E5B685] flex items-center gap-1 transition-colors"
+                      className="text-sm text-white hover:text-gray-300 flex items-center gap-1 transition-colors"
                     >
                       {tx.transaction.id}
                       <ExternalLink className="w-3 h-3" />
