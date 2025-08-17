@@ -10,14 +10,14 @@ import { Separator } from '@/components/algebra/ui/separator';
 import Container from '../Container';
 import { useUserState } from '@/lib/algebra/state/userStore';
 import { Percent } from '@cryptoalgebra/sdk';
-import SettingButtonIcon from './../assets/setting-button.png';
+import SettingButtonIcon from './../assets/setting-button.svg';
 import Image from 'next/image';
 import { useState } from 'react';
 
 const Settings = () => {
   return (
     <Popover>
-      <PopoverTrigger asChild className="p-0">
+      <PopoverTrigger asChild className="p-3">
         <Image
           src={SettingButtonIcon}
           alt="setting"
