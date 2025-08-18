@@ -176,10 +176,6 @@ export function AllAquaberaVaults({
     initVaults();
   }, [searchString, onDataLoaded, infoClient, prefetchedData, chainId]);
 
-
-
-
-
   useEffect(() => {
     if (!vaults?.ichiVaults?.length || !infoClient || !cacheKey) {
       return;
