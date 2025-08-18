@@ -406,13 +406,13 @@ export const VaultDetail = observer(() => {
             <div className="grid grid-cols-1 gap-6">
               <div>
                 <p className="text-sm text-white mb-2">Vault Address</p>
-                <div className="flex items-center justify-between rounded-[16px] border-2 border-[#5A4A4A] bg-white px-4 py-2 shadow-[2px_2px_0px_0px_#202020,2px_4px_0px_0px_#202020]">
+                <div className="flex items-center text-black justify-between rounded-[16px] border-2 border-[#5A4A4A] bg-white px-4 py-2 shadow-[2px_2px_0px_0px_#202020,2px_4px_0px_0px_#202020]">
                   <div className="flex items-center gap-2 overflow-hidden">
-                    <p className="font-mono text-white truncate">{address}</p>
+                    <p className="font-mono text-black truncate">{address}</p>
                     <Link
                       href={`${wallet.currentChain.chain.blockExplorers?.default.url}address/${address}`}
                       target="_blank"
-                      className="text-white hover:text-white/80 flex-shrink-0"
+                      className="text-black hover:text-black/80 flex-shrink-0"
                     >
                       <HiExternalLink size={20} />
                     </Link>
@@ -422,30 +422,30 @@ export const VaultDetail = observer(() => {
               </div>
               <div>
                 <p className="text-sm text-white mb-2">Token Addresses</p>
-                <div className="flex items-center justify-between rounded-[16px] border-2 border-[#5A4A4A] bg-white px-4 py-2 shadow-[2px_2px_0px_0px_#202020,2px_4px_0px_0px_#202020] mb-2">
+                <div className="flex items-center text-black  justify-between rounded-[16px] border-2 border-[#5A4A4A] bg-white px-4 py-2 shadow-[2px_2px_0px_0px_#202020,2px_4px_0px_0px_#202020] mb-2">
                   <div className="flex items-center gap-2 overflow-hidden">
-                    <p className="font-mono text-white truncate">
+                    <p className="font-mono text-black truncate">
                       {vault?.token0?.address}
                     </p>
                     <Link
                       href={`${wallet.currentChain.chain.blockExplorers?.default.url}address/${vault?.token0?.address}`}
                       target="_blank"
-                      className="text-white hover:text-white/80 flex-shrink-0"
+                      className="text-black hover:text-black/80 flex-shrink-0"
                     >
                       <HiExternalLink size={20} />
                     </Link>
                   </div>
                   <Copy value={vault?.token0?.address as string} />
                 </div>
-                <div className="flex items-center justify-between rounded-[16px] border-2 border-[#5A4A4A] bg-white px-4 py-2 shadow-[2px_2px_0px_0px_#202020,2px_4px_0px_0px_#202020]">
+                <div className="flex items-center  justify-between rounded-[16px] border-2 border-[#5A4A4A] bg-white px-4 py-2 shadow-[2px_2px_0px_0px_#202020,2px_4px_0px_0px_#202020]">
                   <div className="flex items-center gap-2 overflow-hidden">
-                    <p className="font-mono text-white truncate">
+                    <p className=" text-black font-mono truncate">
                       {vault?.token1?.address}
                     </p>
                     <Link
                       href={`${wallet.currentChain.chain.blockExplorers?.default.url}address/${vault?.token1?.address}`}
                       target="_blank"
-                      className="text-white hover:text-white/80 flex-shrink-0"
+                      className="text-black hover:text-black/80 flex-shrink-0"
                     >
                       <HiExternalLink size={20} />
                     </Link>
