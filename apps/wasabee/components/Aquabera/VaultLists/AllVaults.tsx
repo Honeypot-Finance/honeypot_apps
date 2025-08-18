@@ -155,11 +155,7 @@ export function AllAquaberaVaults({
   useEffect(() => {
     const initVaults = async () => {
       if (!wallet.isInit || !infoClient) return;
-
-
-
-
-      // If prefetched data is null (cleared), reset vaults state
+            // If prefetched data is null (cleared), reset vaults state
       if (prefetchedData === null) {
         setVaults(undefined);
       }
