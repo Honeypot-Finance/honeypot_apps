@@ -111,8 +111,8 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
             onClick={() => goToPage(i)}
             className={`w-8 h-8 rounded ${
               currentPage === i
-                ? 'bg-[#F59E0B] text-black font-semibold'
-                : 'bg-transparent text-gray-400 hover:text-white hover:bg-[#2a2a2a]'
+                ? 'bg-[#D4A574] text-black font-semibold'
+                : 'text-gray-500 hover:text-gray-300 hover:bg-[#2a2318]/50'
             } transition-colors`}
           >
             {i}
@@ -122,7 +122,7 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
 
       if (start > 1) {
         pages.unshift(
-          <span key="dots-start" className="text-gray-400 px-2">
+          <span key="dots-start" className="text-gray-600 px-2">
             ...
           </span>
         );
@@ -130,7 +130,7 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
 
       if (end < totalPages) {
         pages.push(
-          <span key="dots-end" className="text-gray-400 px-2">
+          <span key="dots-end" className="text-gray-600 px-2">
             ...
           </span>
         );
@@ -138,7 +138,7 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
           <button
             key={totalPages}
             onClick={() => goToPage(totalPages)}
-            className="w-8 h-8 rounded bg-transparent text-gray-400 hover:text-white hover:bg-[#2a2a2a] transition-colors"
+            className="w-8 h-8 rounded text-gray-500 hover:text-gray-300 hover:bg-[#2a2318]/50 transition-colors"
           >
             {totalPages}
           </button>
@@ -150,7 +150,7 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
 
     const containerClass = inModal 
       ? "w-full bg-transparent" 
-      : "w-full bg-[#0D0D0D] rounded-2xl border border-[#2a2a2a] p-6";
+      : "w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-6";
 
     return (
       <div className={containerClass}>
@@ -162,9 +162,9 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
-                <th className="text-left text-sm text-gray-400 font-normal pb-4">Time</th>
-                <th className="text-left text-sm text-gray-400 font-normal pb-4">
+              <tr className="border-b border-[#2a2318]">
+                <th className="text-left text-sm text-gray-500 font-normal pb-4 pl-2">Time</th>
+                <th className="text-left text-sm text-gray-500 font-normal pb-4">
                   <div className="flex items-center gap-1">
                     Value
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,18 +172,22 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
                     </svg>
                   </div>
                 </th>
-                <th className="text-left text-sm text-gray-400 font-normal pb-4">From</th>
-                <th className="text-left text-sm text-gray-400 font-normal pb-4">To</th>
-                <th className="text-left text-sm text-gray-400 font-normal pb-4">Status</th>
-                <th className="text-left text-sm text-gray-400 font-normal pb-4">User</th>
-                <th className="text-left text-sm text-gray-400 font-normal pb-4">TX Hash</th>
+                <th className="text-left text-sm text-gray-500 font-normal pb-4">From</th>
+                <th className="text-left text-sm text-gray-500 font-normal pb-4">To</th>
+                <th className="text-left text-sm text-gray-500 font-normal pb-4">Status</th>
+                <th className="text-left text-sm text-gray-500 font-normal pb-4">User</th>
+                <th className="text-left text-sm text-gray-500 font-normal pb-4">TX Hash</th>
               </tr>
             </thead>
             <tbody>
               {currentTransactions.length > 0 ? (
-                currentTransactions.map((tx) => (
-                  <tr key={tx.id} className="border-b border-[#1a1a1a] hover:bg-[#141414] transition-colors">
-                    <td className="py-4 text-sm text-gray-300">
+                currentTransactions.map((tx, index) => (
+                  <tr key={tx.id} className={`border-b border-[#2a2318] transition-colors ${
+                    index % 2 === 0 
+                      ? 'bg-transparent hover:bg-[#0A0704]'
+                      : 'bg-[#1F1409] hover:bg-[#241809]'
+                  }`}>
+                    <td className="py-4 text-sm text-white pl-2">
                       {formatTimeAgo(tx.timestamp)}
                     </td>
                     <td className="py-4 text-sm text-white font-medium">
@@ -191,7 +195,7 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
                     </td>
                     <td className="py-4">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-white">
+                        <span className="text-sm text-green-500">
                           {tx.fromToken?.amount || '0'} {tx.fromToken?.symbol || 'Unknown'}
                         </span>
                         <span className="text-xs text-gray-500">
@@ -201,7 +205,7 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
                     </td>
                     <td className="py-4">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-[#4ADE80]">
+                        <span className="text-sm text-red-500">
                           {tx.toToken?.amount || '...'} {tx.toToken?.symbol || 'Unknown'}
                         </span>
                         <span className="text-xs text-gray-500">
@@ -223,7 +227,7 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
                     <td className="py-4">
                       <button
                         onClick={() => copyToClipboard(tx.userAddress)}
-                        className="text-sm text-[#F59E0B] hover:text-[#DC8A09] flex items-center gap-1 transition-colors"
+                        className="text-sm text-[#FFA931] hover:text-[#FFB951] flex items-center gap-1 transition-colors"
                       >
                         {formatAddress(tx.userAddress)}
                         <Copy className="w-3 h-3" />
@@ -233,7 +237,7 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
                       {tx.txHash && tx.txHash !== '0x...' ? (
                         <button
                           onClick={() => openInExplorer(tx.txHash!, tx.fromChain?.chainId)}
-                          className="text-sm text-[#F59E0B] hover:text-[#DC8A09] flex items-center gap-1 transition-colors"
+                          className="text-sm text-white hover:text-gray-300 flex items-center gap-1 transition-colors"
                         >
                           {formatAddress(tx.txHash)}
                           <ExternalLink className="w-3 h-3" />
@@ -246,7 +250,7 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-gray-400">
+                  <td colSpan={7} className="py-8 text-center text-gray-500">
                     No transactions yet
                   </td>
                 </tr>
@@ -261,7 +265,7 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
             <button
               onClick={() => goToPage(currentPage - 1)}
               disabled={currentPage === 1}
-              className="w-8 h-8 rounded bg-transparent text-gray-400 hover:text-white hover:bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+              className="w-8 h-8 rounded text-gray-500 hover:text-gray-300 hover:bg-[#2a2318]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -271,7 +275,7 @@ const CrossChainTransactionHistory: React.FC<CrossChainTransactionHistoryProps> 
             <button
               onClick={() => goToPage(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="w-8 h-8 rounded bg-transparent text-gray-400 hover:text-white hover:bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+              className="w-8 h-8 rounded text-gray-500 hover:text-gray-300 hover:bg-[#2a2318]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

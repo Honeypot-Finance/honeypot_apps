@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Button } from '@nextui-org/react';
+import { Button } from '@/components/algebra/ui/button';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { ArrowDown, Settings } from 'lucide-react';
+import { Settings, Wallet2 } from 'lucide-react';
+import Image from 'next/image';
 import ChainSelector from './ChainSelector';
 import TokenSelector from './TokenSelector';
 import { crossChainSwapService } from '@/services/crossChainSwap';
@@ -19,10 +20,10 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
   ({ onSwapSuccess }) => {
     const [fromAmount, setFromAmount] = useState('');
     const [toAmount, setToAmount] = useState('');
-    const [isLoadingQuote, setIsLoadingQuote] = useState(false);
+    const [showDetail, setShowDetail] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
-    const [showRecommended, setShowRecommended] = useState(false);
     const [slippage, setSlippage] = useState('1.0');
+    const [isLoadingQuote, setIsLoadingQuote] = useState(false);
     const [quoteData, setQuoteData] = useState<{
       priceImpact: number;
       estimatedTime: number;
@@ -48,7 +49,10 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
           try {
             await wallet.universalAccount.loadUniversalAccountInfo();
           } catch (error) {
-            console.warn('Failed to load Universal Account info on mount:', error);
+            console.warn(
+              'Failed to load Universal Account info on mount:',
+              error
+            );
             // Try again after a short delay
             setTimeout(async () => {
               try {
@@ -56,13 +60,16 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                   await wallet.universalAccount.loadUniversalAccountInfo();
                 }
               } catch (retryError) {
-                console.error('Failed to load Universal Account info after retry:', retryError);
+                console.error(
+                  'Failed to load Universal Account info after retry:',
+                  retryError
+                );
               }
             }, 2000);
           }
         }
       };
-      
+
       initializeUniversalAccount();
       // Also ensure chains are initialized
       crossChainSwapService.initializeChains();
@@ -232,14 +239,11 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                   console.log(`  Full response:`, JSON.stringify(res, null, 2));
 
                   // Check for both 'price' and 'priceUSD' fields for compatibility
-                  if (
-                    res.status === 'success' &&
-                    res.data &&
-                    res.data.price
-                  ) {
-                    const price = typeof res.data.price === 'string' 
-                      ? parseFloat(res.data.price) 
-                      : res.data.price;
+                  if (res.status === 'success' && res.data && res.data.price) {
+                    const price =
+                      typeof res.data.price === 'string'
+                        ? parseFloat(res.data.price)
+                        : res.data.price;
                     setFromTokenPrice(price);
                     console.log(
                       `  ✅ ${fromToken.symbol} price from API: $${price}`
@@ -249,7 +253,10 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                       `  ⚠️ No valid price data in response for ${fromToken.symbol}`
                     );
                     console.log(`  Response status: ${res.status}`);
-                    console.log(`  Response data:`, res.status === 'success' ? res.data : 'No data');
+                    console.log(
+                      `  Response data:`,
+                      res.status === 'success' ? res.data : 'No data'
+                    );
                     // Only use fallback for stablecoins
                     const stablecoins = ['USDT', 'USDC', 'DAI', 'BUSD'];
                     const fallbackPrice = stablecoins.includes(
@@ -345,14 +352,11 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                   console.log(`  Full response:`, JSON.stringify(res, null, 2));
 
                   // Check for both 'price' and 'priceUSD' fields for compatibility
-                  if (
-                    res.status === 'success' &&
-                    res.data &&
-                    res.data.price
-                  ) {
-                    const price = typeof res.data.price === 'string' 
-                      ? parseFloat(res.data.price) 
-                      : res.data.price;
+                  if (res.status === 'success' && res.data && res.data.price) {
+                    const price =
+                      typeof res.data.price === 'string'
+                        ? parseFloat(res.data.price)
+                        : res.data.price;
                     setToTokenPrice(price);
                     console.log(
                       `  ✅ ${toToken.symbol} price from API: $${price}`
@@ -362,7 +366,10 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                       `  ⚠️ No valid price data in response for ${toToken.symbol}`
                     );
                     console.log(`  Response status: ${res.status}`);
-                    console.log(`  Response data:`, res.status === 'success' ? res.data : 'No data');
+                    console.log(
+                      `  Response data:`,
+                      res.status === 'success' ? res.data : 'No data'
+                    );
                     // Only use fallback for stablecoins
                     const stablecoins = ['USDT', 'USDC', 'DAI', 'BUSD'];
                     const fallbackPrice = stablecoins.includes(
@@ -436,34 +443,38 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
       }
 
       const loadingToast = toast.loading('Simulating swap...');
-      
+
       try {
         // Debug current state
         crossChainSwapService.debugState();
-        
+
         // Run simulation
         const simulation = await crossChainSwapService.simulateSwap(fromAmount);
-        
+
         toast.dismiss(loadingToast);
-        
+
         if (simulation.success) {
           WrappedToastify.success({
             title: 'Simulation Successful',
             message: (
               <div>
                 <p>✅ Swap can proceed</p>
-                {simulation.estimatedFees && <p>Estimated fees: ${simulation.estimatedFees}</p>}
+                {simulation.estimatedFees && (
+                  <p>Estimated fees: ${simulation.estimatedFees}</p>
+                )}
                 {simulation.warnings.length > 0 && (
                   <div className="mt-2">
                     <p className="font-semibold">Warnings:</p>
                     {simulation.warnings.map((w, i) => (
-                      <p key={i} className="text-sm">⚠️ {w}</p>
+                      <p key={i} className="text-sm">
+                        ⚠️ {w}
+                      </p>
                     ))}
                   </div>
                 )}
               </div>
             ),
-            options: { autoClose: 8000 }
+            options: { autoClose: 8000 },
           });
         } else {
           WrappedToastify.error({
@@ -475,16 +486,17 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                 ))}
               </div>
             ),
-            options: { autoClose: 10000 }
+            options: { autoClose: 10000 },
           });
         }
-        
+
         console.log('Simulation details:', simulation.details);
       } catch (error) {
         toast.dismiss(loadingToast);
         WrappedToastify.error({
           title: 'Simulation Error',
-          message: error instanceof Error ? error.message : 'Failed to simulate swap',
+          message:
+            error instanceof Error ? error.message : 'Failed to simulate swap',
         });
       }
     };
@@ -500,7 +512,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
       ) {
         return;
       }
-      
+
       // Add enhanced logging
       console.log('\n🚀 STARTING CROSS-CHAIN SWAP');
       console.log('=====================================');
@@ -511,17 +523,18 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
         fromToken: fromToken.symbol,
         toToken: toToken.symbol,
         fromChain: fromChain?.chainId,
-        toChain: toChain?.chainId
+        toChain: toChain?.chainId,
       });
       console.log('=====================================\n');
-      
+
       // Check if Universal Account is properly initialized
       if (!wallet.universalAccount.universalAccount) {
         WrappedToastify.error({
           title: 'Universal Account Not Ready',
-          message: 'Please wait for the Universal Account to initialize and try again.',
+          message:
+            'Please wait for the Universal Account to initialize and try again.',
         });
-        
+
         // Try to initialize it
         try {
           await wallet.universalAccount.loadUniversalAccountInfo();
@@ -577,8 +590,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
         }
 
         // For cross-chain swaps, we sign the transaction ID
-        const messageToSign =
-          transaction.id || 'cross-chain-swap';
+        const messageToSign = transaction.id || 'cross-chain-swap';
 
         // Sign the message
         const signature = await wallet.walletClient.signMessage({
@@ -605,8 +617,10 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
         if (result.status === 'completed') {
           // Use withdrawalTxId if available, otherwise use transferTxId
           const finalTxId =
-            (result as { withdrawalTxId?: string; transferTxId?: string }).withdrawalTxId || 
-            (result as { withdrawalTxId?: string; transferTxId?: string }).transferTxId;
+            (result as { withdrawalTxId?: string; transferTxId?: string })
+              .withdrawalTxId ||
+            (result as { withdrawalTxId?: string; transferTxId?: string })
+              .transferTxId;
 
           crossChainTransactionService.updateTransactionStatus(
             transactionId,
@@ -648,7 +662,9 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
             transactionId,
             'failed',
             txHash,
-            `Refunded due to ${(result as any).originalError || 'high gas fees'}`
+            `Refunded due to ${
+              (result as any).originalError || 'high gas fees'
+            }`
           );
 
           WrappedToastify.info({
@@ -666,13 +682,13 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
             ),
             options: {
               autoClose: 10000, // Keep visible longer
-            }
+            },
           });
-          
+
           // Reset form after refund
           setFromAmount('');
           setToAmount('');
-          
+
           // Reload balances to reflect refund
           await crossChainSwapService.reloadTokenBalances();
         } else if (result.status === 'deposit_complete') {
@@ -709,7 +725,8 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                 </a>
               )}
               <p className="text-sm mt-2 text-gray-400">
-                💡 Tip: The conversion usually takes 1-3 minutes. You can withdraw manually from the Universal Account once complete.
+                💡 Tip: The conversion usually takes 1-3 minutes. You can
+                withdraw manually from the Universal Account once complete.
               </p>
             </div>
           );
@@ -719,14 +736,16 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
             message: pendingMessage,
             options: {
               autoClose: 15000, // Keep visible longer for important info
-            }
+            },
           });
         } else {
           // For any other status, still update transaction and show generic success
           // This shouldn't happen with current logic but acts as a fallback
           const universalTxId =
-            (result as { tx?: { id?: string }; transactionId?: string })?.tx?.id || 
-            (result as { tx?: { id?: string }; transactionId?: string })?.transactionId;
+            (result as { tx?: { id?: string }; transactionId?: string })?.tx
+              ?.id ||
+            (result as { tx?: { id?: string }; transactionId?: string })
+              ?.transactionId;
           crossChainTransactionService.updateTransactionStatus(
             transactionId,
             'completed',
@@ -744,11 +763,15 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
         }
 
         // Common cleanup for all successful cases (including refunds and pending)
-        if (result.status === 'completed' || result.status === 'refunded' || result.status === 'pending_withdrawal') {
+        if (
+          result.status === 'completed' ||
+          result.status === 'refunded' ||
+          result.status === 'pending_withdrawal'
+        ) {
           // Reset form for all cases
           setFromAmount('');
           setToAmount('');
-          
+
           // Call success callback for completed cases
           if (result.status === 'completed') {
             onSwapSuccess?.();
@@ -780,12 +803,19 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
           toast.dismiss(pendingToastId);
         }
 
-        const errorMessage = error instanceof Error ? error.message : 'Failed to execute cross-chain swap';
-        
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : 'Failed to execute cross-chain swap';
+
         // Check if it's a refund scenario (funds were returned)
-        const isRefunded = errorMessage.includes('has been refunded') || errorMessage.includes('✅');
-        const isHighGasError = errorMessage.toLowerCase().includes('high gas fee') || errorMessage.toLowerCase().includes('gas prices');
-        
+        const isRefunded =
+          errorMessage.includes('has been refunded') ||
+          errorMessage.includes('✅');
+        const isHighGasError =
+          errorMessage.toLowerCase().includes('high gas fee') ||
+          errorMessage.toLowerCase().includes('gas prices');
+
         // Update transaction status based on error type
         if (isRefunded) {
           crossChainTransactionService.updateTransactionStatus(
@@ -794,14 +824,14 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
             undefined,
             'Refunded due to high gas fees'
           );
-          
+
           // Show info notification for refund
           WrappedToastify.info({
             title: 'Swap Cancelled - Funds Refunded',
             message: errorMessage,
             options: {
               autoClose: 10000, // Keep visible longer for important info
-            }
+            },
           });
         } else if (isHighGasError) {
           crossChainTransactionService.updateTransactionStatus(
@@ -810,14 +840,14 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
             undefined,
             'High gas fees - funds in Universal Account'
           );
-          
+
           // Show warning notification for funds in Universal Account
           WrappedToastify.warn({
             title: 'Swap Failed - Manual Recovery Needed',
             message: errorMessage,
             options: {
               autoClose: 15000, // Keep visible even longer
-            }
+            },
           });
         } else {
           // Regular error
@@ -833,7 +863,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
             message: errorMessage,
             options: {
               autoClose: 8000,
-            }
+            },
           });
         }
 
@@ -867,14 +897,16 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
     };
 
     // Compute directly without useMemo - MobX will handle reactivity
-    const isWrongChain = fromToken && wallet.currentChainId.toString() !== fromToken.chainId;
-    
+    const isWrongChain =
+      fromToken && wallet.currentChainId.toString() !== fromToken.chainId;
+
     // Debug logging to track chain changes
     useEffect(() => {
       console.log('Chain state updated:', {
         currentChainId: wallet.currentChainId?.toString(),
         fromTokenChainId: fromToken?.chainId,
-        isWrongChain: fromToken && wallet.currentChainId.toString() !== fromToken.chainId
+        isWrongChain:
+          fromToken && wallet.currentChainId.toString() !== fromToken.chainId,
       });
     }, [fromToken]); // Only depend on fromToken changes
 
@@ -903,7 +935,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
 
     // Create a reactive chain ID variable that triggers effects
     const currentChainId = wallet.currentChainId;
-    
+
     // Load balances when tokens change or wallet/chain changes
     useEffect(() => {
       if (!fromToken || !wallet.account) {
@@ -977,28 +1009,25 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
     }
 
     return (
-      <div className="w-full max-w-full sm:max-w-[400px] lg:w-[400px] px-2 sm:px-0">
+      <div className="w-full max-w-full sm:max-w-[480px] lg:w-[480px] px-2 sm:px-0">
         {/* Main Card */}
-        <div className="bg-[#140D06] rounded-xl sm:rounded-2xl border border-[#333333] shadow-xl h-fit">
+        <div className="bg-[#140D06] rounded-[25px] border border-[rgba(255,255,255,0.2)] shadow-xl h-fit p-4">
           {/* Header */}
-          <div className="flex items-center justify-between p-3 sm:p-4 pb-2 sm:pb-3">
-            <h2 className="text-base sm:text-lg font-medium text-white">Cross-Chain Swap</h2>
-            <Button
-              isIconOnly
-              size="sm"
-              variant="flat"
-              className="bg-transparent text-gray-400 hover:text-white"
-              onPress={() => setShowSettings(!showSettings)}
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-white text-2xl font-medium">Swap</h2>
+            <button
+              className="rounded-[1rem] bg-[#2A1F14] hover:bg-[#3A2F24] transition-colors p-2"
+              onClick={() => setShowSettings(!showSettings)}
             >
-              <Settings className="w-5 h-5" />
-            </Button>
+              <Settings className="w-5 h-5 text-gray-400" />
+            </button>
           </div>
 
-          <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-2">
+          <div className="">
             {/* From Section */}
-            <div className="bg-[#271A0C] rounded-lg sm:rounded-xl p-2.5 sm:p-3 border border-[#333333]">
+            <div className="bg-[#1F1409] rounded-xl p-5 border border-[#2a2318]">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
-                <span className="text-xs text-gray-500">From</span>
+                <span className="text-xs text-[#998877]">From</span>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2">
                   <TokenSelector
                     chainId={fromChain?.chainId || 0}
@@ -1022,9 +1051,9 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                     placeholder="0.00"
                     className="w-full text-xl sm:text-2xl font-medium bg-transparent outline-none text-white placeholder-gray-600"
                   />
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-xs text-[#998877] mt-1">
                     {isPriceLoading ? (
-                      <span className="text-gray-600">Loading...</span>
+                      <span className="text-[#665544]">Loading...</span>
                     ) : (
                       <>
                         $
@@ -1035,26 +1064,31 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                     )}
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-xs text-gray-500">
-                    <span className="text-gray-600">⚡</span>{' '}
-                    {fromTokenBalance}{' '}
-                    {fromToken?.symbol || 'ETH'}
+                <div className="flex items-center justify-end gap-2">
+                  <div className="flex items-center text-xs text-[#E7CDB1]">
+                    <Wallet2 className="w-3 h-3 mr-1" />
+                    {fromTokenBalance} {fromToken?.symbol || 'ETH'}
                   </div>
                   <button
-                    className="text-xs text-[#F59E0B] cursor-pointer mt-1 hover:text-[#DC8A09] transition-colors"
+                    className="text-xs bg-[#FFFFFF1A]/10 rounded-full border border-[#86715B] px-2 py-0.5 hover:bg-[#FFFFFF1A]/20 transition-colors"
                     onClick={() => {
                       console.log(
                         'Max button clicked, balance:',
                         fromTokenBalance
                       );
-                      if (fromTokenBalance && fromTokenBalance !== '0' && fromTokenBalance !== 'Loading...') {
+                      if (
+                        fromTokenBalance &&
+                        fromTokenBalance !== '0' &&
+                        fromTokenBalance !== 'Loading...'
+                      ) {
                         try {
                           // Parse the balance and handle it properly
                           const balance = parseFloat(fromTokenBalance);
                           if (!isNaN(balance) && balance > 0) {
                             // Format to avoid scientific notation and trailing zeros
-                            const cleanBalance = balance.toFixed(10).replace(/\.?0+$/, '');
+                            const cleanBalance = balance
+                              .toFixed(10)
+                              .replace(/\.?0+$/, '');
                             setFromAmount(cleanBalance);
                           }
                         } catch (err) {
@@ -1070,21 +1104,21 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
             </div>
 
             {/* Swap Direction Button */}
-            <div className="flex justify-center -my-1 relative z-10">
-              <Button
-                isIconOnly
-                size="sm"
-                className="bg-[#F59E0B] hover:bg-[#DC8A09] text-black rounded-full w-10 h-10"
-                onPress={handleSwapChains}
-              >
-                <ArrowDown className="w-5 h-5" />
-              </Button>
+            <div className="flex w-full items-center justify-center z-10 h-3">
+              <div className="cursor-pointer" onClick={handleSwapChains}>
+                <Image
+                  src="/images/icons/swap_arrow.png"
+                  alt="switch tokens"
+                  width={50}
+                  height={50}
+                />
+              </div>
             </div>
 
             {/* To Section */}
-            <div className="bg-[#271A0C] rounded-lg sm:rounded-xl p-2.5 sm:p-3 border border-[#333333]">
+            <div className="bg-[#1F1409] rounded-xl p-5 border border-[#2a2318]">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
-                <span className="text-xs text-gray-500">To</span>
+                <span className="text-xs text-[#998877]">To</span>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2">
                   <TokenSelector
                     chainId={toChain?.chainId || 0}
@@ -1108,9 +1142,9 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                     placeholder="0.00"
                     className="w-full text-xl sm:text-2xl font-medium bg-transparent outline-none text-white placeholder-gray-600"
                   />
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-xs text-[#998877] mt-1">
                     {isPriceLoading ? (
-                      <span className="text-gray-600">Loading...</span>
+                      <span className="text-[#665544]">Loading...</span>
                     ) : (
                       <>
                         $
@@ -1121,59 +1155,13 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                     )}
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-xs text-gray-500">
-                    <span className="text-gray-600">⚡</span>{' '}
-                    {toTokenBalance}{' '}
-                    {toToken?.symbol || 'USDT'}
+                <div className="flex items-center justify-end">
+                  <div className="flex items-center text-xs text-[#E7CDB1]">
+                    <Wallet2 className="w-3 h-3 mr-1" />
+                    {toTokenBalance} {toToken?.symbol || 'USDT'}
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Recommended Dropdown */}
-            <div className="mt-3">
-              <button
-                onClick={() => setShowRecommended(!showRecommended)}
-                className="w-full flex items-center justify-between text-sm text-gray-400 hover:text-white transition-colors p-2"
-              >
-                <span>Detail</span>
-                <ArrowDown
-                  className={`w-4 h-4 transition-transform ${
-                    showRecommended ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
-
-              {showRecommended && (
-                <div className="mt-2 space-y-2 text-sm">
-                  <div className="flex items-center justify-between px-2">
-                    <span className="text-gray-500">Route:</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[#F59E0B]">Universal Account</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between px-2">
-                    <span className="text-gray-500">Fee:</span>
-                    <span className="text-white">
-                      {quoteData?.priceImpact?.toFixed(2) || '1.00'}%
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between px-2">
-                    <span className="text-gray-500">Minimum Received:</span>
-                    <span className="text-white">
-                      {toAmount && parseFloat(toAmount) > 0
-                        ? (parseFloat(toAmount) * 0.99).toFixed(2)
-                        : '1,238'}{' '}
-                      {toToken?.symbol || 'HONEY'}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between px-2">
-                    <span className="text-gray-500">Slippage Tolerance:</span>
-                    <span className="text-white">{slippage}%</span>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Settings Panel - Hidden for now */}
@@ -1225,36 +1213,85 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
               </div>
             )}
 
-            {/* Action Buttons */}
-            <div className="flex gap-2 mt-3">
-              {/* Simulate Button */}
-              <Button
-                className="flex-1 h-12 bg-[#1e1e1e] hover:bg-[#2a2a2a] text-gray-300 font-semibold text-base rounded-xl border border-[#333333]"
-                isDisabled={!fromAmount || parseFloat(fromAmount) === 0 || !fromToken || !toToken}
-                onPress={handleSimulateSwap}
+            {/* Detail Section */}
+            <div className="mt-3">
+              <button
+                className="w-full text-sm text-gray-500 hover:text-gray-400 flex items-center justify-between px-1"
+                onClick={() => setShowDetail(!showDetail)}
               >
-                Simulate
-              </Button>
-              
+                <span>Detail</span>
+                <svg
+                  className={`w-4 h-4 transition-transform ${
+                    showDetail ? 'rotate-180' : ''
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+
+              {showDetail && toAmount && (
+                <div className="mt-2 bg-[#1F1409]/50 rounded-xl p-3 border border-[#2a2318]/50 space-y-2">
+                  <div className="text-sm font-medium text-[#E7CDB1] mb-2">
+                    Recommended
+                  </div>
+
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#998877]">Fee:</span>
+                    <span className="text-[#E7CDB1]">1.00%</span>
+                  </div>
+
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#998877]">LP Fee:</span>
+                    <span className="text-[#E7CDB1]">
+                      {(parseFloat(fromAmount || '0') * 0.0039).toFixed(4)}{' '}
+                      {fromToken?.symbol}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#998877]">Minimum Received:</span>
+                    <span className="text-[#E7CDB1]">
+                      {(parseFloat(toAmount) * 0.99).toFixed(4)}{' '}
+                      {toToken?.symbol}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#998877]">Slippage Tolerance:</span>
+                    <span className="text-[#E7CDB1]">1.00%</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="mt-4">
               {/* Swap Button */}
               <Button
-                className="flex-1 h-12 bg-[#F59E0B] hover:bg-[#DC8A09] text-black font-semibold text-base rounded-xl"
-                isDisabled={isSwapDisabled || isProcessingSwap}
-                onPress={isWrongChain ? handleSwitchChain : handleSwap}
-                isLoading={isProcessingSwap}
+                className="w-full bg-[#FFA931] hover:bg-[#E89821] text-black font-bold py-6 rounded-2xl"
+                disabled={isSwapDisabled || isProcessingSwap}
+                onClick={isWrongChain ? handleSwitchChain : handleSwap}
               >
                 {isProcessingSwap
                   ? 'Processing...'
                   : isLoadingQuote
                   ? 'Getting Quote...'
                   : isWrongChain
-                  ? `Switch Chain`
+                  ? `Switch to ${fromChain?.displayName || 'Chain'}`
                   : 'Swap'}
               </Button>
             </div>
           </div>
         </div>
-        
+
         {/* Universal Account Link */}
         <div className="mt-4 text-center">
           <a

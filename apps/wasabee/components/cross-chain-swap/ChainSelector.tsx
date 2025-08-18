@@ -71,17 +71,14 @@ function ChainSelector<T extends ChainInfo = ChainInfo>({
     return (
       <Popover placement="bottom" isOpen={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger>
-          <Button
-            variant="flat"
-            size="sm"
-            className={`${
+          <button
+            className={`flex items-center justify-between gap-2 px-3 py-2 rounded-full transition-colors ${
               compact ? 'min-w-[80px] px-2' : 'w-full sm:w-auto sm:min-w-[140px]'
-            } justify-between ${
+            } ${
               isDark
-                ? 'bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white border-[#3a3a3a]'
+                ? 'bg-[#FFFFFF1A]/10 hover:bg-[#FFFFFF1A]/20 text-white border border-[#86715B]'
                 : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'
             }`}
-            endContent={<ChevronDown className="w-3 h-3" />}
           >
             <div className="flex items-center gap-1 sm:gap-2">
               <Image
@@ -97,7 +94,8 @@ function ChainSelector<T extends ChainInfo = ChainInfo>({
                 </span>
               )}
             </div>
-          </Button>
+            <ChevronDown className="w-3 h-3" />
+          </button>
         </PopoverTrigger>
         <PopoverContent
           className={`w-[200px] p-2 ${

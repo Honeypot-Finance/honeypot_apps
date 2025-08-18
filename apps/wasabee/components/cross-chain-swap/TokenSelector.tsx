@@ -123,16 +123,15 @@ const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, 
 
   return (
     <>
-      <Button
-        variant="flat"
-        size="sm"
-        className={`${compact ? 'min-w-[80px] px-2' : 'w-full sm:w-auto sm:min-w-[120px]'} justify-between ${
+      <button
+        className={`flex items-center justify-between gap-2 px-3 py-2 rounded-full transition-colors ${
+          compact ? 'min-w-[80px] px-2' : 'w-full sm:w-auto sm:min-w-[120px]'
+        } ${
           isDark 
-            ? 'bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white border-[#3a3a3a]' 
+            ? 'bg-[#FFFFFF1A]/10 hover:bg-[#FFFFFF1A]/20 text-white border border-[#86715B]' 
             : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'
         }`}
-        endContent={<ChevronDown className="w-3 h-3" />}
-        onPress={() => setIsOpen(true)}
+        onClick={() => setIsOpen(true)}
       >
         {value ? (
           <div className="flex items-center gap-1 sm:gap-2">
@@ -145,7 +144,8 @@ const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, 
         ) : (
           <span className={`text-xs sm:text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{compact ? 'Token' : 'Select Token'}</span>
         )}
-      </Button>
+        <ChevronDown className="w-3 h-3" />
+      </button>
 
       <Modal 
         isOpen={isOpen} 
