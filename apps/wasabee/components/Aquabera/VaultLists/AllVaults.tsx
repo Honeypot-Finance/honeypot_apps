@@ -54,7 +54,9 @@ export function AllAquaberaVaults({
   // Generate cache key based on vaults data
   const cacheKey = useMemo(() => {
     if (!vaults?.ichiVaults?.length) return '';
-    return `${chainId}-${vaults.ichiVaults.map((v) => v.id).join('-')}`;
+    return `${chainId}-${vaults.ichiVaults
+      .map((v) => v.id)
+      .join('-')}`;
   }, [vaults]);
 
   useEffect(() => {
@@ -78,7 +80,8 @@ export function AllAquaberaVaults({
       return;
     }
     getVaultsFromLocalStorage();
-  }, [chainId]);
+
+  }, [chainId])
 
   // Load vault contracts from localStorage cache
   const getVaultsFromLocalStorage = () => {
@@ -139,6 +142,10 @@ export function AllAquaberaVaults({
     }
   };
 
+  useEffect(() => {
+    getVaultsFromLocalStorage();
+  }, [cacheKey]);
+
   const [sortField, setSortField] = useState<SortField>(sortBy as SortField);
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [page, setPage] = useState(1);
@@ -149,7 +156,8 @@ export function AllAquaberaVaults({
     const initVaults = async () => {
       if (!wallet.isInit || !infoClient) return;
 
-      // If we have prefetched data and no search string
+
+
 
       // If prefetched data is null (cleared), reset vaults state
       if (prefetchedData === null) {
@@ -172,17 +180,18 @@ export function AllAquaberaVaults({
     initVaults();
   }, [searchString, onDataLoaded, infoClient, prefetchedData, chainId]);
 
-  // Update vault contracts when prefetched contracts change
-  useEffect(() => {
-    if (prefetchedContracts && prefetchedContracts.length > 0) {
-      setVaultsContracts(prefetchedContracts);
-    }
-  }, [prefetchedContracts]);
+
+
+
 
   useEffect(() => {
     if (!vaults?.ichiVaults?.length || !infoClient || !cacheKey) {
       return;
     }
+
+
+
+
 
     // Skip if we already have loaded data
     if (vaultsContracts.length > 0) {
@@ -190,6 +199,8 @@ export function AllAquaberaVaults({
     }
 
     const storageKey = `${CACHE_KEY_PREFIX}${cacheKey}`;
+
+
 
     setIsLoadingFromCache(true);
 
@@ -340,8 +351,7 @@ export function AllAquaberaVaults({
 
   const isLoading = useMemo(() => {
     const hasData = vaultsContracts.length > 0;
-    const hasPrefetchedData =
-      prefetchedContracts && prefetchedContracts.length > 0;
+    const hasPrefetchedData = prefetchedContracts && prefetchedContracts.length > 0;
 
     // If we have prefetched data or actual data, never show loading
     if (hasData || hasPrefetchedData) {
@@ -486,14 +496,14 @@ export function AllAquaberaVaults({
                   <div className="flex flex-col">
                     <ChevronUp
                       className={`h-3 w-3 ${sortField === 'pair' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
                         }`}
                     />
                     <ChevronDown
                       className={`h-3 w-3 ${sortField === 'pair' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
                         }`}
                     />
                   </div>
@@ -508,14 +518,14 @@ export function AllAquaberaVaults({
                   <div className="flex flex-col">
                     <ChevronUp
                       className={`h-3 w-3 ${sortField === 'pair' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
                         }`}
                     />
                     <ChevronDown
                       className={`h-3 w-3 ${sortField === 'pair' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
                         }`}
                     />
                   </div>
@@ -530,14 +540,14 @@ export function AllAquaberaVaults({
                   <div className="flex flex-col">
                     <ChevronUp
                       className={`h-3 w-3 ${sortField === 'tvl' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
                         }`}
                     />
                     <ChevronDown
                       className={`h-3 w-3 ${sortField === 'tvl' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
                         }`}
                     />
                   </div>
@@ -552,14 +562,14 @@ export function AllAquaberaVaults({
                   <div className="flex flex-col">
                     <ChevronUp
                       className={`h-3 w-3 ${sortField === 'volume' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
                         }`}
                     />
                     <ChevronDown
                       className={`h-3 w-3 ${sortField === 'volume' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
                         }`}
                     />
                   </div>
@@ -574,14 +584,14 @@ export function AllAquaberaVaults({
                   <div className="flex flex-col">
                     <ChevronUp
                       className={`h-3 w-3 ${sortField === 'fees' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
                         }`}
                     />
                     <ChevronDown
                       className={`h-3 w-3 ${sortField === 'fees' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
                         }`}
                     />
                   </div>
@@ -596,14 +606,14 @@ export function AllAquaberaVaults({
                   <div className="flex flex-col">
                     <ChevronUp
                       className={`h-3 w-3 ${sortField === 'apr' && sortDirection === 'asc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
                         }`}
                     />
                     <ChevronDown
                       className={`h-3 w-3 ${sortField === 'apr' && sortDirection === 'desc'
-                          ? 'text-black'
-                          : 'text-[#4D4D4D]'
+                        ? 'text-black'
+                        : 'text-[#4D4D4D]'
                         }`}
                     />
                   </div>
