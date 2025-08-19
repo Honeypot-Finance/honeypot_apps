@@ -153,7 +153,7 @@ export function AquaberaList({ prefetchedData }: AquaberaListProps) {
             onDataLoaded={handleDataLoaded}
             prefetchedData={prefetchedData?.allVaults}
             prefetchedContracts={prefetchedData?.allVaultContracts}
-            ChainId={prefetchedData?.chainId}
+            prfetchedDataChainId={prefetchedData?.chainId}
           />
         ) : (
           <MyAquaberaVaults
