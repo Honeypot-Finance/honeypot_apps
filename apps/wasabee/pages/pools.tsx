@@ -21,7 +21,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
   useEffect(() => {
     const prefetchTimer = setTimeout(() => {
       setShouldPrefetch(true);
-    }, 1500);
+    }, 100); 
 
     return () => clearTimeout(prefetchTimer);
   }, []);
@@ -79,23 +79,11 @@ const PoolsPage: NextLayoutPage = observer(() => {
           <PoolsList />
         </Tab>
       </Tabs>
-
-      {/* Prefetch the other tab's component in background after initial load */}
+      
+      {/* Prefetch the pools tab component in background after initial load */}
       {shouldPrefetch && (
-        <div
-          style={{
-            position: 'absolute',
-            left: '-9999px',
-            top: '-9999px',
-            visibility: 'hidden',
-            pointerEvents: 'none',
-          }}
-        >
-          {currentTab === 'aquabera' ? (
-            <PoolsList />
-          ) : (
-            <AquaberaList prefetchedData={vaultData} />
-          )}
+        <div style={{ position: 'absolute', left: '-9999px', top: '-9999px', visibility: 'hidden', pointerEvents: 'none' }}>
+           <PoolsList />
         </div>
       )}
     </div>

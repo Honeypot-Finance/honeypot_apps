@@ -19,7 +19,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 export const MyVaultRow = observer(
   ({ vault }: { vault: ICHIVaultContract }) => {
-    console.log(vault);
+
     const [vaultContract, setVaultContract] = useState<
       ICHIVaultContract | undefined
     >(undefined);
