@@ -1276,7 +1276,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
             <div className="mt-4">
               {/* Swap Button */}
               <Button
-                className="w-full bg-[#FFA931] hover:bg-[#E89821] text-black font-bold py-6 rounded-2xl"
+                className="w-full bg-[#FFA931] hover:bg-[#E89821] text-black font-bold py-4 rounded-2xl border-[3px] border-[#C87304]"
                 disabled={isSwapDisabled || isProcessingSwap}
                 onClick={isWrongChain ? handleSwitchChain : handleSwap}
               >

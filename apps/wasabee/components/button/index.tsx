@@ -21,7 +21,7 @@ export const Button = ({
   styleMode = styleMode || 'primary';
   // FIXME: hover bg color
   const baseClassNames = cn(
-    'flex h-[45px] font-bold text-white justify-center items-center gap-2.5 self-stretch bg-[#F59E0B] px-6 py-3 rounded-2xl hover:bg-[#DC8A09] active:opacity-80 transition-colors border border-[#F59E0B]',
+    'flex h-[45px] font-bold text-white justify-center items-center gap-2.5 self-stretch bg-[#F59E0B] px-6 py-3 rounded-2xl hover:bg-[#DC8A09] active:opacity-80 transition-colors border-[3px] border-[#C87304]',
     styleMode === 'plain'
       ? 'bg-transparent border-[#333333] hover:bg-[#333333] text-gray-300'
       : '',
