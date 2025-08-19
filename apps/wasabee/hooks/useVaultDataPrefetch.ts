@@ -7,7 +7,7 @@ import {
 } from '@/lib/algebra/graphql/clients/vaults';
 import { VaultsSortedByHoldersQuery } from '@/lib/algebra/graphql/generated/graphql';
 import { ICHIVaultContract } from '@honeypot/shared';
-
+import { Wallet } from '@honeypot/shared';
 interface VaultDataStore {
   allVaults: VaultsSortedByHoldersQuery | null;
   allVaultContracts: ICHIVaultContract[] | null;
@@ -19,6 +19,7 @@ interface VaultDataStore {
 export interface VaultDataPrefetchReturn extends VaultDataStore {
   isLoading: boolean;
   isDataFresh: boolean;
+  chainId: number | undefined;
 }
 
 const DATA_DURATION = 5 * 60 * 1000; // 5 minutes
@@ -204,6 +205,32 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
     }
   };
 
+  // Clear data when chain changes
+  const clearDataOnChainChange = () => {
+    const clearedData = {
+      allVaults: null,
+      allVaultContracts: null,
+      isAllVaultsLoading: false,
+      isContractsLoading: false,
+      lastFetched: 0,
+    };
+    globalVaultData = clearedData;
+    setData(clearedData);
+  };
+
+  // Track current chain to detect changes
+  const [currentChainId, setCurrentChainId] = useState(wallet.currentChainId);
+
+  // Clear data when chain changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return; // Skip during SSR/build
+    
+    if (currentChainId !== wallet.currentChainId && wallet.currentChainId !== -1) {
+      clearDataOnChainChange();
+      setCurrentChainId(wallet.currentChainId);
+    }
+  }, [wallet.currentChainId]);
+
   // Auto-prefetch when wallet is ready (only in browser, not during build)
   useEffect(() => {
     if (typeof window === 'undefined') return; // Skip during SSR/build
@@ -220,5 +247,6 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
     lastFetched: data.lastFetched,
     isLoading: data.isAllVaultsLoading || data.isContractsLoading,
     isDataFresh: isDataFresh(),
+    chainId: wallet.currentChainId,
   };
 };

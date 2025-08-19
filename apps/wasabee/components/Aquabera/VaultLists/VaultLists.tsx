@@ -84,9 +84,8 @@ export function AquaberaList({ prefetchedData }: AquaberaListProps) {
             {sortOptions.map((option) => (
               <DropdownItem
                 key={option.key}
-                className={`text-black text-sm p-2 ${
-                  sortField === option.key ? 'bg-[#FFCD4D]' : ''
-                }`}
+                className={`text-black text-sm p-2 ${sortField === option.key ? 'bg-[#FFCD4D]' : ''
+                  }`}
               >
                 {option.label}
               </DropdownItem>
@@ -154,6 +153,7 @@ export function AquaberaList({ prefetchedData }: AquaberaListProps) {
             onDataLoaded={handleDataLoaded}
             prefetchedData={prefetchedData?.allVaults}
             prefetchedContracts={prefetchedData?.allVaultContracts}
+            ChainId={prefetchedData?.chainId}
           />
         ) : (
           <MyAquaberaVaults
