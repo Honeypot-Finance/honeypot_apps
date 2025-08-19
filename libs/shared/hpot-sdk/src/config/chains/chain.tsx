@@ -23,6 +23,7 @@ import {
   sonicMainnet,
   confluxESpaceMainnet,
   merlinMainnet,
+  monadTestnet,
 } from './chainBaseConfig';
 import { ICHIVaultContract } from '../../lib/contract/aquabera/ICHIVault-contract';
 import { getMultipleTokensData } from '../../lib/graphql/clients/token';
@@ -92,16 +93,31 @@ export class Network {
   }
 
   init() {
-    console.log('[Network.init] Starting for chain:', this.chainId, 'displayName:', this.displayName);
-    console.log('[Network.init] validatedTokensInfo count:', Object.keys(this.validatedTokensInfo).length);
-    console.log('[Network.init] validatedTokensInfo keys:', Object.keys(this.validatedTokensInfo));
-    
+    console.log(
+      '[Network.init] Starting for chain:',
+      this.chainId,
+      'displayName:',
+      this.displayName
+    );
+    console.log(
+      '[Network.init] validatedTokensInfo count:',
+      Object.keys(this.validatedTokensInfo).length
+    );
+    console.log(
+      '[Network.init] validatedTokensInfo keys:',
+      Object.keys(this.validatedTokensInfo)
+    );
+
     this.nativeToken = Token.getToken({
       ...this.nativeToken,
       isNative: true,
       chainId: this.chainId.toString(),
     });
-    console.log('[Network.init] Native token created:', this.nativeToken.symbol, this.nativeToken.address);
+    console.log(
+      '[Network.init] Native token created:',
+      this.nativeToken.symbol,
+      this.nativeToken.address
+    );
 
     this.validatedTokens = [];
     this.validatedTokens.push(this.nativeToken);
@@ -116,9 +132,15 @@ export class Network {
       this.validatedTokensInfo[address] = token;
       this.validatedTokens.push(token);
     });
-    
-    console.log('[Network.init] Final validatedTokens count:', this.validatedTokens.length);
-    console.log('[Network.init] Final validatedTokens symbols:', this.validatedTokens.map(t => t.symbol));
+
+    console.log(
+      '[Network.init] Final validatedTokens count:',
+      this.validatedTokens.length
+    );
+    console.log(
+      '[Network.init] Final validatedTokens symbols:',
+      this.validatedTokens.map((t) => t.symbol)
+    );
 
     if (this.supportDEX) {
       getMultipleTokensData(
@@ -173,9 +195,11 @@ export class Network {
     if (!explorer) {
       return '#';
     }
-    
+
     // Remove trailing slash from explorer URL if present
-    const baseUrl = explorer.url.endsWith('/') ? explorer.url.slice(0, -1) : explorer.url;
+    const baseUrl = explorer.url.endsWith('/')
+      ? explorer.url.slice(0, -1)
+      : explorer.url;
     return `${baseUrl}/address/${address}`;
   }
 
@@ -184,9 +208,11 @@ export class Network {
     if (!explorer) {
       return '#';
     }
-    
+
     // Remove trailing slash from explorer URL if present
-    const baseUrl = explorer.url.endsWith('/') ? explorer.url.slice(0, -1) : explorer.url;
+    const baseUrl = explorer.url.endsWith('/')
+      ? explorer.url.slice(0, -1)
+      : explorer.url;
     return `${baseUrl}/tx/${txHash}`;
   }
 }
@@ -232,7 +258,8 @@ export const bscMainnetNetwork = new Network({
       name: 'Wrapped BNB',
       symbol: 'WBNB',
       decimals: 18,
-      logoURI: 'https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png',
+      logoURI:
+        'https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png',
       isRouterToken: true,
       isPopular: true,
     },
@@ -1366,6 +1393,51 @@ export const merlinNetwork = new Network({
   validatedMemeAddresses: [],
 });
 
+// Merlin Network
+export const monadNetworkTestnet = new Network({
+  supportDEX: true,
+  supportPot2Pump: true,
+  supportVault: true,
+  supportUniversalAccount: true,
+  chain: monadTestnet,
+  iconUrl:
+    'https://cdn.prod.website-files.com/667c57e6f9254a4b6d914440/66c3711574e166ac115bba8a_Logo%20Mark.svg',
+  nativeToken: {
+    address: '0x0000000000000000000000000000000000000000',
+    name: 'Monad',
+    symbol: 'MON',
+    decimals: 18,
+    isNative: true,
+    logoURI:
+      'https://cdn.prod.website-files.com/667c57e6f9254a4b6d914440/66c3711574e166ac115bba8a_Logo%20Mark.svg',
+    chainId: '10143',
+  },
+  wrappedNativeToken: {
+    address: '0x760AfE86e5de5fa0Ee542fc7B7B713e1c5425701',
+    name: 'WrappedMonad',
+    symbol: 'WMON',
+    decimals: 18,
+    logoURI:
+      'https://cdn.prod.website-files.com/667c57e6f9254a4b6d914440/66c3711574e166ac115bba8a_Logo%20Mark.svg',
+    chainId: '10143',
+  },
+  contracts: contractAddresses['10143'] || contractAddresses['default'],
+  subgraphAddresses: subgraphAddresses['10143'] || subgraphAddresses['default'],
+  faucetTokens: [],
+  raisedTokenData: [],
+  validatedTokensInfo: {
+    '0xf817257fed379853cde0fa4f97ab987181b1e5ea': {
+      address: '0xf817257fed379853cde0fa4f97ab987181b1e5ea',
+      name: 'USDC',
+      symbol: 'USDC',
+      decimals: 18,
+      logoURI: 'https://bscscan.com/token/images/centre-usdc_28.png',
+    },
+  },
+  validatedFtoAddresses: [],
+  validatedMemeAddresses: [],
+});
+
 export const networks = [
   berachainNetwork,
   arbitrumOneNetwork,
@@ -1385,6 +1457,7 @@ export const networks = [
   sonicNetwork,
   confluxNetwork,
   merlinNetwork,
+  monadNetworkTestnet,
   // movementNetWork,
   // sprotoNetWork,
 ];

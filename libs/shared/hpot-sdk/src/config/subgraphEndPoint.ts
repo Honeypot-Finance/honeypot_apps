@@ -56,4 +56,13 @@ export const subgraphAddresses: Record<string, SubgraphAddresses> = {
     lbp: '',
     wasabee_ido: '',
   },
+  '10143': {
+    algebra_info:
+      'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-monad-testnet/1.0.0/gn',
+    algebra_farming:
+      'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-farming-monad-testnet/1.0.0/gn',
+    bgt_market: '',
+    lbp: '',
+    wasabee_ido: '',
+  },
 };

@@ -18,6 +18,7 @@ import {
   blast,
   manta,
   mode,
+  monadTestnet as monadTest,
 } from 'viem/chains';
 
 export const bscMainnet: Chain = {
@@ -85,6 +86,10 @@ export const berachainTestnet: Chain = {
       blockCreated: 1938031,
     },
   },
+};
+
+export const monadTestnet: Chain = {
+  ...monadTest,
 };
 
 export const movementTestnet: Chain = {
@@ -269,6 +274,7 @@ export const chains = [
   arbitrumMainnet,
   baseMainnet,
   ethMainnet,
+  monadTestnet,
 ];
 
 export const chainsMap = chains.reduce((acc, chain) => {
