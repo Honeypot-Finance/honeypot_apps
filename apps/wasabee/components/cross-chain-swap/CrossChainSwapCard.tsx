@@ -1174,37 +1174,37 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                   <div className="flex items-center gap-1">
                     <Button
                       size="sm"
-                      variant={slippage === '0.5' ? 'flat' : 'light'}
+                      variant={slippage === '0.5' ? 'action' : 'ghost'}
                       className={
                         slippage === '0.5'
                           ? 'bg-[#F59E0B] text-black text-xs h-6'
                           : 'text-gray-400 text-xs h-6'
                       }
-                      onPress={() => setSlippage('0.5')}
+                      onClick={() => setSlippage('0.5')}
                     >
                       0.5%
                     </Button>
                     <Button
                       size="sm"
-                      variant={slippage === '1.0' ? 'flat' : 'light'}
+                      variant={slippage === '1.0' ? 'action' : 'ghost'}
                       className={
                         slippage === '1.0'
                           ? 'bg-[#F59E0B] text-black text-xs h-6'
                           : 'text-gray-400 text-xs h-6'
                       }
-                      onPress={() => setSlippage('1.0')}
+                      onClick={() => setSlippage('1.0')}
                     >
                       1.0%
                     </Button>
                     <Button
                       size="sm"
-                      variant={slippage === '3.0' ? 'flat' : 'light'}
+                      variant={slippage === '3.0' ? 'action' : 'ghost'}
                       className={
                         slippage === '3.0'
                           ? 'bg-[#F59E0B] text-black text-xs h-6'
                           : 'text-gray-400 text-xs h-6'
                       }
-                      onPress={() => setSlippage('3.0')}
+                      onClick={() => setSlippage('3.0')}
                     >
                       3.0%
                     </Button>

@@ -1,7 +1,12 @@
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
-import { useDerivedSwapInfo, useSwapState } from '@/lib/algebra/state/swapStore';
-import useWrapCallback, { WrapType } from '@/lib/algebra/hooks/swap/useWrapCallback';
+import {
+  useDerivedSwapInfo,
+  useSwapState,
+} from '@/lib/algebra/state/swapStore';
+import useWrapCallback, {
+  WrapType,
+} from '@/lib/algebra/hooks/swap/useWrapCallback';
 import { SwapField } from '@/types/algebra/types/swap-field';
 import { TradeType } from '@cryptoalgebra/sdk';
 
@@ -11,10 +16,10 @@ const SwapParamsV3 = () => {
     allowedSlippage,
     currencies,
   } = useDerivedSwapInfo();
-  
+
   const { typedValue } = useSwapState();
   const [isExpanded, setIsExpanded] = useState(false);
-  
+
   const { wrapType } = useWrapCallback(
     currencies[SwapField.INPUT],
     currencies[SwapField.OUTPUT],
@@ -27,9 +32,14 @@ const SwapParamsV3 = () => {
     return null; // Don't show anything if there's no trade
   }
 
-  const minimumReceived = trade.tradeType === TradeType.EXACT_INPUT
-    ? `${trade.minimumAmountOut(allowedSlippage).toSignificant(6)} ${trade.outputAmount.currency.symbol}`
-    : `${trade.maximumAmountIn(allowedSlippage).toSignificant(6)} ${trade.inputAmount.currency.symbol}`;
+  const minimumReceived =
+    trade.tradeType === TradeType.EXACT_INPUT
+      ? `${trade.minimumAmountOut(allowedSlippage).toSignificant(6)} ${
+          trade.outputAmount.currency.symbol
+        }`
+      : `${trade.maximumAmountIn(allowedSlippage).toSignificant(6)} ${
+          trade.inputAmount.currency.symbol
+        }`;
 
   return (
     <div className="w-full">
