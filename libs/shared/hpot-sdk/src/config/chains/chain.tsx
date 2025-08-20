@@ -1431,6 +1431,8 @@ export const monadNetworkTestnet = new Network({
       name: 'USDC',
       symbol: 'USDC',
       decimals: 18,
+      chainId: '10143',
+      isStableCoin: true,
       logoURI: 'https://bscscan.com/token/images/centre-usdc_28.png',
     },
   },

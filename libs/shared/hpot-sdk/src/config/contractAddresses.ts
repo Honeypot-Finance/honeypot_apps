@@ -216,7 +216,8 @@ export const contractAddresses: Record<string, ContractAddresses> = {
   },
   '10143': {
     //algebra
-    algebraPoolInitCodeHash: zeroAddress,
+    algebraPoolInitCodeHash:
+      '0xb3fc09be5eb433d99b1ec89fd8435aaf5ffea75c1879e19028aa2414a14b3c85',
     algebraFactory: '0xad88d4abbe0d0672f00eb3b83e6518608d82e95d',
     algebraPoolDeployer: '0xb6120de62561d702087142de405eeb02c18873bc',
     algebraPositionManager: '0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27',

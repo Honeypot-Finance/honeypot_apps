@@ -383,6 +383,8 @@ export function useDerivedSwapInfo(): {
   const isWrap =
     currencies.INPUT &&
     currencies.OUTPUT &&
+    currencies.INPUT.wrapped &&
+    currencies.OUTPUT.wrapped &&
     currencies.INPUT.wrapped.equals(currencies.OUTPUT.wrapped);
 
   const poolAddress = isWrap
@@ -392,8 +394,8 @@ export function useDerivedSwapInfo(): {
       (() => {
         try {
           return computePoolAddress({
-            tokenA: currencies[SwapField.INPUT]!.wrapped,
-            tokenB: currencies[SwapField.OUTPUT]!.wrapped,
+            tokenA: currencies[SwapField.INPUT]!.wrapped || currencies[SwapField.INPUT]!,
+            tokenB: currencies[SwapField.OUTPUT]!.wrapped || currencies[SwapField.OUTPUT]!,
             initCodeHashManualOverride: wallet.currentChain?.contracts?.algebraPoolInitCodeHash,
             poolDeployer: wallet.currentChain?.contracts?.algebraPoolDeployer,
           }).toLowerCase() as Address;
@@ -571,6 +573,8 @@ export function useDerivedSwapInfoWithoutSwapState({
   const isWrap =
     currencies.INPUT &&
     currencies.OUTPUT &&
+    currencies.INPUT.wrapped &&
+    currencies.OUTPUT.wrapped &&
     currencies.INPUT.wrapped.equals(currencies.OUTPUT.wrapped);
 
   const poolAddress = isWrap
@@ -580,8 +584,8 @@ export function useDerivedSwapInfoWithoutSwapState({
       (() => {
         try {
           return computePoolAddress({
-            tokenA: currencies[SwapField.INPUT]!.wrapped,
-            tokenB: currencies[SwapField.OUTPUT]!.wrapped,
+            tokenA: currencies[SwapField.INPUT]!.wrapped || currencies[SwapField.INPUT]!,
+            tokenB: currencies[SwapField.OUTPUT]!.wrapped || currencies[SwapField.OUTPUT]!,
             initCodeHashManualOverride: wallet.currentChain?.contracts?.algebraPoolInitCodeHash,
             poolDeployer: wallet.currentChain?.contracts?.algebraPoolDeployer,
           }).toLowerCase() as Address;
