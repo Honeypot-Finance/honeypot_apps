@@ -1,45 +1,60 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { VscCopy } from 'react-icons/vsc';
 import { ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { wallet } from '@honeypot/shared/lib/wallet';
+import { useSwapTransactions } from '@/lib/algebra/graphql/clients/swapTransactions';
+import { observer } from 'mobx-react-lite';
+import { SwapField } from '@/types/algebra/types/swap-field';
+import { useDerivedSwapInfo } from '@/lib/algebra/state/swapStore';
+import { zeroAddress } from 'viem';
+import BigNumber from 'bignumber.js';
 
-const SwapTransactionHistory = () => {
-  const [allTransactions, setAllTransactions] = useState<any[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+const SwapTransactionHistory = observer(() => {
+  const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const itemsPerPage = 10; // 10 items per page as requested
-  const totalItems = 100; // 100 total items
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const pageSize = 10;
 
-  // Generate all 100 transactions once on mount
+  const { currencies } = useDerivedSwapInfo();
+  const { fetchTransactions } = useSwapTransactions();
+
+  const baseCurrency = currencies[SwapField.INPUT];
+  const quoteCurrency = currencies[SwapField.OUTPUT];
+
   useEffect(() => {
-    const generateTransactions = () => {
-      const transactions = Array.from({ length: totalItems }, (_, i) => {
-        // Generate varied but realistic looking data
-        const baseAmount = 0.345 + (Math.random() * 0.5 - 0.25);
-        const sellAmount = 0.09043 + (Math.random() * 0.02 - 0.01);
-        const value = 50.393 + (Math.random() * 100 - 50);
+    const loadTransactions = async (currentPage: number) => {
+      setLoading(true);
+      try {
+        // Log the request details for debugging
+        console.log('[SwapTransactionHistory] Loading transactions:', {
+          chainId: wallet.currentChainId,
+          page: currentPage,
+          baseCurrency: baseCurrency?.wrapped.address ?? zeroAddress,
+          quoteCurrency: quoteCurrency?.wrapped.address ?? zeroAddress,
+        });
         
-        return {
-          id: `tx-${i}`,
-          timestamp: Math.floor(Date.now() / 1000 - i * 60).toString(), // 1 minute apart
-          transaction: {
-            id: `0x4e3${i.toString(16).padStart(3, '0')}...5f0a`,
-            from: `0x4e3${i.toString(16).padStart(3, '0')}...5f0a`
-          },
-          token0: { symbol: 'WBERA' },
-          token1: { symbol: 'HONEY' },
-          amount0: baseAmount.toFixed(3),
-          amount1: sellAmount.toFixed(5),
-          value: value.toFixed(3)
-        };
-      });
-      
-      setAllTransactions(transactions);
-      setLoading(false);
+        const response = await fetchTransactions(
+          currentPage,
+          pageSize,
+          baseCurrency?.wrapped.address ?? zeroAddress,
+          quoteCurrency?.wrapped.address ?? zeroAddress
+        );
+        
+        console.log('[SwapTransactionHistory] Response:', response);
+        
+        setTransactions(response.data);
+        setHasNextPage(response.pageInfo.hasNextPage);
+      } catch (error) {
+        console.error('[SwapTransactionHistory] Error loading transactions:', error);
+        setTransactions([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    generateTransactions();
-  }, []); // Only run once on mount
+    loadTransactions(page);
+  }, [baseCurrency, page, pageSize, quoteCurrency, fetchTransactions]);
 
   const formatTimeAgo = (timestamp: string) => {
     const now = Math.floor(Date.now() / 1000);
@@ -57,89 +72,28 @@ const SwapTransactionHistory = () => {
   };
 
   const openInExplorer = (txHash: string) => {
-    // For now, use a default explorer URL
-    const explorerUrl = 'https://etherscan.io';
+    // Get explorer URL based on current chain
+    let explorerUrl = 'https://etherscan.io';
+    
+    if (wallet.currentChainId === 56) {
+      explorerUrl = 'https://bscscan.com';
+    } else if (wallet.currentChainId === 137) {
+      explorerUrl = 'https://polygonscan.com';
+    } else if (wallet.currentChainId === 42161) {
+      explorerUrl = 'https://arbiscan.io';
+    } else if (wallet.currentChainId === 10) {
+      explorerUrl = 'https://optimistic.etherscan.io';
+    } else if (wallet.currentChainId === 8453) {
+      explorerUrl = 'https://basescan.org';
+    } else if (wallet.currentChainId === 80084) {
+      explorerUrl = 'https://bartio.beratrail.io';
+    }
+    
     window.open(`${explorerUrl}/tx/${txHash}`, '_blank');
   };
 
-  // Calculate pagination
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentTransactions = allTransactions.slice(startIndex, endIndex);
-
-  const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
-
-  const renderPageNumbers = () => {
-    const pages = [];
-    const maxVisible = 5;
-    let start = Math.max(1, currentPage - 2);
-    let end = Math.min(totalPages, currentPage + 2);
-    
-    // Always show page 1
-    if (start > 1) {
-      pages.push(
-        <button
-          key={1}
-          onClick={() => goToPage(1)}
-          className="w-8 h-8 rounded text-gray-500 hover:text-gray-300 hover:bg-[#2a2318]/50 transition-colors"
-        >
-          1
-        </button>
-      );
-      
-      if (start > 2) {
-        pages.push(
-          <span key="dots-start" className="text-gray-600 px-2">
-            ...
-          </span>
-        );
-      }
-    }
-
-    // Show current range
-    for (let i = start; i <= end; i++) {
-      pages.push(
-        <button
-          key={i}
-          onClick={() => goToPage(i)}
-          className={`w-8 h-8 rounded ${
-            currentPage === i
-              ? 'bg-[#D4A574] text-black font-semibold' // Golden/orange for active
-              : 'text-gray-500 hover:text-gray-300 hover:bg-[#2a2318]/50'
-          } transition-colors`}
-        >
-          {i}
-        </button>
-      );
-    }
-
-    // Always show last page
-    if (end < totalPages) {
-      if (end < totalPages - 1) {
-        pages.push(
-          <span key="dots-end" className="text-gray-600 px-2">
-            ...
-          </span>
-        );
-      }
-      
-      pages.push(
-        <button
-          key={totalPages}
-          onClick={() => goToPage(totalPages)}
-          className="w-8 h-8 rounded text-gray-500 hover:text-gray-300 hover:bg-[#2a2318]/50 transition-colors"
-        >
-          {totalPages}
-        </button>
-      );
-    }
-
-    return pages;
+  const formatAmount = (amount: string) => {
+    return new BigNumber(amount).toFixed(6);
   };
 
   return (
@@ -160,8 +114,12 @@ const SwapTransactionHistory = () => {
                   </svg>
                 </div>
               </th>
-              <th className="text-left text-sm text-gray-500 font-normal pb-4">Buy WBERA</th>
-              <th className="text-left text-sm text-gray-500 font-normal pb-4">Sell HONEY</th>
+              <th className="text-left text-sm text-gray-500 font-normal pb-4">
+                {transactions[0]?.token0?.symbol || 'Token In'}
+              </th>
+              <th className="text-left text-sm text-gray-500 font-normal pb-4">
+                {transactions[0]?.token1?.symbol || 'Token Out'}
+              </th>
               <th className="text-left text-sm text-gray-500 font-normal pb-4">User</th>
               <th className="text-left text-sm text-gray-500 font-normal pb-4">TX Hash</th>
             </tr>
@@ -173,41 +131,63 @@ const SwapTransactionHistory = () => {
                   Loading...
                 </td>
               </tr>
-            ) : currentTransactions.length === 0 ? (
+            ) : transactions.length === 0 ? (
               <tr>
                 <td colSpan={6} className="py-8 text-center text-gray-500">
-                  No transactions found
+                  <div className="flex flex-col gap-2">
+                    <span>No transactions found for this token pair</span>
+                    <span className="text-xs text-gray-600">
+                      Chain: {wallet.currentChain?.displayName || wallet.currentChain?.chain?.name || 'Unknown'} (ID: {wallet.currentChainId})
+                    </span>
+                    {baseCurrency && quoteCurrency && (
+                      <span className="text-xs text-gray-600">
+                        {baseCurrency.symbol} ↔ {quoteCurrency.symbol}
+                      </span>
+                    )}
+                  </div>
                 </td>
               </tr>
             ) : (
-              currentTransactions.map((tx, index) => (
+              transactions.map((tx, index) => (
                 <tr 
                   key={tx.id} 
                   className={`border-b border-[#2a2318] transition-colors ${
                     index % 2 === 0 
-                      ? 'bg-transparent hover:bg-[#0A0704]' // Even rows - darker (transparent shows #140D06 bg)
+                      ? 'bg-transparent hover:bg-[#0A0704]' // Even rows - darker
                       : 'bg-[#1F1409] hover:bg-[#241809]'   // Odd rows - lighter background
                   }`}
                 >
                   <td className="py-4 text-sm text-white pl-2">{formatTimeAgo(tx.timestamp)}</td>
-                  <td className="py-4 text-sm text-white font-medium">${tx.value}</td>
-                  <td className="py-4 text-sm text-green-500">{tx.amount0}</td>
-                  <td className="py-4 text-sm text-red-500">{tx.amount1}</td>
+                  <td className="py-4 text-sm text-white font-medium">
+                    ${new BigNumber(tx.amountUSD || 0).toFixed(2)}
+                  </td>
+                  <td className="py-4 text-sm">
+                    <span className={`${parseFloat(tx.amount0) > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                      {parseFloat(tx.amount0) > 0 ? 'Buy ' : 'Sell '}
+                      {formatAmount(Math.abs(parseFloat(tx.amount0)).toString())}
+                    </span>
+                  </td>
+                  <td className="py-4 text-sm">
+                    <span className={`${parseFloat(tx.amount1) > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                      {parseFloat(tx.amount1) > 0 ? 'Buy ' : 'Sell '}
+                      {formatAmount(Math.abs(parseFloat(tx.amount1)).toString())}
+                    </span>
+                  </td>
                   <td className="py-4">
                     <button
-                      onClick={() => copyToClipboard(tx.transaction.from)}
+                      onClick={() => copyToClipboard(tx.origin || tx.sender || '')}
                       className="text-sm text-[#FFA931] hover:text-[#FFB951] flex items-center gap-1 transition-colors"
                     >
-                      {tx.transaction.from}
+                      {(tx.origin || tx.sender || '').slice(0, 6)}...{(tx.origin || tx.sender || '').slice(-4)}
                       <VscCopy className="w-3 h-3" />
                     </button>
                   </td>
                   <td className="py-4">
                     <button
-                      onClick={() => openInExplorer(tx.transaction.id)}
+                      onClick={() => openInExplorer(tx.transaction?.id || '')}
                       className="text-sm text-white hover:text-gray-300 flex items-center gap-1 transition-colors"
                     >
-                      {tx.transaction.id}
+                      {(tx.transaction?.id || '').slice(0, 6)}...{(tx.transaction?.id || '').slice(-4)}
                       <ExternalLink className="w-3 h-3" />
                     </button>
                   </td>
@@ -219,29 +199,29 @@ const SwapTransactionHistory = () => {
       </div>
 
       {/* Pagination */}
-      {allTransactions.length > 0 && (
-        <div className="flex items-center justify-center gap-2 mt-6">
-          <button
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="w-8 h-8 rounded text-gray-500 hover:text-gray-300 hover:bg-[#2a2318]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          
-          {renderPageNumbers()}
-          
-          <button
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="w-8 h-8 rounded text-gray-500 hover:text-gray-300 hover:bg-[#2a2318]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-      )}
+      <div className="flex items-center justify-center gap-2 mt-6">
+        <button
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={page === 1 || loading}
+          className="w-8 h-8 rounded text-gray-500 hover:text-gray-300 hover:bg-[#2a2318]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+        
+        <span className="text-gray-400 px-4">
+          Page {page}
+        </span>
+        
+        <button
+          onClick={() => setPage((p) => p + 1)}
+          disabled={!hasNextPage || loading}
+          className="w-8 h-8 rounded text-gray-500 hover:text-gray-300 hover:bg-[#2a2318]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
     </div>
   );
-};
+});
 
 export default SwapTransactionHistory;
