@@ -1,5 +1,5 @@
 import { Currency, Token, computePoolAddress } from '@cryptoalgebra/sdk';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { useAllCurrencyCombinations } from './useAllCurrencyCombinations';
 import { Address, getContract } from 'viem';
 import {
@@ -9,6 +9,7 @@ import {
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { useObserver } from 'mobx-react-lite';
 import { algebraPoolAbi } from '@honeypot/shared/wagmi-generated';
+import { graphQLRateLimiter } from '../../utils/rateLimiter';
 
 /**
  * Returns all the existing pools that should be considered for swapping between an input currency and an output currency
@@ -34,6 +35,8 @@ export function useSwapPools(
   loading: boolean;
 } {
   const [existingPools, setExistingPools] = useState<any[]>();
+  const [isLoading, setIsLoading] = useState(false);
+  const lastFetchedAddresses = useRef<string>('');
   const { currentChainId, currentChain } = useObserver(() => {
     return {
       currentChainId: wallet.currentChainId,
@@ -46,42 +49,69 @@ export function useSwapPools(
     currencyOut
   );
 
+  // Memoize pool addresses to prevent unnecessary recalculations
+  const poolsAddresses = useMemo(() => {
+    return allCurrencyCombinations.map(([tokenA, tokenB]) => {
+      try {
+        const address = computePoolAddress({
+          tokenA,
+          tokenB,
+          initCodeHashManualOverride: currentChain?.contracts?.algebraPoolInitCodeHash,
+          poolDeployer: currentChain?.contracts?.algebraPoolDeployer,
+        }) as Address;
+        return address;
+      } catch (error) {
+        console.warn('Failed to compute pool address:', error);
+        return '0x0000000000000000000000000000000000000000' as Address;
+      }
+    });
+  }, [allCurrencyCombinations, currentChain]);
+
   const [getMultiplePools] = useMultiplePoolsLazyQuery();
 
   useEffect(() => {
+    if (!poolsAddresses.length) return;
+    
+    // Check if we've already fetched these exact addresses
+    const addressesKey = poolsAddresses.join(',');
+    if (lastFetchedAddresses.current === addressesKey && existingPools) {
+      return; // Skip if we already have data for these addresses
+    }
+    
+    // Debounce requests to prevent rapid API calls
+    const debounceTimer = setTimeout(() => {
+      getPools();
+    }, 300);
+
+    return () => clearTimeout(debounceTimer);
+
     async function getPools() {
+      setIsLoading(true);
+      lastFetchedAddresses.current = addressesKey;
       // Log only once per combination change
       if (allCurrencyCombinations.length > 0 && allCurrencyCombinations[0]) {
         const firstPair = allCurrencyCombinations[0];
         console.log(`Fetching pools for ${firstPair[0].symbol}/${firstPair[1].symbol} and ${allCurrencyCombinations.length - 1} other combinations`);
       }
-      
-      const poolsAddresses = allCurrencyCombinations.map(
-        ([tokenA, tokenB]) => {
-          try {
-            const address = computePoolAddress({
-              tokenA,
-              tokenB,
-              initCodeHashManualOverride: wallet.currentChain?.contracts?.algebraPoolInitCodeHash,
-              poolDeployer: wallet.currentChain?.contracts?.algebraPoolDeployer,
-            }) as Address;
-            // Debug: pool address computed
-            return address;
-          } catch (error) {
-            // If computePoolAddress fails, return a dummy address
-            console.warn('Failed to compute pool address:', error);
-            return '0x0000000000000000000000000000000000000000' as Address;
-          }
-        }
-      );
 
       // Debug: fetching pools
       
-      const poolsData = await getMultiplePools({
-        variables: {
-          poolIds: poolsAddresses.map((address) => address.toLowerCase()),
-        },
-      });
+      let poolsData;
+      try {
+        poolsData = await graphQLRateLimiter.execute(() => 
+          getMultiplePools({
+            variables: {
+              poolIds: poolsAddresses.map((address) => address.toLowerCase()),
+            },
+          })
+        );
+      } catch (error) {
+        console.error('Failed to fetch pools after retries:', error);
+        // Return empty result if rate limited
+        setExistingPools([]);
+        setIsLoading(false);
+        return;
+      }
 
       let pools =
         poolsData.data &&
@@ -171,16 +201,15 @@ export function useSwapPools(
       }
       
       setExistingPools(pools);
+      setIsLoading(false);
     }
-
-    Boolean(allCurrencyCombinations.length) && getPools();
-  }, [allCurrencyCombinations]);
+  }, [poolsAddresses, allCurrencyCombinations, getMultiplePools, currentChainId, existingPools]);
 
   return useMemo(() => {
     if (!existingPools)
       return {
         pools: [],
-        loading: true,
+        loading: isLoading,
       };
 
     return {
@@ -207,7 +236,7 @@ export function useSwapPools(
         .filter(({ pool }) => {
           return pool;
         }),
-      loading: false,
+      loading: isLoading,
     };
-  }, [existingPools, currentChainId]);
+  }, [existingPools, currentChainId, isLoading]);
 }
