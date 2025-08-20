@@ -33,17 +33,17 @@ const PoolsPage: NextLayoutPage = observer(({
 
   // Prefetch vault data immediately when page loads
   const vaultData = useVaultDataPrefetch();
- 
+
   // Start prefetching the tab after a delay to prioritize current tab loading
   useEffect(() => {
     const prefetchTimer = setTimeout(() => {
       setShouldPrefetch(true);
-    }, 100); 
+    }, 100);
 
     return () => clearTimeout(prefetchTimer);
   }, []);
 
-  if (typeof window !== 'undefined' && wallet.currentChain?.supportDEX === false) {
+  if (!wallet.currentChain.supportDEX) {
     return (
       <div className="w-full flex items-center justify-center pb-6 sm:pb-12 overflow-x-hidden">
         <div className="text-center">
@@ -85,8 +85,8 @@ const PoolsPage: NextLayoutPage = observer(({
           key="aquabera"
           title={<span className="text-xs sm:text-base">Concentrated Liquidity</span>}
         >
-           <PoolsList initialPools={initialPools} initialActiveFarmings={initialActiveFarmings} />
-        
+          <PoolsList initialPools={initialPools} initialActiveFarmings={initialActiveFarmings} />
+
         </Tab>
         <Tab
           key="algebra"
@@ -94,10 +94,10 @@ const PoolsPage: NextLayoutPage = observer(({
             <span className="text-xs sm:text-base">Automated Vaults</span>
           }
         >
-           <AquaberaList prefetchedData={vaultData} />
+          <AquaberaList prefetchedData={vaultData} />
         </Tab>
       </Tabs>
-      
+
     </div>
   );
 });
