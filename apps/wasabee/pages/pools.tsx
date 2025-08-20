@@ -3,12 +3,29 @@ import { observer } from 'mobx-react-lite';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { Tab, Tabs } from '@nextui-org/react';
 import { NextLayoutPage } from '@/types/nextjs';
+import type { GetServerSideProps } from 'next';
+import { getSubgraphClientByChainId } from '@honeypot/shared';
+import { DEFAULT_CHAIN_ID } from '@/config/algebra/default-chain-id';
+import {
+  PoolsListDocument,
+  ActiveFarmingsDocument,
+  type PoolsListQuery,
+  type ActiveFarmingsQuery,
+} from '@/lib/algebra/graphql/generated/graphql';
 import { useEffect, useState } from 'react';
 import PoolsList from '@/components/algebra/pools/PoolsList';
 import AquaberaList from '@/components/Aquabera/VaultLists/VaultLists';
 import { useVaultDataPrefetch } from '@/hooks/useVaultDataPrefetch';
 
-const PoolsPage: NextLayoutPage = observer(() => {
+type PoolsPageProps = {
+  initialPools?: PoolsListQuery['pools'];
+  initialActiveFarmings?: ActiveFarmingsQuery['eternalFarmings'];
+};
+
+const PoolsPage: NextLayoutPage = observer(({
+  initialPools = [],
+  initialActiveFarmings = [],
+}: PoolsPageProps) => {
   const [currentTab, setCurrentTab] = useState<'aquabera' | 'algebra'>(
     'aquabera'
   );
@@ -16,7 +33,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
 
   // Prefetch vault data immediately when page loads
   const vaultData = useVaultDataPrefetch();
-
+ 
   // Start prefetching the tab after a delay to prioritize current tab loading
   useEffect(() => {
     const prefetchTimer = setTimeout(() => {
@@ -26,7 +43,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
     return () => clearTimeout(prefetchTimer);
   }, []);
 
-  if (!wallet.currentChain.supportDEX) {
+  if (typeof window !== 'undefined' && wallet.currentChain?.supportDEX === false) {
     return (
       <div className="w-full flex items-center justify-center pb-6 sm:pb-12 overflow-x-hidden">
         <div className="text-center">
@@ -66,28 +83,55 @@ const PoolsPage: NextLayoutPage = observer(() => {
       >
         <Tab
           key="aquabera"
-          title={<span className="text-xs sm:text-base">Automated Vaults</span>}
+          title={<span className="text-xs sm:text-base">Concentrated Liquidity</span>}
         >
-          <AquaberaList prefetchedData={vaultData} />
+           <PoolsList initialPools={initialPools} initialActiveFarmings={initialActiveFarmings} />
+        
         </Tab>
         <Tab
           key="algebra"
           title={
-            <span className="text-xs sm:text-base">Concentrated Liquidity</span>
+            <span className="text-xs sm:text-base">Automated Vaults</span>
           }
         >
-          <PoolsList />
+           <AquaberaList prefetchedData={vaultData} />
         </Tab>
       </Tabs>
       
-      {/* Prefetch the pools tab component in background after initial load */}
-      {shouldPrefetch && (
-        <div style={{ position: 'absolute', left: '-9999px', top: '-9999px', visibility: 'hidden', pointerEvents: 'none' }}>
-           <PoolsList />
-        </div>
-      )}
     </div>
   );
 });
 
 export default PoolsPage;
+
+export const getServerSideProps: GetServerSideProps<PoolsPageProps> = async (
+  ctx
+) => {
+  try {
+    const chainId = DEFAULT_CHAIN_ID.toString();
+    const infoClient = getSubgraphClientByChainId(chainId, 'algebra_info');
+    const farmingClient = getSubgraphClientByChainId(chainId, 'algebra_farming');
+
+    const [poolsRes, farmingsRes] = await Promise.all([
+      infoClient.query({
+        query: PoolsListDocument,
+        variables: { search: '' },
+        fetchPolicy: 'no-cache',
+      }),
+      farmingClient.query({
+        query: ActiveFarmingsDocument,
+        fetchPolicy: 'no-cache',
+      }),
+    ]);
+
+    return {
+      props: {
+        initialPools: poolsRes.data?.pools ?? [],
+        initialActiveFarmings: farmingsRes.data?.eternalFarmings ?? [],
+      },
+    };
+  } catch (e) {
+    console.error('SSR pools fetch failed', e);
+    return { props: { initialPools: [], initialActiveFarmings: [] } };
+  }
+};
