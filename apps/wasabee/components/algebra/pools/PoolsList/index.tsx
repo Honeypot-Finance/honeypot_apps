@@ -30,17 +30,21 @@ const mappingSortKeys: Record<any, Pool_OrderBy> = {
   'marktet cap': Pool_OrderBy.Token0MarketCap,
 };
 
+import type { ProcessedPool } from '@/lib/cache/pools-cache';
+
 interface PoolsListProps {
   defaultFilter?: string;
   showOptions?: boolean;
   initialPools?: any[];
   initialActiveFarmings?: { pool: string; id: string }[];
+  initialProcessedPools?: ProcessedPool[];
 }
 const PoolsList = ({
   defaultFilter = 'trending',
   showOptions = true,
   initialPools = [],
   initialActiveFarmings = [],
+  initialProcessedPools = [],
 }: PoolsListProps) => {
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'id', desc: true },
@@ -76,6 +80,13 @@ const PoolsList = ({
   // ||isFarmingsAPRLoading;
 
   const formattedPools = useMemo(() => {
+    // If we have processed pools from cache, use them directly
+    if (initialProcessedPools && initialProcessedPools.length > 0) {
+      console.log('Using pre-processed pools from cache');
+      return initialProcessedPools;
+    }
+
+    // Fallback to client-side processing (for real-time data)
     const sourcePools = (pools?.pools ?? initialPools) as any[];
     const activeFarmingsList = (activeFarmings?.eternalFarmings ?? initialActiveFarmings) as any[];
 
@@ -281,7 +292,7 @@ const PoolsList = ({
         };
       }
     );
-  }, [isLoading, pools, activeFarmings?.eternalFarmings, initialPools, initialActiveFarmings]);
+  }, [isLoading, pools, activeFarmings?.eternalFarmings, initialPools, initialActiveFarmings, initialProcessedPools]);
 
   const formattedUserPools = useMemo(() => {
     if (isLoading || !userPools || !wallet.isInit) return [];
