@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { debounce } from 'lodash';
 import { Link, Tooltip } from '@nextui-org/react';
 import { usePot2PumpLeaderboard } from '@/hooks/usePot2PumpLeaderboard';
@@ -6,7 +6,7 @@ import {
   usePot2PumpAccounts,
   Account_OrderBy,
 } from '@/hooks/usePot2PumpAccounts';
-import { useTotalUsers } from '@/hooks/useTotalUsers';
+import { useTotalUsersFromDB, ChainUserData } from '@/hooks/useTotalUsersFromDB';
 import { formatNumberWithUnit } from '@/lib/utils';
 import { DynamicFormatAmount } from '@/lib/algebra/utils/common/formatAmount';
 
@@ -70,7 +70,10 @@ const Pot2PumpLeaderboard = () => {
 
   // Real data hooks
   const { stats, loading: statsLoading } = usePot2PumpLeaderboard();
-  const { totalUsers, loading: usersLoading } = useTotalUsers();
+  const { fetchTotalUsers, fetchChainBreakdown } = useTotalUsersFromDB();
+  const [totalUsers, setTotalUsers] = useState<number>(0);
+  const [chainBreakdown, setChainBreakdown] = useState<ChainUserData[]>([]);
+  const [usersLoading, setUsersLoading] = useState(true);
   const {
     accounts,
     loading: accountsLoading,
@@ -78,8 +81,75 @@ const Pot2PumpLeaderboard = () => {
     loadMore,
   } = usePot2PumpAccounts(page, pageSize, searchAddress, accountOrderBy);
 
+  // Fetch total users and chain breakdown from database
+  useEffect(() => {
+    const loadUserData = async () => {
+      setUsersLoading(true);
+      const [total, breakdown] = await Promise.all([
+        fetchTotalUsers(),
+        fetchChainBreakdown()
+      ]);
+      setTotalUsers(total);
+      setChainBreakdown(breakdown);
+      setUsersLoading(false);
+    };
+    loadUserData();
+  }, []);
+
+  // Format chain names for display
+  const getChainDisplayName = (chainId: string) => {
+    const chainNames: Record<string, string> = {
+      'bera': 'Berachain',
+      'bsc': 'BSC',
+      'ethereum': 'Ethereum',
+      'base': 'Base'
+    };
+    return chainNames[chainId.toLowerCase()] || chainId.toUpperCase();
+  };
+
   const statsCards: StatsCard[] = [
-    { title: 'Users', value: usersLoading ? 'Loading...' : totalUsers },
+    { 
+      title: 'Users', 
+      value: usersLoading ? 'Loading...' : (
+        <div className="flex items-center gap-2">
+          <span>{totalUsers.toLocaleString()}</span>
+          {chainBreakdown.length > 0 && (
+            <Tooltip
+              content={
+                <div className="p-2">
+                  <div className="text-sm font-semibold mb-2">Users by Chain</div>
+                  {chainBreakdown.map((chain) => (
+                    <div key={chain.id} className="flex justify-between gap-4 text-xs">
+                      <span>{getChainDisplayName(chain.id)}:</span>
+                      <span className="font-mono">{chain.total_account.toLocaleString()}</span>
+                    </div>
+                  ))}
+                </div>
+              }
+              placement="bottom"
+              classNames={{
+                base: 'z-50',
+                content: 'bg-black text-white rounded-lg max-w-none',
+              }}
+            >
+              <svg 
+                className="w-4 h-4 text-gray-400 hover:text-white cursor-help transition-colors" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+                />
+              </svg>
+            </Tooltip>
+          )}
+        </div>
+      )
+    },
     stats
       ? {
           title: stats.totalMemeCreated.title,

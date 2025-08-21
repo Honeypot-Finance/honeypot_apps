@@ -6,6 +6,7 @@ import { tokenRouter } from './router/token';
 import { metadataRouter } from './router/metadata';
 import { aiLaunchProjectRouter } from './router/AILaunchProject';
 import { lbpRouter } from './router/lbp';
+import { subgraphMetaDataRouter } from './router/subgraphMetaData';
 export const appRouter = router({
   projects: ftoRouter,
   priceFeed: priceFeedRouter,
@@ -14,6 +15,7 @@ export const appRouter = router({
   metadata: metadataRouter,
   aiLaunchProject: aiLaunchProjectRouter,
   lbp: lbpRouter,
+  subgraphMetaData: subgraphMetaDataRouter,
 });
 
 // Export only the type of a router!
