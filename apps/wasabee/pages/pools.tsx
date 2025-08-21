@@ -4,44 +4,24 @@ import { wallet } from '@honeypot/shared/lib/wallet';
 import { Tab, Tabs } from '@nextui-org/react';
 import { NextLayoutPage } from '@/types/nextjs';
 import type { GetServerSideProps } from 'next';
-import { getSubgraphClientByChainId } from '@honeypot/shared';
-import { DEFAULT_CHAIN_ID } from '@/config/algebra/default-chain-id';
-import {
-  PoolsListDocument,
-  ActiveFarmingsDocument,
-  type PoolsListQuery,
-  type ActiveFarmingsQuery,
-} from '@/lib/algebra/graphql/generated/graphql';
+import { getProcessedPoolsDataWithFallback, type ProcessedPool } from '@/lib/cache/pools-cache';
 import { useEffect, useState } from 'react';
 import PoolsList from '@/components/algebra/pools/PoolsList';
 import AquaberaList from '@/components/Aquabera/VaultLists/VaultLists';
 import { useVaultDataPrefetch } from '@/hooks/useVaultDataPrefetch';
 
 type PoolsPageProps = {
-  initialPools?: PoolsListQuery['pools'];
-  initialActiveFarmings?: ActiveFarmingsQuery['eternalFarmings'];
+  initialProcessedPools?: ProcessedPool[];
 };
 
 const PoolsPage: NextLayoutPage = observer(({
-  initialPools = [],
-  initialActiveFarmings = [],
+  initialProcessedPools = [],
 }: PoolsPageProps) => {
   const [currentTab, setCurrentTab] = useState<'aquabera' | 'algebra'>(
     'aquabera'
   );
-  const [shouldPrefetch, setShouldPrefetch] = useState(false);
-
   // Prefetch vault data immediately when page loads
   const vaultData = useVaultDataPrefetch();
-
-  // Start prefetching the tab after a delay to prioritize current tab loading
-  useEffect(() => {
-    const prefetchTimer = setTimeout(() => {
-      setShouldPrefetch(true);
-    }, 100);
-
-    return () => clearTimeout(prefetchTimer);
-  }, []);
 
   if (!wallet.currentChain.supportDEX) {
     return (
@@ -85,7 +65,7 @@ const PoolsPage: NextLayoutPage = observer(({
           key="aquabera"
           title={<span className="text-xs sm:text-base">Concentrated Liquidity</span>}
         >
-          <PoolsList initialPools={initialPools} initialActiveFarmings={initialActiveFarmings} />
+          <PoolsList initialProcessedPools={initialProcessedPools} />
 
         </Tab>
         <Tab
@@ -108,30 +88,22 @@ export const getServerSideProps: GetServerSideProps<PoolsPageProps> = async (
   ctx
 ) => {
   try {
-    const chainId = DEFAULT_CHAIN_ID.toString();
-    const infoClient = getSubgraphClientByChainId(chainId, 'algebra_info');
-    const farmingClient = getSubgraphClientByChainId(chainId, 'algebra_farming');
-
-    const [poolsRes, farmingsRes] = await Promise.all([
-      infoClient.query({
-        query: PoolsListDocument,
-        variables: { search: '' },
-        fetchPolicy: 'no-cache',
-      }),
-      farmingClient.query({
-        query: ActiveFarmingsDocument,
-        fetchPolicy: 'no-cache',
-      }),
-    ]);
+    console.log('SSR: Fetching pools data...');
+    const startTime = Date.now();
+    
+    // Get processed data from cache or fallback to fresh fetch + processing
+    const data = await getProcessedPoolsDataWithFallback();
+    
+    const endTime = Date.now();
+    console.log(`SSR: Processed pools data fetched in ${endTime - startTime}ms`);
 
     return {
       props: {
-        initialPools: poolsRes.data?.pools ?? [],
-        initialActiveFarmings: farmingsRes.data?.eternalFarmings ?? [],
+        initialProcessedPools: data.pools,
       },
     };
   } catch (e) {
     console.error('SSR pools fetch failed', e);
-    return { props: { initialPools: [], initialActiveFarmings: [] } };
+    return { props: { initialProcessedPools: [] } };
   }
 };

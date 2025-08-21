@@ -1,33 +1,8 @@
 {
-  "version": 2,
-  "buildCommand": "node scripts/build-optimize.js",
-  "outputDirectory": ".next",
-  "installCommand": "pnpm install",
-  "framework": "nextjs",
-  "build": {
-    "env": {
-      "NODE_ENV": "production",
-      "NEXT_TELEMETRY_DISABLED": "1",
-      "SENTRY_UPLOAD_SOURCEMAPS": "false",
-      "SENTRY_DISABLE_TELEMETRY": "true",
-      "NEXT_BUILD_CACHE_DISABLED": "0"
-    }
-  },
-  "functions": {
-    "app/api/**": {
-      "maxDuration": 30,
-      "memory": 512
-    }
-  },
-  "headers": [
+  "crons": [
     {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
+      "path": "/api/cron/update-pools-cache",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
