@@ -115,13 +115,13 @@ const MyPositions = ({
   return (
     <div className="flex flex-col">
       {/* Main content with dashed border */}
-      <div className="flex flex-col bg-white text-black rounded-3xl shadow-sm border border-dashed border-gray-300">
+      <div className="flex flex-col bg-[#271A0C] text-black rounded-3xl shadow-sm border border-dashed border-[#FFFFFF33]">
         {/* Summary header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-8 py-8 sm:pt-16 border-b border-gray-100 gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 w-full">
             <h3 className="text-xl font-bold">My Positions</h3>
             <div className="flex flex-wrap gap-3 sm:gap-4">
-              <span className="text-sm sm:text-base text-gray-500">
+              <span className="text-sm sm:text-base">
                 {positions.length} positions
               </span>
               <div className="flex items-center">

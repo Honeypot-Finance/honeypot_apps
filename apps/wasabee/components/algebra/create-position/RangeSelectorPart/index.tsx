@@ -82,7 +82,7 @@ const RangeSelectorPart = ({
   return (
     <div className="flex-1 w-full flex flex-col gap-y-3  ">
       <div className="text-[rgba(32,32,32,1)] flex items-center justify-between px-2 font-gliker">
-        <span className="text-base">{title.toUpperCase()}</span>
+        <span className="text-base text-black">{title.toUpperCase()}</span>
       </div>
 
       <div className="w-full  h-[64px] rounded-2xl border bg-card-dark border-[rgba(90,74,74,1)] shadow-[1px_2px_0px_0px_rgba(32,32,32,1),1px_1px_0px_0px_rgba(32,32,32,1)]  flex items-center justify-between px-4 py-2.5 gap-x-2">

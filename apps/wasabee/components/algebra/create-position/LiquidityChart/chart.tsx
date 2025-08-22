@@ -6,9 +6,9 @@ import {
   Bar,
   Cell,
   Tooltip,
-} from "recharts";
-import { useState, useMemo } from "react";
-import { Currency } from "@cryptoalgebra/sdk";
+} from 'recharts';
+import { useState, useMemo } from 'react';
+import { Currency } from '@cryptoalgebra/sdk';
 
 interface CustomBarProps {
   x: number;
@@ -50,21 +50,9 @@ const CustomBar = ({
   return (
     <g>
       <defs>
-        <linearGradient
-          id="colorUv"
-          x1="0"
-          y1="0"
-          x2="0"
-          y2="100%"
-        >
-          <stop
-            offset="0"
-            stopColor="#2797ff"
-          />
-          <stop
-            offset="1"
-            stopColor="rgba(35, 133, 222, 0.05)"
-          />
+        <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="100%">
+          <stop offset="0" stopColor="#2797ff" />
+          <stop offset="1" stopColor="rgba(35, 133, 222, 0.05)" />
         </linearGradient>
       </defs>
       {percent && (
@@ -72,7 +60,7 @@ const CustomBar = ({
           x={x + 10}
           y={y - 10}
           fill="#202020"
-          fontSize={"14px"}
+          fontSize={'14px'}
           fontWeight={600}
           textAnchor="middle"
         >{`${percent.toFixed(0)}%`}</text>
@@ -82,7 +70,7 @@ const CustomBar = ({
           x={x + 10}
           y={y - 10}
           fill="#202020"
-          fontSize={"14px"}
+          fontSize={'14px'}
           fontWeight={600}
           textAnchor="middle"
         >
@@ -116,7 +104,7 @@ const CustomTooltip = ({ props, currencyA, currencyB }: CustomTooltipProps) => {
             ? `${Number(price0).toLocaleString(undefined, {
                 maximumSignificantDigits: 3,
               })} ${currencyB?.symbol}`
-            : ""
+            : ''
         }`}</div>
       </div>
       <div className="flex gap-4 justify-between">
@@ -126,7 +114,7 @@ const CustomTooltip = ({ props, currencyA, currencyB }: CustomTooltipProps) => {
             ? `${Number(price1).toLocaleString(undefined, {
                 maximumSignificantDigits: 3,
               })} ${currencyA?.symbol}`
-            : ""
+            : ''
         }`}</div>
       </div>
       {/* {currentPrice && price0 && currentPrice > price1 ? <div className="flex gap-4 justify-between">
@@ -164,10 +152,7 @@ export function Chart({
   return (
     <>
       {hasValidRange ? (
-        <ResponsiveContainer
-          width={"100%"}
-          height={250}
-        >
+        <ResponsiveContainer width={'100%'} height={250}>
           <BarChart
             data={formattedData}
             margin={{
@@ -215,18 +200,18 @@ export function Chart({
                   <text
                     x={props.x}
                     y={props.y + 20}
-                    fill="white"
+                    fill="black"
                     textAnchor="middle"
-                    fontSize={"12px"}
-                    width={"12px"}
+                    fontSize={'12px'}
+                    width={'12px'}
                   >
                     {!isSmallScreen || isEdgeTick
                       ? props.payload.value.toFixed(3)
-                      : ""}
+                      : ''}
                   </text>
                 );
               }}
-              dataKey={isSorted ? "price0" : "price1"}
+              dataKey={isSorted ? 'price0' : 'price1'}
               interval={12}
               offset={0}
               tickLine={false}
@@ -234,11 +219,11 @@ export function Chart({
             />
 
             <Bar
-              dataKey={hasOtherPositions ? "activeLiquidity" : "defaultHeight"}
+              dataKey={hasOtherPositions ? 'activeLiquidity' : 'defaultHeight'}
               fill="#2172E5"
               isAnimationActive={false}
               shape={(props: any) => {
-                const price = props[isSorted ? "price0" : "price1"];
+                const price = props[isSorted ? 'price0' : 'price1'];
                 let percent = 0;
                 if (
                   price === +Number(leftPrice).toFixed(8) ||
@@ -265,8 +250,8 @@ export function Chart({
                 const height = hasOtherPositions
                   ? props.height
                   : isInRange
-                    ? 150
-                    : 0;
+                  ? 150
+                  : 0;
 
                 const baseY = 60; // Base Y position for the bars
                 const y = hasOtherPositions ? props.y : baseY;
@@ -287,29 +272,24 @@ export function Chart({
               }}
             >
               {formattedData?.map((entry: any, index: number) => {
-                let fill = "#FFF8E7";
+                let fill = '#FFF8E7';
 
                 const value = isSorted ? entry.price0 : entry.price1;
 
                 if (focusBar === index) {
-                  fill = "#FFE7B3";
+                  fill = '#FFE7B3';
                 } else if (entry.isCurrent) {
-                  fill = "#FFCD4D";
+                  fill = '#FFCD4D';
                 } else if (leftPrice && rightPrice) {
                   if (
                     Number(value) >= Number(leftPrice) &&
                     Number(value) <= Number(rightPrice)
                   ) {
-                    fill = "#FFE199";
+                    fill = '#FFE199';
                   }
                 }
 
-                return (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={fill}
-                  />
-                );
+                return <Cell key={`cell-${index}`} fill={fill} />;
               })}
             </Bar>
           </BarChart>

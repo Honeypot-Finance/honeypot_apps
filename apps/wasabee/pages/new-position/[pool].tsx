@@ -23,6 +23,7 @@ import {
 import { DynamicFormatAmount } from '@honeypot/shared';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Button } from '@nextui-org/react';
+import Container from '@/components/multichain-design/Container';
 
 type NewPositionPageParams = Record<'pool', Address>;
 
@@ -71,6 +72,7 @@ const NewPositionPage = () => {
       amount: price ?? '',
       decimals: 5,
       endWith: currencyB?.symbol,
+      className: 'text-black',
     });
   }, [mintInfo.price, price]);
 
@@ -136,20 +138,17 @@ const NewPositionPage = () => {
         </Button>
       </div>
       <PageContainer>
-        <div className="max-w-[1200px] mx-auto bg-[#FFCD4D] rounded-3xl relative overflow-hidden">
-          {/* 顶部装饰边框 */}
-          <div className="bg-[url('/images/pumping/outline-border.png')] bg-contain bg-repeat-x bg-left-top h-[60px] absolute -top-1 left-0 w-full"></div>
-
+        <Container className="max-w-[1200px] mx-auto  rounded-3xl relative overflow-hidden">
           <div className="max-w-[1200px] w-full mx-auto px-4 sm:px-6 pt-[40px] sm:pt-[60px] pb-[50px] sm:pb-[70px]">
             {/* <PageTitle title={"Create Position"} /> */}
-            <div className="font-gliker text-[rgba(32,32,32,1)] text-xl sm:text-2xl">
+            <div className="font-gliker text-xl sm:text-2xl">
               Create Position
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-8 gap-x-0 gap-y-6 sm:gap-y-8 w-full lg:gap-8 text-left mt-4 sm:mt-6">
               <div className="col-span-5">
                 <div className="flex max-md:flex-col md:items-center justify-between w-full mb-4 sm:mb-6 gap-3 sm:gap-4">
-                  <h2 className="text-sm sm:text-base text-[#202020] font-gliker">
+                  <h2 className="text-sm sm:text-base font-gliker">
                     1. Select Range
                   </h2>
                   <PresetTabs
@@ -203,7 +202,7 @@ const NewPositionPage = () => {
               </div>
 
               <div className="flex flex-col col-span-3">
-                <div className="text-[rgba(32,32,32,1)] mb-4 sm:mb-6 leading-[36px] sm:leading-[44px] font-gliker text-sm sm:text-base mt-0 sm:mt-[-10px]">
+                <div className=" mb-4 sm:mb-6 leading-[36px] sm:leading-[44px] font-gliker text-sm sm:text-base mt-0 sm:mt-[-10px]">
                   2. Enter Amounts
                 </div>
                 <div className="w-full rounded-[24px] sm:rounded-[32px] bg-white space-y-3 sm:space-y-4 px-4 sm:px-6 py-6 sm:py-8 border-[1px] border-[#000000] shadow-[4px_4px_0px_0px_rgba(210,154,13,1)]">
@@ -224,7 +223,7 @@ const NewPositionPage = () => {
           <div className="absolute -bottom-1 left-0 w-full">
             <div className="bg-[url('/images/pool-detail/bottom-border.svg')] bg-contain bg-repeat-x bg-left-bottom h-[70px] w-full"></div>
           </div>
-        </div>
+        </Container>
       </PageContainer>
     </div>
   );

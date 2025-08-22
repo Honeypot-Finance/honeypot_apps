@@ -399,7 +399,7 @@ const PoolPage = observer(() => {
                   <span className="text-xs sm:text-base">My Positions</span>
                 }
               >
-                <div className="w-full bg-white rounded-2xl p-4 custom-dashed-3xl border-black">
+                <div className="w-full bg-black rounded-2xl p-4 custom-dashed-3xl border-white">
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8">
                     <div className="lg:col-span-2">
                       {!account ? (

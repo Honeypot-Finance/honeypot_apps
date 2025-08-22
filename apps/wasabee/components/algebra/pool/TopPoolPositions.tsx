@@ -536,7 +536,7 @@ export const PositionRow = ({
       <td className="py-4 px-6 text-black">
         {liquidityUSD !== null ? (
           <span
-            className="text-[#479FFF] font-medium cursor-help relative group"
+            className="text-[#479FFF] font-medium cursor-help relative group "
             title={`${DynamicFormatAmount({
               amount: position.depositedToken0,
               decimals: 3,
@@ -552,6 +552,7 @@ export const PositionRow = ({
               amount: liquidityUSD.toString(),
               decimals: 2,
               endWith: '',
+              className: 'text-black',
             })}
             {/* Tooltip */}
             <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">

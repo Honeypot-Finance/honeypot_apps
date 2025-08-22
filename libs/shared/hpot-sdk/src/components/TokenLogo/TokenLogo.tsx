@@ -36,7 +36,7 @@ export const TokenLogo = observer(
     return (
       <Tooltip
         content={
-          <div className="flex flex-col items-center gap-[8px] text-black">
+          <div className="flex flex-col items-center gap-[8px] ">
             {token.name} ({token.symbol})
           </div>
         }
@@ -61,7 +61,7 @@ export const TokenLogo = observer(
               addtionalClasses
             )}
             src={
-              !!token.logoURI
+              token.logoURI
                 ? token.logoURI
                 : '/images/icons/tokens/unknown-token-icon.png'
             }

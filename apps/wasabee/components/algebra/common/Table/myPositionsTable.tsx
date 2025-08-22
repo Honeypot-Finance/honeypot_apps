@@ -181,7 +181,7 @@ const MyPositionsTable = <TData, TValue>({
           </TableRow>
         ))}
       </TableHeader>
-      <TableBody className="[&_tr]:border-opacity-30 text-[16px] transition-all">
+      <TableBody className="[&_tr]:border-opacity-30 text-[16px] transition-all [&_tr]:bg-[#271A0C] [&_tr]:hover:bg-[#56391b]">
         {table.getRowModel().rows?.length === 0 ||
         (!filterStatus.Open &&
           !filterStatus.Closed &&
@@ -195,7 +195,10 @@ const MyPositionsTable = <TData, TValue>({
         (noFarmingPositions && !filterStatus.Open && !filterStatus.Closed) ||
         (noClosedPositions && !filterStatus.Open && !filterStatus.OnFarming) ? (
           <TableRow className="hover:bg-card h-full border-0">
-            <TableCell colSpan={columns.length} className="h-24 text-center">
+            <TableCell
+              colSpan={columns.length}
+              className="h-24 text-center bg-[#271A0C"
+            >
               No results.
             </TableCell>
           </TableRow>

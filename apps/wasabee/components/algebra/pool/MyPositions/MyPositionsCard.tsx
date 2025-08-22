@@ -20,12 +20,14 @@ const MyPositionsCard = ({
   }
 
   return (
-    <div className="divide-y divide-gray-100">
+    <div className="divide-y divide-gray-100 bg-[#271A0C]">
       {positions.map((position) => (
         <div
           key={position.id}
           className={`p-4 cursor-pointer transition-colors ${
-            Number(selectedPosition) === Number(position.id) ? 'bg-gray-50' : ''
+            Number(selectedPosition) === Number(position.id)
+              ? 'bg-[#271A0C]'
+              : 'bg-[#271A0C]'
           }`}
           onClick={() => onSelectPosition(Number(position.id))}
         >
@@ -36,11 +38,11 @@ const MyPositionsCard = ({
             </div>
             <div>
               {position.outOfRange ? (
-                <span className="px-2 py-1 rounded-md bg-yellow-50 text-yellow-600 text-xs font-medium">
+                <span className="px-2 py-1 rounded-md bg-yellow-50 text-yellow-600 text-xs font-medium whitespace-nowrap">
                   Out of range
                 </span>
               ) : (
-                <span className="px-2 py-1 rounded-md bg-green-50 text-green-500 text-xs font-medium">
+                <span className="px-2 py-1 rounded-md bg-green-50 text-green-500 text-xs font-medium  whitespace-nowrap">
                   In range
                 </span>
               )}

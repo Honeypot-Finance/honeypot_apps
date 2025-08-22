@@ -129,7 +129,7 @@ const PositionCard = ({
 
   if (!selectedPosition || loading)
     return (
-      <div className="flex flex-col gap-4 rounded-3xl p-4 bg-white border border-[#F7931A20] w-full h-full">
+      <div className="flex flex-col gap-4 rounded-3xl p-4 bg-[#271A0C] border border-[#F7931A20] w-full h-full">
         <div className="text-black flex flex-col gap-2 text-center justify-center items-center h-full">
           Select a position to view details
         </div>
@@ -137,7 +137,7 @@ const PositionCard = ({
     );
 
   return (
-    <div className="flex flex-col gap-4 rounded-3xl p-4 bg-white border border-[#F7931A20]">
+    <div className="flex flex-col gap-4 rounded-3xl p-4 bg-[#271A0C] border border-[#F7931A20]">
       {/* Header with position info */}
       <div className="flex justify-between items-start">
         <div className="flex flex-col gap-2">

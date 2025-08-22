@@ -56,11 +56,13 @@ export function DynamicFormatAmount({
   decimals = 3,
   beginWith,
   endWith,
+  className,
 }: {
   amount: string | number;
   decimals?: number;
   beginWith?: ReactNode;
   endWith?: ReactNode;
+  className?: string;
 }): ReactNode {
   const isNegative = Number(amount) < 0;
   const absAmount = new BigNumber(amount).abs().toFixed(40);
@@ -72,7 +74,7 @@ export function DynamicFormatAmount({
     : FormatSmallDecimal({ number: Number(amountStr) });
 
   return (
-    <span>
+    <span className={className}>
       {beginWith ? `${beginWith} ` : ''}
       {isNegative ? '-' : ''}
       {output}
