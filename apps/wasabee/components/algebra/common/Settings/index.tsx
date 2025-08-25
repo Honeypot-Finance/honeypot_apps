@@ -1,30 +1,30 @@
-import { Button } from "@/components/algebra/ui/button";
-import { Input } from "@/components/algebra/ui/input";
+import { Button } from '@/components/algebra/ui/button';
+import { Input } from '@/components/algebra/ui/input';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/algebra/ui/popover";
-import { Separator } from "@/components/algebra/ui/separator";
-import { Switch } from "@/components/algebra/ui/switch";
-import CardContianer from "@/components/CardContianer/CardContianer";
-import { useUserState } from "@/lib/algebra/state/userStore";
-import { Percent } from "@cryptoalgebra/sdk";
-import { SettingsIcon } from "lucide-react";
-import { useState } from "react";
+} from '@/components/algebra/ui/popover';
+import { Separator } from '@/components/algebra/ui/separator';
+import { Switch } from '@/components/algebra/ui/switch';
+import CardContianer from '@/components/CardContianer/CardContianer';
+import { useUserState } from '@/lib/algebra/state/userStore';
+import { Percent } from '@cryptoalgebra/sdk';
+import { SettingsIcon } from 'lucide-react';
+import { useState } from 'react';
 
 const Settings = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant={"icon"} size={"icon"}>
+        <Button variant={'icon'} size={'icon'}>
           <SettingsIcon />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="z-[9999]">
+      <PopoverContent className="z-[9999] bg-[#1F150A]">
         <CardContianer addtionalClassName="flex-col gap-2">
           <div className="text-md font-bold">Transaction Settings</div>
-          <Separator orientation={"horizontal"} className="bg-border" />
+          <Separator orientation={'horizontal'} className="bg-border" />
           <SlippageTolerance />
           <TransactionDeadline />
           <Multihop />
@@ -41,7 +41,7 @@ const SlippageTolerance = () => {
     actions: { setSlippage },
   } = useUserState();
 
-  const [slippageInput, setSlippageInput] = useState("");
+  const [slippageInput, setSlippageInput] = useState('');
   const [slippageError, setSlippageError] = useState<boolean>(false);
 
   function parseSlippageInput(value: string) {
@@ -50,13 +50,13 @@ const SlippageTolerance = () => {
     setSlippageError(false);
 
     if (value.length === 0) {
-      setSlippage("auto");
+      setSlippage('auto');
     } else {
       const parsed = Math.floor(Number.parseFloat(value) * 100);
 
       if (!Number.isInteger(parsed) || parsed < 0 || parsed > 5000) {
-        setSlippage("auto");
-        if (value !== ".") {
+        setSlippage('auto');
+        if (value !== '.') {
           setSlippageError(true);
         }
       } else {
@@ -66,41 +66,41 @@ const SlippageTolerance = () => {
   }
 
   const tooLow =
-    slippage !== "auto" && slippage.lessThan(new Percent(5, 10_000));
+    slippage !== 'auto' && slippage.lessThan(new Percent(5, 10_000));
   const tooHigh =
-    slippage !== "auto" && slippage.greaterThan(new Percent(1, 100));
+    slippage !== 'auto' && slippage.greaterThan(new Percent(1, 100));
 
-  const slippageString = slippage !== "auto" ? slippage.toFixed(2) : "auto";
+  const slippageString = slippage !== 'auto' ? slippage.toFixed(2) : 'auto';
 
   return (
     <div className="flex flex-col gap-2">
       <div className="text-md font-semibold">Slippage Tolerance</div>
       <div className="flex gap-2">
         <Button
-          variant={slippageString === "auto" ? "iconActive" : "icon"}
-          size={"sm"}
-          onClick={() => parseSlippageInput("")}
+          variant={slippageString === 'auto' ? 'iconActive' : 'icon'}
+          size={'sm'}
+          onClick={() => parseSlippageInput('')}
         >
           Auto
         </Button>
         <Button
-          variant={slippageString === "0.10" ? "iconActive" : "icon"}
-          size={"sm"}
-          onClick={() => parseSlippageInput("0.10")}
+          variant={slippageString === '0.10' ? 'iconActive' : 'icon'}
+          size={'sm'}
+          onClick={() => parseSlippageInput('0.10')}
         >
           0.1%
         </Button>
         <Button
-          variant={slippageString === "0.50" ? "iconActive" : "icon"}
-          size={"sm"}
-          onClick={() => parseSlippageInput("0.5")}
+          variant={slippageString === '0.50' ? 'iconActive' : 'icon'}
+          size={'sm'}
+          onClick={() => parseSlippageInput('0.5')}
         >
           0.5%
         </Button>
         <Button
-          variant={slippageString === "1.00" ? "iconActive" : "icon"}
-          size={"sm"}
-          onClick={() => parseSlippageInput("1")}
+          variant={slippageString === '1.00' ? 'iconActive' : 'icon'}
+          size={'sm'}
+          onClick={() => parseSlippageInput('1')}
         >
           1%
         </Button>
@@ -109,19 +109,19 @@ const SlippageTolerance = () => {
             value={
               slippageInput.length > 0
                 ? slippageInput
-                : slippage === "auto"
-                  ? ""
-                  : slippage.toFixed(2)
+                : slippage === 'auto'
+                ? ''
+                : slippage.toFixed(2)
             }
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               parseSlippageInput(e.target.value)
             }
             onBlur={() => {
-              setSlippageInput("");
+              setSlippageInput('');
               setSlippageError(false);
             }}
             className={`text-right border-none text-md font-semibold bg-card-dark rounded-l-xl rounded-r-none w-[70px]`}
-            placeholder={"0.0"}
+            placeholder={'0.0'}
           />
           <div className="bg-card-dark text-sm p-2 pt-2.5 rounded-r-xl select-none">
             %
@@ -137,8 +137,8 @@ const SlippageTolerance = () => {
           ) : (
             <div className="bg-yellow-900 text-yellow-200 px-2 py-1 rounded-xl">
               {tooLow
-                ? "Your transaction may fail"
-                : "Your transaction may be frontrun"}
+                ? 'Your transaction may fail'
+                : 'Your transaction may be frontrun'}
             </div>
           )}
         </div>
@@ -153,7 +153,7 @@ const TransactionDeadline = () => {
     actions: { setTxDeadline },
   } = useUserState();
 
-  const [deadlineInput, setDeadlineInput] = useState("");
+  const [deadlineInput, setDeadlineInput] = useState('');
   const [deadlineError, setDeadlineError] = useState<boolean>(false);
 
   function parseCustomDeadline(value: string) {
@@ -181,22 +181,22 @@ const TransactionDeadline = () => {
       <div className="text-md font-semibold">Transaction Deadline</div>
       <div className="flex">
         <Input
-          placeholder={"30"}
+          placeholder={'30'}
           value={
             deadlineInput.length > 0
               ? deadlineInput
               : txDeadline === 180
-                ? ""
-                : (txDeadline / 60).toString()
+              ? ''
+              : (txDeadline / 60).toString()
           }
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             parseCustomDeadline(e.target.value)
           }
           onBlur={() => {
-            setDeadlineInput("");
+            setDeadlineInput('');
             setDeadlineError(false);
           }}
-          color={deadlineError ? "red" : ""}
+          color={deadlineError ? 'red' : ''}
           className={`text-left border-none text-md font-semibold bg-card-dark rounded-l-xl rounded-r-none w-full`}
         />
         <div className="bg-card-dark text-sm p-2 pt-2.5 rounded-r-xl select-none">

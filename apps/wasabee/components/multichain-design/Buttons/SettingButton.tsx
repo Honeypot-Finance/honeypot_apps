@@ -13,6 +13,9 @@ import { Percent } from '@cryptoalgebra/sdk';
 import SettingButtonIcon from './../assets/setting-button.svg';
 import Image from 'next/image';
 import { useState } from 'react';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import { Tooltip } from '@nextui-org/react';
+import { cn } from '@/lib/tailwindcss';
 
 const Settings = () => {
   return (
@@ -26,9 +29,9 @@ const Settings = () => {
           className="cursor-pointer hover:brightness-125"
         />
       </PopoverTrigger>
-      <PopoverContent className="z-[9999]">
-        <Container className="flex-col gap-2">
-          <div className="text-md font-bold">Transaction Settings</div>
+      <PopoverContent className="z-[9999] ">
+        <Container className="flex-col gap-2 !bg-[#1F150A]">
+          <div className="text-md font-sans">Transaction Settings</div>
           <Separator orientation={'horizontal'} className="bg-border" />
           <SlippageTolerance />
           <TransactionDeadline />
@@ -78,12 +81,16 @@ const SlippageTolerance = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-md font-semibold">Slippage Tolerance</div>
+      <div className="text-md text-md font-sans">Slippage Tolerance</div>
       <div className="flex gap-2">
         <Button
           variant={slippageString === 'auto' ? 'iconActive' : 'icon'}
           size={'sm'}
           onClick={() => parseSlippageInput('')}
+          className={cn(
+            'px-5 rounded-lg',
+            slippageString === 'auto' ? 'bg-[#FB9A1B]' : 'bg-[#62411E]'
+          )}
         >
           Auto
         </Button>
@@ -91,6 +98,10 @@ const SlippageTolerance = () => {
           variant={slippageString === '0.10' ? 'iconActive' : 'icon'}
           size={'sm'}
           onClick={() => parseSlippageInput('0.10')}
+          className={cn(
+            'px-5 rounded-lg',
+            slippageString === '0.1' ? 'bg-[#FB9A1B]' : 'bg-[#62411E]'
+          )}
         >
           0.1%
         </Button>
@@ -98,6 +109,10 @@ const SlippageTolerance = () => {
           variant={slippageString === '0.50' ? 'iconActive' : 'icon'}
           size={'sm'}
           onClick={() => parseSlippageInput('0.5')}
+          className={cn(
+            'px-5 rounded-lg',
+            slippageString === '0.5' ? 'bg-[#FB9A1B]' : 'bg-[#62411E]'
+          )}
         >
           0.5%
         </Button>
@@ -105,6 +120,10 @@ const SlippageTolerance = () => {
           variant={slippageString === '1.00' ? 'iconActive' : 'icon'}
           size={'sm'}
           onClick={() => parseSlippageInput('1')}
+          className={cn(
+            'px-5 rounded-lg',
+            slippageString === '1' ? 'bg-[#FB9A1B]' : 'bg-[#62411E]'
+          )}
         >
           1%
         </Button>
@@ -135,7 +154,7 @@ const SlippageTolerance = () => {
       {slippageError || tooLow || tooHigh ? (
         <div>
           {slippageError ? (
-            <div className="bg-red-900 text-red-200 px-2 py-1 rounded-xl">
+            <div className="bg-red-900 text-red-200 px-2 py-1 rounded-lg">
               Enter a valid slippage percentage
             </div>
           ) : (
@@ -182,7 +201,7 @@ const TransactionDeadline = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-md font-semibold">Transaction Deadline</div>
+      <div className="text-md text-md font-sans">Transaction Deadline</div>
       <div className="flex">
         <Input
           placeholder={'30'}
@@ -218,19 +237,24 @@ const ExpertMode = () => {
   } = useUserState();
 
   return (
-    <div className="flex flex-col gap-2 max-w-[332px]">
-      <div className="flex justify-between items-center gap-2 text-md font-semibold">
-        <label htmlFor="expert-mode">Expert mode</label>
+    <div className="flex flex-col gap-2 text-md font-sans">
+      <div className="flex justify-between items-center gap-2 text-md">
+        <label htmlFor="multihop" className="flex justify-center items-center">
+          Expert mode
+          <Tooltip
+            content="Advanced control over swap parameters such as price setting and gas management."
+            className="flex justify-center items-center"
+          >
+            <InformationCircleIcon width={15} height={15} />
+          </Tooltip>
+        </label>
         <Switch
           id="expert-mode"
           checked={isExpertMode}
           onCheckedChange={setIsExpertMode}
+          className="data-[state=checked]:bg-blue-500"
         />
       </div>
-      <p className="whitespace-break-spaces">
-        Advanced control over swap parameters such as price setting and gas
-        management.
-      </p>
     </div>
   );
 };
@@ -242,18 +266,24 @@ const Multihop = () => {
   } = useUserState();
 
   return (
-    <div className="flex flex-col gap-2 max-w-[332px]">
-      <div className="flex justify-between items-center gap-2 text-md font-semibold">
-        <label htmlFor="multihop">Multihop</label>
+    <div className="flex flex-col gap-2 text-md font-sans">
+      <div className="flex justify-between items-center gap-2 text-md">
+        <label htmlFor="multihop" className="flex justify-center items-center">
+          Multihop{' '}
+          <Tooltip
+            content="Optimized trades across multiple liquidity pools."
+            className="flex justify-center items-center"
+          >
+            <InformationCircleIcon width={15} height={15} />
+          </Tooltip>
+        </label>
         <Switch
           id="multihop"
           checked={isMultihop}
           onCheckedChange={setIsMultihop}
+          className="data-[state=checked]:bg-blue-500"
         />
       </div>
-      <p className="whitespace-break-spaces">
-        Optimized trades across multiple liquidity pools.
-      </p>
     </div>
   );
 };

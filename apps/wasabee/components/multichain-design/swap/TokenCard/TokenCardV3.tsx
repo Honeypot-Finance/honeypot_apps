@@ -8,6 +8,7 @@ import { Address, zeroAddress } from 'viem';
 import { TokenSelector } from '@honeypot/shared';
 import { Token as AlgebraToken } from '@cryptoalgebra/sdk';
 import { wallet } from '@honeypot/shared/lib/wallet';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 import { Token } from '@honeypot/shared';
 import { Slider } from '@nextui-org/react';
@@ -42,7 +43,7 @@ const Settings = () => {
           <SettingsIcon />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="z-[9999]">
+      <PopoverContent className="z-[9999] bg-[#1F150A]">
         <CardContianer addtionalClassName="flex-col gap-2">
           <div className="text-md font-bold">Transaction Settings</div>
           <Separator orientation={'horizontal'} className="bg-border" />
@@ -98,7 +99,7 @@ const SlippageTolerance = () => {
       <div className="flex gap-2">
         <Button
           variant={slippageString === 'auto' ? 'iconActive' : 'icon'}
-          size={'sm'}
+          size={'md'}
           onClick={() => parseSlippageInput('')}
         >
           Auto
@@ -260,16 +261,25 @@ const Multihop = () => {
   return (
     <div className="flex flex-col gap-2 max-w-[332px]">
       <div className="flex justify-between items-center gap-2 text-md font-semibold">
-        <label htmlFor="multihop">Multihop</label>
+        <label htmlFor="multihop">
+          Multihop{' '}
+          <Popover>
+            <PopoverTrigger>
+              <InformationCircleIcon />
+            </PopoverTrigger>
+            <PopoverContent>
+              <p className="whitespace-break-spaces">
+                Optimized trades across multiple liquidity pools.
+              </p>
+            </PopoverContent>
+          </Popover>
+        </label>
         <Switch
           id="multihop"
           checked={isMultihop}
           onCheckedChange={setIsMultihop}
         />
       </div>
-      <p className="whitespace-break-spaces">
-        Optimized trades across multiple liquidity pools.
-      </p>
     </div>
   );
 };
