@@ -190,7 +190,7 @@ export const MyAquaberaVaults = observer(
       align?: 'left' | 'right' | 'center';
     }) => (
       <th
-        className={`py-4 px-6 cursor-pointer transition-colors text-[#4D4D4D]`}
+        className="text-left text-sm text-gray-500 font-normal pb-4 cursor-pointer"
         onClick={() => handleSort(field)}
       >
         <div
@@ -202,25 +202,10 @@ export const MyAquaberaVaults = observer(
               : ''
           }`}
         >
-          <span className={label.length > 4 ? 'text-[13px]' : 'text-base'}>
-            {label}
-          </span>
-          <div className="flex flex-col">
-            <ChevronUpIcon
-              className={`h-3 w-3 ${
-                sortField === field && sortDirection === 'asc'
-                  ? 'text-black'
-                  : 'text-[#4D4D4D]'
-              }`}
-            />
-            <ChevronDownIcon
-              className={`h-3 w-3 ${
-                sortField === field && sortDirection === 'desc'
-                  ? 'text-black'
-                  : 'text-[#4D4D4D]'
-              }`}
-            />
-          </div>
+          <span>{label}</span>
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
         </div>
       </th>
     );
@@ -235,17 +220,17 @@ export const MyAquaberaVaults = observer(
     return (
       <div className="w-full">
         {/* Mobile view - card layout for small screens */}
-        <div className="sm:hidden">
+        <div className="sm:hidden bg-[#140D06] rounded-2xl border border-[#2a2318] p-4">
           {!sortedVaults.length ? (
-            <div className="text-center py-8 text-black">No results.</div>
+            <div className="text-center py-8 text-gray-500">No results.</div>
           ) : (
             sortedVaults.map((vault) => (
               <div
                 key={vault.address}
-                className="mb-4 p-4 bg-[#271A0C] custom-dashed-3xl"
+                className="mb-4 p-4 bg-[#1F1409] rounded-lg border border-[#2a2318]"
               >
                 <div className="flex justify-between items-center mb-3">
-                  <div className="font-medium">Token Pair</div>
+                  <div className="font-medium text-gray-500">Token Pair</div>
                   <div className="flex items-center">
                     <div className="flex items-center">
                       <TokenLogo
@@ -265,7 +250,7 @@ export const MyAquaberaVaults = observer(
                         size={20}
                       />
                     </div>
-                    <span className="font-bold ml-2">
+                    <span className="font-bold ml-2 text-white">
                       {
                         Token.getToken({
                           address: vault.token0?.address ?? '',
@@ -284,7 +269,7 @@ export const MyAquaberaVaults = observer(
                 </div>
 
                 <div className="flex justify-between items-center mb-3">
-                  <div className="font-medium">Allow Token</div>
+                  <div className="font-medium text-gray-500">Allow Token</div>
                   {vault.allowToken0 && (
                     <div className="flex items-center gap-1">
                       <TokenLogo
@@ -294,7 +279,7 @@ export const MyAquaberaVaults = observer(
                         })}
                         size={20}
                       />
-                      <span>
+                      <span className="text-white">
                         {
                           Token.getToken({
                             address: vault.token0?.address ?? '',
@@ -313,7 +298,7 @@ export const MyAquaberaVaults = observer(
                         })}
                         size={20}
                       />
-                      <span>
+                      <span className="text-white">
                         {
                           Token.getToken({
                             address: vault.token1?.address ?? '',
@@ -326,8 +311,8 @@ export const MyAquaberaVaults = observer(
                 </div>
 
                 <div className="flex justify-between items-center mb-3">
-                  <div className="font-medium">Your TVL</div>
-                  <div className="font-medium">
+                  <div className="font-medium text-gray-500">Your TVL</div>
+                  <div className="font-medium text-white">
                     $
                     {Number(vault.userTVLUSD || 0).toLocaleString('en-US', {
                       maximumFractionDigits: 2,
@@ -336,8 +321,8 @@ export const MyAquaberaVaults = observer(
                 </div>
 
                 <div className="flex justify-between items-center mb-3">
-                  <div className="font-medium">APR</div>
-                  <div className="font-bold text-green-600">
+                  <div className="font-medium text-gray-500">APR</div>
+                  <div className="font-bold text-green-500">
                     {Number(vault.apr || 0).toLocaleString('en-US', {
                       maximumFractionDigits: 2,
                     })}
@@ -372,7 +357,7 @@ export const MyAquaberaVaults = observer(
         </div>
 
         {/* Desktop view - table layout for medium screens and up */}
-        <div className="hidden sm:block w-full overflow-x-auto custom-dashed-3xl sm:p-6 sm:bg-[#271A0C]">
+        <div className="hidden sm:block w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-6 overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr>
@@ -386,16 +371,16 @@ export const MyAquaberaVaults = observer(
                 <SortHeader field="apr" label="APR" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#4D4D4D]">
+            <tbody>
               {!sortedVaults.length ? (
-                <tr className="hover:bg-white border-white h-full">
-                  <td colSpan={6} className="h-24 text-center text-black">
+                <tr className="h-full">
+                  <td colSpan={6} className="h-24 text-center text-gray-500">
                     No results.
                   </td>
                 </tr>
               ) : (
-                sortedVaults.map((vault) => {
-                  return <MyVaultRow key={vault.address} vault={vault} />;
+                sortedVaults.map((vault, index) => {
+                  return <MyVaultRow key={vault.address} vault={vault} index={index} />;
                 })
               )}
             </tbody>

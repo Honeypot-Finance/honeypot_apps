@@ -441,17 +441,17 @@ export function AllAquaberaVaults({
   return (
     <div className="w-full">
       {/* Mobile view - card layout for small screens */}
-      <div className="sm:hidden">
+      <div className="sm:hidden bg-[#140D06] rounded-2xl border border-[#2a2318] p-4">
         {!isLoading && !isSearching ? (
           vaultsContracts.length === 0 ? (
             <>
-              <div className="text-center py-8 text-black">
+              <div className="text-center py-8 text-gray-500">
                 No vaults available.
               </div>
             </>
           ) : !sortedVaults.length ? (
             <>
-              <div className="text-center py-8 text-black">
+              <div className="text-center py-8 text-gray-500">
                 No results match your criteria.
               </div>
             </>
@@ -475,11 +475,11 @@ export function AllAquaberaVaults({
       </div>
 
       {/* Desktop view - table layout for medium screens and up */}
-      <div className="hidden sm:block w-full overflow-x-auto custom-dashed-3xl sm:p-6 sm:bg-[#271A0C]">
+      <div className="hidden sm:block w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-6 overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr>
-              <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
+              <th className="text-left text-sm text-gray-500 font-normal pb-4 cursor-pointer">
                 <div
                   className="flex items-center gap-2"
                   onClick={() => handleSort('pair')}
@@ -501,7 +501,7 @@ export function AllAquaberaVaults({
                   </div>
                 </div>
               </th>
-              <th className="py-4 px-6 cursor-pointer text-[#4D4D4D] min-w-[180px]">
+              <th className="text-left text-sm text-gray-500 font-normal pb-4 cursor-pointer min-w-[180px]">
                 <div
                   className="flex items-center gap-2"
                   onClick={() => handleSort('pair')}
@@ -523,97 +523,53 @@ export function AllAquaberaVaults({
                   </div>
                 </div>
               </th>
-              <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+              <th className="text-left text-sm text-gray-500 font-normal pb-4 cursor-pointer">
                 <div
-                  className="flex items-center gap-2 justify-end"
+                  className="flex items-center gap-1 justify-end"
                   onClick={() => handleSort('tvl')}
                 >
                   <span>Vault TVL</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${sortField === 'tvl' && sortDirection === 'asc'
-                        ? 'text-black'
-                        : 'text-[#4D4D4D]'
-                        }`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${sortField === 'tvl' && sortDirection === 'desc'
-                        ? 'text-black'
-                        : 'text-[#4D4D4D]'
-                        }`}
-                    />
-                  </div>
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </div>
               </th>
-              <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+              <th className="text-left text-sm text-gray-500 font-normal pb-4 cursor-pointer">
                 <div
-                  className="flex items-center gap-2 justify-end"
+                  className="flex items-center gap-1 justify-end"
                   onClick={() => handleSort('volume')}
                 >
                   <span>Pool 24h Volume</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${sortField === 'volume' && sortDirection === 'asc'
-                        ? 'text-black'
-                        : 'text-[#4D4D4D]'
-                        }`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${sortField === 'volume' && sortDirection === 'desc'
-                        ? 'text-black'
-                        : 'text-[#4D4D4D]'
-                        }`}
-                    />
-                  </div>
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </div>
               </th>
-              <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+              <th className="text-left text-sm text-gray-500 font-normal pb-4 cursor-pointer">
                 <div
-                  className="flex items-center gap-2 justify-end"
+                  className="flex items-center gap-1 justify-end"
                   onClick={() => handleSort('fees')}
                 >
                   <span>Pool 24h Fees</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${sortField === 'fees' && sortDirection === 'asc'
-                        ? 'text-black'
-                        : 'text-[#4D4D4D]'
-                        }`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${sortField === 'fees' && sortDirection === 'desc'
-                        ? 'text-black'
-                        : 'text-[#4D4D4D]'
-                        }`}
-                    />
-                  </div>
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </div>
               </th>
-              <th className="py-4 px-6 cursor-pointer text-right text-[#4D4D4D]">
+              <th className="text-left text-sm text-gray-500 font-normal pb-4 cursor-pointer">
                 <div
-                  className="flex items-center gap-2 justify-end"
+                  className="flex items-center gap-1 justify-end"
                   onClick={() => handleSort('apr')}
                 >
                   <span>APR</span>
-                  <div className="flex flex-col">
-                    <ChevronUp
-                      className={`h-3 w-3 ${sortField === 'apr' && sortDirection === 'asc'
-                        ? 'text-black'
-                        : 'text-[#4D4D4D]'
-                        }`}
-                    />
-                    <ChevronDown
-                      className={`h-3 w-3 ${sortField === 'apr' && sortDirection === 'desc'
-                        ? 'text-black'
-                        : 'text-[#4D4D4D]'
-                        }`}
-                    />
-                  </div>
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </div>
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#4D4D4D]">
+          <tbody>
             {isLoading || isSearching ? (
               // Show 10 skeleton loading rows
               Array.from({ length: 10 }).map((_, index) => (
@@ -624,14 +580,14 @@ export function AllAquaberaVaults({
                 </tr>
               ))
             ) : !sortedVaults.length ? (
-              <tr className="hover:bg-white border-white h-full">
-                <td colSpan={6} className="h-24 text-center text-black">
+              <tr className="h-full">
+                <td colSpan={6} className="h-24 text-center text-gray-500">
                   No results.
                 </td>
               </tr>
             ) : (
-              sortedVaults.map((vault) => {
-                return <VaultRow key={vault.address} vault={vault} />;
+              sortedVaults.map((vault, index) => {
+                return <VaultRow key={vault.address} vault={vault} index={index} />;
               })
             )}
           </tbody>
@@ -641,19 +597,19 @@ export function AllAquaberaVaults({
       {!isLoading && !isSearching && (
         <div className="py-4">
           <div className="flex flex-row justify-between items-center gap-4">
-            <span className="text-black text-sm">
+            <span className="text-gray-500 text-sm">
               Page {page} of {pages}
             </span>
             <div className="flex gap-x-2">
               <Button
-                className="border border-[#2D2D2D] bg-white hover:bg-gray-50 text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
+                className="border border-[#2a2318] bg-[#1F1409] hover:bg-[#241809] text-white rounded-lg px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
                 disabled={page === 1}
                 onClick={() => setPage(page - 1)}
               >
                 Previous
               </Button>
               <Button
-                className="border border-[#2D2D2D] bg-white hover:bg-gray-50 text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
+                className="border border-[#2a2318] bg-[#1F1409] hover:bg-[#241809] text-white rounded-lg px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
                 disabled={page === pages}
                 onClick={() => setPage(page + 1)}
               >

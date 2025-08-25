@@ -10,7 +10,7 @@ import { InfoIcon } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import { VaultTag } from '../VaultTag';
 
-export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
+export const VaultRow = observer(({ vault, index }: { vault: ICHIVaultContract, index?: number }) => {
   // Use fully initialized tokens from parent - no additional setup needed!
   const tokenA = vault.token0;
   const tokenB = vault.token1;
@@ -28,7 +28,11 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
 
   return (
     <tr
-      className="transition-colors bg-[#86715B] text-black hover:bg-gray-50 cursor-pointer"
+      className={`border-b border-[#2a2318] transition-colors cursor-pointer ${
+        (index ?? 0) % 2 === 0 
+          ? 'bg-transparent hover:bg-[#0A0704]' // Even rows - darker
+          : 'bg-[#1F1409] hover:bg-[#241809]'   // Odd rows - lighter background
+      }`}
       onClick={() => (window.location.href = `/vault/${vault.address}`)}
     >
       {/* Token pair */}
@@ -56,7 +60,7 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
               />}
             </div>
             <div className="flex flex-col">
-              <p className="text-black font-medium">
+              <p className="text-white font-medium">
                 {tokenA?.symbol || 'Token'}/{tokenB?.symbol || 'Token'}
               </p>
             </div>
@@ -71,7 +75,7 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
             {isTokenBAllowed.data && tokenB && <TokenLogo token={tokenB} size={24} />}
           </div>
           <div className="flex">
-            <p className="text-black font-medium">
+            <p className="text-white font-medium">
               {isTokenAAllowed.data && tokenA?.symbol}
               {isTokenBAllowed.data && tokenB?.symbol}
             </p>
@@ -81,7 +85,7 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
       {/* vault address */}
       {/* <td className="py-4 px-6 text-black">{vault.id}</td> */}
       {/* apr */}
-      <td className="py-4 px-6 text-right text-black">
+      <td className="py-4 px-6 text-right text-white">
         {DynamicFormatAmount({
           amount: vault.tvlUSD ?? 0,
           decimals: 3,
@@ -89,7 +93,7 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
         })}
       </td>
       {/* volume */}
-      <td className="py-4 px-6 text-right text-black">
+      <td className="py-4 px-6 text-right text-white">
         {DynamicFormatAmount({
           amount: volume ?? 0,
           decimals: 3,
@@ -97,14 +101,14 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
         })}
       </td>
       {/* fees */}
-      <td className="py-4 px-6 text-right text-black">
+      <td className="py-4 px-6 text-right text-white">
         {DynamicFormatAmount({
           amount: fees ?? 0,
           decimals: 3,
           beginWith: ' $',
         })}
       </td>
-      <td className="py-4 px-6 text-right text-black">
+      <td className="py-4 px-6 text-right text-white">
         <div className="h-full flex justify-end items-center gap-2">
           {vault.apr?.toFixed(2) || '0.00'}%
           <Tooltip
@@ -117,7 +121,7 @@ export const VaultRow = observer(({ vault }: { vault: ICHIVaultContract }) => {
               </div>
             }
           >
-            <span className="text-gray-500">
+            <span className="text-gray-400">
               <InfoIcon className="w-4 h-4" />
             </span>
           </Tooltip>

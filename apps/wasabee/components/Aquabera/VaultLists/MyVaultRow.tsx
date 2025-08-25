@@ -18,7 +18,7 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useMemo, useState } from 'react';
 
 export const MyVaultRow = observer(
-  ({ vault }: { vault: ICHIVaultContract }) => {
+  ({ vault, index }: { vault: ICHIVaultContract, index?: number }) => {
 
     const [vaultContract, setVaultContract] = useState<
       ICHIVaultContract | undefined
@@ -92,7 +92,11 @@ export const MyVaultRow = observer(
 
     return (
       <tr
-        className="transition-colors bg-[#86715B] text-black hover:bg-gray-50 cursor-pointer"
+        className={`border-b border-[#2a2318] transition-colors cursor-pointer ${
+          (index ?? 0) % 2 === 0 
+            ? 'bg-transparent hover:bg-[#0A0704]' // Even rows - darker
+            : 'bg-[#1F1409] hover:bg-[#241809]'   // Odd rows - lighter background
+        }`}
         onClick={() => (window.location.href = `/vault/${vault.address}`)}
       >
         {/* Token pair */}
@@ -111,7 +115,7 @@ export const MyVaultRow = observer(
               />
             </div>
             <div className="flex flex-col">
-              <p className="text-black font-medium">
+              <p className="text-white font-medium">
                 {tokenA.symbol}/{tokenB.symbol}
               </p>
             </div>
@@ -125,7 +129,7 @@ export const MyVaultRow = observer(
               {isTokenBAllowed.data && <TokenLogo token={tokenB} size={24} />}
             </div>
             <div className="flex">
-              <p className="text-black font-medium">
+              <p className="text-white font-medium">
                 {isTokenAAllowed.data && tokenA.symbol}
                 {isTokenBAllowed.data && tokenB.symbol}
               </p>
@@ -135,7 +139,7 @@ export const MyVaultRow = observer(
         {/* vault address */}
         {/* <td className="py-4 px-6 text-black">{vault.id}</td> */}
         {/* tvl */}
-        <td className="py-4 px-6 text-right text-black">
+        <td className="py-4 px-6 text-right text-white">
           {DynamicFormatAmount({
             amount: vaultContract?.userTVLUSD ?? 0,
             decimals: 3,
@@ -143,7 +147,7 @@ export const MyVaultRow = observer(
           })}
         </td>
         {/* apr */}
-        <td className="py-4 px-6 text-right text-black flex justify-end items-center gap-2">
+        <td className="py-4 px-6 text-right text-white flex justify-end items-center gap-2">
           {vaultContract?.apr.toFixed(2)}%
           <Tooltip
             content={
@@ -155,7 +159,7 @@ export const MyVaultRow = observer(
               </div>
             }
           >
-            <span className="text-gray-500">
+            <span className="text-gray-400">
               <InfoIcon className="w-4 h-4" />
             </span>
           </Tooltip>

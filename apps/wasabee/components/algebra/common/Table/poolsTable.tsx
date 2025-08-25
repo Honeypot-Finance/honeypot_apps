@@ -352,10 +352,10 @@ const PoolsTable = observer(
         )}
 
         {/* Mobile view - card layout for small screens */}
-        <div className="md:hidden w-full">
+        <div className="md:hidden w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-4">
           {!loading ? (
             getSortedPools().length === 0 ? (
-              <div className="text-center py-8 text-black">
+              <div className="text-center py-8 text-gray-500">
                 {selectedFilter === 'myPools' && wallet.account
                   ? "You don't have any pools yet. Create a pool to get started."
                   : 'No results found.'}
@@ -364,7 +364,7 @@ const PoolsTable = observer(
               getSortedPools().map((pool: Pool & { userTVLUSD: number }) => (
                 <div
                   key={pool.id}
-                  className="mb-4 p-4 bg-[#271A0C] rounded-lg custom-dashed-3xl"
+                  className="mb-4 p-4 bg-[#1F1409] rounded-lg border border-[#2a2318]"
                   onClick={() => {
                     if (action) {
                       action(pool.id);
@@ -374,7 +374,7 @@ const PoolsTable = observer(
                   }}
                 >
                   <div className="flex justify-between items-center mb-3">
-                    <div className="font-medium">Pool</div>
+                    <div className="font-medium text-gray-500">Pool</div>
                     <div className="flex items-center">
                       <div className="flex items-center gap-1">
                         <TokenLogo
@@ -394,7 +394,7 @@ const PoolsTable = observer(
                           size={20}
                         />
                       </div>
-                      <div className="font-bold">
+                      <div className="font-bold text-white">
                         {pool.pair.token0.symbol}/{pool.pair.token1.symbol}
                       </div>
                     </div>
@@ -403,14 +403,14 @@ const PoolsTable = observer(
                   {defaultFilter === 'trending' && (
                     <>
                       <div className="flex justify-between items-center mb-3">
-                        <div className="font-medium">TVL</div>
-                        <div>{formatExtremelyLargeNumber(pool.tvlUSD)}</div>
+                        <div className="font-medium text-gray-500">TVL</div>
+                        <div className="text-white">{formatExtremelyLargeNumber(pool.tvlUSD)}</div>
                       </div>
 
                       <div className="flex justify-between items-center mb-3">
-                        <div className="font-medium">Volume 24H</div>
+                        <div className="font-medium text-gray-500">Volume 24H</div>
                         <div className="flex flex-col items-end">
-                          <span>
+                          <span className="text-white">
                             {formatExtremelyLargeNumber(pool.volume24USD)}
                           </span>
                           <span
@@ -427,15 +427,15 @@ const PoolsTable = observer(
                       </div>
 
                       <div className="flex justify-between items-center mb-3">
-                        <div className="font-medium">Fee 24H</div>
-                        <div>{formatUSD.format(pool.fees24USD)}</div>
+                        <div className="font-medium text-gray-500">Fee 24H</div>
+                        <div className="text-white">{formatUSD.format(pool.fees24USD)}</div>
                       </div>
                     </>
                   )}
 
                   <div className="flex justify-between items-center mb-3">
-                    <div className="font-medium">APR</div>
-                    <div className="font-bold text-green-600">
+                    <div className="font-medium text-gray-500">APR</div>
+                    <div className="font-bold text-green-500">
                       {Number(pool.apr24h).toFixed(2)}%
                     </div>
                   </div>
@@ -443,13 +443,13 @@ const PoolsTable = observer(
                   {defaultFilter === 'myPools' && (
                     <>
                       <div className="flex justify-between items-center mb-3">
-                        <div className="font-medium">My TVL</div>
-                        <div>{formatExtremelyLargeNumber(pool.userTVLUSD)}</div>
+                        <div className="font-medium text-gray-500">My TVL</div>
+                        <div className="text-white">{formatExtremelyLargeNumber(pool.userTVLUSD)}</div>
                       </div>
 
                       <div className="flex justify-between items-center mb-3">
-                        <div className="font-medium">Unclaimed Fees</div>
-                        <div>
+                        <div className="font-medium text-gray-500">Unclaimed Fees</div>
+                        <div className="text-white">
                           ${Number(pool.unclaimedFees).toLocaleString()}
                         </div>
                       </div>
@@ -485,41 +485,79 @@ const PoolsTable = observer(
         </div>
 
         {/* Desktop view - table layout for medium screens and up */}
-        <div className="hidden md:block custom-dashed-3xl w-full p-6 bg-[#271A0C] overflow-x-auto">
+        <div className="hidden md:block w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-6 overflow-x-auto">
           {!loading ? (
             <table className="w-full">
               <thead>
                 <tr>
-                  <SortHeader field="pool" label="Pool" align="left" />
+                  <th className="text-left text-sm text-gray-500 font-normal pb-4">Pool</th>
                   {defaultFilter === 'trending' && (
                     <>
-                      <SortHeader field="tvl" label="TVL" />
-                      <SortHeader field="volume" label="Volume 24H" />
-                      <SortHeader field="feesUSD" label="Fee 24H" />
+                      <th className="text-left text-sm text-gray-500 font-normal pb-4">
+                        <div className="flex items-center gap-1 justify-end cursor-pointer" onClick={() => handleSort('tvl')}>
+                          TVL
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </th>
+                      <th className="text-left text-sm text-gray-500 font-normal pb-4">
+                        <div className="flex items-center gap-1 justify-end cursor-pointer" onClick={() => handleSort('volume')}>
+                          Volume 24H
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </th>
+                      <th className="text-left text-sm text-gray-500 font-normal pb-4">
+                        <div className="flex items-center gap-1 justify-end cursor-pointer" onClick={() => handleSort('feesUSD')}>
+                          Fee 24H
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </th>
                     </>
                   )}
-                  <SortHeader field="apr" label="APR" />
+                  <th className="text-left text-sm text-gray-500 font-normal pb-4">
+                    <div className="flex items-center gap-1 justify-end cursor-pointer" onClick={() => handleSort('apr')}>
+                      APR
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </th>
                   {defaultFilter === 'myPools' && (
                     <>
-                      <SortHeader field="user_tvl" label="My TVL" />
-                      <SortHeader
-                        field="unclaimedFees"
-                        label="Unclaimed Fees"
-                        align="center"
-                      />
+                      <th className="text-left text-sm text-gray-500 font-normal pb-4">
+                        <div className="flex items-center gap-1 justify-end cursor-pointer" onClick={() => handleSort('user_tvl')}>
+                          My TVL
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </th>
+                      <th className="text-left text-sm text-gray-500 font-normal pb-4">
+                        <div className="flex items-center gap-1 justify-center cursor-pointer" onClick={() => handleSort('unclaimedFees')}>
+                          Unclaimed Fees
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </th>
                     </>
                   )}
-                  <th className="py-4 px-6 text-center text-[#4D4D4D]">
+                  <th className="text-left text-sm text-gray-500 font-normal pb-4 text-center">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#4D4D4D]">
+              <tbody>
                 {!getSortedPools().length ? (
-                  <tr className="hover:bg-white border-white h-full w-full">
+                  <tr className="h-full w-full">
                     <td
                       colSpan={columns.length}
-                      className="h-24 text-center text-black"
+                      className="h-24 text-center text-gray-500"
                     >
                       {selectedFilter === 'myPools' && wallet.account
                         ? "You don't have any pools yet. Create a pool to get started."
@@ -528,10 +566,14 @@ const PoolsTable = observer(
                   </tr>
                 ) : (
                   getSortedPools().map(
-                    (pool: Pool & { userTVLUSD: number }) => (
+                    (pool: Pool & { userTVLUSD: number }, index) => (
                       <tr
                         key={pool.id}
-                        className="transition-colors bg-[#86715B] text-black  hover:bg-gray-50 cursor-pointer"
+                        className={`border-b border-[#2a2318] transition-colors cursor-pointer ${
+                          index % 2 === 0 
+                            ? 'bg-transparent hover:bg-[#0A0704]' // Even rows - darker
+                            : 'bg-[#1F1409] hover:bg-[#241809]'   // Odd rows - lighter background
+                        }`}
                         onClick={() => {
                           if (action) {
                             action(pool.id);
@@ -561,11 +603,11 @@ const PoolsTable = observer(
                               />
                             </div>
                             <div className="flex flex-col">
-                              <p className="text-black font-medium">
+                              <p className="text-white font-medium">
                                 {pool.pair.token0.symbol}/
                                 {pool.pair.token1.symbol}
                               </p>
-                              <p className="text-black/60 text-sm">
+                              <p className="text-gray-500 text-sm">
                                 base fee {pool.fee}%
                               </p>
                             </div>
@@ -598,14 +640,14 @@ const PoolsTable = observer(
                           <>
                             <td className="py-4 px-6 text-right">
                               <div className="flex flex-col">
-                                <span className="text-black font-mono">
+                                <span className="text-white font-mono">
                                   {formatExtremelyLargeNumber(pool.tvlUSD)}
                                 </span>
                               </div>
                             </td>
                             <td className="py-4 px-6 text-right">
                               <div className="flex flex-col">
-                                <span className="text-black font-mono">
+                                <span className="text-white font-mono">
                                   {formatExtremelyLargeNumber(pool.volume24USD)}
                                 </span>
                                 <span
@@ -624,7 +666,7 @@ const PoolsTable = observer(
                             </td>
                             <td className="py-4 px-6 text-right">
                               <div className="flex flex-col">
-                                <span className="text-black">
+                                <span className="text-white">
                                   {formatUSD.format(pool.fees24USD)}
                                 </span>
                               </div>
@@ -633,7 +675,7 @@ const PoolsTable = observer(
                         )}
                         <td className="py-4 px-6 text-right">
                           <div className="flex flex-col">
-                            <span className="text-black">
+                            <span className="text-white">
                               {Number(pool.apr24h).toFixed(2)}%
                             </span>
                           </div>
@@ -642,13 +684,13 @@ const PoolsTable = observer(
                           <>
                             <td className="py-4 px-6 text-right">
                               <div className="flex flex-col">
-                                <span className="text-black">
+                                <span className="text-white">
                                   {formatExtremelyLargeNumber(pool.userTVLUSD)}
                                 </span>
                               </div>
                             </td>
                             <td className="py-4 px-6 text-center">
-                              <span className="text-black">
+                              <span className="text-white">
                                 ${Number(pool.unclaimedFees).toLocaleString()}
                               </span>
                             </td>
@@ -689,12 +731,12 @@ const PoolsTable = observer(
           {showPagination && tableData.length > 10 && (
             <div className="py-4">
               <div className="flex flex-row justify-between items-center gap-4">
-                <span className="text-black text-sm">
+                <span className="text-gray-500 text-sm">
                   Page {page} of {Math.ceil(tableData.length / 10)}
                 </span>
                 <div className="flex gap-x-2">
                   <Button
-                    className="border border-[#2D2D2D] bg-white hover:bg-gray-50 text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
+                    className="border border-[#2a2318] bg-[#1F1409] hover:bg-[#241809] text-white rounded-lg px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
                     disabled={page === 1}
                     onClick={() => {
                       setPage(page - 1);
@@ -703,7 +745,7 @@ const PoolsTable = observer(
                     Previous
                   </Button>
                   <Button
-                    className="border border-[#2D2D2D] bg-white hover:bg-gray-50 text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
+                    className="border border-[#2a2318] bg-[#1F1409] hover:bg-[#241809] text-white rounded-lg px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
                     disabled={page === Math.ceil(tableData.length / 10)}
                     onClick={() => {
                       setPage(page + 1);
