@@ -81,7 +81,9 @@ const SlippageTolerance = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-md text-md font-sans">Slippage Tolerance</div>
+      <div className="text-md text-md font-sans text-[#FFFFFF80]">
+        Slippage Tolerance
+      </div>
       <div className="flex gap-2">
         <Button
           variant={slippageString === 'auto' ? 'iconActive' : 'icon'}
@@ -201,7 +203,9 @@ const TransactionDeadline = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-md text-md font-sans">Transaction Deadline</div>
+      <div className="text-md text-md font-sans text-[#FFFFFF80]">
+        Transaction Deadline
+      </div>
       <div className="flex">
         <Input
           placeholder={'30'}
@@ -239,7 +243,10 @@ const ExpertMode = () => {
   return (
     <div className="flex flex-col gap-2 text-md font-sans">
       <div className="flex justify-between items-center gap-2 text-md">
-        <label htmlFor="multihop" className="flex justify-center items-center">
+        <label
+          htmlFor="multihop"
+          className="flex justify-center items-center text-[#FFFFFF80]"
+        >
           Expert mode
           <Tooltip
             content="Advanced control over swap parameters such as price setting and gas management."
@@ -268,7 +275,10 @@ const Multihop = () => {
   return (
     <div className="flex flex-col gap-2 text-md font-sans">
       <div className="flex justify-between items-center gap-2 text-md">
-        <label htmlFor="multihop" className="flex justify-center items-center">
+        <label
+          htmlFor="multihop"
+          className="flex justify-center items-center text-[#FFFFFF80]"
+        >
           Multihop{' '}
           <Tooltip
             content="Optimized trades across multiple liquidity pools."
