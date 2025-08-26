@@ -32,13 +32,13 @@ export default function Leaderboard() {
               panel: 'pt-6',
             }}
           >
-            <Tab key="pot2pump" title="Pot2Pump">
+            <Tab key="pot2pump" title="Meme">
               <Pot2PumpLeaderboard />
             </Tab>
-            <Tab key="wasabee" title="Wasabee">
+            <Tab key="wasabee" title="Dex">
               <WasabeeLeaderboard />
             </Tab>
-            <Tab key="dreampad" title="Dreampad">
+            <Tab key="dreampad" title="Launchpad">
               <DreampadLeaderboard />
             </Tab>
           </Tabs>
