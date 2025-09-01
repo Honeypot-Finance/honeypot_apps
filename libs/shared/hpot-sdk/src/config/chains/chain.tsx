@@ -248,6 +248,11 @@ export const bscMainnetNetwork = new Network({
       address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'.toLowerCase(),
       amount: BigInt('100000000000000'),
     },
+    {
+      symbol: 'USD1',
+      address: '0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d'.toLowerCase(),
+      amount: BigInt('20000000000000000000000'),
+    },
   ],
   faucetTokens: [],
   contracts: contractAddresses['56'],
@@ -304,6 +309,12 @@ export const bscMainnetNetwork = new Network({
       logoURI: 'https://bscscan.com/token/images/btcb_32.png',
       isRouterToken: true,
       isPopular: true,
+    },
+    '0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d': {
+      name: 'World Liberty Financial USD',
+      symbol: 'USD1',
+      decimals: 18,
+      logoURI: 'https://bscscan.com/token/images/wlfi-usd1_32.png',
     },
   },
 });
