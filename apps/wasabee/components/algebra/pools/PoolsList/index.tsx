@@ -38,6 +38,7 @@ interface PoolsListProps {
   initialPools?: any[];
   initialActiveFarmings?: { pool: string; id: string }[];
   initialProcessedPools?: ProcessedPool[];
+  isClientLoading?: boolean;
 }
 const PoolsList = ({
   defaultFilter = 'trending',
@@ -45,6 +46,7 @@ const PoolsList = ({
   initialPools = [],
   initialActiveFarmings = [],
   initialProcessedPools = [],
+  isClientLoading = false,
 }: PoolsListProps) => {
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'id', desc: true },
@@ -75,8 +77,10 @@ const PoolsList = ({
     });
 
   const isLoading =
-    (isPoolsListLoading || isFarmingsLoading) &&
-    !(initialPools && initialPools.length > 0);
+    isClientLoading || 
+    ((isPoolsListLoading || isFarmingsLoading) &&
+    !(initialPools && initialPools.length > 0) &&
+    !(initialProcessedPools && initialProcessedPools.length > 0));
   // ||isFarmingsAPRLoading;
 
   const formattedPools = useMemo(() => {

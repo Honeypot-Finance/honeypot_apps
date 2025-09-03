@@ -13,9 +13,16 @@ import { Address } from 'viem';
 // Create namespaced cache for pools data
 const poolsCache = createCache('pools');
 
-// Cache keys
-const PROCESSED_POOLS_KEY = 'processed-pools';
-const LAST_UPDATE_KEY = 'last-update';
+// Cache key generators (chain-aware)
+const getProcessedPoolsKey = (chainId: string) => `processed-pools-${chainId}`;
+const getLastUpdateKey = (chainId: string) => `last-update-${chainId}`;
+
+// Supported chain IDs
+export const SUPPORTED_CHAINS = {
+  BERACHAIN: '80084', // Berachain testnet
+  BSC: '56',          // BNB Smart Chain
+  // Add more chains as needed
+} as const;
 
 // Cache TTL - 5 minutes (data will be updated every 5 minutes via cron)
 const CACHE_TTL = 5 * 60;
@@ -59,6 +66,7 @@ export type ProcessedPool = {
 
 export type CachedProcessedData = {
   pools: ProcessedPool[];
+  chainId: string;
   lastUpdated: number;
 };
 
@@ -246,14 +254,14 @@ function processPoolData(
 }
 
 /**
- * Fetch and process pools data from subgraph
+ * Fetch and process pools data from subgraph for a specific chain
  */
-export async function fetchAndProcessPoolsData(): Promise<CachedProcessedData> {
-  const chainId = DEFAULT_CHAIN_ID.toString();
-  const infoClient = getSubgraphClientByChainId(chainId, 'algebra_info');
-  const farmingClient = getSubgraphClientByChainId(chainId, 'algebra_farming');
+export async function fetchAndProcessPoolsData(chainId?: string): Promise<CachedProcessedData> {
+  const targetChainId = chainId || DEFAULT_CHAIN_ID.toString();
+  const infoClient = getSubgraphClientByChainId(targetChainId, 'algebra_info');
+  const farmingClient = getSubgraphClientByChainId(targetChainId, 'algebra_farming');
 
-  console.log('Fetching fresh pools data from subgraph...');
+  console.log(`Fetching fresh pools data from subgraph for chain ${targetChainId}...`);
   const startTime = Date.now();
 
   const [poolsRes, farmingsRes] = await Promise.all([
@@ -269,7 +277,7 @@ export async function fetchAndProcessPoolsData(): Promise<CachedProcessedData> {
   ]);
 
   const endTime = Date.now();
-  console.log(`Subgraph query completed in ${endTime - startTime}ms`);
+  console.log(`Subgraph query completed in ${endTime - startTime}ms for chain ${targetChainId}`);
 
   console.log('Processing pools data...');
   const processStart = Date.now();
@@ -284,35 +292,88 @@ export async function fetchAndProcessPoolsData(): Promise<CachedProcessedData> {
 
   return {
     pools: processedPools,
+    chainId: targetChainId,
     lastUpdated: Date.now(),
   };
 }
 
 /**
- * Cache processed pools data in KV store
+ * Fetch and process pools data for all supported chains
+ */
+export async function fetchAndProcessAllChainsData(): Promise<Record<string, CachedProcessedData>> {
+  const results: Record<string, CachedProcessedData> = {};
+  
+  const chainIds = Object.values(SUPPORTED_CHAINS);
+  console.log(`Fetching data for ${chainIds.length} chains: ${chainIds.join(', ')}`);
+  
+  // Process chains in parallel for better performance
+  const chainPromises = chainIds.map(async (chainId) => {
+    try {
+      const data = await fetchAndProcessPoolsData(chainId);
+      return { chainId, data };
+    } catch (error) {
+      console.error(`Failed to fetch data for chain ${chainId}:`, error);
+      return { chainId, data: null };
+    }
+  });
+  
+  const chainResults = await Promise.all(chainPromises);
+  
+  // Store results, skipping failed chains
+  chainResults.forEach(({ chainId, data }) => {
+    if (data) {
+      results[chainId] = data;
+      console.log(`Successfully processed ${data.pools.length} pools for chain ${chainId}`);
+    }
+  });
+  
+  return results;
+}
+
+/**
+ * Cache processed pools data in KV store for a specific chain
  */
 export async function cacheProcessedPoolsData(data: CachedProcessedData): Promise<void> {
   try {
+    const poolsKey = getProcessedPoolsKey(data.chainId);
+    const updateKey = getLastUpdateKey(data.chainId);
+    
     await Promise.all([
-      poolsCache.set(PROCESSED_POOLS_KEY, data.pools, { ex: CACHE_TTL }),
-      poolsCache.set(LAST_UPDATE_KEY, data.lastUpdated, { ex: CACHE_TTL }),
+      poolsCache.set(poolsKey, data.pools, { ex: CACHE_TTL }),
+      poolsCache.set(updateKey, data.lastUpdated, { ex: CACHE_TTL }),
     ]);
     
-    console.log(`Processed pools data cached successfully (${data.pools.length} pools)`);
+    console.log(`Processed pools data cached successfully for chain ${data.chainId} (${data.pools.length} pools)`);
   } catch (error) {
-    console.error('Failed to cache processed pools data:', error);
+    console.error(`Failed to cache processed pools data for chain ${data.chainId}:`, error);
     throw error;
   }
 }
 
 /**
- * Get cached processed pools data from KV store
+ * Cache data for all chains
  */
-export async function getCachedProcessedPoolsData(): Promise<CachedProcessedData | null> {
+export async function cacheAllChainsData(allChainsData: Record<string, CachedProcessedData>): Promise<void> {
+  const cachePromises = Object.values(allChainsData).map(data => 
+    cacheProcessedPoolsData(data)
+  );
+  
+  await Promise.all(cachePromises);
+  console.log(`Cached data for ${Object.keys(allChainsData).length} chains`);
+}
+
+/**
+ * Get cached processed pools data from KV store for a specific chain
+ */
+export async function getCachedProcessedPoolsData(chainId?: string): Promise<CachedProcessedData | null> {
   try {
+    const targetChainId = chainId || DEFAULT_CHAIN_ID.toString();
+    const poolsKey = getProcessedPoolsKey(targetChainId);
+    const updateKey = getLastUpdateKey(targetChainId);
+    
     const [pools, lastUpdated] = await Promise.all([
-      poolsCache.get<ProcessedPool[]>(PROCESSED_POOLS_KEY),
-      poolsCache.get<number>(LAST_UPDATE_KEY),
+      poolsCache.get<ProcessedPool[]>(poolsKey),
+      poolsCache.get<number>(updateKey),
     ]);
 
     if (!pools || !lastUpdated) {
@@ -321,10 +382,11 @@ export async function getCachedProcessedPoolsData(): Promise<CachedProcessedData
 
     return {
       pools,
+      chainId: targetChainId,
       lastUpdated,
     };
   } catch (error) {
-    console.error('Failed to get cached processed pools data:', error);
+    console.error(`Failed to get cached processed pools data for chain ${chainId}:`, error);
     return null;
   }
 }
@@ -332,18 +394,20 @@ export async function getCachedProcessedPoolsData(): Promise<CachedProcessedData
 /**
  * Get processed pools data with fallback to fresh data if cache miss
  */
-export async function getProcessedPoolsDataWithFallback(): Promise<CachedProcessedData> {
+export async function getProcessedPoolsDataWithFallback(chainId?: string): Promise<CachedProcessedData> {
+  const targetChainId = chainId || DEFAULT_CHAIN_ID.toString();
+  
   // Try to get from cache first
-  const cached = await getCachedProcessedPoolsData();
+  const cached = await getCachedProcessedPoolsData(targetChainId);
   
   if (cached) {
-    console.log('Serving processed pools data from cache');
+    console.log(`Serving processed pools data from cache for chain ${targetChainId}`);
     return cached;
   }
 
-  console.log('Cache miss - fetching and processing fresh data');
+  console.log(`Cache miss - fetching and processing fresh data for chain ${targetChainId}`);
   // Cache miss - fetch fresh data, process it, and cache it
-  const freshData = await fetchAndProcessPoolsData();
+  const freshData = await fetchAndProcessPoolsData(targetChainId);
   
   // Cache the fresh processed data (fire and forget)
   cacheProcessedPoolsData(freshData).catch(console.error);
@@ -352,14 +416,16 @@ export async function getProcessedPoolsDataWithFallback(): Promise<CachedProcess
 }
 
 /**
- * Update processed pools cache (used by cron job)
+ * Update processed pools cache for all supported chains (used by cron job)
  */
 export async function updateProcessedPoolsCache(): Promise<void> {
   try {
-    console.log('Starting processed pools cache update...');
-    const freshData = await fetchAndProcessPoolsData();
-    await cacheProcessedPoolsData(freshData);
-    console.log('Processed pools cache updated successfully');
+    console.log('Starting processed pools cache update for all chains...');
+    const allChainsData = await fetchAndProcessAllChainsData();
+    await cacheAllChainsData(allChainsData);
+    
+    const totalPools = Object.values(allChainsData).reduce((sum, data) => sum + data.pools.length, 0);
+    console.log(`Processed pools cache updated successfully for ${Object.keys(allChainsData).length} chains (${totalPools} total pools)`);
   } catch (error) {
     console.error('Failed to update processed pools cache:', error);
     throw error;
@@ -367,10 +433,10 @@ export async function updateProcessedPoolsCache(): Promise<void> {
 }
 
 /**
- * Check if cache data is stale (older than 10 minutes)
+ * Check if cache data is stale (older than 10 minutes) for a specific chain
  */
-export async function isProcessedCacheStale(): Promise<boolean> {
-  const cached = await getCachedProcessedPoolsData();
+export async function isProcessedCacheStale(chainId?: string): Promise<boolean> {
+  const cached = await getCachedProcessedPoolsData(chainId);
   if (!cached) return true;
   
   const now = Date.now();

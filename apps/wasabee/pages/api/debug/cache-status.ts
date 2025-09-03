@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getCachedProcessedPoolsData, isProcessedCacheStale } from '@/lib/cache/pools-cache';
+import { getCachedProcessedPoolsData, isProcessedCacheStale, SUPPORTED_CHAINS } from '@/lib/cache/pools-cache';
 import { kv } from '@/lib/kv';
 
 export default async function handler(
@@ -16,53 +16,65 @@ export default async function handler(
     const testValue = await kv.get(testKey);
     console.log('Raw KV test:', testValue === 'working' ? '✅ Working' : '❌ Failed');
     
-    // Check processed cache data
-    console.log('Checking cached processed pools data...');
-    const startTime = Date.now();
-    const cached = await getCachedProcessedPoolsData();
-    const endTime = Date.now();
+    // Check processed cache data for all supported chains
+    console.log('Checking cached processed pools data for all chains...');
+    const chainIds = Object.values(SUPPORTED_CHAINS);
+    const chainStatuses: Record<string, any> = {};
     
-    console.log(`Cache read took: ${endTime - startTime}ms`);
-    
-    if (cached) {
-      console.log('✅ Processed Cache EXISTS');
-      console.log(`Processed pools count: ${cached.pools.length}`);
-      console.log(`Last updated: ${new Date(cached.lastUpdated).toISOString()}`);
-      console.log(`Age: ${Date.now() - cached.lastUpdated}ms`);
-    } else {
-      console.log('❌ Processed Cache is EMPTY');
+    for (const chainId of chainIds) {
+      const startTime = Date.now();
+      const cached = await getCachedProcessedPoolsData(chainId);
+      const endTime = Date.now();
+      
+      console.log(`Cache read for chain ${chainId} took: ${endTime - startTime}ms`);
+      
+      if (cached) {
+        console.log(`✅ Processed Cache EXISTS for chain ${chainId}`);
+        console.log(`Processed pools count: ${cached.pools.length}`);
+        console.log(`Last updated: ${new Date(cached.lastUpdated).toISOString()}`);
+        console.log(`Age: ${Date.now() - cached.lastUpdated}ms`);
+      } else {
+        console.log(`❌ Processed Cache is EMPTY for chain ${chainId}`);
+      }
+      
+      const isStale = await isProcessedCacheStale(chainId);
+      console.log(`Processed cache is stale for chain ${chainId}: ${isStale}`);
+      
+      chainStatuses[chainId] = {
+        exists: !!cached,
+        readTime: endTime - startTime,
+        isStale,
+        data: cached ? {
+          poolsCount: cached.pools.length,
+          lastUpdated: cached.lastUpdated,
+          age: Date.now() - cached.lastUpdated,
+        } : null,
+      };
     }
     
-    const isStale = await isProcessedCacheStale();
-    console.log(`Processed cache is stale: ${isStale}`);
-    
-    // Check individual cache keys
+    // Check individual cache keys for default chain
     const { createCache } = await import('@/lib/kv');
     const poolsCache = createCache('pools');
+    const defaultChainId = Object.values(SUPPORTED_CHAINS)[0];
     const [processedPools, lastUpdate] = await Promise.all([
-      poolsCache.get('processed-pools'),
-      poolsCache.get('last-update'),
+      poolsCache.get(`processed-pools-${defaultChainId}`),
+      poolsCache.get(`last-update-${defaultChainId}`),
     ]);
     
     return res.status(200).json({
       kvConnection: testValue === 'working',
-      cacheExists: !!cached,
-      cacheReadTime: endTime - startTime,
-      isStale,
-      data: cached ? {
-        processedPoolsCount: cached.pools.length,
-        lastUpdated: cached.lastUpdated,
-        age: Date.now() - cached.lastUpdated,
-        samplePool: cached.pools[0] ? {
-          id: cached.pools[0].id,
-          tvlUSD: cached.pools[0].tvlUSD,
-          volume24USD: cached.pools[0].volume24USD,
-          avgApr: cached.pools[0].avgApr,
-        } : null,
-      } : null,
+      supportedChains: Object.keys(SUPPORTED_CHAINS),
+      chainStatuses,
       rawKeys: {
         processedPools: !!processedPools,
         lastUpdate: !!lastUpdate,
+      },
+      summary: {
+        totalChains: chainIds.length,
+        cachedChains: Object.values(chainStatuses).filter(status => status.exists).length,
+        totalPools: Object.values(chainStatuses).reduce((sum, status) => 
+          sum + (status.data?.poolsCount || 0), 0
+        ),
       }
     });
   } catch (error) {
