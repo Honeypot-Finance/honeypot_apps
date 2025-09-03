@@ -46,7 +46,7 @@ const PoolsList = ({
   initialPools = [],
   initialActiveFarmings = [],
   initialProcessedPools = [],
-  isClientLoading = false,
+  isClientLoading ,
 }: PoolsListProps) => {
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'id', desc: true },
@@ -78,9 +78,7 @@ const PoolsList = ({
 
   const isLoading =
     isClientLoading || 
-    ((isPoolsListLoading || isFarmingsLoading) &&
-    !(initialPools && initialPools.length > 0) &&
-    !(initialProcessedPools && initialProcessedPools.length > 0));
+    ((isPoolsListLoading || isFarmingsLoading) )
   // ||isFarmingsAPRLoading;
 
   const formattedPools = useMemo(() => {
