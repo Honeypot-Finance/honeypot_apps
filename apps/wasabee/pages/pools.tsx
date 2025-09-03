@@ -8,6 +8,13 @@ import { useEffect, useState } from 'react';
 import PoolsList from '@/components/algebra/pools/PoolsList';
 import AquaberaList from '@/components/Aquabera/VaultLists/VaultLists';
 import { useVaultDataPrefetch } from '@/hooks/useVaultDataPrefetch';
+import { useChainId } from 'wagmi';
+
+
+
+
+
+
 
 const PoolsPage: NextLayoutPage = observer(() => {
   const [currentTab, setCurrentTab] = useState<'aquabera' | 'algebra'>(
@@ -19,7 +26,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
   
   // Prefetch vault data immediately when page loads
   const vaultData = useVaultDataPrefetch();
-
+  const chainId = useChainId();
   // Fetch pools data on client side based on current chain
   useEffect(() => {
     const fetchPoolsData = async () => {
@@ -28,12 +35,12 @@ const PoolsPage: NextLayoutPage = observer(() => {
         setError(null);
         
         // Get the current chain ID from wallet
-        const currentChainId = wallet.currentChain.toString() ?? '80094';
-        console.log(`Fetching pools data from client for chain ${currentChainId}...`);
+        const currentChainId = chainId;
+        console.log(`Fetching pools data from client for chain ${chainId}...`);
         const startTime = Date.now();
         
         // Pass chain ID as query parameter
-        const response = await fetch(`/api/pools/cached?chainId=${80094}`);
+        const response = await fetch(`/api/pools/cached?chainId=${chainId}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch pools data: ${response.statusText}`);
         }
@@ -54,7 +61,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
     };
 
     fetchPoolsData();
-  }, [wallet.currentChain.id]); // Re-fetch when chain changes
+  }, [chainId]); // Re-fetch when chain changes
 
   if (!wallet.currentChain.supportDEX) {
     return (
