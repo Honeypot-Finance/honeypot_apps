@@ -3,31 +3,81 @@ import { observer } from 'mobx-react-lite';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { Tab, Tabs } from '@nextui-org/react';
 import { NextLayoutPage } from '@/types/nextjs';
-import type { GetServerSideProps } from 'next';
-import { getProcessedPoolsDataWithFallback, type ProcessedPool } from '@/lib/cache/pools-cache';
+import { type ProcessedPool } from '@/lib/cache/pools-cache';
 import { useEffect, useState } from 'react';
 import PoolsList from '@/components/algebra/pools/PoolsList';
 import AquaberaList from '@/components/Aquabera/VaultLists/VaultLists';
 import { useVaultDataPrefetch } from '@/hooks/useVaultDataPrefetch';
 
-type PoolsPageProps = {
-  initialProcessedPools?: ProcessedPool[];
-};
-
-const PoolsPage: NextLayoutPage = observer(({
-  initialProcessedPools = [],
-}: PoolsPageProps) => {
+const PoolsPage: NextLayoutPage = observer(() => {
   const [currentTab, setCurrentTab] = useState<'aquabera' | 'algebra'>(
     'aquabera'
   );
+  const [processedPools, setProcessedPools] = useState<ProcessedPool[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   // Prefetch vault data immediately when page loads
   const vaultData = useVaultDataPrefetch();
+
+  // Fetch pools data on client side based on current chain
+  useEffect(() => {
+    const fetchPoolsData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        // Get the current chain ID from wallet
+        const currentChainId = wallet.currentChain.toString() ?? '80094';
+        console.log(`Fetching pools data from client for chain ${currentChainId}...`);
+        const startTime = Date.now();
+        
+        // Pass chain ID as query parameter
+        const response = await fetch(`/api/pools/cached?chainId=${80094}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch pools data: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        const endTime = Date.now();
+        
+        console.log(`Client-side pools data fetched in ${endTime - startTime}ms for chain ${currentChainId}`);
+        console.log(`Received ${data.pools?.length || 0} pools from chain ${data.chainId}`);
+        
+        setProcessedPools(data.pools || []);
+      } catch (err) {
+        console.error('Failed to fetch pools data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to fetch pools data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPoolsData();
+  }, [wallet.currentChain.id]); // Re-fetch when chain changes
 
   if (!wallet.currentChain.supportDEX) {
     return (
       <div className="w-full flex items-center justify-center pb-6 sm:pb-12 overflow-x-hidden">
         <div className="text-center">
           <p className="text-lg">DEX is not supported on this chain</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="w-full flex items-center justify-center pb-6 sm:pb-12 overflow-x-hidden">
+        <div className="text-center">
+          <p className="text-lg text-red-500">Error loading pools: {error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -65,7 +115,10 @@ const PoolsPage: NextLayoutPage = observer(({
           key="aquabera"
           title={<span className="text-xs sm:text-base">Concentrated Liquidity</span>}
         >
-          <PoolsList initialProcessedPools={initialProcessedPools} />
+          <PoolsList 
+            initialProcessedPools={processedPools} 
+            isClientLoading={isLoading}
+          />
 
         </Tab>
         <Tab
@@ -83,27 +136,3 @@ const PoolsPage: NextLayoutPage = observer(({
 });
 
 export default PoolsPage;
-
-export const getServerSideProps: GetServerSideProps<PoolsPageProps> = async (
-  ctx
-) => {
-  try {
-    console.log('SSR: Fetching pools data...');
-    const startTime = Date.now();
-    
-    // Get processed data from cache or fallback to fresh fetch + processing
-    const data = await getProcessedPoolsDataWithFallback();
-    
-    const endTime = Date.now();
-    console.log(`SSR: Processed pools data fetched in ${endTime - startTime}ms`);
-
-    return {
-      props: {
-        initialProcessedPools: data.pools,
-      },
-    };
-  } catch (e) {
-    console.error('SSR pools fetch failed', e);
-    return { props: { initialProcessedPools: [] } };
-  }
-};

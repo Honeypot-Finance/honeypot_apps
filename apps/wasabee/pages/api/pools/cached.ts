@@ -10,12 +10,14 @@ export default async function handler(
   }
 
   try {
-    const { force } = req.query;
+    const { force, chainId } = req.query;
+    console.log(req.query,"req querey is")
+    const targetChainId = typeof chainId === 'string' ? chainId : undefined;
     
     // If force=true, always fetch fresh data
     if (force === 'true') {
-      console.log('Force refresh requested');
-      const data = await getProcessedPoolsDataWithFallback();
+      console.log(`Force refresh requested for chain ${targetChainId || 'default'}`);
+      const data = await getProcessedPoolsDataWithFallback(targetChainId);
       return res.status(200).json({
         ...data,
         cached: false,
@@ -24,10 +26,10 @@ export default async function handler(
     }
 
     // Try to get cached data first
-    const cached = await getCachedProcessedPoolsData();
+    const cached = await getCachedProcessedPoolsData(targetChainId);
     
-    if (cached && !(await isProcessedCacheStale())) {
-      console.log('Serving processed data from cache');
+    if (cached && !(await isProcessedCacheStale(targetChainId))) {
+      console.log(`Serving processed data from cache for chain ${cached.chainId}`);
       return res.status(200).json({
         ...cached,
         cached: true,
@@ -36,8 +38,8 @@ export default async function handler(
     }
 
     // Cache miss or stale - get fresh data
-    console.log('Cache miss or stale - fetching and processing fresh data');
-    const data = await getProcessedPoolsDataWithFallback();
+    console.log(`Cache miss or stale - fetching and processing fresh data for chain ${targetChainId || 'default'}`);
+    const data = await getProcessedPoolsDataWithFallback(targetChainId);
     
     return res.status(200).json({
       ...data,
