@@ -10,12 +10,6 @@ import AquaberaList from '@/components/Aquabera/VaultLists/VaultLists';
 import { useVaultDataPrefetch } from '@/hooks/useVaultDataPrefetch';
 import { useChainId } from 'wagmi';
 
-
-
-
-
-
-
 const PoolsPage: NextLayoutPage = observer(() => {
   const [currentTab, setCurrentTab] = useState<'aquabera' | 'algebra'>(
     'aquabera'
@@ -23,7 +17,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
   const [processedPools, setProcessedPools] = useState<ProcessedPool[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Prefetch vault data immediately when page loads
   const vaultData = useVaultDataPrefetch();
   const chainId = useChainId();
@@ -33,24 +27,24 @@ const PoolsPage: NextLayoutPage = observer(() => {
       try {
         setIsLoading(true);
         setError(null);
-        
+
         // Get the current chain ID from wallet
         const currentChainId = chainId;
         console.log(`Fetching pools data from client for chain ${chainId}...`);
         const startTime = Date.now();
-        
+
         // Pass chain ID as query parameter
         const response = await fetch(`/api/pools/cached?chainId=${chainId}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch pools data: ${response.statusText}`);
         }
-        
+
         const data = await response.json();
         const endTime = Date.now();
-        
+
         console.log(`Client-side pools data fetched in ${endTime - startTime}ms for chain ${currentChainId}`);
         console.log(`Received ${data.pools?.length || 0} pools from chain ${data.chainId}`);
-        
+
         setProcessedPools(data.pools || []);
       } catch (err) {
         console.error('Failed to fetch pools data:', err);
@@ -79,8 +73,8 @@ const PoolsPage: NextLayoutPage = observer(() => {
       <div className="w-full flex items-center justify-center pb-6 sm:pb-12 overflow-x-hidden">
         <div className="text-center">
           <p className="text-lg text-red-500">Error loading pools: {error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
           >
             Retry
@@ -122,8 +116,8 @@ const PoolsPage: NextLayoutPage = observer(() => {
           key="aquabera"
           title={<span className="text-xs sm:text-base">Concentrated Liquidity</span>}
         >
-          <PoolsList 
-            initialProcessedPools={processedPools} 
+          <PoolsList
+            initialProcessedPools={processedPools}
             isClientLoading={isLoading}
           />
 
