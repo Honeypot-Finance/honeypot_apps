@@ -69,7 +69,7 @@ export function AllAquaberaVaults({
 
   // Fetch cached vault data from API
   const fetchCachedVaultData = async () => {
-    if (!chainId) return;
+   
 
     try {
       setIsLoadingCachedData(true);
@@ -79,37 +79,23 @@ export function AllAquaberaVaults({
       console.log(`Current chainId from useAccount: ${chainId}, type: ${typeof chainId}`);
       const startTime = Date.now();
       
-      // Add a timeout to avoid long waits
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
       
-      try {
-        const response = await fetch(`/api/vaults/cached?chainId=${chainId}`, {
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch cached vault data: ${response.statusText}`);
+    
+      const response = await fetch(`/api/vaults/cached?chainId=${chainId??80094}` );
+      if (!response.ok) {
+        throw new Error(`Failed to fetch cached vault data: ${response.statusText}`);
+      }
+      const data = await response.json();
+      const endTime = Date.now();
+      console.log(`Cached vault data fetched in ${endTime - startTime}ms for chain ${chainId}`);
+      console.log(`Received ${data.vaults?.length || 0} vaults from chain ${data.chainId}`);
+      if (data.success && data.vaults) {
+        setProcessedVaults(data.vaults);
+        if (onDataLoaded) {
+          onDataLoaded();
         }
-
-        const data = await response.json();
-        const endTime = Date.now();
-        
-        console.log(`Cached vault data fetched in ${endTime - startTime}ms for chain ${chainId}`);
-        console.log(`Received ${data.vaults?.length || 0} vaults from chain ${data.chainId}`);
-        
-        if (data.success && data.vaults) {
-          setProcessedVaults(data.vaults);
-          if (onDataLoaded) {
-            onDataLoaded();
-          }
-        } else {
-          throw new Error('Invalid response format');
-        }
-      } catch (fetchError) {
-        clearTimeout(timeoutId);
-        throw fetchError;
+      } else {
+        throw new Error('Invalid response format');
       }
     } catch (error) {
       console.error('Error fetching cached vault data:', error);
@@ -472,27 +458,44 @@ export function AllAquaberaVaults({
   }, [searchString]);
 
   // Convert processed vault to compatible format for display
-  const convertProcessedToContract = (vault: ProcessedVault): any => {
+  function convertProcessedToContract(vault: ProcessedVault): any {
+    // Recreate Token instances for compatibility with TokenLogo and other components
+    const token0 = vault.token0
+      ? Token.getToken({
+          address: vault.token0.id,
+          chainId: chainId?.toString() || '80084',
+          name: vault.token0.name,
+          symbol: vault.token0.symbol,
+          decimals: vault.token0.decimals,
+        })
+      : null;
+
+    const token1 = vault.token1
+      ? Token.getToken({
+          address: vault.token1.id,
+          chainId: chainId?.toString() || '80084',
+          name: vault.token1.name,
+          symbol: vault.token1.symbol,
+          decimals: vault.token1.decimals,
+        })
+      : null;
+
+    // Initialize tokens to ensure logos and basic metadata are loaded quickly
+    if (token0) {
+      token0.init(false, { loadIndexerTokenData: true });
+    }
+    if (token1) {
+      token1.init(false, { loadIndexerTokenData: true });
+    }
+
     // Create a minimal vault-like object for display purposes
     return {
       address: vault.address,
       apr: vault.apr,
       detailedApr: vault.detailedApr,
       tvlUSD: vault.tvlUSD,
-      token0: vault.token0 ? {
-        address: vault.token0.id,
-        symbol: vault.token0.symbol,
-        name: vault.token0.name,
-        decimals: vault.token0.decimals,
-        logoURI: vault.token0.logoURI,
-      } : null,
-      token1: vault.token1 ? {
-        address: vault.token1.id,
-        symbol: vault.token1.symbol,
-        name: vault.token1.name,
-        decimals: vault.token1.decimals,
-        logoURI: vault.token1.logoURI,
-      } : null,
+      token0,
+      token1,
       pool: vault.pool,
       name: vault.name,
       fee: vault.fee,
@@ -500,7 +503,7 @@ export function AllAquaberaVaults({
       allowToken1: vault.allowToken1,
       vaultTag: vault.vaultTag,
     };
-  };
+  }
 
   const sortAndFilter = () => {
     // Prioritize processed vaults, fallback to vault contracts
