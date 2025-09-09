@@ -7,12 +7,15 @@ import {
 } from '@/lib/algebra/graphql/clients/vaults';
 import { VaultsSortedByHoldersQuery } from '@/lib/algebra/graphql/generated/graphql';
 import { ICHIVaultContract } from '@honeypot/shared';
-import { Wallet } from '@honeypot/shared';
+import { ProcessedVault } from '@/lib/cache/vaults-cache';
+import { useChainId } from 'wagmi';
 interface VaultDataStore {
   allVaults: VaultsSortedByHoldersQuery | null;
   allVaultContracts: ICHIVaultContract[] | null;
+  processedVaults: ProcessedVault[] | null;
   isAllVaultsLoading: boolean;
   isContractsLoading: boolean;
+  isProcessedLoading: boolean;
   lastFetched: number;
 }
 
@@ -28,17 +31,79 @@ const DATA_DURATION = 5 * 60 * 1000; // 5 minutes
 let globalVaultData: VaultDataStore = {
   allVaults: null,
   allVaultContracts: null,
+  processedVaults: null,
   isAllVaultsLoading: false,
   isContractsLoading: false,
+  isProcessedLoading: false,
   lastFetched: 0,
 };
 
 export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
   const [data, setData] = useState<VaultDataStore>(globalVaultData);
   const infoClient = useSubgraphClient('algebra_info');
+  const chainId = useChainId();
 
   const isDataFresh = () => {
     return Date.now() - data.lastFetched < DATA_DURATION;
+  };
+
+  // Fetch processed vault data from cache
+  const fetchProcessedVaultData = async () => {
+    if (!chainId) {
+      console.log('❌ fetchProcessedVaultData: No chainId');
+      return;
+    }
+
+    console.log(`🔄 fetchProcessedVaultData: Starting for chain ${chainId}`);
+
+    setData((prev) => ({
+      ...prev,
+      isProcessedLoading: true,
+    }));
+    globalVaultData.isProcessedLoading = true;
+
+    try {
+      const startTime = Date.now();
+      const response = await fetch(`/api/vaults/cached?chainId=${chainId}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch cached vault data: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const endTime = Date.now();
+      
+      console.log(`📥 fetchProcessedVaultData: API response in ${endTime - startTime}ms`,response, {
+        success: result.success,
+        vaultCount: result.vaults?.length || 0,
+        cached: result.cached,
+        stale: result.stale
+        
+      });
+      
+      if (result.success && result.vaults) {
+        const newData = {
+          ...globalVaultData,
+          processedVaults: result.vaults,
+          isProcessedLoading: false,
+          lastFetched: Date.now(),
+        };
+
+        globalVaultData = newData;
+        setData(newData);
+        
+        console.log(`✅ fetchProcessedVaultData: Stored ${result.vaults.length} processed vaults for chain ${chainId}`);
+      } else {
+        throw new Error('Invalid response format');
+      }
+    } catch (error) {
+      console.error('❌ fetchProcessedVaultData error:', error);
+      const newData = {
+        ...globalVaultData,
+        isProcessedLoading: false,
+      };
+      globalVaultData = newData;
+      setData(newData);
+    }
   };
 
   // Process vault contracts with full initialization
@@ -186,18 +251,31 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
   };
 
   const prefetchVaultData = async () => {
+    // Try to use processed vault data first (fastest)
+    if (!data.processedVaults && !data.isProcessedLoading) {
+      await fetchProcessedVaultData();
+      return;
+    }
+
+    // Skip if processed data is fresh
+    if (isDataFresh() && data.processedVaults) {
+      return;
+    }
+
     // Skip if data is fresh and vault data with contracts is available
     if (isDataFresh() && data.allVaults && data.allVaultContracts) {
       return;
     }
 
     // Skip if already loading
-    if (data.isAllVaultsLoading) {
+    if (data.isAllVaultsLoading || data.isProcessedLoading) {
       return;
     }
 
-    // Fetch vault data if not fresh or not available
-    if (
+    // Prefer cached processed data over subgraph fetching
+    if (!data.processedVaults) {
+      await fetchProcessedVaultData();
+    } else if (
       !data.isAllVaultsLoading &&
       (!data.allVaults || !data.allVaultContracts || !isDataFresh())
     ) {
@@ -210,8 +288,10 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
     const clearedData = {
       allVaults: null,
       allVaultContracts: null,
+      processedVaults: null,
       isAllVaultsLoading: false,
       isContractsLoading: false,
+      isProcessedLoading: false,
       lastFetched: 0,
     };
     globalVaultData = clearedData;
@@ -219,34 +299,37 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
   };
 
   // Track current chain to detect changes
-  const [currentChainId, setCurrentChainId] = useState(wallet.currentChainId);
+  const [currentChainId, setCurrentChainId] = useState(chainId);
 
   // Clear data when chain changes
   useEffect(() => {
     if (typeof window === 'undefined') return; // Skip during SSR/build
     
-    if (currentChainId !== wallet.currentChainId && wallet.currentChainId !== -1) {
+    if (currentChainId !== chainId && chainId) {
       clearDataOnChainChange();
-      setCurrentChainId(wallet.currentChainId);
+      setCurrentChainId(chainId);
     }
-  }, [wallet.currentChainId]);
+  }, [chainId]);
 
-  // Auto-prefetch when wallet is ready (only in browser, not during build)
+  // Auto-prefetch when chain is available (only in browser, not during build)
   useEffect(() => {
     if (typeof window === 'undefined') return; // Skip during SSR/build
-    if (!wallet.isInit || !infoClient) return;
+    if (!chainId) return;
 
+    console.log('🚀 useVaultDataPrefetch triggered for chain:', chainId);
     prefetchVaultData();
-  }, [wallet.isInit, infoClient]);
+  }, [chainId]);
 
   return {
     allVaults: data.allVaults,
     allVaultContracts: data.allVaultContracts,
+    processedVaults: data.processedVaults,
     isAllVaultsLoading: data.isAllVaultsLoading,
     isContractsLoading: data.isContractsLoading,
+    isProcessedLoading: data.isProcessedLoading,
     lastFetched: data.lastFetched,
-    isLoading: data.isAllVaultsLoading || data.isContractsLoading,
+    isLoading: data.isAllVaultsLoading || data.isContractsLoading || data.isProcessedLoading,
     isDataFresh: isDataFresh(),
-    chainId: wallet.currentChainId,
+    chainId: chainId,
   };
 };

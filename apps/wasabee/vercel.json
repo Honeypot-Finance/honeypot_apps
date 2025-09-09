@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/update-pools-cache",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/update-vaults-cache",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
