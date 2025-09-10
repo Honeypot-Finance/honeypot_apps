@@ -32,6 +32,8 @@ export interface MinimalVaultTag {
 }
 
 export interface ProcessedVault {
+  name: string;
+  fee: string;
   // Essential fields for display only
   address: string;
   apr: number;
@@ -98,6 +100,8 @@ export async function processVaultData(
 
   return vaultContracts.map((vault) => {
     return {
+      name: vault.name || '',
+      fee: (vault.fee || '0').toString(),
       // Essential fields displayed in UI
       address: vault.address,
       apr: vault.apr || 0,
