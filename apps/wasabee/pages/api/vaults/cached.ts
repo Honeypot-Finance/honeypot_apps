@@ -3,6 +3,7 @@ import {
   getProcessedVaultsDataWithFallback,
   getCachedProcessedVaultsData,
   isProcessedCacheStale,
+  clearVaultsCache,
   ProcessedVaultsData,
 } from '@/lib/cache/vaults-cache';
 
@@ -12,10 +13,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { force, chainId } = req.query;
+    const { force, chainId, clearCache } = req.query;
     const targetChainId = Array.isArray(chainId) ? chainId[0] : chainId;
 
     console.log(`📥 Vault cache request for chain: ${targetChainId || 'default'}`);
+
+    // Handle cache clearing
+    if (clearCache === 'true') {
+      console.log('🗑️ Clearing cache as requested');
+      await clearVaultsCache(targetChainId);
+      return res.status(200).json({
+        success: true,
+        message: 'Cache cleared successfully',
+        chainId: targetChainId || 'default',
+        timestamp: new Date().toISOString(),
+      });
+    }
 
     let data: ProcessedVaultsData;
 

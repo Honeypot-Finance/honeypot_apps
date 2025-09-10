@@ -462,7 +462,7 @@ export function AllAquaberaVaults({
     // Recreate Token instances for compatibility with TokenLogo and other components
     const token0 = vault.token0
       ? Token.getToken({
-          address: vault.token0.id,
+          address: vault.token0.address,
           chainId: chainId?.toString() || '80084',
           name: vault.token0.name,
           symbol: vault.token0.symbol,
@@ -472,7 +472,7 @@ export function AllAquaberaVaults({
 
     const token1 = vault.token1
       ? Token.getToken({
-          address: vault.token1.id,
+          address: vault.token1.address,
           chainId: chainId?.toString() || '80084',
           name: vault.token1.name,
           symbol: vault.token1.symbol,
@@ -480,13 +480,7 @@ export function AllAquaberaVaults({
         })
       : null;
 
-    // Initialize tokens to ensure logos and basic metadata are loaded quickly
-    if (token0) {
-      token0.init(false, { loadIndexerTokenData: true });
-    }
-    if (token1) {
-      token1.init(false, { loadIndexerTokenData: true });
-    }
+
 
     // Create a minimal vault-like object for display purposes
     return {

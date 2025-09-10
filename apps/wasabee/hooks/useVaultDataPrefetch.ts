@@ -50,16 +50,12 @@ export const useVaultDataPrefetch = (): VaultDataPrefetchReturn => {
   // Fetch processed vault data from cache
   const fetchProcessedVaultData = async () => {
     if (!chainId) {
-      console.log('❌ fetchProcessedVaultData: No chainId');
+      console.log('❌ #fetch fetchProcessedVaultData: No chainId');
       return;
     }
 
-    console.log(`🔄 fetchProcessedVaultData: Starting for chain ${chainId}`);
+    console.log(`🔄  #fetch fetchProcessedVaultData: Starting for chain ${chainId}`);
 
-    setData((prev) => ({
-      ...prev,
-      isProcessedLoading: true,
-    }));
     globalVaultData.isProcessedLoading = true;
 
     try {
