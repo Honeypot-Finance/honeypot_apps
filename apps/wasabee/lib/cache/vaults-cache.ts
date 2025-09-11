@@ -324,31 +324,12 @@ export async function getCachedProcessedVaultsData(chainId?: string): Promise<Pr
       return null;
     }
 
-    // Validate cached data before parsing
-    if (typeof cached !== 'string') {
-      console.error('❌ Cached data is not a string, type:', typeof cached);
-      console.error('❌ This indicates corrupted cache data. Clearing cache...');
-      // Clear the corrupted cache entry
-      await clearVaultsCache(chainId);
-      return null;
-    }
 
-    if (cached === '[object Object]' || cached.toString() === '[object Object]') {
-      console.error('Cached data is "[object Object]", clearing invalid cache entry');
-      // Clear the invalid cache entry
-      await vaultsCache.set(vaultsKey, '', { ex: 1 }); // Set to expire in 1 second
-      return null;
-    }
-
-    const data = JSON.parse(cached) as ProcessedVaultsData;
+    const data = cached as ProcessedVaultsData;
     
-    // Validate parsed data structure
-    if (!data.vaults || !Array.isArray(data.vaults)) {
-      console.error('Invalid cached data structure:', data);
-      return null;
-    }
 
-    console.log(`Retrieved ${data.vaults.length} cached vaults for chain ${chainId || 'default'}`);
+
+    console.log(`Retrieved ${data} cached vaults for chain ${chainId || 'default'}`);
     return data;
   } catch (error) {
     console.error('Error retrieving cached vault data:', error);
