@@ -162,14 +162,14 @@ const SwapTransactionHistory = observer(() => {
                     ${new BigNumber(tx.amountUSD || 0).toFixed(2)}
                   </td>
                   <td className="py-4 text-sm">
-                    <span className={`${parseFloat(tx.amount0) > 0 ? 'text-green-500' : 'text-red-500'}`}>
-                      {parseFloat(tx.amount0) > 0 ? 'Buy ' : 'Sell '}
+                    <span className={`${parseFloat(tx.amount0) > 0 ? 'text-red-500' : 'text-green-500'}`}>
+                      {parseFloat(tx.amount0) > 0 ? 'Sell ' : 'Buy '}
                       {formatAmount(Math.abs(parseFloat(tx.amount0)).toString())}
                     </span>
                   </td>
                   <td className="py-4 text-sm">
-                    <span className={`${parseFloat(tx.amount1) > 0 ? 'text-green-500' : 'text-red-500'}`}>
-                      {parseFloat(tx.amount1) > 0 ? 'Buy ' : 'Sell '}
+                    <span className={`${parseFloat(tx.amount1) > 0 ? 'text-red-500' : 'text-green-500'}`}>
+                      {parseFloat(tx.amount1) > 0 ? 'Sell ' : 'Buy '}
                       {formatAmount(Math.abs(parseFloat(tx.amount1)).toString())}
                     </span>
                   </td>
