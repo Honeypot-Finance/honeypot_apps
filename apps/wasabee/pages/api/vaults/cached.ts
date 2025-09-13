@@ -32,29 +32,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     let data: ProcessedVaultsData;
 
-    if (force === 'true') {
-      // Force refresh - bypass cache
-      console.log('🔄 Force refresh requested, bypassing cache');
-      data = await getProcessedVaultsDataWithFallback(targetChainId);
-    } else {
+
       // Normal flow - try cache first
       const cached = await getCachedProcessedVaultsData(targetChainId);
-      const isStale = await isProcessedCacheStale(targetChainId);
+   
 
-      if (cached && !isStale) {
-        console.log(`✅ Serving fresh cached vault data for chain ${targetChainId || 'default'}`);
-        data = cached;
-      } else if (cached && isStale) {
-        console.log(`⚠️ Serving stale cached vault data for chain ${targetChainId || 'default'}`);
-        data = cached;
-        
-        // TODO: Consider triggering background refresh here
-        // getProcessedVaultsDataWithFallback(targetChainId).catch(console.error);
-      } else {
-        console.log(`❌ No cached vault data, fetching fresh for chain ${targetChainId || 'default'}`);
+    
+      if(cached)
+        data = cached!;
+      else
         data = await getProcessedVaultsDataWithFallback(targetChainId);
-      }
-    }
+    
+      
+   
+    
 
     // Add cache metadata to response
     const isStale = await isProcessedCacheStale(targetChainId);
