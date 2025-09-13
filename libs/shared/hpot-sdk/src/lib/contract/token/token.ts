@@ -3,7 +3,7 @@ import { BaseContract } from '../baseContract';
 import { wallet } from '../../wallet/wallet';
 import { get, makeAutoObservable, reaction } from 'mobx';
 import { Address, getContract, zeroAddress } from 'viem';
-import { ContractWrite } from '../../utils/utils';
+import { ContractWrite, safeLocalStorage } from '../../utils/utils';
 import { ERC20ABI } from '../../abis/erc20';
 import { faucetABI } from '../../abis/faucet';
 import { watchAsset } from 'viem/actions';
@@ -195,7 +195,7 @@ export class Token implements BaseContract {
 
     if (!force) {
       //cache the logoURI
-      const cachedLocalLogoURI = localStorage.getItem(
+      const cachedLocalLogoURI = safeLocalStorage.getItem(
         `token-logo-uri-${wallet.currentChainId}-${this.address.toLowerCase()}`
       );
 
@@ -243,7 +243,7 @@ export class Token implements BaseContract {
   }
 
   setLogoURI(logoURI: string) {
-    localStorage.setItem(
+    safeLocalStorage.setItem(
       `token-logo-uri-${wallet.currentChainId}-${this.address.toLowerCase()}`,
       logoURI
     );
@@ -325,7 +325,7 @@ export class Token implements BaseContract {
     }
 
     if (!force) {
-      const cachedName = localStorage.getItem(
+      const cachedName = safeLocalStorage.getItem(
         `token-name-${this.address.toLowerCase()}`
       );
       if (!!cachedName && cachedName !== 'null' && cachedName !== 'undefined') {
@@ -338,7 +338,7 @@ export class Token implements BaseContract {
 
     this.name = name;
 
-    localStorage.setItem(
+    safeLocalStorage.setItem(
       `token-name-${wallet.currentChainId}-${this.address.toLowerCase()}`,
       name
     );

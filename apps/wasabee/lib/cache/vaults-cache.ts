@@ -5,6 +5,7 @@ import { ICHIVaultContract } from '@honeypot/shared';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { getSubgraphClientByChainId } from '@honeypot/shared';
 import { DEFAULT_CHAIN_ID } from '@/config/algebra/default-chain-id';
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 
 // Cache configuration
 const CACHE_TTL = 10 * 60; // 10 minutes in seconds (Redis/KV expiration)
@@ -148,7 +149,7 @@ export async function processVaultData(
 /**
  * Process vault contracts with full initialization
  */
-async function processVaultContracts(vaults: any[], infoClient: any): Promise<ICHIVaultContract[]> {
+async function processVaultContracts(vaults: Array<{id: string}>, infoClient: ApolloClient<NormalizedCacheObject>): Promise<ICHIVaultContract[]> {
   if (!vaults?.length || !infoClient) return [];
 
   try {
@@ -159,13 +160,45 @@ async function processVaultContracts(vaults: any[], infoClient: any): Promise<IC
     for (let i = 0; i < vaults.length; i += batchSize) {
       const batch = vaults.slice(i, i + batchSize);
 
-      const batchPromises = batch.map(async (vault: any) => {
+      const batchPromises = batch.map(async (vault: {id: string}) => {
         try {
           const vaultContract = await getSingleVaultDetails(infoClient, vault.id);
 
           if (vaultContract) {
-            // Skip on-chain heavy calls in serverless caching to avoid provider-related issues
-            // Values like tvlUSD will default to 0 in processed output when unavailable
+            // Validate that wallet is properly initialized before contract calls
+            if (!wallet.publicClient) {
+              throw new Error(`Wallet not properly initialized for vault ${vault.id}`);
+            }
+
+            // Load all vault data for accurate TVL calculation
+            // This takes time but users get pre-calculated data from cache
+            await Promise.all([
+              vaultContract.getTotalAmounts().catch(error => {
+                console.error(`Failed to get total amounts for vault ${vault.id}:`, error);
+                // Set default values instead of failing completely
+                vaultContract.totalAmountsWithoutDecimal = {
+                  total0: BigInt(0),
+                  total1: BigInt(0),
+                };
+              }),
+              vaultContract.getTotalSupply().catch(error => {
+                console.error(`Failed to get total supply for vault ${vault.id}:`, error);
+                // Set default value instead of failing completely
+                vaultContract.totalsupplyShares = BigInt(0);
+              }),
+              // Initialize tokens with full data loading for price information
+              vaultContract.token0?.init(true, {
+                loadIndexerTokenData: true,
+              }).catch(error => {
+                console.error(`Failed to initialize token0 for vault ${vault.id}:`, error);
+              }),
+              vaultContract.token1?.init(true, {
+                loadIndexerTokenData: true,
+              }).catch(error => {
+                console.error(`Failed to initialize token1 for vault ${vault.id}:`, error);
+              }),
+            ]);
+
             return vaultContract;
           }
           return null;
@@ -203,6 +236,18 @@ export async function fetchAndProcessVaultsData(chainId?: string): Promise<Proce
     const targetChainId = chainId || DEFAULT_CHAIN_ID.toString();
     console.log(`Fetching vault data from subgraph for chain ${targetChainId}...`);
     const startTime = Date.now();
+
+    // Initialize wallet for server-side operations (required for contract calls)
+    if (!wallet.publicClient || wallet.currentChainId.toString() !== targetChainId) {
+      console.log(`🔧 Initializing wallet for chain ${targetChainId}...`);
+      // Initialize wallet without walletClient for server-side operations
+      await wallet.initWallet();
+      // Ensure we're on the correct chain
+      if (wallet.currentChainId.toString() !== targetChainId) {
+        wallet.changeChain(parseInt(targetChainId));
+      }
+      console.log(`✅ Wallet initialized for chain ${targetChainId}`);
+    }
 
     // Get the info client for the current chain  
     const infoClient = getSubgraphClientByChainId(targetChainId, 'algebra_info');
