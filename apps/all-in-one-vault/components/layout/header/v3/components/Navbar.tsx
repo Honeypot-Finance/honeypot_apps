@@ -106,8 +106,9 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                   : ''
               )}
               onPress={() => {
-                if (typeof menu.path === 'string') {
-                  router.push(menu.path);
+                const targetPath = menu.routePath || menu.path;
+                if (typeof targetPath === 'string') {
+                  router.push(targetPath);
                 }
               }}
             >
