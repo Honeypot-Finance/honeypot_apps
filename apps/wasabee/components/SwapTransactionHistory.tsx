@@ -27,26 +27,29 @@ const SwapTransactionHistory = observer(() => {
       setLoading(true);
       try {
         // Log the request details for debugging
-        console.log('[SwapTransactionHistory] Loading transactions:', {
-          chainId: wallet.currentChainId,
-          page: currentPage,
-          baseCurrency: baseCurrency?.wrapped.address ?? zeroAddress,
-          quoteCurrency: quoteCurrency?.wrapped.address ?? zeroAddress,
-        });
-        
+        // console.log('[SwapTransactionHistory] Loading transactions:', {
+        //   chainId: wallet.currentChainId,
+        //   page: currentPage,
+        //   baseCurrency: baseCurrency?.wrapped.address ?? zeroAddress,
+        //   quoteCurrency: quoteCurrency?.wrapped.address ?? zeroAddress,
+        // });
+
         const response = await fetchTransactions(
           currentPage,
           pageSize,
           baseCurrency?.wrapped.address ?? zeroAddress,
           quoteCurrency?.wrapped.address ?? zeroAddress
         );
-        
-        console.log('[SwapTransactionHistory] Response:', response);
-        
+
+        // console.log('[SwapTransactionHistory] Response:', response);
+
         setTransactions(response.data);
         setHasNextPage(response.pageInfo.hasNextPage);
       } catch (error) {
-        console.error('[SwapTransactionHistory] Error loading transactions:', error);
+        console.error(
+          '[SwapTransactionHistory] Error loading transactions:',
+          error
+        );
         setTransactions([]);
       } finally {
         setLoading(false);
@@ -60,10 +63,12 @@ const SwapTransactionHistory = observer(() => {
     const now = Math.floor(Date.now() / 1000);
     const txTime = parseInt(timestamp);
     const diffInSeconds = now - txTime;
-    
+
     if (diffInSeconds < 60) return `${diffInSeconds} secs ago`;
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} mins ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} mins ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
     return `${Math.floor(diffInSeconds / 86400)} days ago`;
   };
 
@@ -74,7 +79,7 @@ const SwapTransactionHistory = observer(() => {
   const openInExplorer = (txHash: string) => {
     // Get explorer URL based on current chain
     let explorerUrl = 'https://etherscan.io';
-    
+
     if (wallet.currentChainId === 56) {
       explorerUrl = 'https://bscscan.com';
     } else if (wallet.currentChainId === 137) {
@@ -88,7 +93,7 @@ const SwapTransactionHistory = observer(() => {
     } else if (wallet.currentChainId === 80084) {
       explorerUrl = 'https://bartio.beratrail.io';
     }
-    
+
     window.open(`${explorerUrl}/tx/${txHash}`, '_blank');
   };
 
@@ -98,19 +103,33 @@ const SwapTransactionHistory = observer(() => {
 
   return (
     <div className="w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-6">
-      <h2 className="text-xl font-semibold text-white mb-6">Latest Transactions</h2>
-      
+      <h2 className="text-xl font-semibold text-white mb-6">
+        Latest Transactions
+      </h2>
+
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-[#2a2318]">
-              <th className="text-left text-sm text-gray-500 font-normal pb-4 pl-2">Time</th>
+              <th className="text-left text-sm text-gray-500 font-normal pb-4 pl-2">
+                Time
+              </th>
               <th className="text-left text-sm text-gray-500 font-normal pb-4">
                 <div className="flex items-center gap-1">
                   Value
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <svg
+                    className="w-3 h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </div>
               </th>
@@ -120,8 +139,12 @@ const SwapTransactionHistory = observer(() => {
               <th className="text-left text-sm text-gray-500 font-normal pb-4">
                 {transactions[0]?.token1?.symbol || 'Token Out'}
               </th>
-              <th className="text-left text-sm text-gray-500 font-normal pb-4">User</th>
-              <th className="text-left text-sm text-gray-500 font-normal pb-4">TX Hash</th>
+              <th className="text-left text-sm text-gray-500 font-normal pb-4">
+                User
+              </th>
+              <th className="text-left text-sm text-gray-500 font-normal pb-4">
+                TX Hash
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -137,7 +160,11 @@ const SwapTransactionHistory = observer(() => {
                   <div className="flex flex-col gap-2">
                     <span>No transactions found for this token pair</span>
                     <span className="text-xs text-gray-600">
-                      Chain: {wallet.currentChain?.displayName || wallet.currentChain?.chain?.name || 'Unknown'} (ID: {wallet.currentChainId})
+                      Chain:{' '}
+                      {wallet.currentChain?.displayName ||
+                        wallet.currentChain?.chain?.name ||
+                        'Unknown'}{' '}
+                      (ID: {wallet.currentChainId})
                     </span>
                     {baseCurrency && quoteCurrency && (
                       <span className="text-xs text-gray-600">
@@ -149,36 +176,57 @@ const SwapTransactionHistory = observer(() => {
               </tr>
             ) : (
               transactions.map((tx, index) => (
-                <tr 
-                  key={tx.id} 
+                <tr
+                  key={tx.id}
                   className={`border-b border-[#2a2318] transition-colors ${
-                    index % 2 === 0 
+                    index % 2 === 0
                       ? 'bg-transparent hover:bg-[#0A0704]' // Even rows - darker
-                      : 'bg-[#1F1409] hover:bg-[#241809]'   // Odd rows - lighter background
+                      : 'bg-[#1F1409] hover:bg-[#241809]' // Odd rows - lighter background
                   }`}
                 >
-                  <td className="py-4 text-sm text-white pl-2">{formatTimeAgo(tx.timestamp)}</td>
+                  <td className="py-4 text-sm text-white pl-2">
+                    {formatTimeAgo(tx.timestamp)}
+                  </td>
                   <td className="py-4 text-sm text-white font-medium">
                     ${new BigNumber(tx.amountUSD || 0).toFixed(2)}
                   </td>
                   <td className="py-4 text-sm">
-                    <span className={`${parseFloat(tx.amount0) > 0 ? 'text-red-500' : 'text-green-500'}`}>
+                    <span
+                      className={`${
+                        parseFloat(tx.amount0) > 0
+                          ? 'text-red-500'
+                          : 'text-green-500'
+                      }`}
+                    >
                       {parseFloat(tx.amount0) > 0 ? 'Sell ' : 'Buy '}
-                      {formatAmount(Math.abs(parseFloat(tx.amount0)).toString())}
+                      {formatAmount(
+                        Math.abs(parseFloat(tx.amount0)).toString()
+                      )}
                     </span>
                   </td>
                   <td className="py-4 text-sm">
-                    <span className={`${parseFloat(tx.amount1) > 0 ? 'text-red-500' : 'text-green-500'}`}>
+                    <span
+                      className={`${
+                        parseFloat(tx.amount1) > 0
+                          ? 'text-red-500'
+                          : 'text-green-500'
+                      }`}
+                    >
                       {parseFloat(tx.amount1) > 0 ? 'Sell ' : 'Buy '}
-                      {formatAmount(Math.abs(parseFloat(tx.amount1)).toString())}
+                      {formatAmount(
+                        Math.abs(parseFloat(tx.amount1)).toString()
+                      )}
                     </span>
                   </td>
                   <td className="py-4">
                     <button
-                      onClick={() => copyToClipboard(tx.origin || tx.sender || '')}
+                      onClick={() =>
+                        copyToClipboard(tx.origin || tx.sender || '')
+                      }
                       className="text-sm text-[#FFA931] hover:text-[#FFB951] flex items-center gap-1 transition-colors"
                     >
-                      {(tx.origin || tx.sender || '').slice(0, 6)}...{(tx.origin || tx.sender || '').slice(-4)}
+                      {(tx.origin || tx.sender || '').slice(0, 6)}...
+                      {(tx.origin || tx.sender || '').slice(-4)}
                       <VscCopy className="w-3 h-3" />
                     </button>
                   </td>
@@ -187,7 +235,8 @@ const SwapTransactionHistory = observer(() => {
                       onClick={() => openInExplorer(tx.transaction?.id || '')}
                       className="text-sm text-white hover:text-gray-300 flex items-center gap-1 transition-colors"
                     >
-                      {(tx.transaction?.id || '').slice(0, 6)}...{(tx.transaction?.id || '').slice(-4)}
+                      {(tx.transaction?.id || '').slice(0, 6)}...
+                      {(tx.transaction?.id || '').slice(-4)}
                       <ExternalLink className="w-3 h-3" />
                     </button>
                   </td>
@@ -207,11 +256,9 @@ const SwapTransactionHistory = observer(() => {
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
-        
-        <span className="text-gray-400 px-4">
-          Page {page}
-        </span>
-        
+
+        <span className="text-gray-400 px-4">Page {page}</span>
+
         <button
           onClick={() => setPage((p) => p + 1)}
           disabled={!hasNextPage || loading}
