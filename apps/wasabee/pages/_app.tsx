@@ -158,6 +158,7 @@ export default function App({
 
   return (
     <ErrorBoundary>
+      <Analytics />
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
           <PersistQueryClientProvider
