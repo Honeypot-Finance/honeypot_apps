@@ -352,7 +352,7 @@ export class Token implements BaseContract {
       return;
     }
 
-    if (!force) {
+    if (!force && typeof window !== 'undefined') {
       const cachedSymbol = localStorage.getItem(
         `token-symbol-${wallet.currentChainId}-${this.address.toLowerCase()}`
       );
@@ -369,10 +369,12 @@ export class Token implements BaseContract {
     const symbol = await this.contract.read.symbol();
     this.symbol = symbol;
 
-    localStorage.setItem(
-      `token-symbol-${wallet.currentChainId}-${this.address.toLowerCase()}`,
-      symbol
-    );
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(
+        `token-symbol-${wallet.currentChainId}-${this.address.toLowerCase()}`,
+        symbol
+      );
+    }
 
     return symbol;
   }
@@ -383,7 +385,7 @@ export class Token implements BaseContract {
       return;
     }
     
-    if (!force) {
+    if (!force && typeof window !== 'undefined') {
       const cachedDecimals = localStorage.getItem(
         `token-decimals-${wallet.currentChainId}-${this.address.toLowerCase()}`
       );
@@ -400,10 +402,12 @@ export class Token implements BaseContract {
     const decimals = await this.contract.read.decimals();
     this.decimals = decimals;
 
-    localStorage.setItem(
-      `token-decimals-${wallet.currentChainId}-${this.address.toLowerCase()}`,
-      decimals.toString()
-    );
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(
+        `token-decimals-${wallet.currentChainId}-${this.address.toLowerCase()}`,
+        decimals.toString()
+      );
+    }
 
     return decimals;
   }
@@ -440,13 +444,15 @@ export class Token implements BaseContract {
       return this.pot2pumpAddress;
     }
 
-    const cachedPot2PumpAddress = localStorage.getItem(
-      `token-pot2pump-${wallet.currentChainId}-${this.address.toLowerCase()}`
-    );
+    if (typeof window !== 'undefined') {
+      const cachedPot2PumpAddress = localStorage.getItem(
+        `token-pot2pump-${wallet.currentChainId}-${this.address.toLowerCase()}`
+      );
 
-    if (cachedPot2PumpAddress) {
-      this.pot2pumpAddress = cachedPot2PumpAddress as Address;
-      return cachedPot2PumpAddress;
+      if (cachedPot2PumpAddress) {
+        this.pot2pumpAddress = cachedPot2PumpAddress as Address;
+        return cachedPot2PumpAddress;
+      }
     }
 
     const pot2pumpAddress = await wallet.contracts.memeFactory.contract.read
@@ -461,10 +467,12 @@ export class Token implements BaseContract {
       return null;
     }
     this.pot2pumpAddress = pot2pumpAddress;
-    localStorage.setItem(
-      `token-pot2pump-${wallet.currentChainId}-${this.address.toLowerCase()}`,
-      pot2pumpAddress as `0x${string}`
-    );
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(
+        `token-pot2pump-${wallet.currentChainId}-${this.address.toLowerCase()}`,
+        pot2pumpAddress as `0x${string}`
+      );
+    }
     return pot2pumpAddress;
   }
 
@@ -504,7 +512,7 @@ export class Token implements BaseContract {
   }
 
   async getTotalSupply(force?: boolean) {
-    if (!force) {
+    if (!force && typeof window !== 'undefined') {
       const cachedTotalSupply = localStorage.getItem(
         `token-totalSupply-${
           wallet.currentChainId
@@ -520,12 +528,14 @@ export class Token implements BaseContract {
 
     this.totalSupplyWithoutDecimals = new BigNumber(totalSupply.toString());
 
-    localStorage.setItem(
-      `token-totalSupply-${
-        wallet.currentChainId
-      }-${this.address.toLowerCase()}`,
-      totalSupply.toString()
-    );
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(
+        `token-totalSupply-${
+          wallet.currentChainId
+        }-${this.address.toLowerCase()}`,
+        totalSupply.toString()
+      );
+    }
 
     return this.totalSupplyWithoutDecimals;
   }
