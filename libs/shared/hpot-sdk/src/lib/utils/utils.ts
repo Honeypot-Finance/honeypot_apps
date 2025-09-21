@@ -605,6 +605,41 @@ export class IndexerPaginationState<
   }
 }
 
+// Safe localStorage helper for server-side compatibility
+export const safeLocalStorage = {
+  getItem(key: string): string | null {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        return localStorage.getItem(key);
+      } catch (error) {
+        console.warn('localStorage.getItem failed:', error);
+        return null;
+      }
+    }
+    return null;
+  },
+  
+  setItem(key: string, value: string): void {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        localStorage.setItem(key, value);
+      } catch (error) {
+        console.warn('localStorage.setItem failed:', error);
+      }
+    }
+  },
+  
+  removeItem(key: string): void {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        localStorage.removeItem(key);
+      } catch (error) {
+        console.warn('localStorage.removeItem failed:', error);
+      }
+    }
+  }
+};
+
 export class StorageState<T = any, U = any> {
   static storages = {} as Record<string, StorageState>;
   static register(key: string, storage: StorageState) {

@@ -8,9 +8,11 @@ export const cache = (key: string, data: string) => {
   kv.set(key, { data: data, timestamp: new Date().getTime() });
 };
 
-export const getCache = (cacheKey: string): string | null => {
+export const getCache = async (
+  cacheKey: string
+): Promise<string | null> => {
   const timeBeforeRefresh = 15 * 60 * 1000; // 15 min
-  const cacheData = kv.get(cacheKey);
+  const cacheData = await kv.get(cacheKey);
 
   if (!cacheData) {
     return null;

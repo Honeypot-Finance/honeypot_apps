@@ -75,6 +75,8 @@ const PoolsTable = observer(
     const [sortField, setSortField] = useState<SortField>('tvl');
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [page, setPage] = useState(1);
+    const isMyPools = selectedFilter === 'myPools';
+    const showLoading = isMyPools ? Boolean(loading) : false;
 
     const filters = [
       { key: 'trending', label: 'All Pools' },
@@ -89,8 +91,8 @@ const PoolsTable = observer(
     const [showSortDropdown, setShowSortDropdown] = useState(false);
 
     useEffect(() => {
-      if (!wallet.isInit) return;
       if (selectedFilter === 'myPools') {
+        if (!wallet.isInit) return;
         setTableData(userPools as (Pool & { userTVLUSD: number })[]);
       } else {
         setTableData(data as (Pool & { userTVLUSD: number })[]);
@@ -352,8 +354,8 @@ const PoolsTable = observer(
         )}
 
         {/* Mobile view - card layout for small screens */}
-        <div className="md:hidden w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-4">
-          {!loading ? (
+        <div className="md:hidden w-full">
+          {!showLoading ? (
             getSortedPools().length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 {selectedFilter === 'myPools' && wallet.account
@@ -485,8 +487,8 @@ const PoolsTable = observer(
         </div>
 
         {/* Desktop view - table layout for medium screens and up */}
-        <div className="hidden md:block w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-6 overflow-x-auto">
-          {!loading ? (
+        <div className="hidden md:block custom-dashed-3xl w-full p-6 bg-[#271A0C] overflow-x-auto">
+          {!showLoading ? (
             <table className="w-full">
               <thead>
                 <tr>

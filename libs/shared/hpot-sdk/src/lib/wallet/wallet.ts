@@ -6,7 +6,7 @@ import { FtoFactoryContract } from '../contract/launches/fto/ftofactory-contract
 import { FtoFacadeContract } from '../contract/launches/fto/ftofacade-contract';
 import { makeAutoObservable, reaction, runInAction } from 'mobx';
 import { createPublicClientByChain } from './client';
-import { StorageState } from '../utils/utils';
+import { StorageState, safeLocalStorage } from '../utils/utils';
 import { MemeFactoryContract } from '../contract/launches/pot2pump/memefactory-contract';
 import { MEMEFacadeContract } from '../contract/launches/pot2pump/memefacade-contract';
 import { ICHIVaultFactoryContract } from '../contract/aquabera/ICHIVaultFactory-contract';
@@ -94,7 +94,8 @@ export class Wallet {
     this.networks = networks;
     this.currentChainId = walletClient?.chain?.id || DEFAULT_CHAIN_ID;
     console.log('[Wallet.initWallet] currentChainId:', this.currentChainId);
-    const mockAccount = localStorage.getItem('mockAccount');
+    // Use safe localStorage helper for server-side compatibility
+    const mockAccount = safeLocalStorage.getItem('mockAccount');
     this.account = mockAccount || walletClient?.account?.address || zeroAddress;
     this.contracts = {
       rewardVaultFactory: new BGTVaultFactory({
