@@ -20,6 +20,14 @@
         "lintFilePatterns": ["apps/wasabee/**/*.{ts,tsx,js,jsx}"],
         "ignorePath": "apps/wasabee/.eslintignore"
       }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/wasabee"],
+      "options": {
+        "jestConfig": "apps/wasabee/jest.config.ts",
+        "passWithNoTests": true
+      }
     }
   }
 }

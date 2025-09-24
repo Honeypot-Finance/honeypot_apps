@@ -12,6 +12,20 @@
         "outputPath": "apps/pot2pump/",
         "postcssConfig": "apps/pot2pump/postcss.config.js"
       }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["apps/pot2pump/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/pot2pump"],
+      "options": {
+        "jestConfig": "apps/pot2pump/jest.config.ts",
+        "passWithNoTests": true
+      }
     }
   }
 }
