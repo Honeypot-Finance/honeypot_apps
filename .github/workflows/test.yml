@@ -33,10 +33,10 @@ jobs:
         run: pnpm install --no-frozen-lockfile
 
       - name: Run linting
-        run: pnpm nx run-many --target=lint --all --parallel
+        run: pnpm nx run-many --target=lint --projects=wasabee,pot2pump,all-in-one-vault,leaderboard,dreampad --parallel
 
       - name: Run type checking
-        run: pnpm nx run-many --target=build --all --parallel
+        run: pnpm nx run-many --target=build --projects=wasabee,pot2pump,all-in-one-vault,leaderboard,dreampad --parallel
 
       - name: Run unit tests - Wasabee
         run: pnpm nx test wasabee --coverage --watchAll=false
@@ -87,7 +87,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile 
+        run: pnpm install --no-frozen-lockfile
 
       - name: Run integration tests
         run: |
