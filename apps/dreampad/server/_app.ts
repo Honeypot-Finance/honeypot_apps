@@ -20,6 +20,6 @@ export type AppRouter = typeof appRouter;
 const createCaller = t.createCallerFactory(appRouter);
 export const caller = createCaller({
   user: null,
-  //@ts-ignore
+  // @ts-expect-error - TRPC context type issue
   req: null,
 });

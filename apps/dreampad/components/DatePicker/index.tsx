@@ -8,7 +8,7 @@ interface DatePickerProps extends Omit<NextDatePickerProps, 'onChange'>{
 export const DatePicker = ({onChange, value, ...props}: DatePickerProps) => {
     console.log('value', value)
     return <NextDatePicker onChange={(value) => {
-        // @ts-ignore
+        // @ts-expect-error - DateValue type conversion
         const formValue = dayjs(value.toDate()).unix()
         console.log('formValue', formValue)
         onChange({

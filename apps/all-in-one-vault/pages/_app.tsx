@@ -1,7 +1,7 @@
 import '@/styles/globals.css';
 import '@/styles/overrides/reactjs-popup.css';
 import '@/styles/overrides/toastify.css';
-//@ts-ignore
+// @ts-expect-error - Next.js AppProps type issue
 import type { AppProps } from 'next/app';
 import { Layout } from '@/components/layout';
 import { NextLayoutPage } from '@/types/nextjs';

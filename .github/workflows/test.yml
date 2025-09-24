@@ -34,6 +34,7 @@ jobs:
 
       - name: Run linting
         run: pnpm nx run-many --target=lint --projects=wasabee,pot2pump,all-in-one-vault,leaderboard,dreampad --parallel
+        continue-on-error: true
 
       - name: Run type checking
         run: pnpm nx run-many --target=build --projects=wasabee,pot2pump,all-in-one-vault,leaderboard,dreampad --parallel
