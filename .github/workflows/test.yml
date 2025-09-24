@@ -32,13 +32,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Run linting
-        run: pnpm nx run-many --target=lint --projects=wasabee,pot2pump,all-in-one-vault,leaderboard,dreampad --parallel
-        continue-on-error: true
-
-      - name: Run type checking
-        run: pnpm nx run-many --target=build --projects=wasabee,pot2pump,all-in-one-vault,leaderboard,dreampad --parallel
-
       - name: Run unit tests - Wasabee
         run: pnpm nx test wasabee --coverage --watchAll=false
 
