@@ -13,6 +13,7 @@ import {
   wNativeABI,
   algebraVirtualPoolABI,
 } from './src/lib/abis/algebra-contracts/ABIs';
+import { limitOrderManagerABI } from './src/lib/abis/algebra-contracts/ABIs/plugins/limitOrderManagerAbi';
 import { ICHIVaultABI } from './src/lib/abis/aquabera/ICHIVault';
 import { ICHIVaultFactoryABI } from './src/lib/abis/aquabera/ICHIVaultFactory';
 import { ERC20ABI } from './src/lib/abis/erc20';
@@ -103,6 +104,10 @@ const contracts: ContractConfig[] = [
   {
     abi: ICHIVaultFactoryABI,
     name: 'ICHIVaultFactory',
+  },
+  {
+    abi: limitOrderManagerABI,
+    name: 'limitOrderManager',
   },
 ];
 

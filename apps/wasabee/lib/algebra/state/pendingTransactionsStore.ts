@@ -1,15 +1,16 @@
-import deepMerge from "lodash.merge";
-import { useEffect } from "react";
-import { useAccount, usePublicClient } from "wagmi";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { waitForTransactionReceipt } from "viem/actions";
-import { Address } from "viem";
+import deepMerge from 'lodash.merge';
+import { useEffect } from 'react';
+import { useAccount, usePublicClient } from 'wagmi';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { waitForTransactionReceipt } from 'viem/actions';
+import { Address } from 'viem';
 
 export enum TransactionType {
-  SWAP = "SWAP",
-  FARM = "FARM",
-  POOL = "POOL",
+  SWAP = 'SWAP',
+  FARM = 'FARM',
+  POOL = 'POOL',
+  LIMIT_ORDER = 'LIMIT_ORDER',
 }
 
 export interface TransactionInfo {
@@ -96,7 +97,7 @@ export const usePendingTransactionsStore = create(
       },
     }),
     {
-      name: "pending-transactions-storage",
+      name: 'pending-transactions-storage',
       merge(persistedState, currentState) {
         return deepMerge(currentState, persistedState);
       },

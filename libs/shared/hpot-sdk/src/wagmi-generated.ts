@@ -387,6 +387,7 @@ export const algebraBasePluginAbi = [
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -1186,11 +1187,13 @@ export const algebraEternalFarmingAbi = [
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
 export const algebraEternalFarmingAddress = {
   56: '0x0000000000000000000000000000000000000000',
+  10143: '0x99C8fF95fBB69E982e4Fae39e7F46f6Cf1Ca6246',
   80069: '0x0000000000000000000000000000000000000000',
   80094: '0x8554797BaE76Afe81dD5375111A2f3b0414D3B02',
   default: '0x0000000000000000000000000000000000000000',
@@ -1198,6 +1201,7 @@ export const algebraEternalFarmingAddress = {
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -1212,6 +1216,7 @@ export const algebraEternalFarmingConfig = {
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -1838,11 +1843,13 @@ export const algebraFactoryAbi = [
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
 export const algebraFactoryAddress = {
   56: '0xE8B1932CecF2d3fB85033135D72c728893c80D86',
+  10143: '0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d',
   80069: '0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d',
   80094: '0x7d53327D78EFD0b463bd8d7dc938C52402323b95',
   default: '0x0000000000000000000000000000000000000000',
@@ -1850,6 +1857,7 @@ export const algebraFactoryAddress = {
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -2512,6 +2520,7 @@ export const algebraPoolAbi = [
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -3229,11 +3238,13 @@ export const algebraPositionManagerAbi = [
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
 export const algebraPositionManagerAddress = {
   56: '0x559066e029787e27153BC99Dcf9E540111F346f4',
+  10143: '0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27',
   80069: '0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27',
   80094: '0xBB203aADbE36C125028a54584f5d48C1764317D0',
   default: '0x0000000000000000000000000000000000000000',
@@ -3241,6 +3252,7 @@ export const algebraPositionManagerAddress = {
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -3255,6 +3267,7 @@ export const algebraPositionManagerConfig = {
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -3362,11 +3375,13 @@ export const algebraQuoterAbi = [
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
 export const algebraQuoterAddress = {
   56: '0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6',
+  10143: '0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545',
   80069: '0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545',
   80094: '0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73',
   default: '0x0000000000000000000000000000000000000000',
@@ -3374,6 +3389,7 @@ export const algebraQuoterAddress = {
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -3388,6 +3404,7 @@ export const algebraQuoterConfig = {
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -3713,11 +3730,13 @@ export const algebraRouterAbi = [
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
 export const algebraRouterAddress = {
   56: '0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc',
+  10143: '0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69',
   80069: '0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69',
   80094: '0xFff605964840a5511f595EB970011EcBffa46b39',
   default: '0x0000000000000000000000000000000000000000',
@@ -3725,6 +3744,7 @@ export const algebraRouterAddress = {
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -4010,6 +4030,7 @@ export const algebraVirtualPoolAbi = [
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -4171,11 +4192,13 @@ export const algerbaQuoterV2Abi = [
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
 export const algerbaQuoterV2Address = {
   56: '0xc961e26393B4A2301b8e23Ee004A23C856153A49',
+  10143: '0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C',
   80069: '0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C',
   80094: '0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2',
   default: '0x0000000000000000000000000000000000000000',
@@ -4183,6 +4206,7 @@ export const algerbaQuoterV2Address = {
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -4333,6 +4357,7 @@ export const erc20Abi = [
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -4589,11 +4614,13 @@ export const farmingCenterAbi = [
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
 export const farmingCenterAddress = {
   56: '0x0000000000000000000000000000000000000000',
+  10143: '0xE161AeB0C3B41EfAdb070E725D5773352E764097',
   80069: '0x0000000000000000000000000000000000000000',
   80094: '0xD8399d82eb577F223f55e81EfB96942Ce560f51f',
   default: '0x0000000000000000000000000000000000000000',
@@ -4601,6 +4628,7 @@ export const farmingCenterAddress = {
 
 /**
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -5881,6 +5909,363 @@ export const wrappedNativeAbi = [
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// limitOrderManager
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const limitOrderManagerAbi = [
+  {
+    type: 'constructor',
+    inputs: [
+      { name: '_wNativeToken', internalType: 'address', type: 'address' },
+      { name: '_poolDeployer', internalType: 'address', type: 'address' },
+      { name: '_basePluginFactory', internalType: 'address', type: 'address' },
+      { name: '_factory', internalType: 'address', type: 'address' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  { type: 'error', inputs: [], name: 'CrossedRange' },
+  { type: 'error', inputs: [], name: 'Filled' },
+  { type: 'error', inputs: [], name: 'InRange' },
+  { type: 'error', inputs: [], name: 'InsufficientLiquidity' },
+  { type: 'error', inputs: [], name: 'NotFilled' },
+  { type: 'error', inputs: [], name: 'NotPlugin' },
+  { type: 'error', inputs: [], name: 'NotPoolManagerToken' },
+  { type: 'error', inputs: [], name: 'ZeroLiquidity' },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'epoch', internalType: 'Epoch', type: 'uint232', indexed: true },
+      {
+        name: 'tickLower',
+        internalType: 'int24',
+        type: 'int24',
+        indexed: false,
+      },
+      {
+        name: 'zeroForOne',
+        internalType: 'bool',
+        type: 'bool',
+        indexed: false,
+      },
+    ],
+    name: 'Fill',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'owner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      { name: 'epoch', internalType: 'Epoch', type: 'uint232', indexed: true },
+      {
+        name: 'tickLower',
+        internalType: 'int24',
+        type: 'int24',
+        indexed: false,
+      },
+      {
+        name: 'zeroForOne',
+        internalType: 'bool',
+        type: 'bool',
+        indexed: false,
+      },
+      {
+        name: 'liquidity',
+        internalType: 'uint128',
+        type: 'uint128',
+        indexed: false,
+      },
+    ],
+    name: 'Kill',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'pool', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'tickSpacing',
+        internalType: 'int24',
+        type: 'int24',
+        indexed: false,
+      },
+    ],
+    name: 'LimitOrderTickSpacing',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'owner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      { name: 'epoch', internalType: 'Epoch', type: 'uint232', indexed: true },
+      {
+        name: 'pool',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+      {
+        name: 'tickLower',
+        internalType: 'int24',
+        type: 'int24',
+        indexed: false,
+      },
+      {
+        name: 'tickUpper',
+        internalType: 'int24',
+        type: 'int24',
+        indexed: false,
+      },
+      {
+        name: 'zeroForOne',
+        internalType: 'bool',
+        type: 'bool',
+        indexed: false,
+      },
+      {
+        name: 'liquidity',
+        internalType: 'uint128',
+        type: 'uint128',
+        indexed: false,
+      },
+    ],
+    name: 'Place',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'owner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      { name: 'epoch', internalType: 'Epoch', type: 'uint232', indexed: true },
+      {
+        name: 'liquidity',
+        internalType: 'uint128',
+        type: 'uint128',
+        indexed: false,
+      },
+    ],
+    name: 'Withdraw',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ALGEBRA_BASE_PLUGIN_MANAGER',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'pool', internalType: 'address', type: 'address' },
+      { name: 'zeroToOne', internalType: 'bool', type: 'bool' },
+      { name: 'tick', internalType: 'int24', type: 'int24' },
+    ],
+    name: 'afterSwap',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'amount0Owed', internalType: 'uint256', type: 'uint256' },
+      { name: 'amount1Owed', internalType: 'uint256', type: 'uint256' },
+      { name: 'data', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'algebraMintCallback',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'basePluginFactory',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'Epoch', type: 'uint232' }],
+    name: 'epochInfos',
+    outputs: [
+      { name: 'filled', internalType: 'bool', type: 'bool' },
+      { name: 'tickLower', internalType: 'int24', type: 'int24' },
+      { name: 'tickUpper', internalType: 'int24', type: 'int24' },
+      { name: 'liquidityTotal', internalType: 'uint128', type: 'uint128' },
+      { name: 'token0', internalType: 'address', type: 'address' },
+      { name: 'token1', internalType: 'address', type: 'address' },
+      { name: 'deployer', internalType: 'address', type: 'address' },
+      { name: 'token0Total', internalType: 'uint128', type: 'uint128' },
+      { name: 'token1Total', internalType: 'uint128', type: 'uint128' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'epochNext',
+    outputs: [{ name: '', internalType: 'Epoch', type: 'uint232' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+    name: 'epochs',
+    outputs: [{ name: '', internalType: 'Epoch', type: 'uint232' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'factory',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'pool', internalType: 'address', type: 'address' },
+      { name: 'tickLower', internalType: 'int24', type: 'int24' },
+      { name: 'tickUpper', internalType: 'int24', type: 'int24' },
+      { name: 'zeroForOne', internalType: 'bool', type: 'bool' },
+    ],
+    name: 'getEpoch',
+    outputs: [{ name: '', internalType: 'Epoch', type: 'uint232' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'epoch', internalType: 'Epoch', type: 'uint232' },
+      { name: 'owner', internalType: 'address', type: 'address' },
+    ],
+    name: 'getEpochLiquidity',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'initialized',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      {
+        name: 'poolKey',
+        internalType: 'struct PoolAddress.PoolKey',
+        type: 'tuple',
+        components: [
+          { name: 'deployer', internalType: 'address', type: 'address' },
+          { name: 'token0', internalType: 'address', type: 'address' },
+          { name: 'token1', internalType: 'address', type: 'address' },
+        ],
+      },
+      { name: 'tickLower', internalType: 'int24', type: 'int24' },
+      { name: 'tickUpper', internalType: 'int24', type: 'int24' },
+      { name: 'liquidity', internalType: 'uint128', type: 'uint128' },
+      { name: 'zeroForOne', internalType: 'bool', type: 'bool' },
+      { name: 'to', internalType: 'address', type: 'address' },
+    ],
+    name: 'kill',
+    outputs: [
+      { name: 'amount0', internalType: 'uint256', type: 'uint256' },
+      { name: 'amount1', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      {
+        name: 'poolKey',
+        internalType: 'struct PoolAddress.PoolKey',
+        type: 'tuple',
+        components: [
+          { name: 'deployer', internalType: 'address', type: 'address' },
+          { name: 'token0', internalType: 'address', type: 'address' },
+          { name: 'token1', internalType: 'address', type: 'address' },
+        ],
+      },
+      { name: 'tickLower', internalType: 'int24', type: 'int24' },
+      { name: 'zeroForOne', internalType: 'bool', type: 'bool' },
+      { name: 'liquidity', internalType: 'uint128', type: 'uint128' },
+    ],
+    name: 'place',
+    outputs: [],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'poolDeployer',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'pool', internalType: 'address', type: 'address' },
+      { name: 'tickSpacing', internalType: 'int24', type: 'int24' },
+    ],
+    name: 'setTickSpacing',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'tickLowerLasts',
+    outputs: [{ name: '', internalType: 'int24', type: 'int24' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'tickSpacings',
+    outputs: [{ name: '', internalType: 'int24', type: 'int24' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'wNativeToken',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'epoch', internalType: 'Epoch', type: 'uint232' },
+      { name: 'to', internalType: 'address', type: 'address' },
+    ],
+    name: 'withdraw',
+    outputs: [
+      { name: 'amount0', internalType: 'uint256', type: 'uint256' },
+      { name: 'amount1', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  { type: 'receive', stateMutability: 'payable' },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // React
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -6344,6 +6729,7 @@ export const useWatchAlgebraBasePluginPriceChangeFactorEvent =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6355,6 +6741,7 @@ export const useReadAlgebraEternalFarming = /*#__PURE__*/ createUseReadContract(
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"FARMINGS_ADMINISTRATOR_ROLE"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6369,6 +6756,7 @@ export const useReadAlgebraEternalFarmingFarmingsAdministratorRole =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"INCENTIVE_MAKER_ROLE"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6383,6 +6771,7 @@ export const useReadAlgebraEternalFarmingIncentiveMakerRole =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"farmingCenter"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6397,6 +6786,7 @@ export const useReadAlgebraEternalFarmingFarmingCenter =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"farms"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6411,6 +6801,7 @@ export const useReadAlgebraEternalFarmingFarms =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"getRewardInfo"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6425,6 +6816,7 @@ export const useReadAlgebraEternalFarmingGetRewardInfo =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"incentives"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6439,6 +6831,7 @@ export const useReadAlgebraEternalFarmingIncentives =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"isEmergencyWithdrawActivated"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6453,6 +6846,7 @@ export const useReadAlgebraEternalFarmingIsEmergencyWithdrawActivated =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"isIncentiveDeactivated"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6467,6 +6861,7 @@ export const useReadAlgebraEternalFarmingIsIncentiveDeactivated =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"nonfungiblePositionManager"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6481,6 +6876,7 @@ export const useReadAlgebraEternalFarmingNonfungiblePositionManager =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"numOfIncentives"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6495,6 +6891,7 @@ export const useReadAlgebraEternalFarmingNumOfIncentives =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"rewards"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6509,6 +6906,7 @@ export const useReadAlgebraEternalFarmingRewards =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6522,6 +6920,7 @@ export const useWriteAlgebraEternalFarming =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"addRewards"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6536,6 +6935,7 @@ export const useWriteAlgebraEternalFarmingAddRewards =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"claimReward"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6550,6 +6950,7 @@ export const useWriteAlgebraEternalFarmingClaimReward =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"claimRewardFrom"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6564,6 +6965,7 @@ export const useWriteAlgebraEternalFarmingClaimRewardFrom =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"collectRewards"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6578,6 +6980,7 @@ export const useWriteAlgebraEternalFarmingCollectRewards =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"createEternalFarming"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6592,6 +6995,7 @@ export const useWriteAlgebraEternalFarmingCreateEternalFarming =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"deactivateIncentive"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6606,6 +7010,7 @@ export const useWriteAlgebraEternalFarmingDeactivateIncentive =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"decreaseRewardsAmount"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6620,6 +7025,7 @@ export const useWriteAlgebraEternalFarmingDecreaseRewardsAmount =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"enterFarming"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6634,6 +7040,7 @@ export const useWriteAlgebraEternalFarmingEnterFarming =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"exitFarming"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6648,6 +7055,7 @@ export const useWriteAlgebraEternalFarmingExitFarming =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"setEmergencyWithdrawStatus"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6662,6 +7070,7 @@ export const useWriteAlgebraEternalFarmingSetEmergencyWithdrawStatus =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"setFarmingCenterAddress"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6676,6 +7085,7 @@ export const useWriteAlgebraEternalFarmingSetFarmingCenterAddress =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"setRates"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6690,6 +7100,7 @@ export const useWriteAlgebraEternalFarmingSetRates =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6703,6 +7114,7 @@ export const useSimulateAlgebraEternalFarming =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"addRewards"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6717,6 +7129,7 @@ export const useSimulateAlgebraEternalFarmingAddRewards =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"claimReward"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6731,6 +7144,7 @@ export const useSimulateAlgebraEternalFarmingClaimReward =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"claimRewardFrom"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6745,6 +7159,7 @@ export const useSimulateAlgebraEternalFarmingClaimRewardFrom =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"collectRewards"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6759,6 +7174,7 @@ export const useSimulateAlgebraEternalFarmingCollectRewards =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"createEternalFarming"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6773,6 +7189,7 @@ export const useSimulateAlgebraEternalFarmingCreateEternalFarming =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"deactivateIncentive"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6787,6 +7204,7 @@ export const useSimulateAlgebraEternalFarmingDeactivateIncentive =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"decreaseRewardsAmount"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6801,6 +7219,7 @@ export const useSimulateAlgebraEternalFarmingDecreaseRewardsAmount =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"enterFarming"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6815,6 +7234,7 @@ export const useSimulateAlgebraEternalFarmingEnterFarming =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"exitFarming"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6829,6 +7249,7 @@ export const useSimulateAlgebraEternalFarmingExitFarming =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"setEmergencyWithdrawStatus"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6843,6 +7264,7 @@ export const useSimulateAlgebraEternalFarmingSetEmergencyWithdrawStatus =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"setFarmingCenterAddress"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6857,6 +7279,7 @@ export const useSimulateAlgebraEternalFarmingSetFarmingCenterAddress =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `functionName` set to `"setRates"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6871,6 +7294,7 @@ export const useSimulateAlgebraEternalFarmingSetRates =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraEternalFarmingAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6884,6 +7308,7 @@ export const useWatchAlgebraEternalFarmingEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `eventName` set to `"EmergencyWithdraw"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6898,6 +7323,7 @@ export const useWatchAlgebraEternalFarmingEmergencyWithdrawEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `eventName` set to `"EternalFarmingCreated"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6912,6 +7338,7 @@ export const useWatchAlgebraEternalFarmingEternalFarmingCreatedEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `eventName` set to `"FarmEnded"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6926,6 +7353,7 @@ export const useWatchAlgebraEternalFarmingFarmEndedEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `eventName` set to `"FarmEntered"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6940,6 +7368,7 @@ export const useWatchAlgebraEternalFarmingFarmEnteredEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `eventName` set to `"FarmingCenter"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6954,6 +7383,7 @@ export const useWatchAlgebraEternalFarmingFarmingCenterEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `eventName` set to `"IncentiveDeactivated"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6968,6 +7398,7 @@ export const useWatchAlgebraEternalFarmingIncentiveDeactivatedEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `eventName` set to `"RewardAmountsDecreased"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6982,6 +7413,7 @@ export const useWatchAlgebraEternalFarmingRewardAmountsDecreasedEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `eventName` set to `"RewardClaimed"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -6996,6 +7428,7 @@ export const useWatchAlgebraEternalFarmingRewardClaimedEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `eventName` set to `"RewardsAdded"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -7010,6 +7443,7 @@ export const useWatchAlgebraEternalFarmingRewardsAddedEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `eventName` set to `"RewardsCollected"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -7024,6 +7458,7 @@ export const useWatchAlgebraEternalFarmingRewardsCollectedEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraEternalFarmingAbi}__ and `eventName` set to `"RewardsRatesChanged"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x99c8ff95fbb69e982e4fae39e7f46f6cf1ca6246)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x8554797BaE76Afe81dD5375111A2f3b0414D3B02)
  */
@@ -7038,6 +7473,7 @@ export const useWatchAlgebraEternalFarmingRewardsRatesChangedEvent =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7050,6 +7486,7 @@ export const useReadAlgebraFactory = /*#__PURE__*/ createUseReadContract({
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"CUSTOM_POOL_DEPLOYER"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7064,6 +7501,7 @@ export const useReadAlgebraFactoryCustomPoolDeployer =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"DEFAULT_ADMIN_ROLE"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7078,6 +7516,7 @@ export const useReadAlgebraFactoryDefaultAdminRole =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"POOLS_ADMINISTRATOR_ROLE"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7092,6 +7531,7 @@ export const useReadAlgebraFactoryPoolsAdministratorRole =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"POOL_INIT_CODE_HASH"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7106,6 +7546,7 @@ export const useReadAlgebraFactoryPoolInitCodeHash =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"computeCustomPoolAddress"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7120,6 +7561,7 @@ export const useReadAlgebraFactoryComputeCustomPoolAddress =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"computePoolAddress"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7134,6 +7576,7 @@ export const useReadAlgebraFactoryComputePoolAddress =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"customPoolByPair"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7148,6 +7591,7 @@ export const useReadAlgebraFactoryCustomPoolByPair =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"defaultCommunityFee"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7162,6 +7606,7 @@ export const useReadAlgebraFactoryDefaultCommunityFee =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"defaultConfigurationForPool"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7176,6 +7621,7 @@ export const useReadAlgebraFactoryDefaultConfigurationForPool =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"defaultFee"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7190,6 +7636,7 @@ export const useReadAlgebraFactoryDefaultFee =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"defaultPluginFactory"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7204,6 +7651,7 @@ export const useReadAlgebraFactoryDefaultPluginFactory =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"defaultTickspacing"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7218,6 +7666,7 @@ export const useReadAlgebraFactoryDefaultTickspacing =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"getRoleAdmin"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7232,6 +7681,7 @@ export const useReadAlgebraFactoryGetRoleAdmin =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"getRoleMember"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7246,6 +7696,7 @@ export const useReadAlgebraFactoryGetRoleMember =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"getRoleMemberCount"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7260,6 +7711,7 @@ export const useReadAlgebraFactoryGetRoleMemberCount =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"hasRole"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7275,6 +7727,7 @@ export const useReadAlgebraFactoryHasRole = /*#__PURE__*/ createUseReadContract(
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"hasRoleOrOwner"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7289,6 +7742,7 @@ export const useReadAlgebraFactoryHasRoleOrOwner =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"owner"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7302,6 +7756,7 @@ export const useReadAlgebraFactoryOwner = /*#__PURE__*/ createUseReadContract({
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"pendingOwner"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7316,6 +7771,7 @@ export const useReadAlgebraFactoryPendingOwner =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"poolByPair"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7330,6 +7786,7 @@ export const useReadAlgebraFactoryPoolByPair =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"poolDeployer"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7344,6 +7801,7 @@ export const useReadAlgebraFactoryPoolDeployer =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"renounceOwnershipStartTimestamp"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7358,6 +7816,7 @@ export const useReadAlgebraFactoryRenounceOwnershipStartTimestamp =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"supportsInterface"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7372,6 +7831,7 @@ export const useReadAlgebraFactorySupportsInterface =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"vaultFactory"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7386,6 +7846,7 @@ export const useReadAlgebraFactoryVaultFactory =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7398,6 +7859,7 @@ export const useWriteAlgebraFactory = /*#__PURE__*/ createUseWriteContract({
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"acceptOwnership"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7412,6 +7874,7 @@ export const useWriteAlgebraFactoryAcceptOwnership =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"createCustomPool"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7426,6 +7889,7 @@ export const useWriteAlgebraFactoryCreateCustomPool =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"createPool"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7440,6 +7904,7 @@ export const useWriteAlgebraFactoryCreatePool =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"grantRole"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7454,6 +7919,7 @@ export const useWriteAlgebraFactoryGrantRole =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"renounceOwnership"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7468,6 +7934,7 @@ export const useWriteAlgebraFactoryRenounceOwnership =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"renounceRole"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7482,6 +7949,7 @@ export const useWriteAlgebraFactoryRenounceRole =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"revokeRole"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7496,6 +7964,7 @@ export const useWriteAlgebraFactoryRevokeRole =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultCommunityFee"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7510,6 +7979,7 @@ export const useWriteAlgebraFactorySetDefaultCommunityFee =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultFee"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7524,6 +7994,7 @@ export const useWriteAlgebraFactorySetDefaultFee =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultPluginFactory"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7538,6 +8009,7 @@ export const useWriteAlgebraFactorySetDefaultPluginFactory =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultTickspacing"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7552,6 +8024,7 @@ export const useWriteAlgebraFactorySetDefaultTickspacing =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setVaultFactory"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7566,6 +8039,7 @@ export const useWriteAlgebraFactorySetVaultFactory =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"startRenounceOwnership"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7580,6 +8054,7 @@ export const useWriteAlgebraFactoryStartRenounceOwnership =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"stopRenounceOwnership"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7594,6 +8069,7 @@ export const useWriteAlgebraFactoryStopRenounceOwnership =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"transferOwnership"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7608,6 +8084,7 @@ export const useWriteAlgebraFactoryTransferOwnership =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7621,6 +8098,7 @@ export const useSimulateAlgebraFactory =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"acceptOwnership"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7635,6 +8113,7 @@ export const useSimulateAlgebraFactoryAcceptOwnership =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"createCustomPool"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7649,6 +8128,7 @@ export const useSimulateAlgebraFactoryCreateCustomPool =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"createPool"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7663,6 +8143,7 @@ export const useSimulateAlgebraFactoryCreatePool =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"grantRole"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7677,6 +8158,7 @@ export const useSimulateAlgebraFactoryGrantRole =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"renounceOwnership"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7691,6 +8173,7 @@ export const useSimulateAlgebraFactoryRenounceOwnership =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"renounceRole"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7705,6 +8188,7 @@ export const useSimulateAlgebraFactoryRenounceRole =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"revokeRole"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7719,6 +8203,7 @@ export const useSimulateAlgebraFactoryRevokeRole =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultCommunityFee"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7733,6 +8218,7 @@ export const useSimulateAlgebraFactorySetDefaultCommunityFee =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultFee"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7747,6 +8233,7 @@ export const useSimulateAlgebraFactorySetDefaultFee =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultPluginFactory"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7761,6 +8248,7 @@ export const useSimulateAlgebraFactorySetDefaultPluginFactory =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setDefaultTickspacing"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7775,6 +8263,7 @@ export const useSimulateAlgebraFactorySetDefaultTickspacing =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"setVaultFactory"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7789,6 +8278,7 @@ export const useSimulateAlgebraFactorySetVaultFactory =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"startRenounceOwnership"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7803,6 +8293,7 @@ export const useSimulateAlgebraFactoryStartRenounceOwnership =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"stopRenounceOwnership"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7817,6 +8308,7 @@ export const useSimulateAlgebraFactoryStopRenounceOwnership =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraFactoryAbi}__ and `functionName` set to `"transferOwnership"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7831,6 +8323,7 @@ export const useSimulateAlgebraFactoryTransferOwnership =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7844,6 +8337,7 @@ export const useWatchAlgebraFactoryEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"CustomPool"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7858,6 +8352,7 @@ export const useWatchAlgebraFactoryCustomPoolEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"DefaultCommunityFee"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7872,6 +8367,7 @@ export const useWatchAlgebraFactoryDefaultCommunityFeeEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"DefaultFee"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7886,6 +8382,7 @@ export const useWatchAlgebraFactoryDefaultFeeEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"DefaultPluginFactory"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7900,6 +8397,7 @@ export const useWatchAlgebraFactoryDefaultPluginFactoryEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"DefaultTickspacing"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7914,6 +8412,7 @@ export const useWatchAlgebraFactoryDefaultTickspacingEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"OwnershipTransferStarted"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7928,6 +8427,7 @@ export const useWatchAlgebraFactoryOwnershipTransferStartedEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"OwnershipTransferred"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7942,6 +8442,7 @@ export const useWatchAlgebraFactoryOwnershipTransferredEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"Pool"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7956,6 +8457,7 @@ export const useWatchAlgebraFactoryPoolEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"RenounceOwnershipFinish"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7970,6 +8472,7 @@ export const useWatchAlgebraFactoryRenounceOwnershipFinishEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"RenounceOwnershipStart"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7984,6 +8487,7 @@ export const useWatchAlgebraFactoryRenounceOwnershipStartEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"RenounceOwnershipStop"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -7998,6 +8502,7 @@ export const useWatchAlgebraFactoryRenounceOwnershipStopEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"RoleAdminChanged"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -8012,6 +8517,7 @@ export const useWatchAlgebraFactoryRoleAdminChangedEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"RoleGranted"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -8026,6 +8532,7 @@ export const useWatchAlgebraFactoryRoleGrantedEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"RoleRevoked"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -8040,6 +8547,7 @@ export const useWatchAlgebraFactoryRoleRevokedEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraFactoryAbi}__ and `eventName` set to `"VaultFactory"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xE8B1932CecF2d3fB85033135D72c728893c80D86)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xad88d4abbe0d0672f00eb3b83e6518608d82e95d)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x7d53327D78EFD0b463bd8d7dc938C52402323b95)
  */
@@ -8561,6 +9069,7 @@ export const useWatchAlgebraPoolTickSpacingEvent =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8574,6 +9083,7 @@ export const useReadAlgebraPositionManager =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"DOMAIN_SEPARATOR"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8588,6 +9098,7 @@ export const useReadAlgebraPositionManagerDomainSeparator =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"NONFUNGIBLE_POSITION_MANAGER_ADMINISTRATOR_ROLE"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8602,6 +9113,7 @@ export const useReadAlgebraPositionManagerNonfungiblePositionManagerAdministrato
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"PERMIT_TYPEHASH"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8616,6 +9128,7 @@ export const useReadAlgebraPositionManagerPermitTypehash =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"WNativeToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8630,6 +9143,7 @@ export const useReadAlgebraPositionManagerWNativeToken =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"balanceOf"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8644,6 +9158,7 @@ export const useReadAlgebraPositionManagerBalanceOf =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"factory"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8658,6 +9173,7 @@ export const useReadAlgebraPositionManagerFactory =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"farmingApprovals"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8672,6 +9188,7 @@ export const useReadAlgebraPositionManagerFarmingApprovals =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"farmingCenter"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8686,6 +9203,7 @@ export const useReadAlgebraPositionManagerFarmingCenter =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"getApproved"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8700,6 +9218,7 @@ export const useReadAlgebraPositionManagerGetApproved =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"isApprovedForAll"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8714,6 +9233,7 @@ export const useReadAlgebraPositionManagerIsApprovedForAll =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"isApprovedOrOwner"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8728,6 +9248,7 @@ export const useReadAlgebraPositionManagerIsApprovedOrOwner =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"name"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8742,6 +9263,7 @@ export const useReadAlgebraPositionManagerName =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"ownerOf"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8756,6 +9278,7 @@ export const useReadAlgebraPositionManagerOwnerOf =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"poolDeployer"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8770,6 +9293,7 @@ export const useReadAlgebraPositionManagerPoolDeployer =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"positions"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8784,6 +9308,7 @@ export const useReadAlgebraPositionManagerPositions =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"supportsInterface"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8798,6 +9323,7 @@ export const useReadAlgebraPositionManagerSupportsInterface =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"symbol"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8812,6 +9338,7 @@ export const useReadAlgebraPositionManagerSymbol =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"tokenByIndex"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8826,6 +9353,7 @@ export const useReadAlgebraPositionManagerTokenByIndex =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"tokenFarmedIn"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8840,6 +9368,7 @@ export const useReadAlgebraPositionManagerTokenFarmedIn =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"tokenOfOwnerByIndex"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8854,6 +9383,7 @@ export const useReadAlgebraPositionManagerTokenOfOwnerByIndex =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"tokenURI"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8868,6 +9398,7 @@ export const useReadAlgebraPositionManagerTokenUri =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"totalSupply"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8882,6 +9413,7 @@ export const useReadAlgebraPositionManagerTotalSupply =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8895,6 +9427,7 @@ export const useWriteAlgebraPositionManager =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"algebraMintCallback"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8909,6 +9442,7 @@ export const useWriteAlgebraPositionManagerAlgebraMintCallback =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"approve"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8923,6 +9457,7 @@ export const useWriteAlgebraPositionManagerApprove =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"approveForFarming"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8937,6 +9472,7 @@ export const useWriteAlgebraPositionManagerApproveForFarming =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"burn"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8951,6 +9487,7 @@ export const useWriteAlgebraPositionManagerBurn =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"collect"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8965,6 +9502,7 @@ export const useWriteAlgebraPositionManagerCollect =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"createAndInitializePoolIfNecessary"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8979,6 +9517,7 @@ export const useWriteAlgebraPositionManagerCreateAndInitializePoolIfNecessary =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"decreaseLiquidity"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -8993,6 +9532,7 @@ export const useWriteAlgebraPositionManagerDecreaseLiquidity =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"increaseLiquidity"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9007,6 +9547,7 @@ export const useWriteAlgebraPositionManagerIncreaseLiquidity =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"mint"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9021,6 +9562,7 @@ export const useWriteAlgebraPositionManagerMint =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"multicall"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9035,6 +9577,7 @@ export const useWriteAlgebraPositionManagerMulticall =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"permit"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9049,6 +9592,7 @@ export const useWriteAlgebraPositionManagerPermit =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"refundNativeToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9063,6 +9607,7 @@ export const useWriteAlgebraPositionManagerRefundNativeToken =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"safeTransferFrom"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9077,6 +9622,7 @@ export const useWriteAlgebraPositionManagerSafeTransferFrom =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"selfPermit"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9091,6 +9637,7 @@ export const useWriteAlgebraPositionManagerSelfPermit =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"selfPermitAllowed"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9105,6 +9652,7 @@ export const useWriteAlgebraPositionManagerSelfPermitAllowed =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"selfPermitAllowedIfNecessary"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9119,6 +9667,7 @@ export const useWriteAlgebraPositionManagerSelfPermitAllowedIfNecessary =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"selfPermitIfNecessary"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9133,6 +9682,7 @@ export const useWriteAlgebraPositionManagerSelfPermitIfNecessary =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"setApprovalForAll"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9147,6 +9697,7 @@ export const useWriteAlgebraPositionManagerSetApprovalForAll =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"setFarmingCenter"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9161,6 +9712,7 @@ export const useWriteAlgebraPositionManagerSetFarmingCenter =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"sweepToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9175,6 +9727,7 @@ export const useWriteAlgebraPositionManagerSweepToken =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"switchFarmingStatus"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9189,6 +9742,7 @@ export const useWriteAlgebraPositionManagerSwitchFarmingStatus =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"transferFrom"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9203,6 +9757,7 @@ export const useWriteAlgebraPositionManagerTransferFrom =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"unwrapWNativeToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9217,6 +9772,7 @@ export const useWriteAlgebraPositionManagerUnwrapWNativeToken =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9230,6 +9786,7 @@ export const useSimulateAlgebraPositionManager =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"algebraMintCallback"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9244,6 +9801,7 @@ export const useSimulateAlgebraPositionManagerAlgebraMintCallback =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"approve"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9258,6 +9816,7 @@ export const useSimulateAlgebraPositionManagerApprove =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"approveForFarming"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9272,6 +9831,7 @@ export const useSimulateAlgebraPositionManagerApproveForFarming =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"burn"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9286,6 +9846,7 @@ export const useSimulateAlgebraPositionManagerBurn =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"collect"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9300,6 +9861,7 @@ export const useSimulateAlgebraPositionManagerCollect =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"createAndInitializePoolIfNecessary"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9314,6 +9876,7 @@ export const useSimulateAlgebraPositionManagerCreateAndInitializePoolIfNecessary
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"decreaseLiquidity"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9328,6 +9891,7 @@ export const useSimulateAlgebraPositionManagerDecreaseLiquidity =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"increaseLiquidity"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9342,6 +9906,7 @@ export const useSimulateAlgebraPositionManagerIncreaseLiquidity =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"mint"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9356,6 +9921,7 @@ export const useSimulateAlgebraPositionManagerMint =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"multicall"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9370,6 +9936,7 @@ export const useSimulateAlgebraPositionManagerMulticall =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"permit"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9384,6 +9951,7 @@ export const useSimulateAlgebraPositionManagerPermit =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"refundNativeToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9398,6 +9966,7 @@ export const useSimulateAlgebraPositionManagerRefundNativeToken =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"safeTransferFrom"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9412,6 +9981,7 @@ export const useSimulateAlgebraPositionManagerSafeTransferFrom =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"selfPermit"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9426,6 +9996,7 @@ export const useSimulateAlgebraPositionManagerSelfPermit =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"selfPermitAllowed"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9440,6 +10011,7 @@ export const useSimulateAlgebraPositionManagerSelfPermitAllowed =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"selfPermitAllowedIfNecessary"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9454,6 +10026,7 @@ export const useSimulateAlgebraPositionManagerSelfPermitAllowedIfNecessary =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"selfPermitIfNecessary"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9468,6 +10041,7 @@ export const useSimulateAlgebraPositionManagerSelfPermitIfNecessary =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"setApprovalForAll"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9482,6 +10056,7 @@ export const useSimulateAlgebraPositionManagerSetApprovalForAll =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"setFarmingCenter"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9496,6 +10071,7 @@ export const useSimulateAlgebraPositionManagerSetFarmingCenter =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"sweepToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9510,6 +10086,7 @@ export const useSimulateAlgebraPositionManagerSweepToken =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"switchFarmingStatus"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9524,6 +10101,7 @@ export const useSimulateAlgebraPositionManagerSwitchFarmingStatus =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"transferFrom"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9538,6 +10116,7 @@ export const useSimulateAlgebraPositionManagerTransferFrom =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `functionName` set to `"unwrapWNativeToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9552,6 +10131,7 @@ export const useSimulateAlgebraPositionManagerUnwrapWNativeToken =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraPositionManagerAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9565,6 +10145,7 @@ export const useWatchAlgebraPositionManagerEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `eventName` set to `"Approval"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9579,6 +10160,7 @@ export const useWatchAlgebraPositionManagerApprovalEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `eventName` set to `"ApprovalForAll"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9593,6 +10175,7 @@ export const useWatchAlgebraPositionManagerApprovalForAllEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `eventName` set to `"Collect"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9607,6 +10190,7 @@ export const useWatchAlgebraPositionManagerCollectEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `eventName` set to `"DecreaseLiquidity"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9621,6 +10205,7 @@ export const useWatchAlgebraPositionManagerDecreaseLiquidityEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `eventName` set to `"FarmingFailed"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9635,6 +10220,7 @@ export const useWatchAlgebraPositionManagerFarmingFailedEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `eventName` set to `"IncreaseLiquidity"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9649,6 +10235,7 @@ export const useWatchAlgebraPositionManagerIncreaseLiquidityEvent =
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link algebraPositionManagerAbi}__ and `eventName` set to `"Transfer"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x559066e029787e27153BC99Dcf9E540111F346f4)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xBB203aADbE36C125028a54584f5d48C1764317D0)
  */
@@ -9663,6 +10250,7 @@ export const useWatchAlgebraPositionManagerTransferEvent =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraQuoterAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -9675,6 +10263,7 @@ export const useReadAlgebraQuoter = /*#__PURE__*/ createUseReadContract({
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraQuoterAbi}__ and `functionName` set to `"WNativeToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -9689,6 +10278,7 @@ export const useReadAlgebraQuoterWNativeToken =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraQuoterAbi}__ and `functionName` set to `"algebraSwapCallback"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -9703,6 +10293,7 @@ export const useReadAlgebraQuoterAlgebraSwapCallback =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraQuoterAbi}__ and `functionName` set to `"factory"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -9716,6 +10307,7 @@ export const useReadAlgebraQuoterFactory = /*#__PURE__*/ createUseReadContract({
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraQuoterAbi}__ and `functionName` set to `"poolDeployer"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -9730,6 +10322,7 @@ export const useReadAlgebraQuoterPoolDeployer =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraQuoterAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -9742,6 +10335,7 @@ export const useWriteAlgebraQuoter = /*#__PURE__*/ createUseWriteContract({
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraQuoterAbi}__ and `functionName` set to `"quoteExactInput"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -9756,6 +10350,7 @@ export const useWriteAlgebraQuoterQuoteExactInput =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraQuoterAbi}__ and `functionName` set to `"quoteExactInputSingle"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -9770,6 +10365,7 @@ export const useWriteAlgebraQuoterQuoteExactInputSingle =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraQuoterAbi}__ and `functionName` set to `"quoteExactOutput"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -9784,6 +10380,7 @@ export const useWriteAlgebraQuoterQuoteExactOutput =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraQuoterAbi}__ and `functionName` set to `"quoteExactOutputSingle"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -9798,6 +10395,7 @@ export const useWriteAlgebraQuoterQuoteExactOutputSingle =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraQuoterAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -9809,6 +10407,7 @@ export const useSimulateAlgebraQuoter = /*#__PURE__*/ createUseSimulateContract(
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraQuoterAbi}__ and `functionName` set to `"quoteExactInput"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -9823,6 +10422,7 @@ export const useSimulateAlgebraQuoterQuoteExactInput =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraQuoterAbi}__ and `functionName` set to `"quoteExactInputSingle"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -9837,6 +10437,7 @@ export const useSimulateAlgebraQuoterQuoteExactInputSingle =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraQuoterAbi}__ and `functionName` set to `"quoteExactOutput"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -9851,6 +10452,7 @@ export const useSimulateAlgebraQuoterQuoteExactOutput =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraQuoterAbi}__ and `functionName` set to `"quoteExactOutputSingle"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x039eCEfb770ae0eb370d9dbb5cb42218C2Ae98D6)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xa8ef07aebc64a96ae264f3bd5cc37ff5b28b1545)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xa8ef07AEbC64A96Ae264f3Bd5cC37fF5B28B1545)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0x5Cb13b83814f2c7896fb65D61019Ca01eD852A73)
  */
@@ -9865,6 +10467,7 @@ export const useSimulateAlgebraQuoterQuoteExactOutputSingle =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraRouterAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -9877,6 +10480,7 @@ export const useReadAlgebraRouter = /*#__PURE__*/ createUseReadContract({
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"WNativeToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -9891,6 +10495,7 @@ export const useReadAlgebraRouterWNativeToken =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"factory"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -9904,6 +10509,7 @@ export const useReadAlgebraRouterFactory = /*#__PURE__*/ createUseReadContract({
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"poolDeployer"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -9918,6 +10524,7 @@ export const useReadAlgebraRouterPoolDeployer =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -9930,6 +10537,7 @@ export const useWriteAlgebraRouter = /*#__PURE__*/ createUseWriteContract({
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"algebraSwapCallback"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -9944,6 +10552,7 @@ export const useWriteAlgebraRouterAlgebraSwapCallback =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"exactInput"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -9958,6 +10567,7 @@ export const useWriteAlgebraRouterExactInput =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"exactInputSingle"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -9972,6 +10582,7 @@ export const useWriteAlgebraRouterExactInputSingle =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"exactInputSingleSupportingFeeOnTransferTokens"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -9986,6 +10597,7 @@ export const useWriteAlgebraRouterExactInputSingleSupportingFeeOnTransferTokens 
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"exactOutput"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10000,6 +10612,7 @@ export const useWriteAlgebraRouterExactOutput =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"exactOutputSingle"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10014,6 +10627,7 @@ export const useWriteAlgebraRouterExactOutputSingle =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"multicall"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10028,6 +10642,7 @@ export const useWriteAlgebraRouterMulticall =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"refundNativeToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10042,6 +10657,7 @@ export const useWriteAlgebraRouterRefundNativeToken =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"selfPermit"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10056,6 +10672,7 @@ export const useWriteAlgebraRouterSelfPermit =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"selfPermitAllowed"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10070,6 +10687,7 @@ export const useWriteAlgebraRouterSelfPermitAllowed =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"selfPermitAllowedIfNecessary"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10084,6 +10702,7 @@ export const useWriteAlgebraRouterSelfPermitAllowedIfNecessary =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"selfPermitIfNecessary"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10098,6 +10717,7 @@ export const useWriteAlgebraRouterSelfPermitIfNecessary =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"sweepToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10112,6 +10732,7 @@ export const useWriteAlgebraRouterSweepToken =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"sweepTokenWithFee"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10126,6 +10747,7 @@ export const useWriteAlgebraRouterSweepTokenWithFee =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"unwrapWNativeToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10140,6 +10762,7 @@ export const useWriteAlgebraRouterUnwrapWNativeToken =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"unwrapWNativeTokenWithFee"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10154,6 +10777,7 @@ export const useWriteAlgebraRouterUnwrapWNativeTokenWithFee =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10165,6 +10789,7 @@ export const useSimulateAlgebraRouter = /*#__PURE__*/ createUseSimulateContract(
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"algebraSwapCallback"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10179,6 +10804,7 @@ export const useSimulateAlgebraRouterAlgebraSwapCallback =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"exactInput"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10193,6 +10819,7 @@ export const useSimulateAlgebraRouterExactInput =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"exactInputSingle"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10207,6 +10834,7 @@ export const useSimulateAlgebraRouterExactInputSingle =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"exactInputSingleSupportingFeeOnTransferTokens"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10221,6 +10849,7 @@ export const useSimulateAlgebraRouterExactInputSingleSupportingFeeOnTransferToke
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"exactOutput"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10235,6 +10864,7 @@ export const useSimulateAlgebraRouterExactOutput =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"exactOutputSingle"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10249,6 +10879,7 @@ export const useSimulateAlgebraRouterExactOutputSingle =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"multicall"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10263,6 +10894,7 @@ export const useSimulateAlgebraRouterMulticall =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"refundNativeToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10277,6 +10909,7 @@ export const useSimulateAlgebraRouterRefundNativeToken =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"selfPermit"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10291,6 +10924,7 @@ export const useSimulateAlgebraRouterSelfPermit =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"selfPermitAllowed"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10305,6 +10939,7 @@ export const useSimulateAlgebraRouterSelfPermitAllowed =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"selfPermitAllowedIfNecessary"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10319,6 +10954,7 @@ export const useSimulateAlgebraRouterSelfPermitAllowedIfNecessary =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"selfPermitIfNecessary"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10333,6 +10969,7 @@ export const useSimulateAlgebraRouterSelfPermitIfNecessary =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"sweepToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10347,6 +10984,7 @@ export const useSimulateAlgebraRouterSweepToken =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"sweepTokenWithFee"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10361,6 +10999,7 @@ export const useSimulateAlgebraRouterSweepTokenWithFee =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"unwrapWNativeToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10375,6 +11014,7 @@ export const useSimulateAlgebraRouterUnwrapWNativeToken =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algebraRouterAbi}__ and `functionName` set to `"unwrapWNativeTokenWithFee"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x1bFF2BA9ee0FFC1e55c0Eb475575A15E1Cf9D6cc)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xed31e45e6f7c508ce2b91e75e1c5182d7e1bde69)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0xED31e45E6F7c508cE2b91E75e1C5182d7e1bDe69)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xFff605964840a5511f595EB970011EcBffa46b39)
  */
@@ -10733,6 +11373,7 @@ export const useSimulateAlgebraVirtualPoolSwitchDynamicRate =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -10745,6 +11386,7 @@ export const useReadAlgerbaQuoterV2 = /*#__PURE__*/ createUseReadContract({
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__ and `functionName` set to `"WNativeToken"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -10759,6 +11401,7 @@ export const useReadAlgerbaQuoterV2WNativeToken =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__ and `functionName` set to `"algebraSwapCallback"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -10773,6 +11416,7 @@ export const useReadAlgerbaQuoterV2AlgebraSwapCallback =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__ and `functionName` set to `"factory"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -10787,6 +11431,7 @@ export const useReadAlgerbaQuoterV2Factory =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__ and `functionName` set to `"poolDeployer"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -10801,6 +11446,7 @@ export const useReadAlgerbaQuoterV2PoolDeployer =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -10813,6 +11459,7 @@ export const useWriteAlgerbaQuoterV2 = /*#__PURE__*/ createUseWriteContract({
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__ and `functionName` set to `"quoteExactInput"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -10827,6 +11474,7 @@ export const useWriteAlgerbaQuoterV2QuoteExactInput =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__ and `functionName` set to `"quoteExactInputSingle"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -10841,6 +11489,7 @@ export const useWriteAlgerbaQuoterV2QuoteExactInputSingle =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__ and `functionName` set to `"quoteExactOutput"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -10855,6 +11504,7 @@ export const useWriteAlgerbaQuoterV2QuoteExactOutput =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__ and `functionName` set to `"quoteExactOutputSingle"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -10869,6 +11519,7 @@ export const useWriteAlgerbaQuoterV2QuoteExactOutputSingle =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -10882,6 +11533,7 @@ export const useSimulateAlgerbaQuoterV2 =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__ and `functionName` set to `"quoteExactInput"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -10896,6 +11548,7 @@ export const useSimulateAlgerbaQuoterV2QuoteExactInput =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__ and `functionName` set to `"quoteExactInputSingle"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -10910,6 +11563,7 @@ export const useSimulateAlgerbaQuoterV2QuoteExactInputSingle =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__ and `functionName` set to `"quoteExactOutput"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -10924,6 +11578,7 @@ export const useSimulateAlgerbaQuoterV2QuoteExactOutput =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link algerbaQuoterV2Abi}__ and `functionName` set to `"quoteExactOutputSingle"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0xc961e26393B4A2301b8e23Ee004A23C856153A49)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0x2f2f7197d19a13e8c72c1087dd29d555abe76c5c)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x2f2f7197d19A13e8c72c1087dD29d555aBE76C5C)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xd83aeD10ef6c7C0bcf6693E4Ce7cAA134B52bCd2)
  */
@@ -11111,6 +11766,7 @@ export const useWatchErc20TransferEvent =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link farmingCenterAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11123,6 +11779,7 @@ export const useReadFarmingCenter = /*#__PURE__*/ createUseReadContract({
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"algebraPoolDeployer"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11137,6 +11794,7 @@ export const useReadFarmingCenterAlgebraPoolDeployer =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"deposits"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11152,6 +11810,7 @@ export const useReadFarmingCenterDeposits = /*#__PURE__*/ createUseReadContract(
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"eternalFarming"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11166,6 +11825,7 @@ export const useReadFarmingCenterEternalFarming =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"incentiveKeys"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11180,6 +11840,7 @@ export const useReadFarmingCenterIncentiveKeys =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"nonfungiblePositionManager"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11194,6 +11855,7 @@ export const useReadFarmingCenterNonfungiblePositionManager =
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"virtualPoolAddresses"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11208,6 +11870,7 @@ export const useReadFarmingCenterVirtualPoolAddresses =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11220,6 +11883,7 @@ export const useWriteFarmingCenter = /*#__PURE__*/ createUseWriteContract({
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"applyLiquidityDelta"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11234,6 +11898,7 @@ export const useWriteFarmingCenterApplyLiquidityDelta =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"claimReward"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11248,6 +11913,7 @@ export const useWriteFarmingCenterClaimReward =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"collectRewards"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11262,6 +11928,7 @@ export const useWriteFarmingCenterCollectRewards =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"connectVirtualPoolToPlugin"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11276,6 +11943,7 @@ export const useWriteFarmingCenterConnectVirtualPoolToPlugin =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"disconnectVirtualPoolFromPlugin"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11290,6 +11958,7 @@ export const useWriteFarmingCenterDisconnectVirtualPoolFromPlugin =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"enterFarming"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11304,6 +11973,7 @@ export const useWriteFarmingCenterEnterFarming =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"exitFarming"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11318,6 +11988,7 @@ export const useWriteFarmingCenterExitFarming =
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"multicall"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11332,6 +12003,7 @@ export const useWriteFarmingCenterMulticall =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11343,6 +12015,7 @@ export const useSimulateFarmingCenter = /*#__PURE__*/ createUseSimulateContract(
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"applyLiquidityDelta"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11357,6 +12030,7 @@ export const useSimulateFarmingCenterApplyLiquidityDelta =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"claimReward"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11371,6 +12045,7 @@ export const useSimulateFarmingCenterClaimReward =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"collectRewards"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11385,6 +12060,7 @@ export const useSimulateFarmingCenterCollectRewards =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"connectVirtualPoolToPlugin"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11399,6 +12075,7 @@ export const useSimulateFarmingCenterConnectVirtualPoolToPlugin =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"disconnectVirtualPoolFromPlugin"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11413,6 +12090,7 @@ export const useSimulateFarmingCenterDisconnectVirtualPoolFromPlugin =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"enterFarming"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11427,6 +12105,7 @@ export const useSimulateFarmingCenterEnterFarming =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"exitFarming"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -11441,6 +12120,7 @@ export const useSimulateFarmingCenterExitFarming =
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link farmingCenterAbi}__ and `functionName` set to `"multicall"`
  *
  * - [__View Contract on Bnb Smart Chain Bsc Scan__](https://bscscan.com/address/0x0000000000000000000000000000000000000000)
+ * - [__View Contract on Monad Testnet Monad Testnet Explorer__](https://testnet.monadexplorer.com/address/0xe161aeb0c3b41efadb070e725d5773352e764097)
  * - [__View Contract on Berachain Bepolia Berascan__](https://bepolia.beratrail.io/address/0x0000000000000000000000000000000000000000)
  * - [__View Contract on Berachain Berascan__](https://berascan.com/address/0xD8399d82eb577F223f55e81EfB96942Ce560f51f)
  */
@@ -12706,4 +13386,300 @@ export const useWatchWrappedNativeWithdrawalEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: wrappedNativeAbi,
     eventName: 'Withdrawal',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link limitOrderManagerAbi}__
+ */
+export const useReadLimitOrderManager = /*#__PURE__*/ createUseReadContract({
+  abi: limitOrderManagerAbi,
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"ALGEBRA_BASE_PLUGIN_MANAGER"`
+ */
+export const useReadLimitOrderManagerAlgebraBasePluginManager =
+  /*#__PURE__*/ createUseReadContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'ALGEBRA_BASE_PLUGIN_MANAGER',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"basePluginFactory"`
+ */
+export const useReadLimitOrderManagerBasePluginFactory =
+  /*#__PURE__*/ createUseReadContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'basePluginFactory',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"epochInfos"`
+ */
+export const useReadLimitOrderManagerEpochInfos =
+  /*#__PURE__*/ createUseReadContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'epochInfos',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"epochNext"`
+ */
+export const useReadLimitOrderManagerEpochNext =
+  /*#__PURE__*/ createUseReadContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'epochNext',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"epochs"`
+ */
+export const useReadLimitOrderManagerEpochs =
+  /*#__PURE__*/ createUseReadContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'epochs',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"factory"`
+ */
+export const useReadLimitOrderManagerFactory =
+  /*#__PURE__*/ createUseReadContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'factory',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"getEpoch"`
+ */
+export const useReadLimitOrderManagerGetEpoch =
+  /*#__PURE__*/ createUseReadContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'getEpoch',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"getEpochLiquidity"`
+ */
+export const useReadLimitOrderManagerGetEpochLiquidity =
+  /*#__PURE__*/ createUseReadContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'getEpochLiquidity',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"initialized"`
+ */
+export const useReadLimitOrderManagerInitialized =
+  /*#__PURE__*/ createUseReadContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'initialized',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"poolDeployer"`
+ */
+export const useReadLimitOrderManagerPoolDeployer =
+  /*#__PURE__*/ createUseReadContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'poolDeployer',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"tickLowerLasts"`
+ */
+export const useReadLimitOrderManagerTickLowerLasts =
+  /*#__PURE__*/ createUseReadContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'tickLowerLasts',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"tickSpacings"`
+ */
+export const useReadLimitOrderManagerTickSpacings =
+  /*#__PURE__*/ createUseReadContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'tickSpacings',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"wNativeToken"`
+ */
+export const useReadLimitOrderManagerWNativeToken =
+  /*#__PURE__*/ createUseReadContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'wNativeToken',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link limitOrderManagerAbi}__
+ */
+export const useWriteLimitOrderManager = /*#__PURE__*/ createUseWriteContract({
+  abi: limitOrderManagerAbi,
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"afterSwap"`
+ */
+export const useWriteLimitOrderManagerAfterSwap =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'afterSwap',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"algebraMintCallback"`
+ */
+export const useWriteLimitOrderManagerAlgebraMintCallback =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'algebraMintCallback',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"kill"`
+ */
+export const useWriteLimitOrderManagerKill =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'kill',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"place"`
+ */
+export const useWriteLimitOrderManagerPlace =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'place',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"setTickSpacing"`
+ */
+export const useWriteLimitOrderManagerSetTickSpacing =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'setTickSpacing',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"withdraw"`
+ */
+export const useWriteLimitOrderManagerWithdraw =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'withdraw',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link limitOrderManagerAbi}__
+ */
+export const useSimulateLimitOrderManager =
+  /*#__PURE__*/ createUseSimulateContract({ abi: limitOrderManagerAbi })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"afterSwap"`
+ */
+export const useSimulateLimitOrderManagerAfterSwap =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'afterSwap',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"algebraMintCallback"`
+ */
+export const useSimulateLimitOrderManagerAlgebraMintCallback =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'algebraMintCallback',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"kill"`
+ */
+export const useSimulateLimitOrderManagerKill =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'kill',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"place"`
+ */
+export const useSimulateLimitOrderManagerPlace =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'place',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"setTickSpacing"`
+ */
+export const useSimulateLimitOrderManagerSetTickSpacing =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'setTickSpacing',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `functionName` set to `"withdraw"`
+ */
+export const useSimulateLimitOrderManagerWithdraw =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: limitOrderManagerAbi,
+    functionName: 'withdraw',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link limitOrderManagerAbi}__
+ */
+export const useWatchLimitOrderManagerEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({ abi: limitOrderManagerAbi })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `eventName` set to `"Fill"`
+ */
+export const useWatchLimitOrderManagerFillEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: limitOrderManagerAbi,
+    eventName: 'Fill',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `eventName` set to `"Kill"`
+ */
+export const useWatchLimitOrderManagerKillEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: limitOrderManagerAbi,
+    eventName: 'Kill',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `eventName` set to `"LimitOrderTickSpacing"`
+ */
+export const useWatchLimitOrderManagerLimitOrderTickSpacingEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: limitOrderManagerAbi,
+    eventName: 'LimitOrderTickSpacing',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `eventName` set to `"Place"`
+ */
+export const useWatchLimitOrderManagerPlaceEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: limitOrderManagerAbi,
+    eventName: 'Place',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link limitOrderManagerAbi}__ and `eventName` set to `"Withdraw"`
+ */
+export const useWatchLimitOrderManagerWithdrawEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: limitOrderManagerAbi,
+    eventName: 'Withdraw',
   })
