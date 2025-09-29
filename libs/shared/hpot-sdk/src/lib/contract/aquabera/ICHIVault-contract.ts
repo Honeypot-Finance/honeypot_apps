@@ -175,6 +175,11 @@ export class ICHIVaultContract implements BaseContract {
       return this.totalAmountsWithoutDecimal;
     }
 
+    // Check if contract is available before calling
+    if (!this.contract || !wallet.publicClient) {
+      throw new Error(`Contract not available for vault ${this.address}. Wallet may not be properly initialized.`);
+    }
+
     const totalAmounts = await this.contract.read.getTotalAmounts();
     this.totalAmountsWithoutDecimal = {
       total0: BigInt(totalAmounts[0]),
@@ -184,10 +189,10 @@ export class ICHIVaultContract implements BaseContract {
   }
 
   async getToken0() {
-    if (!this.contract) {
-      return;
-    }
     if (this.token0 !== undefined) return this.token0;
+    if (!this.contract || !wallet.publicClient) {
+      throw new Error(`Contract not available for vault ${this.address}. Wallet may not be properly initialized.`);
+    }
     const token0 = await this.contract.read.token0();
     this.token0 = Token.getToken({
       address: token0,
@@ -197,10 +202,10 @@ export class ICHIVaultContract implements BaseContract {
   }
 
   async getToken1() {
-    if (!this.contract) {
-      return;
-    }
     if (this.token1 !== undefined) return this.token1;
+    if (!this.contract || !wallet.publicClient) {
+      throw new Error(`Contract not available for vault ${this.address}. Wallet may not be properly initialized.`);
+    }
     const token1 = await this.contract.read.token1();
     this.token1 = Token.getToken({
       address: token1,
@@ -211,8 +216,8 @@ export class ICHIVaultContract implements BaseContract {
 
   async getTotalSupply() {
     if (this.totalsupplyShares !== undefined) return this.totalsupplyShares;
-    if (!this.contract) {
-      return;
+    if (!this.contract || !wallet.publicClient) {
+      throw new Error(`Contract not available for vault ${this.address}. Wallet may not be properly initialized.`);
     }
     const totalSupply = await this.contract.read.totalSupply();
     this.totalsupplyShares = BigInt(totalSupply);

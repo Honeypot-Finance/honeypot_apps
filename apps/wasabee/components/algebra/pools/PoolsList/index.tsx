@@ -30,13 +30,23 @@ const mappingSortKeys: Record<any, Pool_OrderBy> = {
   'marktet cap': Pool_OrderBy.Token0MarketCap,
 };
 
+import type { ProcessedPool } from '@/lib/cache/pools-cache';
+
 interface PoolsListProps {
   defaultFilter?: string;
   showOptions?: boolean;
+  initialPools?: any[];
+  initialActiveFarmings?: { pool: string; id: string }[];
+  initialProcessedPools?: ProcessedPool[];
+  isClientLoading?: boolean;
 }
 const PoolsList = ({
   defaultFilter = 'trending',
   showOptions = true,
+  initialPools = [],
+  initialActiveFarmings = [],
+  initialProcessedPools = [],
+  isClientLoading ,
 }: PoolsListProps) => {
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'id', desc: true },
@@ -67,16 +77,24 @@ const PoolsList = ({
     });
 
   const isLoading =
-    isPoolsListLoading ||
-    // isPoolsMaxAprLoading ||
-    // isPoolsAvgAprLoading ||
-    isFarmingsLoading;
+    isClientLoading || 
+    ((isPoolsListLoading || isFarmingsLoading) )
   // ||isFarmingsAPRLoading;
 
   const formattedPools = useMemo(() => {
-    if (isLoading || !pools || !wallet.isInit) return [];
+    // If we have processed pools from cache, use them directly
+    if (initialProcessedPools && initialProcessedPools.length > 0) {
+      console.log('Using pre-processed pools from cache');
+      return initialProcessedPools;
+    }
 
-    return pools?.pools.map(
+    // Fallback to client-side processing (for real-time data)
+    const sourcePools = (pools?.pools ?? initialPools) as any[];
+    const activeFarmingsList = (activeFarmings?.eternalFarmings ?? initialActiveFarmings) as any[];
+
+    if (!sourcePools || sourcePools.length === 0) return [];
+
+    return sourcePools.map(
       ({
         id,
         token0,
@@ -190,7 +208,7 @@ const PoolsList = ({
         /* time difference calculations here to ensure that the graph provides information for the last 24 hours */
         const msIn24Hours = 24 * 60 * 60 * 1000;
         const msIn48Hours = 48 * 60 * 60 * 1000;
-        const activeFarming = activeFarmings?.eternalFarmings.find(
+        const activeFarming = activeFarmingsList.find(
           (farming) => farming.pool === id
         );
 
@@ -201,25 +219,25 @@ const PoolsList = ({
         let total24to48hDataCount = 0;
 
         poolHourData
-          .filter((hour) => {
+          .filter((hour: any) => {
             return (
               hour.periodStartUnix > currentDate / 1000 - msIn24Hours / 1000
             );
           })
-          .map((hour) => {
+          .map((hour: any) => {
             total24hFees += Number(hour.feesUSD);
             total24hDataCount++;
             total24hVolume += Number(hour.volumeUSD);
           });
 
         poolHourData
-          .filter((hour) => {
+          .filter((hour: any) => {
             return (
               hour.periodStartUnix > currentDate / 1000 - msIn48Hours / 1000 &&
               hour.periodStartUnix < currentDate / 1000 - msIn24Hours / 1000
             );
           })
-          .map((hour) => {
+          .map((hour: any) => {
             total24to48hVolume += Number(hour.volumeUSD);
             total24to48hDataCount++;
           });
@@ -276,7 +294,7 @@ const PoolsList = ({
         };
       }
     );
-  }, [isLoading, pools, activeFarmings?.eternalFarmings, wallet.isInit]);
+  }, [isLoading, pools, activeFarmings?.eternalFarmings, initialPools, initialActiveFarmings, initialProcessedPools]);
 
   const formattedUserPools = useMemo(() => {
     if (isLoading || !userPools || !wallet.isInit) return [];
