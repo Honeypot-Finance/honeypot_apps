@@ -167,6 +167,7 @@ export function WithdrawFromVaultModal({
                               ).toString(),
                               decimals: 3,
                               endWith: vault?.token0?.symbol,
+                              className: 'text-black',
                             })}
                             {vault?.token0 && (
                               <TokenLogo token={vault?.token0} />
@@ -179,6 +180,7 @@ export function WithdrawFromVaultModal({
                               ).toString(),
                               decimals: 3,
                               endWith: vault?.token1?.symbol,
+                              className: 'text-black',
                             })}
                             {vault?.token1 && (
                               <TokenLogo token={vault?.token1} />
@@ -190,7 +192,7 @@ export function WithdrawFromVaultModal({
                     <div className="flex gap-2">
                       <div className="w-full bg-transparent border border-black rounded-[16px] px-4 py-[18px] text-black outline-none shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)]">
                         <span className="flex flex-col text-right">
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 text-black ">
                             {vault?.token0 && (
                               <TokenLogo token={vault?.token0} />
                             )}
@@ -206,10 +208,11 @@ export function WithdrawFromVaultModal({
                                 .toString(),
                               decimals: 3,
                               endWith: vault?.token0?.symbol,
+                              className: 'text-black',
                             })}
                           </div>
 
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 text-black ">
                             {vault?.token1 && (
                               <TokenLogo token={vault?.token1} />
                             )}
@@ -225,6 +228,7 @@ export function WithdrawFromVaultModal({
                                 .toString(),
                               decimals: 3,
                               endWith: vault?.token1?.symbol,
+                              className: 'text-black',
                             })}
                           </div>
                         </span>
