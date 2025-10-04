@@ -3,7 +3,12 @@ import { useNeedAllowance } from '@/lib/algebra/hooks/common/useNeedAllowance';
 import { useApprove } from '@/lib/algebra/hooks/common/useApprove';
 import { useTransactionAwait } from '@/lib/algebra/hooks/common/useTransactionAwait';
 import { Token, tryParseTick } from '@cryptoalgebra/sdk';
-import { useAccount, useSimulateContract, usePublicClient, useWalletClient } from 'wagmi';
+import {
+  useAccount,
+  useSimulateContract,
+  usePublicClient,
+  useWalletClient,
+} from 'wagmi';
 import { ApprovalState } from '@/types/algebra/types/approve-state';
 import Loader from '@/components/algebra/common/Loader';
 import { SwapField } from '@/types/algebra/types/swap-field';
@@ -49,6 +54,14 @@ export const LimitOrderButton = ({
   const { data: walletClient } = useWalletClient();
   const [detailedError, setDetailedError] = useState<string | null>(null);
 
+  // State to store the correct pool deployer from the contract
+  const [contractPoolDeployer, setContractPoolDeployer] =
+    useState<Address | null>(null);
+  // State to store the ACTUAL plugin attached to the pool
+  const [actualPoolPlugin, setActualPoolPlugin] = useState<Address | null>(
+    null
+  );
+
   const currenChain = useObserver(() => wallet.currentChain);
 
   const {
@@ -81,7 +94,7 @@ export const LimitOrderButton = ({
   const needAllowance = useNeedAllowance(
     inputCurrency?.isNative ? undefined : inputCurrency?.wrapped,
     inputAmount,
-    currenChain.contracts.limitOrderManager
+    currenChain.contracts.limitOrderManager // Use configured limit order manager
   );
 
   const insufficientBalance =
@@ -121,7 +134,7 @@ export const LimitOrderButton = ({
 
   const { approvalState, approvalCallback } = useApprove(
     inputAmount,
-    currenChain.contracts.limitOrderManager
+    currenChain.contracts.limitOrderManager // Use configured limit order manager
   );
 
   // Debug logging before config creation
@@ -160,7 +173,7 @@ export const LimitOrderButton = ({
       // When zeroToOne=true (selling token0), tick must be > current
       // When zeroToOne=false (selling token1), tick must be < current
       const isValidSide = zeroToOne
-        ? limitOrder.tickLower > tick  // Selling token0, tick should be above
+        ? limitOrder.tickLower > tick // Selling token0, tick should be above
         : limitOrder.tickLower < tick; // Selling token1, tick should be below
 
       if (!isValidSide) {
@@ -175,14 +188,12 @@ export const LimitOrderButton = ({
     }
   }
 
-  // State to store the correct pool deployer from the contract
-  const [contractPoolDeployer, setContractPoolDeployer] = useState<Address | null>(null);
-
-  // Fetch the correct pool deployer from the contract on mount
+  // Fetch the pool deployer from the limit order manager contract
   useEffect(() => {
     const fetchPoolDeployer = async () => {
       if (publicClient && currenChain.contracts.limitOrderManager) {
         try {
+          // Get the pool deployer from the limit order manager contract
           const deployer = await publicClient.readContract({
             address: currenChain.contracts.limitOrderManager as Address,
             abi: limitOrderManagerABI,
@@ -190,58 +201,89 @@ export const LimitOrderButton = ({
             args: [],
           });
           setContractPoolDeployer(deployer as Address);
-          console.log('Fetched pool deployer from contract:', deployer);
+          console.log(
+            'Fetched pool deployer from limit order manager:',
+            deployer
+          );
         } catch (error) {
           console.error('Error fetching pool deployer:', error);
+          // Fallback to zero address if we can't read it
+          setContractPoolDeployer(
+            '0x0000000000000000000000000000000000000000' as Address
+          );
         }
       }
     };
     fetchPoolDeployer();
   }, [publicClient, currenChain.contracts.limitOrderManager]);
 
-  // Use the correct pool deployer from the contract
+  // Fetch the actual plugin from the pool (for informational purposes)
+  useEffect(() => {
+    const fetchPoolPlugin = async () => {
+      if (publicClient && poolAddress) {
+        try {
+          const plugin = await publicClient.readContract({
+            address: poolAddress,
+            abi: [
+              {
+                inputs: [],
+                name: 'plugin',
+                outputs: [{ name: '', type: 'address' }],
+                stateMutability: 'view',
+                type: 'function',
+              },
+            ],
+            functionName: 'plugin',
+            args: [],
+          });
+          setActualPoolPlugin(plugin as Address);
+          console.log('Pool has plugin attached:', plugin);
+        } catch (error) {
+          console.error('Error fetching pool plugin:', error);
+        }
+      }
+    };
+    fetchPoolPlugin();
+  }, [publicClient, poolAddress]);
+
+  // Get the pool deployer for the poolKey
   const getPoolDeployer = () => {
-    // First try the deployer we fetched from the contract
-    if (contractPoolDeployer) {
-      return contractPoolDeployer;
-    }
-
-    // Fallback to checking available contracts
-    const contracts = currenChain.contracts as any;
-    const deployerOptions = [
-      contracts.algebraPoolDeployer,
-      contracts.poolDeployer,
-      contracts.customPoolDeployer,
-      contracts.factory,
-      // Common Algebra/Uniswap V3 pool deployer addresses on Berachain
-      '0x7a44CD060afC1B6F4c80A2B9b37f4473E74E25Df', // Berachain Algebra deployer
-    ].filter(Boolean);
-
-    return deployerOptions[0] || '0x7a44CD060afC1B6F4c80A2B9b37f4473E74E25Df';
+    return (
+      contractPoolDeployer ||
+      ('0x0000000000000000000000000000000000000000' as Address)
+    );
   };
 
-  const placeLimitOrderConfig = isReady && limitOrder && tickSpacing &&
+  // Use the configured limit order manager - it's a separate contract, not the pool's plugin
+  const limitOrderManagerAddress = currenChain.contracts
+    .limitOrderManager as Address;
+
+  const placeLimitOrderConfig =
+    isReady &&
+    limitOrder &&
+    tickSpacing &&
     limitOrder.tickLower % tickSpacing === 0 && // Ensure tick is aligned
-    contractPoolDeployer // Make sure we have the correct deployer
-    ? {
-        address: currenChain.contracts.limitOrderManager as Address,
-        abi: limitOrderManagerABI,
-        functionName: 'place' as const,
-        args: [
-          {
-            deployer: contractPoolDeployer, // Use the correct deployer from contract
-            token0: token0.address as Address,
-            token1: token1.address as Address,
-          },
-          limitOrder.tickLower, // Use tickLower directly, it's already aligned
-          zeroToOne,
-          BigInt(limitOrder.liquidity.toString()),
-        ] as const,
-        value: inputAmount?.currency.isNative
-          ? BigInt(inputAmount.quotient.toString())
-          : BigInt(0),
-      }
-    : undefined;
+    contractPoolDeployer && // Make sure we have the correct deployer
+    actualPoolPlugin // Make sure we found the actual plugin
+      ? {
+          address: limitOrderManagerAddress, // Use actual plugin, not configured manager
+          abi: limitOrderManagerABI,
+          functionName: 'place' as const,
+          args: [
+            {
+              deployer: contractPoolDeployer, // Use the correct deployer from contract
+              token0: token0.address as Address,
+              token1: token1.address as Address,
+            },
+            limitOrder.tickLower, // Use tickLower directly, it's already aligned
+            zeroToOne,
+            BigInt(limitOrder.liquidity.toString()),
+          ] as const,
+          value: inputAmount?.currency.isNative
+            ? BigInt(inputAmount.quotient.toString())
+            : BigInt(0),
+        }
+      : undefined;
 
   // Simulate the contract call before sending
   const { data: simulationData, error: simulationError } = useSimulateContract(
@@ -388,7 +430,9 @@ export const LimitOrderButton = ({
 
           // Method 4: Parse from message
           if (!extractedError && manualError.message) {
-            const customErrorMatch = manualError.message.match(/custom error '([^']+)'/);
+            const customErrorMatch = manualError.message.match(
+              /custom error '([^']+)'/
+            );
             if (customErrorMatch) {
               extractedError = customErrorMatch[1];
             }
@@ -457,13 +501,15 @@ export const LimitOrderButton = ({
           poolKey: {
             token0: token0?.address,
             token1: token1?.address,
-            deployer: currenChain.contracts.algebraPoolDeployer,
+            deployer: getPoolDeployer(), // Use pool deployer from contract
           },
           tickLower: limitOrder?.tickLower,
           tickUpper: limitOrder?.tickUpper,
           liquidity: limitOrder?.liquidity?.toString(),
           zeroToOne,
-          value: inputAmount?.currency.isNative ? inputAmount.quotient.toString() : '0',
+          value: inputAmount?.currency.isNative
+            ? inputAmount.quotient.toString()
+            : '0',
         },
         inputAmount: inputAmount?.toSignificant(),
         sellPrice,
@@ -472,7 +518,22 @@ export const LimitOrderButton = ({
         calculatedPriceTick: limitOrderTick,
       });
     }
-  }, [simulationError, placeLimitOrderConfig, limitOrder, zeroToOne, inputAmount, token0, token1, currenChain, sellPrice, tickSpacing, tick, publicClient, account, limitOrderTick]);
+  }, [
+    simulationError,
+    placeLimitOrderConfig,
+    limitOrder,
+    zeroToOne,
+    inputAmount,
+    token0,
+    token1,
+    currenChain,
+    sellPrice,
+    tickSpacing,
+    tick,
+    publicClient,
+    account,
+    limitOrderTick,
+  ]);
 
   const {
     data: placeData,
@@ -504,7 +565,13 @@ export const LimitOrderButton = ({
     );
   }
 
-  if (!disabled && needAllowance)
+  if (!disabled && needAllowance) {
+    console.log('Showing approval button:', {
+      needAllowance,
+      approvalState,
+      approvingFor: actualPoolPlugin || currenChain.contracts.limitOrderManager,
+      inputCurrency: inputAmount?.currency.symbol,
+    });
     return (
       <Button
         disabled={approvalState === ApprovalState.PENDING}
@@ -517,6 +584,7 @@ export const LimitOrderButton = ({
         )}
       </Button>
     );
+  }
 
   // Show simulation error if exists
   let displayError: string | null = null;
@@ -537,20 +605,21 @@ export const LimitOrderButton = ({
 
     // Map known error names to user-friendly messages
     const errorMap: Record<string, string> = {
-      'InRange': 'Price is in current range',
-      'CrossedRange': 'Price crossed the range',
-      'ZeroLiquidity': 'Zero liquidity provided',
-      'InsufficientLiquidity': 'Insufficient liquidity',
-      'NotPlugin': 'Pool plugin not enabled',
-      'NotPoolManagerToken': 'Invalid token',
-      'Filled': 'Order already filled',
-      'NotFilled': 'Order not filled',
+      InRange: 'Price is in current range',
+      CrossedRange: 'Price crossed the range',
+      ZeroLiquidity: 'Zero liquidity provided',
+      InsufficientLiquidity: 'Insufficient liquidity',
+      NotPlugin: 'Pool plugin not enabled',
+      NotPoolManagerToken: 'Invalid token',
+      Filled: 'Order already filled',
+      NotFilled: 'Order not filled',
     };
 
     const friendlyError = errorMap[errorMessage] || errorMessage;
-    displayError = friendlyError.length > 50
-      ? friendlyError.substring(0, 47) + '...'
-      : friendlyError;
+    displayError =
+      friendlyError.length > 50
+        ? friendlyError.substring(0, 47) + '...'
+        : friendlyError;
   }
 
   return (
@@ -559,10 +628,11 @@ export const LimitOrderButton = ({
       {(inputError || displayError) && (
         <Button disabled className="text-red-500">
           {displayError ||
-           (typeof inputError === 'string' ? inputError :
-            (inputError as any)?.message ||
-            (inputError as any)?.shortMessage ||
-            'Error')}
+            (typeof inputError === 'string'
+              ? inputError
+              : (inputError as any)?.message ||
+                (inputError as any)?.shortMessage ||
+                'Error')}
         </Button>
       )}
       <Button
@@ -601,7 +671,10 @@ export const LimitOrderButton = ({
           if (simulationData && !simulationError) {
             placeLimitOrderConfig && placeLimitOrder(placeLimitOrderConfig);
           } else {
-            console.error('Cannot place order: simulation failed', simulationError);
+            console.error(
+              'Cannot place order: simulation failed',
+              simulationError
+            );
           }
         }}
       >
@@ -615,26 +688,28 @@ export const LimitOrderButton = ({
           console.warn('TEST BUTTON CLICKED - Creating manual config');
 
           // Create config manually if it doesn't exist
-          const testConfig = placeLimitOrderConfig || (
-            token0 && token1 && limitOrder && tickSpacing ? {
-              address: currenChain.contracts.limitOrderManager as Address,
-              abi: limitOrderManagerABI,
-              functionName: 'place' as const,
-              args: [
-                {
-                  deployer: currenChain.contracts.algebraPoolDeployer,
-                  token0: token0.address as Address,
-                  token1: token1.address as Address,
-                },
-                limitOrder.tickLower,
-                zeroToOne,
-                BigInt(limitOrder.liquidity.toString()),
-              ] as const,
-              value: inputAmount?.currency.isNative
-                ? BigInt(inputAmount.quotient.toString())
-                : BigInt(0),
-            } : null
-          );
+          const testConfig =
+            placeLimitOrderConfig ||
+            (token0 && token1 && limitOrder && tickSpacing
+              ? {
+                  address: limitOrderManagerAddress, // Use actual plugin
+                  abi: limitOrderManagerABI,
+                  functionName: 'place' as const,
+                  args: [
+                    {
+                      deployer: getPoolDeployer(), // Use pool deployer from contract
+                      token0: token0.address as Address,
+                      token1: token1.address as Address,
+                    },
+                    limitOrder.tickLower,
+                    zeroToOne,
+                    BigInt(limitOrder.liquidity.toString()),
+                  ] as const,
+                  value: inputAmount?.currency.isNative
+                    ? BigInt(inputAmount.quotient.toString())
+                    : BigInt(0),
+                }
+              : null);
 
           // Log the exact args being sent
           if (testConfig) {
@@ -683,12 +758,12 @@ export const LimitOrderButton = ({
             const minLiquidity = BigInt(1000000); // Very small amount
 
             const minimalConfig = {
-              address: currenChain.contracts.limitOrderManager as Address,
+              address: limitOrderManagerAddress, // Use actual plugin
               abi: limitOrderManagerABI,
               functionName: 'place' as const,
               args: [
                 {
-                  deployer: currenChain.contracts.algebraPoolDeployer,
+                  deployer: getPoolDeployer(), // Use pool deployer from contract
                   token0: token0.address as Address,
                   token1: token1.address as Address,
                 },
@@ -719,19 +794,25 @@ export const LimitOrderButton = ({
         onClick={() => {
           console.warn('TEST WITH ADJUSTED TICK');
 
-          if (token0 && token1 && limitOrder && tickSpacing && tick !== undefined) {
+          if (
+            token0 &&
+            token1 &&
+            limitOrder &&
+            tickSpacing &&
+            tick !== undefined
+          ) {
             // Try with tick further from current
             const adjustedTick = zeroToOne
-              ? tick + (tickSpacing * 5)  // 5 ticks above for selling token0
-              : tick - (tickSpacing * 5); // 5 ticks below for selling token1
+              ? tick + tickSpacing * 5 // 5 ticks above for selling token0
+              : tick - tickSpacing * 5; // 5 ticks below for selling token1
 
             const adjustedConfig = {
-              address: currenChain.contracts.limitOrderManager as Address,
+              address: limitOrderManagerAddress, // Use actual plugin
               abi: limitOrderManagerABI,
               functionName: 'place' as const,
               args: [
                 {
-                  deployer: currenChain.contracts.algebraPoolDeployer,
+                  deployer: getPoolDeployer(), // Use pool deployer from contract
                   token0: token0.address as Address,
                   token1: token1.address as Address,
                 },
@@ -759,6 +840,86 @@ export const LimitOrderButton = ({
         📍 Test with Adjusted Tick
       </Button>
 
+      {/* Simulate and log result */}
+      <Button
+        className="bg-cyan-600 hover:bg-cyan-700 text-white"
+        onClick={async () => {
+          if (
+            !publicClient ||
+            !limitOrder ||
+            !token0 ||
+            !token1 ||
+            !inputAmount
+          ) {
+            console.error('Missing required data for simulation');
+            return;
+          }
+
+          try {
+            console.log('=== SIMULATING LIMIT ORDER PLACEMENT ===');
+
+            const simulateConfig = {
+              address: limitOrderManagerAddress,
+              abi: limitOrderManagerABI,
+              functionName: 'place' as const,
+              args: [
+                {
+                  deployer: getPoolDeployer(), // Use pool deployer from contract
+                  token0: token0.address as Address,
+                  token1: token1.address as Address,
+                },
+                limitOrder.tickLower,
+                zeroToOne,
+                BigInt(limitOrder.liquidity.toString()),
+              ] as const,
+              value: inputAmount?.currency.isNative
+                ? BigInt(inputAmount.quotient.toString())
+                : BigInt(0),
+              account,
+            };
+
+            console.log('Simulation config:', simulateConfig);
+
+            const result = await publicClient.simulateContract(simulateConfig);
+
+            console.log('✅ SIMULATION SUCCESS!');
+            console.log('Full result:', result);
+            console.log('Request:', result.request);
+            console.log('Result value:', result.result);
+
+            alert('✅ Simulation successful! Check console for full details.');
+          } catch (error: any) {
+            console.error('❌ SIMULATION FAILED');
+            console.error('Full error:', error);
+            console.error('Error name:', error.name);
+            console.error('Error message:', error.message);
+            console.error('Error shortMessage:', error.shortMessage);
+            console.error('Error cause:', error.cause);
+            console.error('Error metaMessages:', error.metaMessages);
+            console.error('Error details:', error.details);
+
+            // Try to decode the error
+            if (error.cause?.data) {
+              try {
+                const decoded = decodeErrorResult({
+                  abi: limitOrderManagerABI,
+                  data: error.cause.data,
+                });
+                console.error('Decoded error:', decoded);
+              } catch (e) {
+                console.error('Could not decode error');
+              }
+            }
+
+            alert(
+              `❌ Simulation failed: ${error.shortMessage || error.message}`
+            );
+          }
+        }}
+      >
+        🔬 Simulate & Log Result
+      </Button>
+
       {/* Debug info button */}
       <Button
         className="bg-gray-600 hover:bg-gray-700 text-white"
@@ -779,13 +940,22 @@ export const LimitOrderButton = ({
           // Additional checks
           console.log('=== ADDITIONAL CHECKS ===');
           if (limitOrder?.tickLower !== undefined) {
-            console.log('Is tick in valid range?', limitOrder.tickLower > -887272 && limitOrder.tickLower < 887272);
+            console.log(
+              'Is tick in valid range?',
+              limitOrder.tickLower > -887272 && limitOrder.tickLower < 887272
+            );
             if (tickSpacing) {
-              console.log('Is tick aligned?', limitOrder.tickLower % tickSpacing === 0);
+              console.log(
+                'Is tick aligned?',
+                limitOrder.tickLower % tickSpacing === 0
+              );
             }
           }
           console.log('Pool address:', poolAddress);
-          console.log('Limit order manager:', currenChain.contracts.limitOrderManager);
+          console.log(
+            'Limit order manager:',
+            currenChain.contracts.limitOrderManager
+          );
           console.log('Pool deployer being used:', getPoolDeployer());
           console.log('Available contracts:', currenChain.contracts);
           console.log('needAllowance:', needAllowance);
@@ -815,11 +985,17 @@ export const LimitOrderButton = ({
                   },
                 ],
                 functionName: 'allowance',
-                args: [account as Address, currenChain.contracts.limitOrderManager as Address],
+                args: [
+                  account as Address,
+                  currenChain.contracts.limitOrderManager as Address,
+                ],
               });
               console.log('Token allowance:', allowance);
               console.log('Amount needed:', inputAmount?.quotient.toString());
-              console.log('Has enough allowance?', allowance >= BigInt(inputAmount?.quotient.toString() || 0));
+              console.log(
+                'Has enough allowance?',
+                allowance >= BigInt(inputAmount?.quotient.toString() || 0)
+              );
             } catch (error) {
               console.error('Error checking allowance:', error);
             }
@@ -837,55 +1013,121 @@ export const LimitOrderButton = ({
         onClick={async () => {
           if (!publicClient || !poolAddress || !tickSpacing || !account) {
             console.error('Missing required data for initialization');
+            console.error({
+              publicClient: !!publicClient,
+              poolAddress,
+              tickSpacing,
+              account,
+            });
             return;
           }
 
           try {
-            console.log('Initializing pool for limit orders...');
+            console.log('=== ATTEMPTING POOL INITIALIZATION ===');
             console.log('Pool address:', poolAddress);
             console.log('Tick spacing:', tickSpacing);
+            console.log('Account:', account);
+            console.log(
+              'Limit Order Manager:',
+              currenChain.contracts.limitOrderManager
+            );
 
-            // Call setTickSpacing to initialize the pool
+            // Check current state before initialization in ACTUAL plugin
+            const beforeInit = await publicClient.readContract({
+              address: limitOrderManagerAddress, // Use actual plugin!
+              abi: limitOrderManagerABI,
+              functionName: 'initialized',
+              args: [poolAddress],
+            });
+            console.log(
+              'Pool initialized BEFORE (in actual plugin):',
+              beforeInit
+            );
+
+            if (beforeInit) {
+              alert('⚠️ Pool is already initialized!');
+              return;
+            }
+
+            // Call setTickSpacing to initialize the pool on ACTUAL plugin
             const { request } = await publicClient.simulateContract({
-              address: currenChain.contracts.limitOrderManager as Address,
+              address: limitOrderManagerAddress, // Use actual plugin!
               abi: limitOrderManagerABI,
               functionName: 'setTickSpacing',
               args: [poolAddress, tickSpacing],
               account,
             });
 
-            console.log('Simulation successful, sending transaction...');
+            console.log('✅ Simulation successful, sending transaction...');
 
             // Execute the transaction
             const hash = await walletClient?.writeContract(request);
-            console.log('Transaction sent:', hash);
+            console.log('📤 Transaction sent:', hash);
 
             if (hash) {
-              const receipt = await publicClient.waitForTransactionReceipt({ hash });
-              console.log('Pool initialized successfully!', receipt);
-              alert('Pool initialized for limit orders! You can now place orders.');
-            }
-          } catch (error: any) {
-            console.error('Error initializing pool:', error);
+              console.log('⏳ Waiting for transaction confirmation...');
+              const receipt = await publicClient.waitForTransactionReceipt({
+                hash,
+              });
+              console.log('✅ Transaction confirmed!', receipt);
+              console.log('Receipt status:', receipt.status);
 
-            // Try without simulation
-            if (walletClient) {
-              try {
-                const hash = await walletClient.writeContract({
-                  address: currenChain.contracts.limitOrderManager as Address,
-                  abi: limitOrderManagerABI,
-                  functionName: 'setTickSpacing',
-                  args: [poolAddress, tickSpacing],
-                  account,
-                });
-                console.log('Transaction sent (no simulation):', hash);
-                const receipt = await publicClient.waitForTransactionReceipt({ hash });
-                console.log('Pool initialized successfully!', receipt);
-                alert('Pool initialized for limit orders! You can now place orders.');
-              } catch (directError) {
-                console.error('Direct execution also failed:', directError);
+              // Verify the pool is now initialized in ACTUAL plugin
+              const afterInit = await publicClient.readContract({
+                address: limitOrderManagerAddress, // Use actual plugin!
+                abi: limitOrderManagerABI,
+                functionName: 'initialized',
+                args: [poolAddress],
+              });
+              console.log(
+                'Pool initialized AFTER (in actual plugin):',
+                afterInit
+              );
+
+              const afterTickSpacing = await publicClient.readContract({
+                address: limitOrderManagerAddress, // Use actual plugin!
+                abi: limitOrderManagerABI,
+                functionName: 'tickSpacings',
+                args: [poolAddress],
+              });
+              console.log(
+                'Tick spacing AFTER (in actual plugin):',
+                afterTickSpacing
+              );
+
+              if (afterInit && afterTickSpacing === tickSpacing) {
+                alert(
+                  '✅ Pool initialized successfully! You can now place limit orders.'
+                );
+              } else {
+                alert(
+                  `⚠️ Transaction succeeded but pool state unexpected. Init: ${afterInit}, TickSpacing: ${afterTickSpacing}`
+                );
               }
             }
+          } catch (error: any) {
+            console.error('❌ Error initializing pool:', error);
+            console.error('Error message:', error.message);
+            console.error('Error shortMessage:', error.shortMessage);
+            console.error('Error cause:', error.cause);
+
+            // Check if it's an access control error
+            if (
+              error.message?.includes('AccessControl') ||
+              error.message?.includes('Ownable') ||
+              error.message?.includes('only') ||
+              error.message?.includes('authorized') ||
+              error.shortMessage?.includes('denied')
+            ) {
+              alert(
+                '❌ Access Denied: Only the contract owner/admin can initialize pools.'
+              );
+              return;
+            }
+
+            alert(
+              `❌ Initialization failed: ${error.shortMessage || error.message}`
+            );
           }
         }}
       >
@@ -896,29 +1138,31 @@ export const LimitOrderButton = ({
       <Button
         className="bg-teal-600 hover:bg-teal-700 text-white"
         onClick={async () => {
-          if (!publicClient || !limitOrder || !tickSpacing || !token0 || !token1 || !inputAmount) {
+          if (
+            !publicClient ||
+            !limitOrder ||
+            !tickSpacing ||
+            !token0 ||
+            !token1 ||
+            !inputAmount
+          ) {
             console.error('Missing required data for test');
             return;
           }
 
           try {
-            // First fetch the correct pool deployer from the contract
-            const correctDeployer = await publicClient.readContract({
-              address: currenChain.contracts.limitOrderManager as Address,
-              abi: limitOrderManagerABI,
-              functionName: 'poolDeployer',
-              args: [],
-            });
+            // Use the pool deployer from the contract
+            const correctDeployer = getPoolDeployer();
 
             console.log('Using pool deployer from contract:', correctDeployer);
 
             const testConfig = {
-              address: currenChain.contracts.limitOrderManager as Address,
+              address: limitOrderManagerAddress,
               abi: limitOrderManagerABI,
               functionName: 'place' as const,
               args: [
                 {
-                  deployer: correctDeployer as Address, // Use the correct deployer
+                  deployer: correctDeployer, // Use pool deployer from contract
                   token0: token0.address as Address,
                   token1: token1.address as Address,
                 },
@@ -931,17 +1175,25 @@ export const LimitOrderButton = ({
                 : BigInt(0),
             };
 
-            console.log('Test config with correct deployer:', testConfig);
+            console.log('Test config with contract deployer:', testConfig);
 
             // Try to simulate first
             try {
-              const simulationResult = await publicClient.simulateContract(testConfig);
-              console.log('Simulation successful with correct deployer!', simulationResult);
+              const simulationResult = await publicClient.simulateContract(
+                testConfig
+              );
+              console.log(
+                'Simulation successful with correct deployer!',
+                simulationResult
+              );
 
               // If simulation succeeds, execute
               placeLimitOrder(testConfig);
             } catch (simError) {
-              console.error('Simulation failed even with correct deployer:', simError);
+              console.error(
+                'Simulation failed even with correct deployer:',
+                simError
+              );
               // Try executing anyway
               placeLimitOrder(testConfig);
             }
@@ -954,74 +1206,290 @@ export const LimitOrderButton = ({
         🎯 Test with Contract Deployer
       </Button>
 
-      {/* Check limit order manager initialization */}
+      {/* Check what type of plugin is attached */}
       <Button
-        className="bg-indigo-600 hover:bg-indigo-700 text-white"
+        className="bg-orange-600 hover:bg-orange-700 text-white"
+        onClick={async () => {
+          if (publicClient && poolAddress && actualPoolPlugin) {
+            try {
+              console.log('=== IDENTIFYING PLUGIN TYPE ===');
+              console.log('Plugin address:', actualPoolPlugin);
+
+              // Try to call common functions to identify the plugin type
+              const checks = [];
+
+              // Check if it's a limit order manager
+              try {
+                const hasInitialized = await publicClient.readContract({
+                  address: actualPoolPlugin,
+                  abi: [
+                    {
+                      inputs: [{ name: 'pool', type: 'address' }],
+                      name: 'initialized',
+                      outputs: [{ name: '', type: 'bool' }],
+                      stateMutability: 'view',
+                      type: 'function',
+                    },
+                  ],
+                  functionName: 'initialized',
+                  args: [poolAddress],
+                });
+                checks.push(
+                  '✅ Has initialized() - Likely a Limit Order Manager'
+                );
+              } catch (e) {
+                checks.push('❌ No initialized() - NOT a Limit Order Manager');
+              }
+
+              // Check if it has other common plugin functions
+              try {
+                const result = await publicClient.readContract({
+                  address: actualPoolPlugin,
+                  abi: [
+                    {
+                      inputs: [],
+                      name: 'name',
+                      outputs: [{ name: '', type: 'string' }],
+                      stateMutability: 'view',
+                      type: 'function',
+                    },
+                  ],
+                  functionName: 'name',
+                  args: [],
+                });
+                checks.push(`✅ Has name(): ${result}`);
+              } catch (e) {
+                checks.push('❌ No name()');
+              }
+
+              console.log('Plugin checks:', checks);
+              alert(
+                `Plugin Type Check:\n\n${checks.join(
+                  '\n'
+                )}\n\nPlugin: ${actualPoolPlugin}\n\nThis pool does NOT have the limit order manager attached.`
+              );
+            } catch (error) {
+              console.error('Error checking plugin type:', error);
+            }
+          } else {
+            alert('No plugin detected or pool address missing');
+          }
+        }}
+      >
+        🔎 Identify Plugin Type
+      </Button>
+
+      {/* Check pool and plugin state directly */}
+      <Button
+        className="bg-pink-600 hover:bg-pink-700 text-white"
         onClick={async () => {
           if (publicClient && poolAddress) {
             try {
-              // Check if pool is initialized in limit order manager
-              const isInitialized = await publicClient.readContract({
-                address: currenChain.contracts.limitOrderManager as Address,
-                abi: limitOrderManagerABI,
-                functionName: 'initialized',
-                args: [poolAddress],
-              });
-              console.log('Pool initialized in limit order manager:', isInitialized);
+              console.log('=== CHECKING POOL STATE DIRECTLY ===');
 
-              // Also check tick spacing
-              const tickSpacingResult = await publicClient.readContract({
-                address: currenChain.contracts.limitOrderManager as Address,
-                abi: limitOrderManagerABI,
-                functionName: 'tickSpacings',
-                args: [poolAddress],
-              });
-              console.log('Pool tick spacing in limit order manager:', tickSpacingResult);
-
-              // Check the tickLowerLast
-              const tickLowerLast = await publicClient.readContract({
-                address: currenChain.contracts.limitOrderManager as Address,
-                abi: limitOrderManagerABI,
-                functionName: 'tickLowerLasts',
-                args: [poolAddress],
-              });
-              console.log('Last tick lower for pool:', tickLowerLast);
-
-              // Get contract addresses for verification
-              const wNativeToken = await publicClient.readContract({
-                address: currenChain.contracts.limitOrderManager as Address,
-                abi: limitOrderManagerABI,
-                functionName: 'wNativeToken',
+              // 1. Check the actual pool contract
+              const poolTickSpacing = await publicClient.readContract({
+                address: poolAddress,
+                abi: [
+                  {
+                    inputs: [],
+                    name: 'tickSpacing',
+                    outputs: [{ name: '', type: 'int24' }],
+                    stateMutability: 'view',
+                    type: 'function',
+                  },
+                ],
+                functionName: 'tickSpacing',
                 args: [],
               });
-              console.log('wNativeToken in contract:', wNativeToken);
+              console.log(
+                'Pool tickSpacing (from pool contract):',
+                poolTickSpacing
+              );
 
-              const poolDeployer = await publicClient.readContract({
-                address: currenChain.contracts.limitOrderManager as Address,
-                abi: limitOrderManagerABI,
-                functionName: 'poolDeployer',
+              // 2. Check if pool has a plugin attached
+              const plugin = await publicClient.readContract({
+                address: poolAddress,
+                abi: [
+                  {
+                    inputs: [],
+                    name: 'plugin',
+                    outputs: [{ name: '', type: 'address' }],
+                    stateMutability: 'view',
+                    type: 'function',
+                  },
+                ],
+                functionName: 'plugin',
                 args: [],
               });
-              console.log('poolDeployer in contract:', poolDeployer);
+              console.log('Pool plugin address:', plugin);
+              console.log(
+                'Is plugin the limit order manager?',
+                plugin?.toLowerCase() ===
+                  currenChain.contracts.limitOrderManager?.toLowerCase()
+              );
 
-              const factory = await publicClient.readContract({
-                address: currenChain.contracts.limitOrderManager as Address,
-                abi: limitOrderManagerABI,
-                functionName: 'factory',
+              // 3. Check plugin factory
+              const pluginFactory = await publicClient.readContract({
+                address: poolAddress,
+                abi: [
+                  {
+                    inputs: [],
+                    name: 'pluginFactory',
+                    outputs: [{ name: '', type: 'address' }],
+                    stateMutability: 'view',
+                    type: 'function',
+                  },
+                ],
+                functionName: 'pluginFactory',
                 args: [],
               });
-              console.log('factory in contract:', factory);
+              console.log('Pool plugin factory:', pluginFactory);
 
-              const basePluginFactory = await publicClient.readContract({
+              // 4. Compare with what limit order manager expects
+              const managerBaseFactory = await publicClient.readContract({
                 address: currenChain.contracts.limitOrderManager as Address,
                 abi: limitOrderManagerABI,
                 functionName: 'basePluginFactory',
                 args: [],
               });
-              console.log('basePluginFactory in contract:', basePluginFactory);
+              console.log(
+                'Limit Order Manager expects basePluginFactory:',
+                managerBaseFactory
+              );
+              console.log(
+                'Do they match?',
+                pluginFactory?.toLowerCase() ===
+                  managerBaseFactory?.toLowerCase()
+              );
 
-              // This is the deployer we should use!
-              console.log('=== IMPORTANT: Use this deployer in poolKey:', poolDeployer);
+              console.log('\n=== DIAGNOSIS ===');
+              if (
+                plugin?.toLowerCase() !==
+                currenChain.contracts.limitOrderManager?.toLowerCase()
+              ) {
+                console.error(
+                  '❌ ISSUE: Pool plugin is NOT the limit order manager!'
+                );
+                console.error('Pool has plugin:', plugin);
+                console.error(
+                  'Expected:',
+                  currenChain.contracts.limitOrderManager
+                );
+                alert(
+                  '❌ Issue found: This pool is not connected to the limit order manager. The pool has a different plugin attached.'
+                );
+              } else {
+                console.log(
+                  '✅ Pool plugin is correctly set to limit order manager'
+                );
+              }
+            } catch (error) {
+              console.error('Error checking pool state:', error);
+            }
+          }
+        }}
+      >
+        🔍 Check Pool & Plugin
+      </Button>
+
+      {/* Check ACTUAL PLUGIN initialization */}
+      <Button
+        className="bg-indigo-600 hover:bg-indigo-700 text-white"
+        onClick={async () => {
+          if (publicClient && poolAddress) {
+            try {
+              console.log('=== CHECKING ACTUAL PLUGIN INITIALIZATION ===');
+              console.log('Using plugin:', limitOrderManagerAddress);
+              console.log(
+                'Configured manager:',
+                currenChain.contracts.limitOrderManager
+              );
+
+              // Check if pool is initialized in the ACTUAL plugin
+              const isInitialized = await publicClient.readContract({
+                address: limitOrderManagerAddress, // Use actual plugin!
+                abi: limitOrderManagerABI,
+                functionName: 'initialized',
+                args: [poolAddress],
+              });
+              console.log('Pool initialized in ACTUAL plugin:', isInitialized);
+
+              // Also check tick spacing in ACTUAL plugin
+              const tickSpacingResult = await publicClient.readContract({
+                address: limitOrderManagerAddress, // Use actual plugin!
+                abi: limitOrderManagerABI,
+                functionName: 'tickSpacings',
+                args: [poolAddress],
+              });
+              console.log(
+                'Pool tick spacing in ACTUAL plugin:',
+                tickSpacingResult
+              );
+
+              // Check the tickLowerLast in ACTUAL plugin
+              const tickLowerLast = await publicClient.readContract({
+                address: limitOrderManagerAddress, // Use actual plugin!
+                abi: limitOrderManagerABI,
+                functionName: 'tickLowerLasts',
+                args: [poolAddress],
+              });
+              console.log(
+                'Last tick lower for pool in ACTUAL plugin:',
+                tickLowerLast
+              );
+
+              // Get contract addresses for verification from ACTUAL plugin
+              const wNativeToken = await publicClient.readContract({
+                address: limitOrderManagerAddress, // Use actual plugin!
+                abi: limitOrderManagerABI,
+                functionName: 'wNativeToken',
+                args: [],
+              });
+              console.log('wNativeToken in ACTUAL plugin:', wNativeToken);
+
+              const poolDeployer = await publicClient.readContract({
+                address: limitOrderManagerAddress, // Use actual plugin!
+                abi: limitOrderManagerABI,
+                functionName: 'poolDeployer',
+                args: [],
+              });
+              console.log('poolDeployer in ACTUAL plugin:', poolDeployer);
+
+              const factory = await publicClient.readContract({
+                address: limitOrderManagerAddress, // Use actual plugin!
+                abi: limitOrderManagerABI,
+                functionName: 'factory',
+                args: [],
+              });
+              console.log('factory in ACTUAL plugin:', factory);
+
+              const basePluginFactory = await publicClient.readContract({
+                address: limitOrderManagerAddress, // Use actual plugin!
+                abi: limitOrderManagerABI,
+                functionName: 'basePluginFactory',
+                args: [],
+              });
+              console.log(
+                'basePluginFactory in ACTUAL plugin:',
+                basePluginFactory
+              );
+
+              console.log('\n=== SUMMARY ===');
+              if (!isInitialized) {
+                console.error(
+                  '❌ Pool is NOT initialized in the actual plugin!'
+                );
+                console.log(
+                  'You need to call setTickSpacing on the ACTUAL plugin:',
+                  limitOrderManagerAddress
+                );
+                alert(
+                  `❌ Pool not initialized!\n\nThe pool is not initialized in the actual plugin.\n\nPlugin: ${limitOrderManagerAddress}\n\nYou need admin access to initialize it.`
+                );
+              } else {
+                console.log('✅ Pool is initialized in the actual plugin');
+              }
             } catch (error) {
               console.error('Error checking initialization:', error);
             }

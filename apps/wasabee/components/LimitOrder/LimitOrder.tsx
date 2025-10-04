@@ -308,8 +308,17 @@ const LimitOrder = observer(
         !token1 ||
         !tick ||
         !tickSpacing
-      )
+      ) {
+        console.log('Buttons disabled - missing data:', {
+          hasInput: !!currencies.INPUT,
+          hasOutput: !!currencies.OUTPUT,
+          hasToken0: !!token0,
+          hasToken1: !!token1,
+          hasTick: !!tick,
+          hasTickSpacing: !!tickSpacing,
+        });
         return [true, true];
+      }
 
       const priceTick = invertPrice
         ? wasInverted
@@ -319,7 +328,25 @@ const LimitOrder = observer(
         ? tryParseTick(token1, token0, sellPrice.toString(), tickSpacing)
         : tryParseTick(token0, token1, sellPrice.toString(), tickSpacing);
 
-      if (priceTick === undefined) return [true, true];
+      if (priceTick === undefined) {
+        console.log('Buttons disabled - priceTick is undefined:', {
+          sellPrice,
+          invertPrice,
+          wasInverted,
+          token0Symbol: token0.symbol,
+          token1Symbol: token1.symbol,
+        });
+        return [true, true];
+      }
+
+      console.log('Button state calculation:', {
+        priceTick,
+        currentTick: tick,
+        tickSpacing,
+        sellingToken0: currencies.INPUT.wrapped.equals(token0.wrapped),
+        sellingToken1: currencies.INPUT.wrapped.equals(token1.wrapped),
+        wasInverted,
+      });
 
       if (
         currencies.INPUT.wrapped.equals(token0.wrapped) &&
