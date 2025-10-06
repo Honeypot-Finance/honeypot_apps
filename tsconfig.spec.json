@@ -1,5 +1,5 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
@@ -17,6 +17,13 @@
     "apps/**/src/**/*.test.js",
     "apps/**/src/**/*.spec.jsx",
     "apps/**/src/**/*.test.jsx",
-    "apps/**/src/**/*.d.ts"
+    "apps/**/src/**/*.d.ts",
+    
+    "apps/all-in-one-vault/test-exports.ts",
+
+    "apps/dreampad/**/*.{ts,tsx}",
+    "apps/pot2pump/**/*.{ts,tsx}" ,
+
+    "apps/wasabee/**/*.{ts,tsx}"   
   ]
 }

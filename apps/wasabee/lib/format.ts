@@ -104,6 +104,12 @@ export function formatExtremelyLargeNumber(
     : number;
 
   const num = new BigNumber(rawNumber);
+
+   // 🚨 Handle invalid inputs
+   if (!num.isFinite()) {
+    return String(number); // "NaN", "Infinity", "-Infinity"
+  }
+
   if (num.isZero()) {
     return options.addPrefix ? `$${num.toFixed(decimals)}` : num.toFixed(decimals);
   }

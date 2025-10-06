@@ -28,11 +28,9 @@ import { FaQuestionCircle } from 'react-icons/fa';
 import { popmodal } from '@/services/popmodal';
 import store from 'store2';
 import { cn } from '@/lib/tailwindcss';
+import { TokenLogo, Token } from '@honeypot/shared';
 import { uploadFile, UploadImage } from '@/components/UploadImage/UploadImage';
 import BigNumber from 'bignumber.js';
-import { TokenLogo } from '@honeypot/shared';
-
-import { Token } from '@honeypot/shared';
 import { amountFormatted, formatAmount } from '@/lib/format';
 import AITokenGenerator, {
   TokenGeneratedSuccessValues,
@@ -221,7 +219,7 @@ const MEMELaunchModal: NextLayoutPage = observer(() => {
   }, []);
 
   useEffect(() => {
-    if (wallet.isInit) {
+    if (wallet.isInit && wallet.currentChain?.raisedTokenData?.length > 0) {
       state.setRaisedTokenAddress(
         wallet.currentChain.raisedTokenData[0].address
       );

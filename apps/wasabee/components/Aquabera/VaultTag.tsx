@@ -17,6 +17,8 @@ export const VaultTagContent = observer(
       <div
         className="flex items-center gap-2 rounded-full px-2 cursor-pointer"
         style={{ backgroundColor: bgColor, color: textColor }}
+        tabIndex={0}
+        role="button"
       >
         <span className="text-sm">{tag}</span>
       </div>
@@ -47,7 +49,7 @@ export const VaultTag = observer(
             content: 'max-w-[200px]',
           }}
         >
-          <div className="cursor-pointer">
+          <div className="cursor-pointer" tabIndex={0} role="button">
             <VaultTagContent
               tag={tag}
               bgColor={bgColor}

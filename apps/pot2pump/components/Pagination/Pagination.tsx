@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { IndexerPaginationState } from '@honeypot/shared/lib/utils/utils';
 import { observer } from 'mobx-react-lite';
 import HoneyStickSvg from '../svg/HoneyStick';
-import { cn } from '@nextui-org/react';
+import { cn } from '@nextui-org/theme';
 import { DataContainer, DataContainerProps } from '../DataContainer';
 
 type PaginationProps<FilterT extends Record<string, any>, ItemT> = {
@@ -44,7 +44,7 @@ export const Pagination = observer(
                 ))}
               </motion.div>
               <div className="flex justify-around my-5">
-                {props.paginationState.filter.hasNextPage && (
+                {props.paginationState.filter?.hasNextPage && (
                   <Button
                     onPress={() => {
                       props.paginationState.loadMore();

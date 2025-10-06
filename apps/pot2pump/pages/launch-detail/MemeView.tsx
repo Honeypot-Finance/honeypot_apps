@@ -127,7 +127,13 @@ export const MemeView = observer(() => {
           </CardContainer>
 
           <div className="bg-transparent rounded-2xl space-y-3 col-span-1">
-            {wallet.isInit && pair ? (
+            {!wallet.isInit ? (
+              <div className="w-full h-full min-h-[400px] flex flex-col items-center justify-center">
+                <div className="text-[#eee369] text-xl text-center">
+                  Initializing wallet...
+                </div>
+              </div>
+            ) : wallet.isInit && pair ? (
               <Action pair={pair} refreshTxsCallback={triggerRefresh} />
             ) : (
               <NotConnetctedDisplay />

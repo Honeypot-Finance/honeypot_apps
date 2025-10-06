@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "module": "commonjs",
+    "types": ["jest", "node"],
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node"
+  },
+  "include": [
+    "jest.config.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "../../test/apps/pot2pump/**/*.test.ts",
+    "../../test/apps/pot2pump/**/*.spec.ts",
+    "../../test/apps/pot2pump/**/*.test.tsx",
+    "../../test/apps/pot2pump/**/*.spec.tsx"
+  ]
+}

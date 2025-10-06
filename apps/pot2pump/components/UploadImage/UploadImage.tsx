@@ -4,6 +4,8 @@ import React, { useRef } from 'react';
 import type { PutBlobResult } from '@vercel/blob';
 import Dropzone from 'react-dropzone';
 
+
+
 export interface UploadImageProps {
   onUpload: (url: string) => void;
   imagePath: string | null | undefined;
@@ -16,21 +18,30 @@ export const uploadFile = async (
   blobName: string,
   onUpload?: (url: string) => void
 ): Promise<string> => {
-  const response = await fetch(
-    `/api/upload/upload-project-icon?filename=${blobName}`,
-    {
-      method: 'POST',
-      body: file,
+  try {
+    const response = await fetch(
+      `/api/upload/upload-project-icon?filename=${blobName}`,
+      {
+        method: 'POST',
+        body: file,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${response.statusText}`);
     }
-  );
 
-  const newBlob = (await response.json()) as PutBlobResult;
+    const newBlob = (await response.json()) as PutBlobResult;
 
-  if (onUpload) {
-    onUpload(newBlob.url);
+    if (onUpload) {
+      onUpload(newBlob.url);
+    }
+
+    return newBlob.url;
+  } catch (error) {
+    console.error('Upload failed:', error);
+    throw error;
   }
-
-  return newBlob.url;
 };
 
 export function UploadImage(props: UploadImageProps): JSX.Element {
@@ -39,17 +50,26 @@ export function UploadImage(props: UploadImageProps): JSX.Element {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const response = await fetch(
-        `/api/upload/upload-project-icon?filename=${props.blobName}`,
-        {
-          method: 'POST',
-          body: file,
+      try {
+        const response = await fetch(
+          `/api/upload/upload-project-icon?filename=${props.blobName}`,
+          {
+            method: 'POST',
+            body: file,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Upload failed: ${response.statusText}`);
         }
-      );
 
-      const newBlob = (await response.json()) as PutBlobResult;
+        const newBlob = (await response.json()) as PutBlobResult;
 
-      props.onUpload(newBlob.url);
+        props.onUpload(newBlob.url);
+      } catch (error) {
+        console.error('Upload failed:', error);
+        // Optionally, you could call an onError callback here if provided
+      }
     }
   };
 
@@ -70,7 +90,8 @@ export function UploadImage(props: UploadImageProps): JSX.Element {
                   src={props?.imagePath ?? '/images/banner-empty.png'}
                   alt="banner"
                   className="rounded-[11.712px] hover:bg-[#ECC94E20] w-[3rem] h-[3rem] self-center cursor-pointer object-fill"
-                  fill
+                  width={48}
+                  height={48}
                   onClick={() => fileIn.current?.click()}
                 ></Image>
               )) || (

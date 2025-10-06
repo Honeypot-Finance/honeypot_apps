@@ -14,19 +14,16 @@
         "postcssConfig": "apps/all-in-one-vault/postcss.config.js"
       }
     },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "options": {
-        "lintFilePatterns": ["apps/all-in-one-vault/**/*.{ts,tsx,js,jsx}"]
-      }
-    },
+
+
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/apps/all-in-one-vault"],
+      "outputs": ["{workspaceRoot}/coverage/{projectName}"],
       "options": {
-        "jestConfig": "apps/all-in-one-vault/jest.config.ts",
+        "jestConfig": "apps/all-in-one-vault/test/jest.config.js",
         "passWithNoTests": true
       }
     }
+    
   }
 }

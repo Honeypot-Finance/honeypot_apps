@@ -1,7 +1,7 @@
 import '@/styles/globals.css';
 import '@/styles/overrides/reactjs-popup.css';
 import '@/styles/overrides/toastify.css';
-// @ts-expect-error - Next.js AppProps type issue
+//@ts-ignore
 import type { AppProps } from 'next/app';
 import { Layout } from '@/components/layout';
 import { NextLayoutPage } from '@/types/nextjs';
@@ -29,7 +29,7 @@ import { useSubgraphClient } from '@honeypot/shared';
 import { ErrorBoundary } from '@sentry/nextjs';
 
 const config = createWagmiConfig({
-  // @ts-expect-error - Network chain type mismatch
+  // @ts-ignore
   chains: networks
     .filter((network) => network.supportLBP)
     .map((network) => network.chain),

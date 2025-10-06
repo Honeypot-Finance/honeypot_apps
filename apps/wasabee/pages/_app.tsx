@@ -66,8 +66,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
     config,
   });
 
-  // Initialize vault data prefetching for instant pools page loading
-  useVaultDataPrefetch();
+
 
   useEffect(() => {
     wallet.initWallet(walletClient);

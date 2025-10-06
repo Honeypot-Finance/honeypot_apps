@@ -5,6 +5,7 @@ import {
   okxWallet,
   walletConnectWallet,
   metaMaskWallet,
+  rabbyWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { injected, safe } from 'wagmi/connectors';
 import { cookieStorage, createStorage, Config, http } from 'wagmi';
@@ -52,6 +53,7 @@ const shouldSetAllWalletsDisconnectedInStorage = () => {
   localStorage.setItem('wagmi.rainbow.disconnected', 'true');
   localStorage.setItem('wagmi.walletConnect.disconnected', 'true');
   localStorage.setItem('wagmi.bitget.disconnected', 'true');
+  localStorage.setItem('wagmi.rabby.disconnected', 'true');
   localStorage.setItem('wagmi.com.okex.wallet.disconnected', 'true');
   localStorage.setItem('wagmi.app.phantom.disconnected', 'true');
   localStorage.setItem('wagmi.io.metamask.disconnected', 'true');
@@ -60,6 +62,7 @@ const shouldSetAllWalletsDisconnectedInStorage = () => {
 const customWallets = () => {
   return [
     metaMaskWallet,
+    rabbyWallet,
     rainbowWallet,
     walletConnectWallet,
     bitgetWallet,
@@ -77,7 +80,10 @@ const customWallets = () => {
 
 const connectors = () => [
   safe(),
-  injected(),
+  injected({
+    // Improve wallet detection for Rabby and other injected wallets
+    shimDisconnect: true,
+  }),
   ...connectorsForWallets(
     [
       {

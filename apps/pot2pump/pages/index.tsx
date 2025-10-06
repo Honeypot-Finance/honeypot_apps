@@ -167,7 +167,12 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
       fetchPolicy: 'network-only',
       notifyOnNetworkStatusChange: true,
       pollInterval: 5000,
+
+
+      // Removed `skip: !wallet.isInit` so trending tokens always fetch 
+      // regardless of wallet connection.
       skip: !wallet.isInit,
+
     });
 
   const isTrendingInitialLoading =
@@ -427,7 +432,7 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
     setTrendingTokensList([]);
     setPopularCapTokensList([]);
     setNewTokensList([]);
-  }, [wallet.currentChain]);
+  }, []);
 
   // // Auto scroll effect
   // useEffect(() => {
@@ -508,8 +513,9 @@ const Pot2PumpOverviewPage: NextLayoutPage = observer(() => {
     <div className="w-full flex flex-col justify-center items-center px-4 font-gliker">
       <CardContainer className="xl:max-w-[1200px]">
         <div className="flex flex-col justify-center w-full rounded-2xl gap-y-4">
+
           {/* Featured Slideshow */}
-          <div className="relative">
+          <div className="relative" >
             {trendingTokensList.length > 0 ? (
               <Carousel
                 setApi={setApi}

@@ -2,38 +2,43 @@ import type { Config } from 'jest';
 
 const config: Config = {
   displayName: 'wasabee',
-  preset: './jest.preset.js',
+  preset: '../../jest.preset.js',
   testEnvironment: 'jsdom',
-  rootDir: '../../',
-  setupFilesAfterEnv: ['<rootDir>/apps/wasabee/src/test-setup.ts'],
-  transform: {
-    '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'] }],
+  setupFilesAfterEnv: ['<rootDir>/../../test/apps/wasabee/setup.ts'],
+  testMatch: ['<rootDir>/../../test/apps/wasabee/**/*.test.{ts,tsx}'],
+  roots: ['<rootDir>/../../test/apps/wasabee'],
+  collectCoverageFrom: [
+    '<rootDir>/**/*.{ts,tsx}',
+    '!<rootDir>/**/*.d.ts',
+    '!<rootDir>/pages/_app.tsx',
+    '!<rootDir>/pages/_document.tsx',
+    '!<rootDir>/next.config.js',
+    '!<rootDir>/**/*.config.{js,ts}',
+    '!<rootDir>/public/**',
+    '!<rootDir>/.next/**',
+  ],
+  coverageDirectory: '<rootDir>/../../coverage/wasabee',
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/$1',
+    '^@wasabee/(.*)$': '<rootDir>/$1',
+    '^@honeypot/shared/(.*)$': '<rootDir>/../../libs/shared/hpot-sdk/src/$1',
+    '^@honeypot/shared$': '<rootDir>/../../libs/shared/hpot-sdk/src/index.ts',
+    // Mock CSS and image imports
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
+      '<rootDir>/../../test/apps/wasabee/__mocks__/fileMock.js',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/apps/wasabee',
-  testMatch: [
-    '<rootDir>/test/apps/wasabee/**/*.test.{ts,tsx}',
-    '<rootDir>/apps/wasabee/**/*.{test,spec}.{ts,tsx}'
-  ],
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/apps/wasabee/$1',
-    '^@honeypot/(.*)$': '<rootDir>/libs/$1/src',
+  transformIgnorePatterns: ['node_modules/(?!(superjson|@trpc|viem|@rainbow-me|clipboard-polyfill|wagmi|@wagmi)/)'],
+  transform: {
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        tsconfig: '<rootDir>/tsconfig.spec.json',
+        useESM: false,
+      },
+    ],
   },
-  collectCoverageFrom: [
-    'apps/wasabee/components/**/*.{ts,tsx}',
-    'apps/wasabee/pages/**/*.{ts,tsx}',
-    'apps/wasabee/lib/**/*.{ts,tsx}',
-    'apps/wasabee/hooks/**/*.{ts,tsx}',
-    '!**/*.d.ts',
-    '!**/node_modules/**',
-  ],
-  testPathIgnorePatterns: [
-    '<rootDir>/node_modules/',
-    '<rootDir>/apps/wasabee/.next/',
-  ],
-  transformIgnorePatterns: [
-    'node_modules/(?!(.*\\.mjs$|@babel|@testing-library))',
-  ],
 };
 
 export default config;

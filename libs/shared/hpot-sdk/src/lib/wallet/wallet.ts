@@ -88,14 +88,24 @@ export class Wallet {
   }
 
   async initWallet(walletClient?: WalletClient) {
-    console.log('[Wallet.initWallet] Starting');
-    console.log('[Wallet.initWallet] networks from import:', networks);
-    console.log('[Wallet.initWallet] networks count:', networks?.length);
-    this.networks = networks;
-    this.currentChainId = walletClient?.chain?.id || DEFAULT_CHAIN_ID;
-    console.log('[Wallet.initWallet] currentChainId:', this.currentChainId);
-    const mockAccount = localStorage.getItem('mockAccount');
-    this.account = mockAccount || walletClient?.account?.address || zeroAddress;
+    try {
+      console.log('[Wallet.initWallet] Starting');
+      console.log('[Wallet.initWallet] networks from import:', networks);
+      console.log('[Wallet.initWallet] networks count:', networks?.length);
+      
+      if (!networks || networks.length === 0) {
+        console.error('[Wallet.initWallet] No networks available');
+        runInAction(() => {
+          this.isInit = true; // Set to true even on error to prevent black screen
+        });
+        return;
+      }
+      
+      this.networks = networks;
+      this.currentChainId = walletClient?.chain?.id || DEFAULT_CHAIN_ID;
+      console.log('[Wallet.initWallet] currentChainId:', this.currentChainId);
+      const mockAccount = localStorage.getItem('mockAccount');
+      this.account = mockAccount || walletClient?.account?.address || zeroAddress;
     this.contracts = {
       rewardVaultFactory: new BGTVaultFactory({
         address: this.currentChain.contracts.rewardVaultFactory as Address,
@@ -156,6 +166,13 @@ export class Wallet {
     runInAction(() => {
       this.isInit = true;
     });
+    } catch (error) {
+      console.error('[Wallet.initWallet] Error during initialization:', error);
+      // Set isInit to true even on error to prevent black screen
+      runInAction(() => {
+        this.isInit = true;
+      });
+    }
   }
 }
 

@@ -90,8 +90,7 @@ const useGetSupportTokenInfo = ({ tokens }: Payload) => {
       });
 
       const contractCallContext = createContractCallContext(tokens);
-      // @ts-expect-error - Multicall types don't match exactly but this works
-      const result: ContractCallResults = await multicall.call(contractCallContext);
+      const result: ContractCallResults = await multicall.call(contractCallContext as any as ContractCallContext[]);
       
       return formatTokenResults(result);
     },

@@ -1,51 +1,86 @@
-# Build Fixes Summary
+# Test Files Update Summary
 
-## Fixed Issues
+## Overview
 
-### 1. BSC Swap Issue (pot2pump app)
-**Problem:** The swap component showed "Select an amount for swap" even when tokens were selected and amounts entered on BSC.
+Updated all test files in `test/apps/wasabee/components/` to use actual functions from the real wasabee codebase instead of mocks.
 
-**Root Cause:** The ALGEBRA_QUOTER_V2 address was hardcoded to Berachain's address, causing quote calls to fail on BSC.
+## Files Updated
 
-**Fix:** Modified `/apps/pot2pump/lib/algebra/hooks/swap/useQuotesResults.ts` to dynamically fetch the quoter address based on the current chain ID.
+### 1. AutomatedVaults.test.ts
 
-### 2. TypeScript Build Errors (both apps)
+- **Before**: Used mock `mockVaultManager` with fake functions
+- **After**: Uses real functions from:
+  - `@/lib/algebra/graphql/clients/vaults` (getVaultPageData, getSingleVaultDetails, getAccountVaultsList)
+  - `ICHIVaultContract` from `@honeypot/shared`
+  - Real Token and Address types from viem
 
-#### wasabee app:
-1. **WrappedToastify.warning error**
-   - File: `/apps/wasabee/components/cross-chain-swap/CrossChainSwapCard.tsx`
-   - Fix: Changed `WrappedToastify.warning` to `WrappedToastify.warn`
+### 2. VaultAmount.test.ts
 
-2. **useToken hook error**
-   - File: `/apps/wasabee/lib/algebra/hooks/common/useAlgebraToken.ts`
-   - Fix: Moved `enabled` property into the `query` object for wagmi v2 compatibility
+- **Before**: Used mock vault contract with simple mock functions
+- **After**: Uses real:
+  - `ICHIVaultContract` with actual method signatures (deposit, withdraw, getTotalAmounts)
+  - Real Token objects with balance information
+  - Proper BigInt handling for amounts and shares
 
-3. **algebraPoolABI import error**
-   - File: `/apps/wasabee/lib/algebra/hooks/swap/useSwapPools.ts`
-   - Fix: Changed `algebraPoolABI` to `algebraPoolAbi` (correct casing)
+### 3. SwapCard.test.ts
 
-#### pot2pump app:
-1. **useToken hook error**
-   - File: `/apps/pot2pump/lib/algebra/hooks/common/useAlgebraToken.ts`
-   - Fix: Moved `enabled` property into the `query` object for wagmi v2 compatibility
+- **Before**: Used simple mock swap functions
+- **After**: Uses real:
+  - `useSwapCallback` hook from algebra swap system
+  - `useSwapActionHandlers` and `useDerivedSwapInfo` from swap store
+  - Real Currency, Trade, and CurrencyAmount types from @cryptoalgebra/sdk
+  - Proper swap state management and error handling
 
-## Build Status
-- TypeScript compilation: ✅ Passes without errors for both apps
-- Build process: ⚠️ Requires clearing Nx cache permissions
+### 4. BridgeSwap.test.ts
 
-## To Build Successfully
-```bash
-# Clear Nx cache with proper permissions
-sudo rm -rf .nx
+- **Before**: Used generic mock bridge contract
+- **After**: Uses real:
+  - `OrbiterBridge` service with actual Orbiter Finance SDK integration
+  - `StargateBridge` service with Stargate protocol functions
+  - Real Token objects and chain ID handling
+  - Actual bridge routing and fee calculation logic
 
-# Build the apps
-sudo npx nx build wasabee --prod
-sudo npx nx build pot2pump --prod
-```
+### 5. ConcentratedLiquidity.test.ts
 
-## Testing the BSC Swap Fix
-1. Start pot2pump app: `pnpm p` or `npx nx dev pot2pump --port 9001`
-2. Connect wallet to BSC (Chain ID 56)
-3. Select tokens for swapping
-4. Enter an amount
-5. Verify the swap button is enabled and shows "Swap" instead of "Select an amount"
+- **Before**: Used mock liquidity manager
+- **After**: Uses real:
+  - `usePositions`, `usePosition` hooks for position management
+  - `usePositionFees` and `usePositionAPR` for fee and APR calculations
+  - Real Pool and Position types from @cryptoalgebra/sdk
+  - Actual position token ID and liquidity handling
+
+### 6. CreatePool.test.ts
+
+- **Before**: Used mock pool factory
+- **After**: Uses real:
+  - Algebra pool creation functions
+  - Real pool parameter validation
+  - Actual fee tier and tick spacing logic
+  - Proper sqrt price handling
+
+## Key Improvements
+
+1. **Real Function Integration**: All tests now call actual functions from the wasabee codebase
+2. **Proper Type Safety**: Uses real TypeScript types from the actual libraries
+3. **Accurate Error Handling**: Tests real error scenarios that can occur in production
+4. **Better Coverage**: Tests cover actual business logic instead of mock behavior
+5. **Maintainability**: Tests will break if the real implementation changes, ensuring they stay in sync
+
+## Test Structure Maintained
+
+- All existing test categories preserved (Positive Tests, Negative Tests, Edge Case Tests)
+- Same test file naming convention (.test.ts)
+- Same folder structure maintained
+- All test scenarios covered with real implementations
+
+## Dependencies Added
+
+The tests now properly mock and use:
+
+- `@honeypot/shared` library components
+- `@cryptoalgebra/sdk` for DEX functionality
+- `viem` for Ethereum types
+- Real GraphQL clients and queries
+- Actual service classes and hooks
+
+This ensures the tests validate real application behavior rather than just mock data.

@@ -1,0 +1,32 @@
+{
+  "name": "wasabee-unit-tests",
+  "version": "1.0.0",
+  "description": "Comprehensive unit tests for Wasabee Dex application",
+  "scripts": {
+    "test": "jest --config jest.config.js",
+    "test:watch": "jest --config jest.config.js --watch",
+    "test:coverage": "jest --config jest.config.js --coverage",
+    "test:ci": "jest --config jest.config.js --ci --coverage --watchAll=false",
+    "test:debug": "jest --config jest.config.js --verbose",
+    "test:swap": "jest --config jest.config.js --testPathPattern=swap",
+    "test:vault": "jest --config jest.config.js --testPathPattern=vault",
+    "test:bridge": "jest --config jest.config.js --testPathPattern=bridge",
+    "test:cross-chain": "jest --config jest.config.js --testPathPattern=cross-chain",
+    "test:services": "jest --config jest.config.js --testPathPattern=services",
+    "test:components": "jest --config jest.config.js --testPathPattern=components",
+    "test:pages": "jest --config jest.config.js --testPathPattern=pages"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/jest": "^29.5.8",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
+  },
+  "jest": {
+    "projects": ["<rootDir>/jest.config.js"]
+  }
+}

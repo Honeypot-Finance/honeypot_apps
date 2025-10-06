@@ -13,6 +13,7 @@ interface StatsCard {
   decimals?: number;
 }
 
+
 const DreampadLeaderboard = () => {
   const [searchInput, setSearchInput] = useState('');
   const [searchAddress, setSearchAddress] = useState('');
