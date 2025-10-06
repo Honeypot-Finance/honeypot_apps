@@ -52,14 +52,6 @@ export const LimitOrderButton = ({
   const publicClient = usePublicClient();
   const [detailedError, setDetailedError] = useState<string | null>(null);
 
-  // State to store the correct pool deployer from the contract
-  const [contractPoolDeployer, setContractPoolDeployer] =
-    useState<Address | null>(null);
-  // State to store the ACTUAL plugin attached to the pool
-  const [actualPoolPlugin, setActualPoolPlugin] = useState<Address | null>(
-    null
-  );
-
   const currenChain = useObserver(() => wallet.currentChain);
 
   const {
@@ -186,72 +178,6 @@ export const LimitOrderButton = ({
     }
   }
 
-  // Fetch the pool deployer from the limit order manager contract
-  useEffect(() => {
-    const fetchPoolDeployer = async () => {
-      if (publicClient && currenChain.contracts.limitOrderManager) {
-        try {
-          // Get the pool deployer from the limit order manager contract
-          const deployer = await publicClient.readContract({
-            address: currenChain.contracts.limitOrderManager as Address,
-            abi: limitOrderManagerABI,
-            functionName: 'poolDeployer',
-            args: [],
-          });
-          setContractPoolDeployer(deployer as Address);
-          console.log(
-            'Fetched pool deployer from limit order manager:',
-            deployer
-          );
-        } catch (error) {
-          console.error('Error fetching pool deployer:', error);
-          // Fallback to zero address if we can't read it
-          setContractPoolDeployer(
-            '0x0000000000000000000000000000000000000000' as Address
-          );
-        }
-      }
-    };
-    fetchPoolDeployer();
-  }, [publicClient, currenChain.contracts.limitOrderManager]);
-
-  // Fetch the actual plugin from the pool (for informational purposes)
-  useEffect(() => {
-    const fetchPoolPlugin = async () => {
-      if (publicClient && poolAddress) {
-        try {
-          const plugin = await publicClient.readContract({
-            address: poolAddress,
-            abi: [
-              {
-                inputs: [],
-                name: 'plugin',
-                outputs: [{ name: '', type: 'address' }],
-                stateMutability: 'view',
-                type: 'function',
-              },
-            ],
-            functionName: 'plugin',
-            args: [],
-          });
-          setActualPoolPlugin(plugin as Address);
-          console.log('Pool has plugin attached:', plugin);
-        } catch (error) {
-          console.error('Error fetching pool plugin:', error);
-        }
-      }
-    };
-    fetchPoolPlugin();
-  }, [publicClient, poolAddress]);
-
-  // Get the pool deployer for the poolKey
-  const getPoolDeployer = () => {
-    return (
-      contractPoolDeployer ||
-      ('0x0000000000000000000000000000000000000000' as Address)
-    );
-  };
-
   // Use the configured limit order manager - it's a separate contract, not the pool's plugin
   const limitOrderManagerAddress = currenChain.contracts
     .limitOrderManager as Address;
@@ -260,16 +186,14 @@ export const LimitOrderButton = ({
     isReady &&
     limitOrder &&
     tickSpacing &&
-    limitOrder.tickLower % tickSpacing === 0 && // Ensure tick is aligned
-    contractPoolDeployer && // Make sure we have the correct deployer
-    actualPoolPlugin // Make sure we found the actual plugin
+    limitOrder.tickLower % tickSpacing === 0 // Ensure tick is aligned
       ? {
-          address: limitOrderManagerAddress, // Use actual plugin, not configured manager
+          address: limitOrderManagerAddress,
           abi: limitOrderManagerABI,
           functionName: 'place' as const,
           args: [
             {
-              deployer: contractPoolDeployer, // Use the correct deployer from contract
+              deployer: '0x0000000000000000000000000000000000000000' as Address, // Always use zero address
               token0: token0.address as Address,
               token1: token1.address as Address,
             },
@@ -499,7 +423,7 @@ export const LimitOrderButton = ({
           poolKey: {
             token0: token0?.address,
             token1: token1?.address,
-            deployer: getPoolDeployer(), // Use pool deployer from contract
+            deployer: '0x0000000000000000000000000000000000000000', // Always zero address
           },
           tickLower: limitOrder?.tickLower,
           tickUpper: limitOrder?.tickUpper,
@@ -567,7 +491,7 @@ export const LimitOrderButton = ({
     console.log('Showing approval button:', {
       needAllowance,
       approvalState,
-      approvingFor: actualPoolPlugin || currenChain.contracts.limitOrderManager,
+      approvingFor: currenChain.contracts.limitOrderManager,
       inputCurrency: inputAmount?.currency.symbol,
     });
     return (
