@@ -11,6 +11,7 @@ import { LoadingDisplay } from '@/components/LoadingDisplay/LoadingDisplay';
 import SwapTransactionHistory from '@/components/SwapTransactionHistory';
 import SwapCardMultichainDesign from '@/components/multichain-design/swap/SwapCard';
 import LimitOrder from '@/components/LimitOrder/LimitOrder';
+import LimitOrderHistory from '@/components/LimitOrder/LimitOrderHistory';
 import * as Tabs from '@radix-ui/react-tabs';
 
 const SwapPage = observer(() => {
@@ -24,6 +25,7 @@ const SwapPage = observer(() => {
   const [outputCurrency, setOutputCurrency] = useState<string | undefined>(
     undefined
   );
+  const [activeTab, setActiveTab] = useState<string>('swap');
 
   const isInit = wallet.isInit;
 
@@ -92,7 +94,12 @@ const SwapPage = observer(() => {
           animate="visible"
           className="relative w-full flex flex-col items-center justify-start col-span-2 lg:col-span-1 overflow-visible"
         >
-          <Tabs.Root defaultValue="swap" className="w-full">
+          <Tabs.Root
+            defaultValue="swap"
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
             <Tabs.List className="flex w-full mb-4 bg-gray-900/50 rounded-lg p-1">
               <Tabs.Trigger
                 value="swap"
@@ -138,7 +145,11 @@ const SwapPage = observer(() => {
           transition={{ duration: 0.5 }}
           className="w-full col-span-2 h-full"
         >
-          <SwapTransactionHistory />
+          {activeTab === 'limit' ? (
+            <LimitOrderHistory ownerAddress={wallet.account} />
+          ) : (
+            <SwapTransactionHistory />
+          )}
         </motion.div>
       </div>
     </div>

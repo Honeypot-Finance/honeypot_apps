@@ -306,16 +306,18 @@ const LimitOrder = observer(
         !currencies.OUTPUT ||
         !token0 ||
         !token1 ||
-        !tick ||
-        !tickSpacing
+        tick === undefined ||
+        tick === null ||
+        tickSpacing === undefined ||
+        tickSpacing === null
       ) {
         console.log('Buttons disabled - missing data:', {
           hasInput: !!currencies.INPUT,
           hasOutput: !!currencies.OUTPUT,
           hasToken0: !!token0,
           hasToken1: !!token1,
-          hasTick: !!tick,
-          hasTickSpacing: !!tickSpacing,
+          tick,
+          tickSpacing,
         });
         return [true, true];
       }

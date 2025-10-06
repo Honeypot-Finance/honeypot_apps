@@ -34,6 +34,17 @@ const createProxiedClient = (
     cache: new InMemoryCache(),
   });
 
+  if (!ApolloProxyClientsRecord[chainId]) {
+    ApolloProxyClientsRecord[chainId] = {
+      algebra_info: null as any,
+      algebra_farming: null as any,
+      bgt_market: null as any,
+      lbp: null as any,
+      wasabee_ido: null as any,
+      limit_order: null as any,
+    };
+  }
+
   ApolloProxyClientsRecord[chainId][endpoint] = client;
 
   return client;
@@ -90,6 +101,7 @@ export function getSubgraphClientByChainId(
       bgt_market: null as any,
       lbp: null as any,
       wasabee_ido: null as any,
+      limit_order: null as any,
     };
   }
 
