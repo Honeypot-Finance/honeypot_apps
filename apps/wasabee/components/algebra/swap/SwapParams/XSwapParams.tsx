@@ -186,8 +186,8 @@ const XSwapParams = ({
   if (wrapType !== WrapType.NOT_APPLICABLE) return;
 
   return trade ? (
-    <div className="flex flex-col w-full rounded-2xl cursor-pointer">
-      <div className="w-full custom-dashed p-4">
+    <div className="flex flex-col w-full rounded-2xl cursor-pointer ">
+      <div className="w-full custom-dashed p-4 bg-white/50">
         <div
           className="flex flex-col w-full"
           onClick={() => toggleExpanded(!isExpanded)}

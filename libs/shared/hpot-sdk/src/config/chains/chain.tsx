@@ -79,14 +79,20 @@ export class Network {
   validatedMemeAddresses: string[] = [];
   validatedVault: ({ address: `0x${string}` } & Partial<ICHIVaultContract>)[] =
     [];
+  multiSwapTokens: Token[] = [];
+  multiSwapTokensInfo: Record<string, Partial<Token>> = {};
   constructor(
     args: Omit<
       Partial<Network>,
-      'faucetTokens' | 'nativeToken' | 'validatedTokensInfo'
+      | 'faucetTokens'
+      | 'nativeToken'
+      | 'validatedTokensInfo'
+      | 'multiSwapTokensInfo'
     > & {
       faucetTokens: Partial<Token>[];
       nativeToken: Partial<Token>;
       validatedTokensInfo: Record<string, Partial<Token>>;
+      multiSwapTokensInfo?: Record<string, Partial<Token>>;
     }
   ) {
     Object.assign(this, args);
@@ -165,6 +171,22 @@ export class Network {
     this.validatedVault.forEach((vault) => {
       const vaultContract = ICHIVaultContract.getVault(vault);
     });
+
+    // Initialize multiSwapTokens from static configuration
+    if (
+      this.multiSwapTokensInfo &&
+      Object.keys(this.multiSwapTokensInfo).length > 0
+    ) {
+      this.multiSwapTokens = Object.entries(this.multiSwapTokensInfo).map(
+        ([address, t]) => {
+          return Token.getToken({
+            ...t,
+            address,
+            chainId: this.chainId.toString(),
+          });
+        }
+      );
+    }
   }
 
   getTokenExplorerUrl(token: Token): string {
@@ -317,6 +339,23 @@ export const bscMainnetNetwork = new Network({
       logoURI: 'https://bscscan.com/token/images/wlfi-usd1_32.png',
     },
   },
+  multiSwapTokensInfo: {
+    '0x0000000000000000000000000000000000000000': {
+      name: 'BNB',
+      symbol: 'BNB',
+      decimals: 18,
+      logoURI:
+        'https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png',
+      isNative: true,
+    },
+    '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d': {
+      name: 'Binance-Peg USD Coin',
+      symbol: 'USDC',
+      decimals: 18,
+      logoURI: 'https://bscscan.com/token/images/centre-usdc_28.png',
+      isStableCoin: true,
+    },
+  },
 });
 
 export const berachainBepoliaNetwork = new Network({
@@ -382,6 +421,22 @@ export const berachainBepoliaNetwork = new Network({
       decimals: 18,
       logoURI: '/images/icons/tokens/thpot-token-icon.jpg',
       isRouterToken: true,
+    },
+  },
+  multiSwapTokensInfo: {
+    '0x0000000000000000000000000000000000000000': {
+      name: 'Bera',
+      symbol: 'BERA',
+      decimals: 18,
+      logoURI: '/images/icons/tokens/wbera-token-icon.png',
+      isNative: true,
+    },
+    '0xfcbd14dc51f0a4d49d5e53c2e0950e0bc26d0dce': {
+      name: 'Honey',
+      symbol: 'HONEY',
+      decimals: 18,
+      logoURI: '/images/icons/tokens/honey-token-icon.png',
+      isStableCoin: true,
     },
   },
 });
@@ -693,6 +748,52 @@ export const berachainNetwork = new Network({
   },
   validatedFtoAddresses: [],
   validatedMemeAddresses: [],
+  multiSwapTokensInfo: {
+    '0x0000000000000000000000000000000000000000': {
+      name: 'Bera',
+      symbol: 'BERA',
+      decimals: 18,
+      logoURI: '/images/icons/tokens/wbera-token-icon.png',
+      isNative: true,
+    },
+    '0x6969696969696969696969696969696969696969': {
+      name: 'Wrapped Bera',
+      symbol: 'WBERA',
+      decimals: 18,
+      logoURI: '/images/icons/tokens/wbera-token-icon.png',
+    },
+    '0xfcbd14dc51f0a4d49d5e53c2e0950e0bc26d0dce': {
+      name: 'Honey',
+      symbol: 'HONEY',
+      decimals: 18,
+      logoURI: '/images/icons/tokens/honey-token-icon.png',
+      isStableCoin: true,
+    },
+    '0x2F6F07CDcf3588944Bf4C42aC74ff24bF56e7590': {
+      name: 'Wrapped ETH',
+      symbol: 'WETH',
+      decimals: 18,
+      logoURI: '/images/icons/tokens/weth-token-icon.png',
+    },
+    '0x0555E30da8f98308EdB960aa94C0Db47230d2B9c': {
+      name: 'Wrapped BTC',
+      symbol: 'WBTC',
+      decimals: 18,
+      logoURI: '/images/icons/tokens/wbtc-token-icon.png',
+    },
+    '0xD2C41BF4033A83C0FC3A7F58a392Bf37d6dCDb58': {
+      name: 'OpenState BGT',
+      symbol: 'osBGT',
+      decimals: 18,
+      logoURI: '/images/icons/tokens/bgt.svg',
+    },
+    '0x118D2cEeE9785eaf70C15Cd74CD84c9f8c3EeC9a': {
+      name: 'POL Staked WBERA',
+      symbol: 'SWBERA',
+      decimals: 18,
+      logoURI: '/images/icons/tokens/wbera-token-icon.png',
+    },
+  },
   validatedVault: [
     {
       //WBERA/HONEY
@@ -1445,6 +1546,23 @@ export const monadNetworkTestnet = new Network({
       chainId: '10143',
       isStableCoin: true,
       logoURI: 'https://bscscan.com/token/images/centre-usdc_28.png',
+    },
+  },
+  multiSwapTokensInfo: {
+    '0x0000000000000000000000000000000000000000': {
+      name: 'Monad',
+      symbol: 'MON',
+      decimals: 18,
+      logoURI:
+        'https://cdn.prod.website-files.com/667c57e6f9254a4b6d914440/66c3711574e166ac115bba8a_Logo%20Mark.svg',
+      isNative: true,
+    },
+    '0xf817257fed379853cde0fa4f97ab987181b1e5ea': {
+      name: 'USDC',
+      symbol: 'USDC',
+      decimals: 18,
+      logoURI: 'https://bscscan.com/token/images/centre-usdc_28.png',
+      isStableCoin: true,
     },
   },
   validatedFtoAddresses: [],

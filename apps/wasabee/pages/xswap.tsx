@@ -93,25 +93,14 @@ const XSwapPage = observer(() => {
             <XSwapCard
               key={token.address}
               disableFromSelection={true}
-              staticToTokenList={[
-                wallet.currentChain.nativeToken,
-                Token.getToken({
-                  address: wallet.currentChain.validatedTokens.filter(
-                    (token) => token.isStableCoin
-                  )[0].address,
-                  chainId: wallet.currentChainId.toString(),
-                }),
-              ].filter((t) => t.address !== token.address)}
+              staticToTokenList={wallet.currentChain.multiSwapTokens.filter(
+                (t) => t.address !== token.address
+              )}
               fromToken={token}
               toToken={
-                token.address !== wallet.currentChain.nativeToken.address
-                  ? wallet.currentChain.nativeToken
-                  : Token.getToken({
-                      address: wallet.currentChain.validatedTokens.filter(
-                        (token) => token.isStableCoin
-                      )[0].address,
-                      chainId: wallet.currentChainId.toString(),
-                    })
+                wallet.currentChain.multiSwapTokens.find(
+                  (t) => t.address !== token.address
+                ) || wallet.currentChain.nativeToken
               }
             />
           ))}
