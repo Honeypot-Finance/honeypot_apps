@@ -46,6 +46,17 @@ const LimitOrderHistory = observer(
       message: '',
     });
 
+    // Pool debugging state
+    const [poolDebugInfo, setPoolDebugInfo] = useState<{
+      currentTick?: number;
+      initialized?: boolean;
+      tickLowerLast?: number;
+      tickSpacing?: number;
+      poolTickSpacing?: number;
+      poolPlugin?: string;
+      pluginConfig?: number;
+    }>({});
+
     useToastify({
       ...txState,
       title: txState.isLoading ? 'Cancelling Order' : txState.isSuccess ? 'Order Cancelled' : 'Cancel Failed',
@@ -142,32 +153,31 @@ const LimitOrderHistory = observer(
           token1Symbol as string
         );
 
-        // Calculate price range
+        // Calculate limit price (use tickLower as the limit execution price)
         const tickLower = Number(order.tickLower);
-        const tickUpper = Number(order.tickUpper);
 
-        console.log('Calculating price range for order:', {
+        console.log('Calculating limit price for order:', {
           orderId: order.id,
           tickLower,
-          tickUpper,
           token0Symbol: token0.symbol,
           token1Symbol: token1.symbol,
           zeroToOne: order.zeroToOne,
         });
 
-        const priceLower = tickToPrice(token0, token1, tickLower);
-        const priceUpper = tickToPrice(token0, token1, tickUpper);
+        const limitPrice = tickToPrice(token0, token1, tickLower);
 
-        console.log('Price objects:', {
-          priceLower: priceLower.toSignificant(6),
-          priceUpper: priceUpper.toSignificant(6),
+        console.log('Limit price object:', {
+          limitPrice: limitPrice.toSignificant(6),
         });
 
+        // For limit orders, show the execution price with direction
+        // zeroToOne = true means selling token0 for token1
+        // zeroToOne = false means selling token1 for token0
         const priceRange = order.zeroToOne
-          ? `${priceLower.toSignificant(6)} - ${priceUpper.toSignificant(6)} ${token1.symbol}/${token0.symbol}`
-          : `${priceLower.invert().toSignificant(6)} - ${priceUpper.invert().toSignificant(6)} ${token0.symbol}/${token1.symbol}`;
+          ? `≤ ${limitPrice.toSignificant(6)} ${token1.symbol}/${token0.symbol}`
+          : `≥ ${limitPrice.invert().toSignificant(6)} ${token0.symbol}/${token1.symbol}`;
 
-        console.log('Final priceRange:', priceRange);
+        console.log('Final limit price display:', priceRange);
 
         return {
           ...order,
@@ -181,6 +191,147 @@ const LimitOrderHistory = observer(
           pool: order.pool,
         });
         return order;
+      }
+    };
+
+    const fetchPoolDebugInfo = async (pool: string) => {
+      if (!publicClient) return;
+
+      try {
+        const limitOrderManagerAddress = wallet.currentChain.contracts
+          .limitOrderManager as Address;
+
+        // Get current tick from pool
+        const globalState = await publicClient.readContract({
+          address: pool as Address,
+          abi: [
+            {
+              inputs: [],
+              name: 'globalState',
+              outputs: [
+                { name: 'price', type: 'uint160' },
+                { name: 'tick', type: 'int24' },
+                { name: 'fee', type: 'uint16' },
+                { name: 'timepointIndex', type: 'uint16' },
+                { name: 'communityFeeToken0', type: 'uint8' },
+                { name: 'communityFeeToken1', type: 'uint8' },
+              ],
+              stateMutability: 'view',
+              type: 'function',
+            },
+          ],
+          functionName: 'globalState',
+        });
+
+        // Get pool tick spacing directly
+        const poolTickSpacing = await publicClient.readContract({
+          address: pool as Address,
+          abi: [
+            {
+              inputs: [],
+              name: 'tickSpacing',
+              outputs: [{ name: '', type: 'int24' }],
+              stateMutability: 'view',
+              type: 'function',
+            },
+          ],
+          functionName: 'tickSpacing',
+        });
+
+        // Get pool info from limit order manager
+        const [initialized, tickLowerLast, managerTickSpacing] = await Promise.all([
+          publicClient.readContract({
+            address: limitOrderManagerAddress,
+            abi: limitOrderManagerABI,
+            functionName: 'initialized',
+            args: [pool as Address],
+          }),
+          publicClient.readContract({
+            address: limitOrderManagerAddress,
+            abi: limitOrderManagerABI,
+            functionName: 'tickLowerLasts',
+            args: [pool as Address],
+          }),
+          publicClient.readContract({
+            address: limitOrderManagerAddress,
+            abi: limitOrderManagerABI,
+            functionName: 'tickSpacings',
+            args: [pool as Address],
+          }),
+        ]);
+
+        const effectiveTickSpacing = Number(managerTickSpacing) === 0 ? Number(poolTickSpacing) : Number(managerTickSpacing);
+
+        // Get pool's plugin address (try-catch for older pool versions)
+        let poolPlugin: string | undefined;
+        let pluginConfig: number | undefined;
+
+        try {
+          poolPlugin = await publicClient.readContract({
+            address: pool as Address,
+            abi: [
+              {
+                inputs: [],
+                name: 'plugin',
+                outputs: [{ name: '', type: 'address' }],
+                stateMutability: 'view',
+                type: 'function',
+              },
+            ],
+            functionName: 'plugin',
+          }) as string;
+        } catch (error) {
+          console.error('[PoolDebug] Pool does not have plugin() function:', error);
+        }
+
+        // Try to get plugin config (may not exist in older versions)
+        if (poolPlugin) {
+          try {
+            pluginConfig = Number(await publicClient.readContract({
+              address: pool as Address,
+              abi: [
+                {
+                  inputs: [],
+                  name: 'pluginConfig',
+                  outputs: [{ name: '', type: 'uint8' }],
+                  stateMutability: 'view',
+                  type: 'function',
+                },
+              ],
+              functionName: 'pluginConfig',
+            }));
+          } catch (error) {
+            console.warn('[PoolDebug] Pool does not have pluginConfig() function (older Algebra version?)');
+          }
+        }
+
+        setPoolDebugInfo({
+          currentTick: Number((globalState as any)[1]),
+          initialized: initialized as boolean,
+          tickLowerLast: Number(tickLowerLast),
+          tickSpacing: effectiveTickSpacing,
+          poolTickSpacing: Number(poolTickSpacing),
+          poolPlugin,
+          pluginConfig,
+        });
+
+        console.log('[PoolDebug] Pool state:', {
+          pool,
+          currentTick: Number((globalState as any)[1]),
+          initialized,
+          tickLowerLast: Number(tickLowerLast),
+          managerTickSpacing: Number(managerTickSpacing),
+          poolTickSpacing: Number(poolTickSpacing),
+          effectiveTickSpacing,
+          poolPlugin,
+          poolPluginIsZero: poolPlugin === '0x0000000000000000000000000000000000000000',
+          pluginConfig,
+          pluginConfigBinary: pluginConfig !== undefined ? pluginConfig.toString(2).padStart(8, '0') : 'N/A',
+          limitOrderManager: limitOrderManagerAddress,
+          pluginMatchesManager: poolPlugin ? poolPlugin.toLowerCase() === limitOrderManagerAddress.toLowerCase() : false,
+        });
+      } catch (error) {
+        console.error('[PoolDebug] Error fetching pool debug info:', error);
       }
     };
 
@@ -201,6 +352,15 @@ const LimitOrderHistory = observer(
         setHasNextOpenPage(openResponse.pageInfo.hasNextPage);
         setClosedOrders(enrichedClosedOrders);
         setHasNextClosedPage(closedResponse.pageInfo.hasNextPage);
+
+        // Fetch pool debug info if we have any orders
+        if (enrichedOpenOrders.length > 0 || enrichedClosedOrders.length > 0) {
+          const pool =
+            enrichedOpenOrders[0]?.pool || enrichedClosedOrders[0]?.pool;
+          if (pool) {
+            await fetchPoolDebugInfo(pool);
+          }
+        }
       } catch (error) {
         console.error('[LimitOrderHistory] Error refreshing orders:', error);
       }
@@ -321,8 +481,10 @@ const LimitOrderHistory = observer(
     };
 
     useEffect(() => {
-      const loadOrders = async () => {
-        setLoading(true);
+      const loadOrders = async (showLoading = true) => {
+        if (showLoading) {
+          setLoading(true);
+        }
         console.log('[LimitOrderHistory] Loading orders with params:', {
           ownerAddress,
           poolAddress,
@@ -360,16 +522,39 @@ const LimitOrderHistory = observer(
           setHasNextOpenPage(openResponse.pageInfo.hasNextPage);
           setClosedOrders(enrichedClosedOrders);
           setHasNextClosedPage(closedResponse.pageInfo.hasNextPage);
+
+          // Fetch pool debug info if we have any orders
+          if (enrichedOpenOrders.length > 0 || enrichedClosedOrders.length > 0) {
+            const pool =
+              enrichedOpenOrders[0]?.pool || enrichedClosedOrders[0]?.pool;
+            if (pool) {
+              await fetchPoolDebugInfo(pool);
+            }
+          }
         } catch (error) {
           console.error('[LimitOrderHistory] Error loading orders:', error);
           setOpenOrders([]);
           setClosedOrders([]);
         } finally {
-          setLoading(false);
+          if (showLoading) {
+            setLoading(false);
+          }
         }
       };
 
-      loadOrders();
+      // Initial load with loading indicator
+      loadOrders(true);
+
+      // Set up polling to refresh orders every 5 seconds (without loading indicator to avoid flickering)
+      const intervalId = setInterval(() => {
+        console.log('[LimitOrderHistory] Auto-refreshing orders...');
+        loadOrders(false);
+      }, 5000);
+
+      // Cleanup interval on unmount or dependency change
+      return () => {
+        clearInterval(intervalId);
+      };
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [openPage, closedPage, ownerAddress, poolAddress]);
 
@@ -520,7 +705,10 @@ const LimitOrderHistory = observer(
                     {formatLiquidity(order.liquidity)}
                   </td>
                   <td className="py-4 text-sm text-gray-400 px-3 whitespace-nowrap">
-                    {order.priceRange || `${order.tickLower} → ${order.tickUpper}`}
+                    <div className="flex flex-col">
+                      <span>{order.priceRange || `${order.tickLower} → ${order.tickUpper}`}</span>
+                      <span className="text-xs text-gray-600">Tick: {order.tickLower}</span>
+                    </div>
                   </td>
                   <td className="py-4 px-3">
                     <button
@@ -582,6 +770,94 @@ const LimitOrderHistory = observer(
 
     return (
       <div className="w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-4 sm:p-6">
+        {/* Pool Debug Info */}
+        {(poolDebugInfo.currentTick !== undefined || poolDebugInfo.initialized !== undefined) && (
+          <div className="mb-4 p-3 bg-[#1A0F06] border border-[#2a2318] rounded-lg">
+            <div className="text-xs text-gray-400 space-y-1">
+              <div className="flex gap-4 flex-wrap">
+                <span>
+                  <strong className="text-gray-300">Current Tick:</strong>{' '}
+                  {poolDebugInfo.currentTick ?? 'N/A'}
+                </span>
+                <span>
+                  <strong className="text-gray-300">Initialized:</strong>{' '}
+                  <span className={poolDebugInfo.initialized ? 'text-green-500' : 'text-red-500'}>
+                    {poolDebugInfo.initialized ? 'Yes' : 'No'}
+                  </span>
+                </span>
+                <span>
+                  <strong className="text-gray-300">Last Tick:</strong>{' '}
+                  {poolDebugInfo.tickLowerLast ?? 'N/A'}
+                </span>
+                <span>
+                  <strong className="text-gray-300">Tick Spacing:</strong>{' '}
+                  {poolDebugInfo.tickSpacing ?? 'N/A'}
+                  {poolDebugInfo.poolTickSpacing && poolDebugInfo.poolTickSpacing !== poolDebugInfo.tickSpacing && (
+                    <span className="text-gray-500"> (Pool: {poolDebugInfo.poolTickSpacing})</span>
+                  )}
+                </span>
+              </div>
+              {!poolDebugInfo.initialized && (
+                <div className="text-yellow-500 mt-2">
+                  ⚠️ Pool not initialized in limit order manager - orders won't fill
+                </div>
+              )}
+              {poolDebugInfo.poolPlugin && (
+                <div className="mt-2 space-y-1">
+                  <div className="text-xs">
+                    <strong className="text-gray-300">Pool Plugin:</strong>{' '}
+                    <span className="text-gray-400 font-mono text-[10px]">
+                      {poolDebugInfo.poolPlugin.slice(0, 6)}...{poolDebugInfo.poolPlugin.slice(-4)}
+                    </span>
+                  </div>
+                  {poolDebugInfo.pluginConfig !== undefined && (
+                    <div className="text-xs">
+                      <strong className="text-gray-300">Plugin Config:</strong>{' '}
+                      <span className="text-gray-400">
+                        {poolDebugInfo.pluginConfig}
+                        {' '}(AfterSwap Hook: {(poolDebugInfo.pluginConfig & 0x20) !== 0 ? (
+                          <span className="text-green-500">Enabled ✓</span>
+                        ) : (
+                          <span className="text-red-500">Disabled ✗</span>
+                        )})
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+              {poolDebugInfo.initialized && poolDebugInfo.tickLowerLast === 0 && (
+                <div className="text-yellow-500 mt-2">
+                  ⚠️ Last Tick is 0 - the limit order manager hasn't tracked any swaps yet. This could mean:
+                  <ul className="ml-4 mt-1 list-disc">
+                    <li>The pool plugin doesn't match the limit order manager</li>
+                    <li>The afterSwap hook is not enabled in plugin config</li>
+                    <li>No swaps have occurred since initialization</li>
+                  </ul>
+                </div>
+              )}
+              {poolDebugInfo.poolPlugin === '0x0000000000000000000000000000000000000000' && (
+                <div className="text-red-500 mt-2 font-semibold">
+                  ❌ CRITICAL: This pool has NO PLUGIN attached! Limit orders will NEVER fill. The pool needs to have the limit order manager set as its plugin.
+                </div>
+              )}
+              {poolDebugInfo.poolPlugin &&
+               poolDebugInfo.poolPlugin !== '0x0000000000000000000000000000000000000000' &&
+               poolDebugInfo.poolPlugin.toLowerCase() !== wallet.currentChain.contracts.limitOrderManager?.toLowerCase() && (
+                <div className="text-red-500 mt-2 font-semibold">
+                  ❌ CRITICAL: Pool plugin is NOT the limit order manager! Current plugin: {poolDebugInfo.poolPlugin.slice(0, 10)}...
+                  Expected: {wallet.currentChain.contracts.limitOrderManager?.slice(0, 10)}...
+                  Limit orders will NOT fill.
+                </div>
+              )}
+              {poolDebugInfo.pluginConfig !== undefined && (poolDebugInfo.pluginConfig & 0x20) === 0 && (
+                <div className="text-red-500 mt-2 font-semibold">
+                  ❌ CRITICAL: AfterSwap hook is DISABLED! Limit orders will NEVER fill. Contact pool admin to enable the afterSwap hook.
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         <Tabs
           value={activeTab}
           onValueChange={(value) => setActiveTab(value as 'open' | 'closed')}

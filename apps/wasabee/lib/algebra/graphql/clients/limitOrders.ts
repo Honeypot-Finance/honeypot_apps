@@ -117,12 +117,14 @@ export async function fetchLimitOrders(
     if (isOpen !== undefined) {
       const beforeFilter = filteredData.length;
       filteredData = filteredData.filter((order) => {
-        const isClosed = order.liquidity === '0';
+        // An order is closed if it's either fully filled (liquidity = 0) or killed/cancelled
+        const isClosed = order.liquidity === '0' || order.killed === true;
         const shouldInclude = isOpen ? !isClosed : isClosed;
         console.log('[LimitOrders] Order:', {
           id: order.id,
           owner: order.owner,
           liquidity: order.liquidity,
+          killed: order.killed,
           isClosed,
           isOpen,
           shouldInclude

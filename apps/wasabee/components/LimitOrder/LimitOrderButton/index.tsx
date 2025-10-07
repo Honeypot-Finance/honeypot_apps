@@ -1,25 +1,24 @@
 import { Button } from '@/components/ui/button';
 import { useNeedAllowance } from '@/lib/algebra/hooks/common/useNeedAllowance';
 import { useApprove } from '@/lib/algebra/hooks/common/useApprove';
-import { useTransactionAwait } from '@/lib/algebra/hooks/common/useTransactionAwait';
 import { Token, tryParseTick } from '@cryptoalgebra/sdk';
 import {
   useAccount,
   useSimulateContract,
   usePublicClient,
+  useWaitForTransactionReceipt,
 } from 'wagmi';
 import { ApprovalState } from '@/types/algebra/types/approve-state';
 import Loader from '@/components/algebra/common/Loader';
 import { SwapField } from '@/types/algebra/types/swap-field';
-import { formatCurrency } from '@/lib/algebra/utils/common/formatCurrency';
-import { TransactionType } from '@/lib/algebra/state/pendingTransactionsStore';
 import { Address, decodeErrorResult } from 'viem';
 import { useWriteLimitOrderManagerPlace } from '@honeypot/shared/wagmi-generated';
 import { useLimitOrderInfo } from '@/hooks/useLimitOrderInfo';
 import { useObserver } from 'mobx-react-lite';
 import { wallet } from '@honeypot/shared';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { limitOrderManagerABI } from '@honeypot/shared/lib/abis/algebra-contracts/ABIs/plugins/limitOrderManagerAbi';
+import { useToastify } from '@honeypot/shared/hooks/useContractToastify';
 
 interface LimitOrderButtonProps {
   derivedSwap: any;
@@ -53,6 +52,19 @@ export const LimitOrderButton = ({
   const [detailedError, setDetailedError] = useState<string | null>(null);
 
   const currenChain = useObserver(() => wallet.currentChain);
+
+  // Toastify state for transaction notifications
+  const [txState, setTxState] = useState({
+    isLoading: false,
+    isSuccess: false,
+    isError: false,
+    message: '' as React.ReactNode,
+  });
+
+  // Refs to track previous states
+  const prevTxStateRef = useRef({ isLoading: false, isSuccess: false, isError: false });
+
+  useToastify(txState);
 
   const {
     currencies: { [SwapField.INPUT]: inputCurrency },
@@ -458,17 +470,69 @@ export const LimitOrderButton = ({
   ]);
 
   const {
-    data: placeData,
+    data: txHash,
     writeContract: placeLimitOrder,
     isPending,
+    isError: isWriteError,
+    error: writeError,
   } = useWriteLimitOrderManagerPlace();
 
-  const { isLoading: isPlaceLoading } = useTransactionAwait(placeData, {
-    type: TransactionType.LIMIT_ORDER,
-    title: `Buy ${formatCurrency.format(
-      Number(inputAmount?.toSignificant())
-    )} ${inputAmount?.currency.symbol}`,
-  });
+  const { isLoading: isPlaceLoading, isSuccess: isTxSuccess } =
+    useWaitForTransactionReceipt({
+      hash: txHash,
+    });
+
+  // Update toastify state when transaction state changes
+  useEffect(() => {
+    const prevState = prevTxStateRef.current;
+
+    if (isPending && !prevState.isLoading) {
+      setTxState({
+        isLoading: true,
+        isSuccess: false,
+        isError: false,
+        message: `Placing limit order for ${inputAmount?.toSignificant() || ''} ${inputAmount?.currency.symbol || ''}...`,
+      });
+      prevTxStateRef.current = { isLoading: true, isSuccess: false, isError: false };
+    }
+
+    if (isPlaceLoading && !isPending && !prevState.isLoading) {
+      setTxState({
+        isLoading: true,
+        isSuccess: false,
+        isError: false,
+        message: 'Confirming transaction...',
+      });
+      prevTxStateRef.current = { isLoading: true, isSuccess: false, isError: false };
+    }
+
+    if (isTxSuccess && !prevState.isSuccess) {
+      setTxState({
+        isLoading: false,
+        isSuccess: true,
+        isError: false,
+        message: `Limit order placed successfully!`,
+      });
+      prevTxStateRef.current = { isLoading: false, isSuccess: true, isError: false };
+    }
+
+    if (isWriteError && !prevState.isError) {
+      setTxState({
+        isLoading: false,
+        isSuccess: false,
+        isError: true,
+        message: writeError?.message || 'Failed to place limit order',
+      });
+      prevTxStateRef.current = { isLoading: false, isSuccess: false, isError: true };
+    }
+  }, [
+    isPending,
+    isPlaceLoading,
+    isTxSuccess,
+    isWriteError,
+    writeError,
+    inputAmount,
+  ]);
 
   if (!account) return <Button onClick={() => open()}>Connect Wallet</Button>;
 
