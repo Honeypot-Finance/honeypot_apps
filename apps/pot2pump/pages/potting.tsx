@@ -210,7 +210,7 @@ const MemeLaunchPage: NextLayoutPage = observer(() => {
                 </Link>
               </Button>
 
-              {canClaimPot2PumpList.length > 0 && (
+              {canClaimPot2PumpList?.length > 0 && (
                 <Button
                   onPress={() => {
                     wallet.contracts.memeFacade.claimAllUserLP

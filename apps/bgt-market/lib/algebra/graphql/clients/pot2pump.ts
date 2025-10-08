@@ -73,10 +73,10 @@ export const canClaimPot2Pump = async (accountId: string) => {
   });
 
   const memeList = await pot2PumpListToMemePairList(
-    res.data.participants.map((p) => p.pot2Pump) as Partial<Pot2Pump>[]
+    res?.data?.participants.map((p) => p.pot2Pump) as Partial<Pot2Pump>[]
   );
 
-  memeList.map((meme) => {
+  memeList?.map((meme) => {
     meme.canClaimLP = true;
   });
 
@@ -98,19 +98,16 @@ export const canRefundPot2Pump = async (accountId: string) => {
     fetchPolicy: "network-only",
   });
 
-  if (!res.data?.participants) {
-    console.error(
-      "Failed to fetch refundable pot2pump participants:",
-      res.error
-    );
+  if (!res?.data?.participants) {
+  
     return [];
   }
 
   const memeList = await pot2PumpListToMemePairList(
-    res.data.participants.map((p) => p.pot2Pump) as Partial<Pot2Pump>[]
+    res?.data?.participants.map((p) => p.pot2Pump) as Partial<Pot2Pump>[]
   );
 
-  memeList.map((meme) => {
+  memeList?.map((meme) => {
     meme.canRefund = true;
   });
 

@@ -16,7 +16,7 @@ class NotificationService {
       return;
     }
     const res = await canClaimPot2Pump(wallet.account);
-    this.isClaimableProject = res.length > 0;
+    this.isClaimableProject = res?.length > 0;
   }
 
   async checkRefundableProject() {
