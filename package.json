@@ -13,19 +13,13 @@
     "leaderboard": "nx dev leaderboard --port 9005",
     "all-in-one-vault": "nx dev all-in-one-vault --port 9006",
     "cleanup-db": "node apps/all-in-one-vault/scripts/cleanup-db.js",
-
-
     "test": "nx run-many --target=test --all --parallel",
     "test:watch": "nx run-many --target=test --all --parallel --watch",
     "test:coverage": "nx run-many --target=test --projects=wasabee,pot2pump,all-in-one-vault,leaderboard --parallel --coverage",
-
-
     "test:wasabee": "nx test wasabee",
     "test:pot2pump": "nx test pot2pump",
     "test:all-in-one-vault": "nx test all-in-one-vault",
     "test:leaderboard": "nx test dreampad",
-
-
     "lint": "nx run-many --target=lint --all --parallel",
     "build:all": "nx run-many --target=build --all --parallel"
   },
@@ -216,6 +210,7 @@
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "16.1.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/fs-extra": "^11.0.4",
     "@types/jest": "^29.5.14",
     "@types/lodash": "^4.17.16",

@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { PottingModal } from '.../../../../components/atoms/Pot2PumpComponents/PottingModal'; 
+import { PottingModal } from '../../../../components/atoms/Pot2PumpComponents/PottingModal'; 
 import { MemePairContract } from '@/services/contract/launches/pot2pump/memepair-contract';
 
 import { wallet } from '@honeypot/shared/lib/wallet';
