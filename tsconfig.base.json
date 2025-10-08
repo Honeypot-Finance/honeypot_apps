@@ -15,17 +15,39 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      // "@honeypot-frontend/universal-account": [
+      //   "libs/shared/universal-account/src/index.ts"
+      // ],
+      // "@honeypot/shared": ["libs/shared/hpot-sdk/src/index.ts"],
+      // "@honeypot/shared/*": ["libs/shared/hpot-sdk/src/*"],
+      // "@honeypot/shared/server/callers": [
+      //   "libs/shared/hpot-sdk/src/server/callers/index.ts"
+      // ],
+      // "@particle-network/universal-account-sdk": [
+      //   "./node_modules/@particle-network/universal-account-sdk/dist/index.d.ts"
+      // ]
+
+
+
+
+      "@honeypot-frontend/libs": ["libs/src/index.ts"],
       "@honeypot-frontend/universal-account": [
         "libs/shared/universal-account/src/index.ts"
       ],
       "@honeypot/shared": ["libs/shared/hpot-sdk/src/index.ts"],
       "@honeypot/shared/*": ["libs/shared/hpot-sdk/src/*"],
+      "@honeypot/shared/lib/*": ["libs/shared/hpot-sdk/src/lib/*"],
       "@honeypot/shared/server/callers": [
         "libs/shared/hpot-sdk/src/server/callers/index.ts"
       ],
       "@particle-network/universal-account-sdk": [
         "./node_modules/@particle-network/universal-account-sdk/dist/index.d.ts"
-      ]
+      ],
+
+
+      "@pot2pump/*": ["apps/pot2pump/*"],
+      "@wasabee/*": ["apps/wasabee/*"]
+
     }
   },
   "exclude": ["node_modules", "tmp"]

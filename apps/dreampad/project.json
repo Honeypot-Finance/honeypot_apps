@@ -43,11 +43,13 @@
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
+  
+
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/dreampad/jest.config.ts"
+        "jestConfig": "apps/dreampad/test/jest.config.js"
       }
     }
   }
