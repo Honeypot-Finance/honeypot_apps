@@ -92,7 +92,7 @@ const XSwapParams = ({
       if (!trade || !tradeState.fee) return undefined;
       const fees = [];
 
-      for (const route of trade?.swaps) {
+      for (const route of trade?.swaps ?? []) {
         for (const pool of route.route.pools) {
           const address = computePoolAddress({
             tokenA: pool.token0,
