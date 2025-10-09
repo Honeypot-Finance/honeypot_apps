@@ -94,7 +94,7 @@ describe('useAccounts (Pot2Pump)', () => {
     const MockWrapper = ({ children }: { children: React.ReactNode }) => {
       return React.createElement(
         MockedProvider,
-        { mocks, addTypename: false },
+        { mocks },
         children
       );
     };

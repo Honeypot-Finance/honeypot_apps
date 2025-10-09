@@ -336,8 +336,19 @@ describe('LaunchTokenPage', () => {
       },
     };
     
-    // Reset wallet to original state with fresh objects
-    Object.assign(mockWallet.wallet, JSON.parse(JSON.stringify(originalWalletData)));
+    // Reset wallet to original state with fresh objects (handle BigInt properly)
+    Object.assign(mockWallet.wallet, {
+      account: originalWalletData.account,
+      isInit: originalWalletData.isInit,
+      currentChain: {
+        raisedTokenData: originalWalletData.currentChain.raisedTokenData.map(token => ({
+          address: token.address,
+          symbol: token.symbol,
+          amount: token.amount, // Keep BigInt as is
+        })),
+        chainId: originalWalletData.currentChain.chainId,
+      },
+    });
 
     // Reset launchpad mock
     const launchpadMock = require('@pot2pump/services/launchpad');

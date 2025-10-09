@@ -103,6 +103,61 @@ jest.mock('../../../lib/abis/erc20', () => ({
 describe('LaunchPad Service', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    
+    // Reset wallet mock to ensure all required properties are available
+    const { wallet } = require('@honeypot/shared/lib/wallet');
+    Object.assign(wallet, {
+      account: '0x1234567890123456789012345678901234567890',
+      currentChainId: 80084,
+      walletClient: {},
+      contracts: {
+        memeFactory: {
+          contract: {
+            simulate: {
+              createPair: jest.fn(),
+            },
+          },
+          createPair: {
+            call: jest.fn(),
+          },
+        },
+        memeFacade: {
+          address: '0xmemefacade',
+        },
+        ftofactory: {
+          contract: {
+            simulate: {
+              createFTO: jest.fn(),
+            },
+          },
+          createFTO: {
+            call: jest.fn(),
+          },
+          allPairsLength: {
+            call: jest.fn(),
+          },
+          allPairs: {
+            call: jest.fn(),
+          },
+        },
+        ftofacade: {
+          address: '0xftofacade',
+        },
+      },
+      currentChain: {
+        contracts: {
+          algebraSwapRouter: '0xrouter',
+          algebraPositionManager: '0xpositionmanager',
+        },
+        raisedTokenData: [
+          {
+            address: '0xhoney',
+            symbol: 'HONEY',
+            amount: BigInt('1000000000000000000000'),
+          },
+        ],
+      },
+    });
   });
 
   describe('Contract Getters', () => {

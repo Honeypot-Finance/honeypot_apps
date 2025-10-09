@@ -33,7 +33,7 @@ jest.mock('@/components/button/button-next', () => {
 jest.mock('@/components/input', () => {
   const mockReact = require('react');
   return {
-    Input: ({ value, onChange, onBlur, className, classNames, isClearable, ...props }: any) =>
+    Input: ({ value, onChange, onBlur, className, classNames, isClearable, ...props }: unknown) =>
       mockReact.createElement('input', {
         value,
         onChange,
@@ -165,6 +165,24 @@ describe('PottingModal', () => {
       depositedLaunchedTokenWithoutDecimals: new BigNumber('1000'),
       raisedTokenMinCap: new BigNumber('2000'),
     } as unknown as MemePairContract;
+
+    // Reset wallet mock to ensure native token has proper methods
+    const { wallet } = require('@honeypot/shared/lib/wallet');
+    Object.assign(wallet.currentChain.nativeToken, {
+      address: '0x0000000000000000000000000000000000000000',
+      isNative: true,
+      init: jest.fn(),
+      balance: mockBalance,
+      balanceFormatted: '1,000.00 ETH',
+      symbol: 'ETH',
+      decimals: 18,
+      getBalance: jest.fn().mockResolvedValue(mockBalance),
+      contract: {
+        write: {
+          deposit: jest.fn(),
+        },
+      },
+    });
 
     // Reset window.location.reload mock
     Object.defineProperty(window, 'location', {
@@ -421,15 +439,28 @@ describe('PottingModal', () => {
     });
 
     it('should initialize with native token when raise token is native', () => {
-      mockPair.raiseToken!.address = wallet.currentChain.nativeToken.address.toLowerCase();
-      
+      // Create a proper mock for native token
       const nativeBalance = new BigNumber('1000');
       nativeBalance.gte = jest.fn((amount) => new BigNumber('1000').gte(amount));
       nativeBalance.toFixed = jest.fn(() => '1000');
       
-      mockPair.raiseToken!.balance = nativeBalance;
+      // Update the pair to use native token
+      const nativePair = {
+        ...mockPair,
+        raiseToken: {
+          address: wallet.currentChain.nativeToken.address.toLowerCase(),
+          decimals: 18,
+          symbol: 'ETH',
+          balance: nativeBalance,
+          balanceFormatted: '1,000.00 ETH',
+          isNative: true,
+          init: jest.fn(),
+          getBalance: jest.fn().mockResolvedValue(nativeBalance),
+          approveIfNoAllowance: jest.fn().mockResolvedValue(true),
+        },
+      };
 
-      render(<PottingModal pair={mockPair} />);
+      render(<PottingModal pair={nativePair as unknown as MemePairContract} />);
 
       // Should initialize with native token
       expect(screen.getByTestId('token-selector')).toBeInTheDocument();
