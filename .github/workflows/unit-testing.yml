@@ -24,17 +24,7 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 10.10.0
-
-
-
-
-
-
-
-
-
-
-          
+    
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -52,7 +42,7 @@ jobs:
         run: pnpm nx test all-in-one-vault --coverage --watchAll=false
 
       - name: Run unit tests - Leaderboard
-        run: pnpm nx test leaderboard --coverage --watchAll=false
+        run: pnpm nx test dreampad --coverage --watchAll=false
 
       - name: Run unit tests - Pot2Pump
         run: pnpm nx test pot2pump --coverage --watchAll=false
