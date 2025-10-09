@@ -305,6 +305,9 @@ describe('LaunchTokenPage', () => {
     user = userEvent.setup();
     mockPush = jest.fn();
 
+    // Clear all mocks first
+    jest.clearAllMocks();
+
     (useRouter as jest.Mock).mockReturnValue({
       push: mockPush,
       query: {},
@@ -333,11 +336,26 @@ describe('LaunchTokenPage', () => {
       },
     };
     
-    // Reset wallet to original state
-    Object.assign(mockWallet.wallet, originalWalletData);
+    // Reset wallet to original state with fresh objects
+    Object.assign(mockWallet.wallet, JSON.parse(JSON.stringify(originalWalletData)));
 
-    // Reset mocks
-    jest.clearAllMocks();
+    // Reset launchpad mock
+    const launchpadMock = require('@pot2pump/services/launchpad');
+    launchpadMock.default.createLaunchProject.loading = false;
+    launchpadMock.default.createLaunchProject.call = jest.fn().mockResolvedValue(['0xdefaultpairaddress']);
+
+    // Reset other service mocks
+    const store = require('store2');
+    store.get.mockClear();
+    store.set.mockClear();
+
+    const { popmodal } = require('@pot2pump/services/popmodal');
+    popmodal.openModal.mockClear();
+    popmodal.closeModal.mockClear();
+
+    // Reset MemePairContract mock
+    mockLaunchedToken.mockClear();
+    mockLaunchedToken.mockResolvedValue('0xlaunchedtoken');
   });
 
   describe('Form Rendering', () => {

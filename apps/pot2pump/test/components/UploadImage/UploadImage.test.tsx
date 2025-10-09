@@ -71,7 +71,14 @@ describe('UploadImage', () => {
 
   beforeEach(() => {
     mockOnUpload = jest.fn();
+    
+    // Completely reset fetch mock
+    jest.clearAllMocks();
     (global.fetch as jest.Mock).mockClear();
+    (global.fetch as jest.Mock).mockReset();
+    
+    // Reset any DOM state
+    document.body.innerHTML = '';
   });
 
   describe('Component Rendering', () => {

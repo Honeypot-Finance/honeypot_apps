@@ -120,6 +120,8 @@ afterAll(() => {
 // Clean up after each test
 afterEach(() => {
   jest.clearAllMocks();
+  
+  // Reset all storage mocks
   localStorageMock.getItem.mockClear();
   localStorageMock.setItem.mockClear();
   localStorageMock.removeItem.mockClear();
@@ -128,6 +130,53 @@ afterEach(() => {
   sessionStorageMock.setItem.mockClear();
   sessionStorageMock.removeItem.mockClear();
   sessionStorageMock.clear.mockClear();
+  
+  // Reset fetch mock
+  if (global.fetch && typeof global.fetch.mockClear === 'function') {
+    global.fetch.mockClear();
+    global.fetch.mockReset();
+  }
+  
+  // Reset DOM state
+  document.body.innerHTML = '';
+  
+  // Reset any timers
+  jest.clearAllTimers();
+  
+  // Reset wagmi mocks to default state
+  const wagmi = require('wagmi');
+  if (wagmi.useWriteContract) {
+    wagmi.useWriteContract.mockReturnValue({
+      writeContractAsync: jest.fn(),
+      data: undefined,
+      isPending: false,
+      isError: false,
+      error: null,
+    });
+  }
+  if (wagmi.useWaitForTransactionReceipt) {
+    wagmi.useWaitForTransactionReceipt.mockReturnValue({
+      isLoading: false,
+      isSuccess: false,
+      isError: false,
+      error: null,
+    });
+  }
+  if (wagmi.useReadContract) {
+    wagmi.useReadContract.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: jest.fn(),
+    });
+  }
+  if (wagmi.useAccount) {
+    wagmi.useAccount.mockReturnValue({
+      address: '0x1234567890123456789012345678901234567890',
+      isConnected: true,
+    });
+  }
 });
 
 // Mock Next.js router

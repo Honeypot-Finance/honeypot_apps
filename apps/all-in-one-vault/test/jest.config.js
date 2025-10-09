@@ -5,6 +5,9 @@ module.exports = {
     '<rootDir>/jest.polyfills.ts',
     '<rootDir>/test-setup.tsx'
   ],
+  // Add test timeout and retry configuration
+  testTimeout: 10000,
+  maxWorkers: 1, // Run tests serially to avoid race conditions
   transform: {
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },

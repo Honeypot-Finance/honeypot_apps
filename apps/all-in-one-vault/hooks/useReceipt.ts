@@ -40,12 +40,14 @@ export function useIsReceiptClaimable(receipt: Receipt | undefined) {
 export function useFormattedCooldownTime(receipt: Receipt | undefined) {
   if (!receipt) return "00:00:00";
   
-  if (receipt.claimed || useIsReceiptClaimable(receipt)) return "00:00:00";
+  if (receipt.claimed) return "00:00:00";
   
   const currentTime = BigInt(Math.floor(Date.now() / 1000));
-  const remainingSeconds = receipt.claimableAt > currentTime 
-    ? Number(receipt.claimableAt - currentTime)
-    : 0;
+  
+  // If the receipt is claimable (current time >= claimableAt), return "00:00:00"
+  if (currentTime >= receipt.claimableAt) return "00:00:00";
+  
+  const remainingSeconds = Number(receipt.claimableAt - currentTime);
   
   const hours = Math.floor(remainingSeconds / 3600);
   const minutes = Math.floor((remainingSeconds % 3600) / 60);

@@ -53,7 +53,7 @@ jest.mock('@/components/ItemSelect', () => {
     SelectState: jest.fn().mockImplementation(({ onSelectChange }) => ({
       onSelectChange,
     })),
-    ItemSelect: ({ children, className, selectState }: any) =>
+    ItemSelect: ({ children, className, selectState }: unknown) =>
       mockReact.createElement('div', { className: `items-center ${className}` }, children),
   };
 });
@@ -134,9 +134,12 @@ describe('PottingModal', () => {
   beforeEach(() => {
     user = userEvent.setup();
     mockOnSuccess = jest.fn();
+    
+    // Clear all mocks completely
+    jest.clearAllMocks();
     mockContractWriteCall.mockClear();
 
-    // Create mock pair object directly instead of using constructor
+    // Create fresh mock pair object for each test
     const mockBalance = new BigNumber('1000');
     mockBalance.gte = jest.fn((amount) => new BigNumber('1000').gte(amount));
     mockBalance.toFixed = jest.fn(() => '1000');
@@ -151,7 +154,7 @@ describe('PottingModal', () => {
         balanceFormatted: '1,000.00 HONEY',
         isNative: false,
         init: jest.fn(),
-        getBalance: jest.fn(),
+        getBalance: jest.fn().mockResolvedValue(mockBalance),
         approveIfNoAllowance: jest.fn().mockResolvedValue(true),
       },
       deposit: {
@@ -162,6 +165,12 @@ describe('PottingModal', () => {
       depositedLaunchedTokenWithoutDecimals: new BigNumber('1000'),
       raisedTokenMinCap: new BigNumber('2000'),
     } as unknown as MemePairContract;
+
+    // Reset window.location.reload mock
+    Object.defineProperty(window, 'location', {
+      value: { reload: jest.fn() },
+      writable: true,
+    });
   });
 
   describe('Component Rendering', () => {

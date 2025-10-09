@@ -478,6 +478,58 @@ afterAll(() => {
   console.error = originalConsoleError;
 });
 
+// Reset all mocks between tests to prevent state pollution
+afterEach(() => {
+  jest.clearAllMocks();
+  
+  // Reset wallet state to default
+  const { wallet } = require('@honeypot/shared/lib/wallet');
+  Object.assign(wallet, {
+    account: '0x1234567890123456789012345678901234567890',
+    currentChainId: 80084,
+    isInit: true,
+    currentChain: {
+      nativeToken: {
+        address: '0xnative',
+        symbol: 'ETH',
+        decimals: 18,
+      },
+      raisedTokenData: [
+        {
+          address: '0xhoney',
+          symbol: 'HONEY',
+          amount: BigInt('1000000000000000000000'),
+        },
+        {
+          address: '0xusdc',
+          symbol: 'USDC',
+          amount: BigInt('5000000000'),
+        },
+      ],
+      validatedFtoAddresses: [],
+    },
+    contracts: {
+      memeFactory: {
+        createPair: { call: jest.fn() },
+      },
+      memeFacade: {
+        deposit: { call: jest.fn() },
+        claimLP: { call: jest.fn() },
+      },
+    },
+  });
+
+  // Reset global fetch mock
+  if (global.fetch && typeof global.fetch.mockClear === 'function') {
+    global.fetch.mockClear();
+  }
+
+  // Reset window.location.reload
+  if (window.location.reload && typeof window.location.reload.mockClear === 'function') {
+    window.location.reload.mockClear();
+  }
+});
+
 // Global test utilities
 export const createMockToken = (overrides = {}) => ({
   address: '0x1234567890123456789012345678901234567890',

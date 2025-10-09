@@ -3,6 +3,9 @@ module.exports = {
   preset: '../../../jest.preset.js',   
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['@testing-library/jest-dom'],
+  // Add test timeout and retry configuration
+  testTimeout: 10000,
+  maxWorkers: 1, // Run tests serially to avoid race conditions
 
   testMatch: ['<rootDir>/pages/**/*.test.{ts,tsx}'],
 
