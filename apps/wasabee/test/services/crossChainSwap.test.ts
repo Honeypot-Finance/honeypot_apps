@@ -106,6 +106,28 @@ const mockSharedLib = {
 // Mock the dynamic import
 jest.mock('@honeypot/shared', () => mockSharedLib);
 
+// Mock uuid to avoid ES module issues
+jest.mock('uuid', () => ({
+  v4: jest.fn(() => 'mocked-uuid-v4'),
+  v1: jest.fn(() => 'mocked-uuid-v1'),
+  default: {
+    v4: jest.fn(() => 'mocked-uuid-v4'),
+    v1: jest.fn(() => 'mocked-uuid-v1'),
+  }
+}));
+
+// Mock other potentially problematic ES modules
+jest.mock('@solana/web3.js', () => ({
+  Connection: jest.fn(),
+  PublicKey: jest.fn(),
+  Keypair: jest.fn(),
+}));
+
+jest.mock('@coral-xyz/anchor', () => ({
+  Program: jest.fn(),
+  AnchorProvider: jest.fn(),
+}));
+
 // Mock universalAccountService
 jest.mock('../../services/universalAccountService', () => ({
   universalAccountService: {

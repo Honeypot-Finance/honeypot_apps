@@ -32,14 +32,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Run unit tests - Wasabee
-        run: pnpm nx test wasabee --coverage --watchAll=false
 
       - name: Run unit tests - All-in-One Vault
         run: pnpm nx test all-in-one-vault --coverage --watchAll=false
 
       - name: Run unit tests - Leaderboard
         run: pnpm nx test leaderboard --coverage --watchAll=false
+
+      - name: Run unit tests - Wasabee
+        run: pnpm nx test wasabee --coverage --watchAll=false
 
       - name: Run unit tests - Pot2Pump
         run: pnpm nx test pot2pump --coverage --watchAll=false

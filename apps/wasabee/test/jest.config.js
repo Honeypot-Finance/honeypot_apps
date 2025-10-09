@@ -12,7 +12,7 @@ module.exports = {
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(superjson|uuid|@solana/web3.js|@coral-xyz/anchor|@particle-network/universal-account-sdk|jayson|@rainbow-me/rainbowkit|wagmi|@wagmi/core|@wagmi/connectors|@gemini-wallet/core|viem|cuer|qr))', // <-- make babel-jest transpile these ES modules
+    'node_modules/(?!(uuid|superjson|@solana/web3\\.js|@coral-xyz/anchor|@particle-network/.*|jayson|@rainbow-me/.*|wagmi|@wagmi/.*|@gemini-wallet/.*|viem|cuer|qr))',
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../coverage/apps/wasabee',
@@ -40,7 +40,8 @@ module.exports = {
     '^@honeypot/shared/server/callers$': '<rootDir>/../../../libs/shared/hpot-sdk/src/server/callers/index.ts',
     '^@honeypot-frontend/universal-account$': '<rootDir>/../../../libs/shared/universal-account/src/index.ts',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    
+    // Map ES modules to CommonJS versions or mocks
+    '^uuid$': '<rootDir>/__mocks__/uuid.js',
   },
   testMatch: [
     '<rootDir>/**/*.test.{ts,tsx}',
