@@ -15,7 +15,7 @@
     "cleanup-db": "node apps/all-in-one-vault/scripts/cleanup-db.js",
     "test": "nx run-many --target=test --all --parallel",
     "test:watch": "nx run-many --target=test --all --parallel --watch",
-    "test:coverage": "nx run-many --target=test --projects=wasabee,pot2pump,all-in-one-vault,leaderboard --parallel --coverage",
+    "test:coverage": "nx run-many --target=test --projects=wasabee,pot2pump,all-in-one-vault,dreampad --parallel --coverage",
     "test:wasabee": "nx test wasabee",
     "test:pot2pump": "nx test pot2pump",
     "test:all-in-one-vault": "nx test all-in-one-vault",
