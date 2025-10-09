@@ -99,7 +99,10 @@ export const canRefundPot2Pump = async (accountId: string) => {
   });
 
   if (!res?.data?.participants) {
-  
+    console.error(
+      "Failed to fetch refundable pot2pump participants:",
+      res.error
+    );
     return [];
   }
 
