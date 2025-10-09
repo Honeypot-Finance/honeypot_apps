@@ -24,6 +24,7 @@ import { Account_OrderBy } from '../../../lib/algebra/graphql/generated/graphql'
 const mockAccountsData = {
   accounts: [
     {
+      __typename: 'Account',
       id: '0x1234567890123456789012345678901234567890',
       totalSpendUSD: '1000.50',
       swapCount: '25',
@@ -33,9 +34,10 @@ const mockAccountsData = {
       participateCount: '10',
       totalDepositPot2pumpUSD: '5000.00',
       pot2PumpLaunchCount: '3',
-      transaction: [{ timestamp: '1735123800' }],
+      transaction: [{ __typename: 'Transaction', timestamp: '1735123800' }],
     },
     {
+      __typename: 'Account',
       id: '0x2345678901234567890123456789012345678901',
       totalSpendUSD: '2500.75',
       swapCount: '50',
@@ -45,7 +47,7 @@ const mockAccountsData = {
       participateCount: '20',
       totalDepositPot2pumpUSD: '10000.00',
       pot2PumpLaunchCount: '5',
-      transaction: [{ timestamp: '1735210200' }],
+      transaction: [{ __typename: 'Transaction', timestamp: '1735210200' }],
     },
   ],
 };
@@ -53,10 +55,12 @@ const mockAccountsData = {
 const mockTopSwapAccountsData = {
   accounts: [
     {
+      __typename: 'Account',
       id: '0x1234567890123456789012345678901234567890',
       swapCount: '100',
     },
     {
+      __typename: 'Account',
       id: '0x2345678901234567890123456789012345678901',
       swapCount: '75',
     },
@@ -66,10 +70,12 @@ const mockTopSwapAccountsData = {
 const mockTopDeployerData = {
   accounts: [
     {
+      __typename: 'Account',
       id: '0x1234567890123456789012345678901234567890',
       pot2PumpLaunchCount: '10',
     },
     {
+      __typename: 'Account',
       id: '0x2345678901234567890123456789012345678901',
       pot2PumpLaunchCount: '8',
     },
@@ -79,12 +85,16 @@ const mockTopDeployerData = {
 const mockTopParticipateData = {
   accounts: [
     {
+      __typename: 'Account',
       id: '0x1234567890123456789012345678901234567890',
       participateCount: '50',
+      totalDepositPot2pumpUSD: '5000.00',
     },
     {
+      __typename: 'Account',
       id: '0x2345678901234567890123456789012345678901',
       participateCount: '35',
+      totalDepositPot2pumpUSD: '3500.00',
     },
   ],
 };
@@ -410,6 +420,7 @@ describe('useAccounts (Pot2Pump)', () => {
             data: {
               accounts: [
                 {
+                  __typename: 'Account',
                   id: 'invalid-address',
                   totalSpendUSD: 'not-a-number',
                   swapCount: 'invalid',
@@ -419,7 +430,7 @@ describe('useAccounts (Pot2Pump)', () => {
                   participateCount: 'invalid',
                   totalDepositPot2pumpUSD: 'invalid',
                   pot2PumpLaunchCount: 'invalid',
-                  transaction: [{ timestamp: 'invalid' }],
+                  transaction: [{ __typename: 'Transaction', timestamp: 'invalid' }],
                 },
               ],
             },
@@ -628,6 +639,7 @@ describe('useAccounts (Pot2Pump)', () => {
                 {
                   id: '0x1234567890123456789012345678901234567890',
                   participateCount: 'not-a-number',
+                  totalDepositPot2pumpUSD: 'invalid',
                 },
               ],
             },
