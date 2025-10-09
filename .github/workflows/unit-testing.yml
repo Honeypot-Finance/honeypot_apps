@@ -1,0 +1,61 @@
+name: Run Tests
+
+on:
+  push:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10.10.0
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Run unit tests - Wasabee
+        run: pnpm nx test wasabee --coverage --watchAll=false
+
+      - name: Run unit tests - Pot2Pump
+        run: pnpm nx test pot2pump --coverage --watchAll=false
+
+      - name: Run unit tests - All-in-One Vault
+        run: pnpm nx test all-in-one-vault --coverage --watchAll=false
+
+      - name: Run unit tests - Leaderboard
+        run: pnpm nx test leaderboard --coverage --watchAll=false
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          directory: ./coverage
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+      - name: Generate test summary
+        run: |
+          echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "### Coverage Reports" >> $GITHUB_STEP_SUMMARY
+          echo "- Wasabee: Coverage report generated" >> $GITHUB_STEP_SUMMARY
+          echo "- Pot2Pump: Coverage report generated" >> $GITHUB_STEP_SUMMARY
+          echo "- All-in-One Vault: Coverage report generated" >> $GITHUB_STEP_SUMMARY
+          echo "- Leaderboard: Coverage report generated" >> $GITHUB_STEP_SUMMARY
