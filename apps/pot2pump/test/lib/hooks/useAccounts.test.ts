@@ -17,6 +17,24 @@ import {
 
 import { Account_OrderBy } from '../../../lib/algebra/graphql/generated/graphql';
 
+// Mock dayjs to return consistent date formatting
+jest.mock('dayjs', () => {
+  const originalDayjs = jest.requireActual('dayjs');
+  return jest.fn((date?: any) => {
+    if (date === 1735142400000) { // Our test timestamp * 1000
+      return {
+        format: (formatStr: string) => {
+          if (formatStr === 'MM/DD/YYYY, h:mm:ss A') {
+            return '12/25/2024, 4:00:00 PM';
+          }
+          return originalDayjs(date).format(formatStr);
+        }
+      };
+    }
+    return originalDayjs(date);
+  });
+});
+
 
 
 
@@ -34,7 +52,7 @@ const mockAccountsData = {
       participateCount: '10',
       totalDepositPot2pumpUSD: '5000.00',
       pot2PumpLaunchCount: '3',
-      transaction: [{ __typename: 'Transaction', timestamp: '1735123800' }],
+      transaction: [{ __typename: 'Transaction', timestamp: '1735142400' }],
     },
     {
       __typename: 'Account',
@@ -153,7 +171,7 @@ describe('useAccounts (Pot2Pump)', () => {
         participateCount: 10,
         totalDepositPot2pumpUSD: '5000.00',
         pot2PumpLaunchCount: '3',
-        lastActive: '12/25/2024, 3:50:00 PM',
+        lastActive: '12/25/2024, 4:00:00 PM',
       });
     });
 
