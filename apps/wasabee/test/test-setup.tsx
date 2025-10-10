@@ -3,10 +3,10 @@ import '@testing-library/jest-dom';
 // Polyfill TextEncoder and TextDecoder for viem
 import { TextEncoder, TextDecoder } from 'util';
 global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
+global.TextDecoder = TextDecoder as any;
 
 // Add BigInt serialization support for Jest
-(BigInt.prototype as any).toJSON = function() {
+(BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };
 
@@ -29,7 +29,7 @@ global.ResizeObserver = class ResizeObserver {
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -81,7 +81,7 @@ Object.defineProperty(window, 'sessionStorage', {
 });
 
 // Mock fetch
-global.fetch = jest.fn();
+global.fetch = jest.fn() as jest.MockedFunction<typeof fetch>;
 
 // Mock console methods to reduce noise in tests
 const originalError = console.error;
@@ -92,8 +92,8 @@ beforeAll(() => {
     if (
       typeof args[0] === 'string' &&
       (args[0].includes('Warning: ReactDOM.render is deprecated') ||
-       args[0].includes('Warning: componentWillReceiveProps') ||
-       args[0].includes('Warning: componentWillMount'))
+        args[0].includes('Warning: componentWillReceiveProps') ||
+        args[0].includes('Warning: componentWillMount'))
     ) {
       return;
     }
@@ -104,7 +104,7 @@ beforeAll(() => {
     if (
       typeof args[0] === 'string' &&
       (args[0].includes('componentWillReceiveProps') ||
-       args[0].includes('componentWillMount'))
+        args[0].includes('componentWillMount'))
     ) {
       return;
     }
@@ -120,7 +120,7 @@ afterAll(() => {
 // Clean up after each test
 afterEach(() => {
   jest.clearAllMocks();
-  
+
   // Reset all storage mocks
   localStorageMock.getItem.mockClear();
   localStorageMock.setItem.mockClear();
@@ -130,19 +130,19 @@ afterEach(() => {
   sessionStorageMock.setItem.mockClear();
   sessionStorageMock.removeItem.mockClear();
   sessionStorageMock.clear.mockClear();
-  
+
   // Reset fetch mock
-  if (global.fetch && typeof global.fetch.mockClear === 'function') {
-    global.fetch.mockClear();
-    global.fetch.mockReset();
+  if (global.fetch && 'mockClear' in global.fetch) {
+    (global.fetch as jest.MockedFunction<typeof fetch>).mockClear();
+    (global.fetch as jest.MockedFunction<typeof fetch>).mockReset();
   }
-  
+
   // Reset DOM state
   document.body.innerHTML = '';
-  
+
   // Reset any timers
   jest.clearAllTimers();
-  
+
   // Reset wagmi mocks to default state
   const wagmi = require('wagmi');
   if (wagmi.useWriteContract) {
@@ -237,7 +237,9 @@ jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
     span: ({ children, ...props }: any) => <span {...props}>{children}</span>,
-    button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+    button: ({ children, ...props }: any) => (
+      <button {...props}>{children}</button>
+    ),
     img: ({ children, ...props }: any) => <img {...props}>{children}</img>,
   },
   AnimatePresence: ({ children }: any) => <>{children}</>,
@@ -279,7 +281,25 @@ jest.mock('wagmi', () => ({
 }));
 
 // Global test utilities
-global.testUtils = {
+const createMockChain = (overrides = {}) => ({
+  chainId: 1,
+  name: 'Ethereum',
+  symbol: 'ETH',
+  rpcUrl: 'https://mainnet.infura.io',
+  blockExplorer: 'https://etherscan.io',
+  ...overrides,
+});
+
+declare global {
+  var testUtils: {
+    createMockToken: (overrides?: any) => any;
+    createMockChain: (overrides?: any) => any;
+    createMockWallet: (overrides?: any) => any;
+    waitForNextTick: () => Promise<void>;
+  };
+}
+
+(global as any).testUtils = {
   createMockToken: (overrides = {}) => ({
     address: '0x123',
     symbol: 'TEST',
@@ -288,23 +308,16 @@ global.testUtils = {
     chainId: 1,
     ...overrides,
   }),
-  
-  createMockChain: (overrides = {}) => ({
-    chainId: 1,
-    name: 'Ethereum',
-    symbol: 'ETH',
-    rpcUrl: 'https://mainnet.infura.io',
-    blockExplorer: 'https://etherscan.io',
-    ...overrides,
-  }),
-  
+
+  createMockChain,
+
   createMockWallet: (overrides = {}) => ({
     address: '0x123',
     isConnected: true,
     isInit: true,
-    currentChain: global.testUtils.createMockChain(),
+    currentChain: createMockChain(),
     ...overrides,
   }),
-  
-  waitForNextTick: () => new Promise(resolve => setTimeout(resolve, 0)),
+
+  waitForNextTick: () => new Promise((resolve) => setTimeout(resolve, 0)),
 };

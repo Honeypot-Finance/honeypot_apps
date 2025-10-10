@@ -11,7 +11,9 @@
       "executor": "@nrwl/next:build",
       "options": {
         "outputPath": "apps/wasabee/",
-        "postcssConfig": "apps/wasabee/postcss.config.js"
+        "postcssConfig": "apps/wasabee/postcss.config.js",
+        "exclude": ["**/*.test.*", "**/jest.setup.ts", "**/test-setup.tsx"]
+
       }
     },
     "lint": {

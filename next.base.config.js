@@ -141,8 +141,13 @@ const baseConfig = {
             },
             // Default vendor chunk
             vendor: {
+              /**
+               * @param {any} module
+               */
               name: (module) => {
-                const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)?.[1] || 'vendor';
+                if (!module.context) return 'vendor';
+                const match = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/);
+                const packageName = match?.[1] || 'vendor';
                 return `vendor.${packageName.replace('@', '')}`;
               },
               test: /[\\/]node_modules[\\/]/,

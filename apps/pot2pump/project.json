@@ -10,7 +10,8 @@
       "executor": "@nrwl/next:build",
       "options": {
         "outputPath": "apps/pot2pump/",
-        "postcssConfig": "apps/pot2pump/postcss.config.js"
+        "postcssConfig": "apps/pot2pump/postcss.config.js",
+        "exclude": ["**/*.test.*", "**/setup.ts"]
       }
     },
     "test": {

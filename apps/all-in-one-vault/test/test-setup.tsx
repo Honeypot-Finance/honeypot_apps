@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 // Polyfill TextEncoder and TextDecoder for viem
 import { TextEncoder, TextDecoder } from 'util';
 global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
+global.TextDecoder = TextDecoder as any;
 
 // Add BigInt serialization support for Jest
 (BigInt.prototype as any).toJSON = function() {
@@ -132,9 +132,9 @@ afterEach(() => {
   sessionStorageMock.clear.mockClear();
   
   // Reset fetch mock
-  if (global.fetch && typeof global.fetch.mockClear === 'function') {
-    global.fetch.mockClear();
-    global.fetch.mockReset();
+  if (global.fetch && typeof (global.fetch as any).mockClear === 'function') {
+    (global.fetch as any).mockClear();
+    (global.fetch as any).mockReset();
   }
   
   // Reset DOM state
@@ -279,7 +279,7 @@ jest.mock('wagmi', () => ({
 }));
 
 // Global test utilities
-global.testUtils = {
+(global as any).testUtils = {
   createMockToken: (overrides = {}) => ({
     address: '0x123',
     symbol: 'TEST',
@@ -302,7 +302,7 @@ global.testUtils = {
     address: '0x123',
     isConnected: true,
     isInit: true,
-    currentChain: global.testUtils.createMockChain(),
+    currentChain: (global as any).testUtils.createMockChain(),
     ...overrides,
   }),
   

@@ -10,67 +10,131 @@ jest.mock('@nextui-org/theme', () => ({
 jest.mock('@nextui-org/react', () => {
   const mockReact = require('react');
   return {
-    Button: ({ children, onClick, isLoading, isDisabled, ...props }: any) => 
-      mockReact.createElement('button', {
-        onClick,
-        disabled: isDisabled,
-        'data-loading': isLoading,
-        ...props
-      }, children),
-    Input: ({ value, onChange, placeholder, ...props }: any) => 
+    Button: ({ children, onClick, isLoading, isDisabled, ...props }: any) =>
+      mockReact.createElement(
+        'button',
+        {
+          onClick,
+          disabled: isDisabled,
+          'data-loading': isLoading,
+          ...props,
+        },
+        children
+      ),
+    Input: ({ value, onChange, placeholder, ...props }: any) =>
       mockReact.createElement('input', {
         value,
         onChange,
         placeholder,
-        ...props
+        ...props,
       }),
-    Select: ({ children, onSelectionChange, defaultSelectedKeys, ...props }: any) => 
-      mockReact.createElement('select', {
-        onChange: (e: any) => onSelectionChange?.({ currentKey: e.target.value }),
-        defaultValue: defaultSelectedKeys?.[0],
-        ...props
-      }, children),
-    SelectItem: ({ children, value, ...props }: any) => 
+    Select: ({
+      children,
+      onSelectionChange,
+      defaultSelectedKeys,
+      ...props
+    }: any) =>
+      mockReact.createElement(
+        'select',
+        {
+          onChange: (e: any) =>
+            onSelectionChange?.({ currentKey: e.target.value }),
+          defaultValue: defaultSelectedKeys?.[0],
+          ...props,
+        },
+        children
+      ),
+    SelectItem: ({ children, value, ...props }: any) =>
       mockReact.createElement('option', { value, ...props }, children),
-    Modal: ({ children, isOpen, onClose, ...props }: any) => 
-      isOpen ? mockReact.createElement('div', { 'data-testid': 'modal', ...props }, children) : null,
-    ModalContent: ({ children, ...props }: any) => 
-      mockReact.createElement('div', { 'data-testid': 'modal-content', ...props }, children),
-    ModalHeader: ({ children, ...props }: any) => 
-      mockReact.createElement('div', { 'data-testid': 'modal-header', ...props }, children),
-    ModalBody: ({ children, ...props }: any) => 
-      mockReact.createElement('div', { 'data-testid': 'modal-body', ...props }, children),
-    ModalFooter: ({ children, ...props }: any) => 
-      mockReact.createElement('div', { 'data-testid': 'modal-footer', ...props }, children),
-    Tooltip: ({ children, content, ...props }: any) => 
+    Modal: ({ children, isOpen, onClose, ...props }: any) =>
+      isOpen
+        ? mockReact.createElement(
+            'div',
+            { 'data-testid': 'modal', ...props },
+            children
+          )
+        : null,
+    ModalContent: ({ children, ...props }: any) =>
+      mockReact.createElement(
+        'div',
+        { 'data-testid': 'modal-content', ...props },
+        children
+      ),
+    ModalHeader: ({ children, ...props }: any) =>
+      mockReact.createElement(
+        'div',
+        { 'data-testid': 'modal-header', ...props },
+        children
+      ),
+    ModalBody: ({ children, ...props }: any) =>
+      mockReact.createElement(
+        'div',
+        { 'data-testid': 'modal-body', ...props },
+        children
+      ),
+    ModalFooter: ({ children, ...props }: any) =>
+      mockReact.createElement(
+        'div',
+        { 'data-testid': 'modal-footer', ...props },
+        children
+      ),
+    Tooltip: ({ children, content, ...props }: any) =>
       mockReact.createElement('div', { title: content, ...props }, children),
-    Pagination: ({ page, total, onChange, showControls, ...props }: any) => 
+    Pagination: ({ page, total, onChange, showControls, ...props }: any) =>
       mockReact.createElement('div', {
         'data-testid': 'pagination',
         'data-page': page,
         'data-total': total,
         'data-show-controls': showControls,
-        ...props
+        ...props,
       }),
-    Accordion: ({ children, ...props }: any) => 
-      mockReact.createElement('div', { 'data-testid': 'accordion', ...props }, children),
-    AccordionItem: ({ children, title, ...props }: any) => 
-      mockReact.createElement('div', { 'data-testid': 'accordion-item', 'data-title': title, ...props }, children),
-    Card: ({ children, ...props }: any) => 
-      mockReact.createElement('div', { 'data-testid': 'card', ...props }, children),
-    CardBody: ({ children, ...props }: any) => 
-      mockReact.createElement('div', { 'data-testid': 'card-body', ...props }, children),
-    CardHeader: ({ children, ...props }: any) => 
-      mockReact.createElement('div', { 'data-testid': 'card-header', ...props }, children),
-    Spinner: (props: any) => 
-      mockReact.createElement('div', { 'data-testid': 'loading-spinner', ...props }, 'Loading...'),
-    Progress: ({ value, label, ...props }: any) => 
-      mockReact.createElement('div', {
-        'data-testid': 'progress',
-        role: 'progressbar',
-        'aria-valuenow': value,
-        ...props
-      }, label),
+    Accordion: ({ children, ...props }: any) =>
+      mockReact.createElement(
+        'div',
+        { 'data-testid': 'accordion', ...props },
+        children
+      ),
+    AccordionItem: ({ children, title, ...props }: any) =>
+      mockReact.createElement(
+        'div',
+        { 'data-testid': 'accordion-item', 'data-title': title, ...props },
+        children
+      ),
+    Card: ({ children, ...props }: any) =>
+      mockReact.createElement(
+        'div',
+        { 'data-testid': 'card', ...props },
+        children
+      ),
+    CardBody: ({ children, ...props }: any) =>
+      mockReact.createElement(
+        'div',
+        { 'data-testid': 'card-body', ...props },
+        children
+      ),
+    CardHeader: ({ children, ...props }: any) =>
+      mockReact.createElement(
+        'div',
+        { 'data-testid': 'card-header', ...props },
+        children
+      ),
+    Spinner: (props: any) =>
+      mockReact.createElement(
+        'div',
+        { 'data-testid': 'loading-spinner', ...props },
+        'Loading...'
+      ),
+    Progress: ({ value, label, ...props }: any) =>
+      mockReact.createElement(
+        'div',
+        {
+          'data-testid': 'progress',
+          role: 'progressbar',
+          'aria-valuenow': value,
+          ...props,
+        },
+        label
+      ),
     cn: (...classes: any[]) => classes.filter(Boolean).join(' '),
   };
 });
@@ -173,14 +237,14 @@ jest.mock('@honeypot/shared', () => ({
     const state = {
       value: config?.value || null,
       loading: false,
-      error: null,
+      error: null as Error | null,
       setValue: jest.fn((newValue) => {
         state.value = newValue;
       }),
     };
     return state;
   }),
-  AsyncState: jest.fn().mockImplementation(function(func) {
+  AsyncState: jest.fn().mockImplementation(function (func) {
     const state = {
       call: jest.fn().mockImplementation(async (...args) => {
         try {
@@ -190,13 +254,13 @@ jest.mock('@honeypot/shared', () => ({
           state.loading = false;
           return result;
         } catch (error) {
-          state.error = error;
+          state.error = error as Error;
           state.loading = false;
           throw error;
         }
       }),
       loading: false,
-      error: null,
+      error: null as Error | null,
       value: null,
       isInit: false,
       setValue: jest.fn((newValue) => {
@@ -251,8 +315,12 @@ jest.mock('@rainbow-me/rainbowkit', () => {
     useConnectModal: jest.fn(() => ({
       openConnectModal: jest.fn(),
     })),
-    ConnectButton: ({ children }: any) => 
-      mockReact.createElement('button', { 'data-testid': 'connect-button' }, children || 'Connect Wallet'),
+    ConnectButton: ({ children }: any) =>
+      mockReact.createElement(
+        'button',
+        { 'data-testid': 'connect-button' },
+        children || 'Connect Wallet'
+      ),
   };
 });
 
@@ -320,24 +388,40 @@ Object.defineProperty(window, 'location', {
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  constructor(_callback: IntersectionObserverCallback, _options?: IntersectionObserverInit) {
+    // Mock implementation
+  }
+  observe(_target: Element): void {
+    // Mock implementation
+  }
+  unobserve(_target: Element): void {
+    // Mock implementation
+  }
+  disconnect(): void {
+    // Mock implementation
+  }
 } as any;
 
 // Mock ResizeObserver
 global.ResizeObserver = class ResizeObserver {
-  constructor() {}
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  constructor(_callback: ResizeObserverCallback) {
+    // Mock implementation
+  }
+  observe(_target: Element, _options?: ResizeObserverOptions): void {
+    // Mock implementation
+  }
+  unobserve(_target: Element): void {
+    // Mock implementation
+  }
+  disconnect(): void {
+    // Mock implementation
+  }
 } as any;
 
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -354,17 +438,23 @@ jest.mock('@/lib/algebra/utils/common/formatAmount', () => ({
   formatAmountWithAlphabetSymbol: jest.fn((amount) => `${amount} formatted`),
 }));
 
-
-
 // Mock PoweredByAlgebra component to avoid PNG import issues
 jest.mock('@pot2pump/components/algebra/common/PoweredByAlgebra', () => {
   const mockReact = require('react');
   return {
     __esModule: true,
-    default: ({ className }: { className?: string }) => 
-      mockReact.createElement('div', { className, 'data-testid': 'powered-by-algebra' }, 'Powered by Algebra'),
-    PoweredByAlphaKek: ({ className }: { className?: string }) => 
-      mockReact.createElement('div', { className, 'data-testid': 'powered-by-alphakek' }, 'Powered by AlphaKek'),
+    default: ({ className }: { className?: string }) =>
+      mockReact.createElement(
+        'div',
+        { className, 'data-testid': 'powered-by-algebra' },
+        'Powered by Algebra'
+      ),
+    PoweredByAlphaKek: ({ className }: { className?: string }) =>
+      mockReact.createElement(
+        'div',
+        { className, 'data-testid': 'powered-by-alphakek' },
+        'Powered by AlphaKek'
+      ),
   };
 });
 
@@ -372,24 +462,36 @@ jest.mock('@pot2pump/components/algebra/common/PoweredByAlgebra', () => {
 jest.mock('@pot2pump/components/algebra/swap/V3SwapCard', () => {
   const mockReact = require('react');
   return {
-    V3SwapCard: (props: any) => 
-      mockReact.createElement('div', { 'data-testid': 'v3-swap-card', ...props }, 'V3 Swap Card'),
+    V3SwapCard: (props: any) =>
+      mockReact.createElement(
+        'div',
+        { 'data-testid': 'v3-swap-card', ...props },
+        'V3 Swap Card'
+      ),
   };
 });
 
 jest.mock('@pot2pump/components/SwapCard/MemeSwap', () => {
   const mockReact = require('react');
   return {
-    MemeSwap: (props: any) => 
-      mockReact.createElement('div', { 'data-testid': 'meme-swap', ...props }, 'Meme Swap'),
+    MemeSwap: (props: any) =>
+      mockReact.createElement(
+        'div',
+        { 'data-testid': 'meme-swap', ...props },
+        'Meme Swap'
+      ),
   };
 });
 
 jest.mock('@pot2pump/components/MemeWarBanner/Pot2PumpTracker', () => {
   const mockReact = require('react');
   return {
-    Pot2PumpTracker: (props: any) => 
-      mockReact.createElement('div', { 'data-testid': 'pot2pump-tracker', ...props }, 'Pot2Pump Tracker'),
+    Pot2PumpTracker: (props: any) =>
+      mockReact.createElement(
+        'div',
+        { 'data-testid': 'pot2pump-tracker', ...props },
+        'Pot2Pump Tracker'
+      ),
   };
 });
 
@@ -397,8 +499,12 @@ jest.mock('@pot2pump/components/MemeWarBanner/Pot2PumpTracker', () => {
 jest.mock('@pot2pump/components/OptionsDropdown/OptionsDropdown', () => {
   const mockReact = require('react');
   return {
-    OptionsDropdown: (props: any) => 
-      mockReact.createElement('div', { 'data-testid': 'options-dropdown', ...props }, 'Options'),
+    OptionsDropdown: (props: any) =>
+      mockReact.createElement(
+        'div',
+        { 'data-testid': 'options-dropdown', ...props },
+        'Options'
+      ),
     optionsPresets: {
       copy: jest.fn((config) => ({
         ...config,
@@ -423,7 +529,8 @@ jest.mock('@pot2pump/components/OptionsDropdown/OptionsDropdown', () => {
 // Mock crypto for UUID generation
 Object.defineProperty(global, 'crypto', {
   value: {
-    randomUUID: () => 'mock-uuid-' + Math.random().toString(36).substring(2, 11),
+    randomUUID: () =>
+      'mock-uuid-' + Math.random().toString(36).substring(2, 11),
     getRandomValues: (arr: any) => {
       for (let i = 0; i < arr.length; i++) {
         arr[i] = Math.floor(Math.random() * 256);
@@ -445,46 +552,55 @@ const originalConsoleWarn = console.warn;
 const originalConsoleError = console.error;
 
 beforeAll(() => {
-  console.warn = (...args: any[]) => {
+  console.warn = (...args: unknown[]) => {
     // Suppress specific warnings that are expected in tests
     const message = args[0];
     if (
-      typeof message === 'string' && 
+      typeof message === 'string' &&
       (message.includes('React.createElement: type is invalid') ||
-       message.includes('Warning: Failed prop type') ||
-       message.includes('Warning: Each child in a list'))
+        message.includes('Warning: Failed prop type') ||
+        message.includes('Warning: Each child in a list'))
     ) {
       return;
     }
     originalConsoleWarn(...args);
   };
 
-  console.error = (...args: any[]) => {
+  console.error = (...args: unknown[]) => {
     // Suppress specific errors that are expected in tests
     const message = args[0];
     if (
-      typeof message === 'string' && 
+      typeof message === 'string' &&
       (message.includes('Warning: ReactDOM.render is no longer supported') ||
-       message.includes('Error: Uncaught [TypeError: Cannot read properties'))
+        message.includes('Error: Uncaught [TypeError: Cannot read properties'))
     ) {
       return;
     }
-    
+
     // Suppress Apollo Client GraphQL errors in tests - these are expected in mock environments
     const messageStr = String(message);
-    const allArgsStr = args.map(arg => String(arg)).join(' ');
-    
-    if (messageStr.includes('An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err') ||
-        messageStr.includes('totalDepositPot2pumpUSD') ||
-        allArgsStr.includes('totalDepositPot2pumpUSD') ||
-        allArgsStr.includes('apollo.dev/c/err') ||
-        allArgsStr.includes('go.apollo.dev') ||
-        messageStr.includes('ts-invariant') ||
-        messageStr.includes('invariant') ||
-        (args.length > 0 && args[0] && typeof args[0] === 'object' && args[0].message && args[0].message.includes('apollo'))) {
+    const allArgsStr = args.map((arg) => String(arg)).join(' ');
+
+    if (
+      messageStr.includes(
+        'An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err'
+      ) ||
+      messageStr.includes('totalDepositPot2pumpUSD') ||
+      allArgsStr.includes('totalDepositPot2pumpUSD') ||
+      allArgsStr.includes('apollo.dev/c/err') ||
+      allArgsStr.includes('go.apollo.dev') ||
+      messageStr.includes('ts-invariant') ||
+      messageStr.includes('invariant') ||
+      (args.length > 0 &&
+        args[0] &&
+        typeof args[0] === 'object' &&
+        'message' in args[0] &&
+        typeof (args[0] as any).message === 'string' &&
+        (args[0] as any).message.includes('apollo'))
+    ) {
       return;
     }
-    
+
     originalConsoleError(...args);
   };
 });
@@ -497,7 +613,7 @@ afterAll(() => {
 // Reset all mocks between tests to prevent state pollution
 afterEach(() => {
   jest.clearAllMocks();
-  
+
   // Reset wallet state to default
   const { wallet } = require('@honeypot/shared/lib/wallet');
   Object.assign(wallet, {
@@ -536,13 +652,17 @@ afterEach(() => {
   });
 
   // Reset global fetch mock
-  if (global.fetch && typeof global.fetch.mockClear === 'function') {
-    global.fetch.mockClear();
+  if (global.fetch && 'mockClear' in global.fetch && typeof (global.fetch as any).mockClear === 'function') {
+    (global.fetch as any).mockClear();
   }
 
   // Reset window.location.reload
-  if (window.location.reload && typeof window.location.reload.mockClear === 'function') {
-    window.location.reload.mockClear();
+  if (
+    window.location.reload &&
+    'mockClear' in window.location.reload &&
+    typeof (window.location.reload as any).mockClear === 'function'
+  ) {
+    (window.location.reload as unknown).mockClear();
   }
 });
 

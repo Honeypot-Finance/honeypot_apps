@@ -19,7 +19,13 @@
         },
         "production": {}
       },
-      "postcssConfig": "apps/dreampad/postcss.config.js"
+      "postcssConfig": "apps/dreampad/postcss.config.js",
+      "exclude": [
+        "**/*.test.*",
+        "**/jest.setup.ts",
+        "**/test-setup.tsx",
+        "**/setup.ts"
+      ]
     },
     "serve": {
       "executor": "@nx/next:server",
@@ -43,7 +49,6 @@
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
-  
 
     "test": {
       "executor": "@nx/jest:jest",
