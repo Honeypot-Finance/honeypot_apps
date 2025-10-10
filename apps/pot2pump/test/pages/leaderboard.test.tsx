@@ -286,18 +286,41 @@ describe('Pot2Pump Leaderboard Page', () => {
     expect(screen.getByText('15')).toBeInTheDocument(); // Participate count
   });
 
+  // it('should render external links to Berascan', () => {
+  //   renderWithProviders(<LeaderboardPage />);
+
+  //   const externalLinks = screen
+  //     .getAllByRole('link')
+  //     .filter((link) => link.getAttribute('href')?.includes('berascan.com'));
+
+  //   expect(externalLinks.length).toBeGreaterThan(0);
+  //   externalLinks.forEach((link) => {
+  //     expect(link).toHaveAttribute('target', '_blank');
+  //   });
+  // });
+
   it('should render external links to Berascan', () => {
     renderWithProviders(<LeaderboardPage />);
-
+  
     const externalLinks = screen
       .getAllByRole('link')
-      .filter((link) => link.getAttribute('href')?.includes('berascan.com'));
-
+      .filter((link) => {
+        const href = link.getAttribute('href');
+        if (!href) return false;
+        try {
+          const host = new URL(href, window.location.origin).host;
+          return host === 'berascan.com' || host.endsWith('.berascan.com');
+        } catch {
+          return false;
+        }
+      });
+  
     expect(externalLinks.length).toBeGreaterThan(0);
     externalLinks.forEach((link) => {
       expect(link).toHaveAttribute('target', '_blank');
     });
   });
+  
 
   it('should handle column header clicks for sorting', () => {
     const mockUseAccounts = useAccounts as jest.Mock;
