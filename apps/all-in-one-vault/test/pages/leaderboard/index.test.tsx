@@ -104,6 +104,19 @@ jest.mock(
 );
 
 jest.mock(
+  '../../../pages/leaderboard/components/points-leaderboard',
+  () => {
+    return function MockPointsLeaderboard() {
+      return (
+        <div data-testid="points-leaderboard">
+          Points Leaderboard Content
+        </div>
+      );
+    };
+  }
+);
+
+jest.mock(
   '../../../components/card-contianer/v3',
   () => {
     return function MockCardContainer({
@@ -137,12 +150,13 @@ describe('All-in-One Vault Leaderboard Hub', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render all three tabs', () => {
+    it('should render all four tabs', () => {
       renderWithProviders(<Leaderboard />);
 
       expect(screen.getByText('Meme')).toBeInTheDocument();
       expect(screen.getByText('Dex')).toBeInTheDocument();
       expect(screen.getByText('Launchpad')).toBeInTheDocument();
+      expect(screen.getByText('Points')).toBeInTheDocument();
     });
 
     it('should render within CardContainer', () => {
@@ -163,6 +177,9 @@ describe('All-in-One Vault Leaderboard Hub', () => {
       expect(
         screen.queryByTestId('dreampad-leaderboard')
       ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('points-leaderboard')
+      ).not.toBeInTheDocument();
     });
 
     it('should switch to Wasabee leaderboard when Dex tab is clicked', async () => {
@@ -181,6 +198,9 @@ describe('All-in-One Vault Leaderboard Hub', () => {
       expect(
         screen.queryByTestId('dreampad-leaderboard')
       ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('points-leaderboard')
+      ).not.toBeInTheDocument();
     });
 
     it('should switch to Dreampad leaderboard when Launchpad tab is clicked', async () => {
@@ -198,6 +218,9 @@ describe('All-in-One Vault Leaderboard Hub', () => {
       ).not.toBeInTheDocument();
       expect(
         screen.queryByTestId('wasabee-leaderboard')
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('points-leaderboard')
       ).not.toBeInTheDocument();
     });
 
@@ -220,6 +243,30 @@ describe('All-in-One Vault Leaderboard Hub', () => {
         expect(screen.getByTestId('pot2pump-leaderboard')).toBeInTheDocument();
       });
 
+      expect(
+        screen.queryByTestId('wasabee-leaderboard')
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('dreampad-leaderboard')
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('points-leaderboard')
+      ).not.toBeInTheDocument();
+    });
+
+    it('should switch to Points leaderboard when Points tab is clicked', async () => {
+      renderWithProviders(<Leaderboard />);
+
+      const pointsTab = screen.getByText('Points');
+      fireEvent.click(pointsTab);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('points-leaderboard')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.queryByTestId('pot2pump-leaderboard')
+      ).not.toBeInTheDocument();
       expect(
         screen.queryByTestId('wasabee-leaderboard')
       ).not.toBeInTheDocument();
@@ -252,6 +299,9 @@ describe('All-in-One Vault Leaderboard Hub', () => {
       expect(
         screen.queryByTestId('wasabee-leaderboard')
       ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('points-leaderboard')
+      ).not.toBeInTheDocument();
     });
 
     it('should handle rapid tab switching', async () => {
@@ -276,6 +326,9 @@ describe('All-in-One Vault Leaderboard Hub', () => {
       ).not.toBeInTheDocument();
       expect(
         screen.queryByTestId('dreampad-leaderboard')
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('points-leaderboard')
       ).not.toBeInTheDocument();
     });
   });
@@ -318,10 +371,11 @@ describe('All-in-One Vault Leaderboard Hub', () => {
       expect(tabList).toBeInTheDocument();
 
       const tabs = screen.getAllByRole('tab');
-      expect(tabs).toHaveLength(3);
+      expect(tabs).toHaveLength(4);
       expect(tabs[0]).toHaveTextContent('Meme');
       expect(tabs[1]).toHaveTextContent('Dex');
       expect(tabs[2]).toHaveTextContent('Launchpad');
+      expect(tabs[3]).toHaveTextContent('Points');
     });
 
     it('should support keyboard navigation', async () => {
