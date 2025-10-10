@@ -787,6 +787,12 @@ export const berachainNetwork = new Network({
       decimals: 18,
       logoURI: '/images/icons/tokens/bgt.svg',
     },
+    '0x69f1E971257419B1E9C405A553f252c64A29A30a': {
+      name: 'Origami iBGT Auto-Compounder',
+      symbol: 'oriBGT',
+      decimals: 18,
+      logoURI: '/images/icons/tokens/bgt.svg',
+    },
     '0x118D2cEeE9785eaf70C15Cd74CD84c9f8c3EeC9a': {
       name: 'POL Staked WBERA',
       symbol: 'SWBERA',

@@ -120,7 +120,8 @@ export default function AllInOneVaultTable({
         return refetchReceipts();
       });
     }
-  }, [onRefetchExpose, refetchReceipts]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onRefetchExpose]);
 
   useEffect(() => {
     if (listReceipts) {
@@ -142,51 +143,48 @@ export default function AllInOneVaultTable({
 
       setPreviousReceiptCount(listReceipts.length);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    receiptsData,
     refreshKey,
-    refetchReceipts,
     listReceipts.length,
-    previousReceiptCount,
     totalWeightItems,
     poolReward,
-    listReceipts,
   ]);
 
-  useEffect(() => {
-    if (
-      !receiptsLoading &&
-      !receiptsError &&
-      receiptsData &&
-      networkStatus === 7
-    ) {
-      console.log('✅ Query completed successfully, checking for updates...');
-      const timeout = setTimeout(() => {
-        if (listReceipts.length > 0) {
-          refetchReceipts();
-        }
-      }, 2000);
+  // Auto-refetch on successful query - disabled to prevent infinite loops
+  // This was causing the component to refetch every 2 seconds after loading
+  // useEffect(() => {
+  //   if (
+  //     !receiptsLoading &&
+  //     !receiptsError &&
+  //     receiptsData &&
+  //     networkStatus === 7
+  //   ) {
+  //     console.log('✅ Query completed successfully, checking for updates...');
+  //     const timeout = setTimeout(() => {
+  //       if (listReceipts.length > 0) {
+  //         refetchReceipts();
+  //       }
+  //     }, 2000);
 
-      return () => clearTimeout(timeout);
-    }
-  }, [
-    receiptsData,
-    receiptsLoading,
-    receiptsError,
-    networkStatus,
-    refetchReceipts,
-    listReceipts.length,
-  ]);
+  //     return () => clearTimeout(timeout);
+  //   }
+  // }, [
+  //   receiptsData,
+  //   receiptsLoading,
+  //   receiptsError,
+  //   networkStatus,
+  //   refetchReceipts,
+  //   listReceipts.length,
+  // ]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (listReceipts) {
-        setRefreshKey((prev) => prev + 1);
-      }
+      setRefreshKey((prev) => prev + 1);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [listReceipts, receiptsData]);
+  }, []); // Empty deps - runs once on mount
 
   useEffect(() => {
     const cooldownHandler = (event: CustomEvent) =>
@@ -207,7 +205,8 @@ export default function AllInOneVaultTable({
       updateClaimedReceipt(claimingReceiptId, setCurrentTableData);
       refetchReceipts();
     }
-  }, [isConfirmed, claimingReceiptId, refetchReceipts]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConfirmed, claimingReceiptId]);
 
   if (receiptsError) {
     console.error('Error loading receipts:', receiptsError);
