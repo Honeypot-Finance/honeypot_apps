@@ -1,6 +1,8 @@
+const nxPreset = require('@nx/jest/preset').default;
+
 module.exports = {
+  ...nxPreset,
   displayName: 'all-in-one-vault-tests',
-  preset: '../../../jest.preset.js',
   setupFilesAfterEnv: [
     '<rootDir>/jest.polyfills.ts',
     '<rootDir>/test-setup.tsx'

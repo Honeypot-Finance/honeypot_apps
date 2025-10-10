@@ -1,6 +1,8 @@
+const nxPreset = require('@nx/jest/preset').default;
+
 module.exports = {
-  displayName: 'Dreampad Tests',
-  preset: '../../../jest.preset.js',   
+  ...nxPreset,
+  displayName: 'Dreampad Tests',   
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['@testing-library/jest-dom'],
   // Add test timeout and retry configuration

@@ -1,6 +1,8 @@
+const nxPreset = require('@nx/jest/preset').default;
+
 module.exports = {
+  ...nxPreset,
   displayName: 'pot2pump-tests',
-  preset: '../../../jest.preset.js',
   setupFilesAfterEnv: [
     '<rootDir>/jest.polyfills.ts',
     '<rootDir>/setup.ts',
@@ -42,8 +44,8 @@ module.exports = {
     '^@honeypot-frontend/universal-account$':
       '<rootDir>/../../../libs/shared/universal-account/src/index.ts',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
-      '<rootDir>/__mocks__/fileMock.js',
+
+    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/fileMock.js',
   },
   testMatch: ['<rootDir>/**/*.test.{ts,tsx}'],
   globals: {

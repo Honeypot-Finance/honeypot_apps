@@ -1,6 +1,8 @@
+const nxPreset = require('@nx/jest/preset').default;
+
 module.exports = {
+  ...nxPreset,
   displayName: 'wasabee-tests',
-  preset: '../../../jest.preset.js',
   setupFilesAfterEnv: [
     '<rootDir>/jest.polyfills.ts',
     '<rootDir>/test-setup.tsx',
@@ -16,7 +18,6 @@ module.exports = {
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../coverage/apps/wasabee',
-  
 
   collectCoverageFrom: [
     '../**/*.{ts,tsx}',
@@ -34,18 +35,20 @@ module.exports = {
   moduleNameMapper: {
     '^@wasabee/(.*)$': '<rootDir>/../../../apps/wasabee/$1',
     '^@/(.*)$': '<rootDir>/../../../apps/wasabee/$1',
-    '^@honeypot/shared$': '<rootDir>/../../../libs/shared/hpot-sdk/src/index.ts',
+    '^@honeypot/shared$':
+      '<rootDir>/../../../libs/shared/hpot-sdk/src/index.ts',
     '^@honeypot/shared/(.*)$': '<rootDir>/../../../libs/shared/hpot-sdk/src/$1',
-    '^@honeypot/shared/lib/(.*)$': '<rootDir>/../../../libs/shared/hpot-sdk/src/lib/$1',
-    '^@honeypot/shared/server/callers$': '<rootDir>/../../../libs/shared/hpot-sdk/src/server/callers/index.ts',
-    '^@honeypot-frontend/universal-account$': '<rootDir>/../../../libs/shared/universal-account/src/index.ts',
+    '^@honeypot/shared/lib/(.*)$':
+      '<rootDir>/../../../libs/shared/hpot-sdk/src/lib/$1',
+    '^@honeypot/shared/server/callers$':
+      '<rootDir>/../../../libs/shared/hpot-sdk/src/server/callers/index.ts',
+    '^@honeypot-frontend/universal-account$':
+      '<rootDir>/../../../libs/shared/universal-account/src/index.ts',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     // Map ES modules to CommonJS versions or mocks
     '^uuid$': '<rootDir>/__mocks__/uuid.js',
   },
-  testMatch: [
-    '<rootDir>/**/*.test.{ts,tsx}',
-  ],
+  testMatch: ['<rootDir>/**/*.test.{ts,tsx}'],
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/../../../tsconfig.spec.json',
