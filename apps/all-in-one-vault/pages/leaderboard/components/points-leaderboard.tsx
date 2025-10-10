@@ -6,7 +6,7 @@ import {
   LoyaltyAccount,
   CURRENCY_IDS,
   getCurrencyName,
-} from '../services/snagSolutionsApi';
+} from '@/lib/services/snagSolutionsApi';
 
 interface CurrencyLeaderboardProps {
   currencyId: string;
