@@ -4,6 +4,7 @@ import CardContainer from '@/components/card-contianer/v3';
 import Pot2PumpLeaderboard from './components/pot2pump-leaderboard';
 import WasabeeLeaderboard from './components/wasabee-leaderboard';
 import DreampadLeaderboard from './components/dreampad-leaderboard';
+import PointsLeaderboard from './components/points-leaderboard';
 
 export default function Leaderboard() {
   const [selectedTab, setSelectedTab] = useState<string>('pot2pump');
@@ -40,6 +41,9 @@ export default function Leaderboard() {
             </Tab>
             <Tab key="dreampad" title="Launchpad">
               <DreampadLeaderboard />
+            </Tab>
+            <Tab key="points" title="Points">
+              <PointsLeaderboard />
             </Tab>
           </Tabs>
         </div>
