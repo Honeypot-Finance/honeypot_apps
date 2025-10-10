@@ -27,7 +27,10 @@
       "@/ui/*": ["./components/ui/*"],
       "@/public/*": ["./public/*"],
       "@/public/images/*": ["./public/images/*"],
-      "@honeypot/shared": ["../../libs/shared/hpot-sdk/src/index.ts"]
+      "@honeypot/shared": ["../../libs/shared/hpot-sdk/src/index.ts"],
+
+      "@honeypot/shared/*": ["../../libs/shared/hpot-sdk/src/*"],
+
     }
   },
   "include": [
