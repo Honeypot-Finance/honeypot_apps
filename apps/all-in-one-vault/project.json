@@ -11,7 +11,17 @@
       "executor": "@nrwl/next:build",
       "options": {
         "outputPath": "apps/all-in-one-vault",
-        "postcssConfig": "apps/all-in-one-vault/postcss.config.js"
+        "postcssConfig": "apps/all-in-one-vault/postcss.config.js",
+        "exclude": ["**/*.test.*", "**/jest.setup.ts", "**/test-setup.tsx"]
+      }
+    },
+
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectName}"],
+      "options": {
+        "jestConfig": "apps/all-in-one-vault/test/jest.config.js",
+        "passWithNoTests": true
       }
     }
   }

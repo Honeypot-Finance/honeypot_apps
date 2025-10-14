@@ -1,0 +1,29 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "module": "commonjs",
+    "types": ["jest", "node"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "test/**/*",
+    "apps/**/src/**/*.spec.ts",
+    "apps/**/src/**/*.test.ts",
+    "apps/**/src/**/*.spec.tsx",
+    "apps/**/src/**/*.test.tsx",
+    "apps/**/src/**/*.spec.js",
+    "apps/**/src/**/*.test.js",
+    "apps/**/src/**/*.spec.jsx",
+    "apps/**/src/**/*.test.jsx",
+    "apps/**/src/**/*.d.ts",
+    
+    "apps/all-in-one-vault/test-exports.ts",
+
+    "apps/dreampad/**/*.{ts,tsx}",
+    "apps/pot2pump/**/*.{ts,tsx}" ,
+
+    "apps/wasabee/**/*.{ts,tsx}"   
+  ]
+}

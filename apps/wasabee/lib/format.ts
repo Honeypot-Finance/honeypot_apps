@@ -99,11 +99,24 @@ export function formatExtremelyLargeNumber(
   decimals = 2,
   options = { addPrefix: true }
 ) {
+  // Handle special string cases first
+  if (typeof number === 'string') {
+    if (number === 'NaN' || number === 'Infinity' || number === '-Infinity') {
+      return number;
+    }
+  }
+
   const rawNumber = typeof number === 'string' && number.startsWith('$') 
     ? number.slice(1) 
     : number;
 
   const num = new BigNumber(rawNumber);
+  
+  // Handle BigNumber NaN and Infinity cases
+  if (!num.isFinite()) {
+    if (num.isNaN()) return 'NaN';
+    return num.isPositive() ? 'Infinity' : '-Infinity';
+  }
   if (num.isZero()) {
     return options.addPrefix ? `$${num.toFixed(decimals)}` : num.toFixed(decimals);
   }

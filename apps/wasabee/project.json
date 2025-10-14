@@ -11,7 +11,9 @@
       "executor": "@nrwl/next:build",
       "options": {
         "outputPath": "apps/wasabee/",
-        "postcssConfig": "apps/wasabee/postcss.config.js"
+        "postcssConfig": "apps/wasabee/postcss.config.js",
+        "exclude": ["**/*.test.*", "**/jest.setup.ts", "**/test-setup.tsx"]
+
       }
     },
     "lint": {
@@ -19,6 +21,17 @@
       "options": {
         "lintFilePatterns": ["apps/wasabee/**/*.{ts,tsx,js,jsx}"],
         "ignorePath": "apps/wasabee/.eslintignore"
+      }
+    },
+
+    "test": {
+      "executor": "@nx/jest:jest",
+
+
+      "outputs": ["{workspaceRoot}/coverage/apps/wasabee"],
+      "options": {
+        "jestConfig": "apps/wasabee/test/jest.config.js",
+        "passWithNoTests": true
       }
     }
   }
