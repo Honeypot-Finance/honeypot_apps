@@ -67,13 +67,12 @@ const QuickModeSwapCalculator = observer(({
       approvalState,
     };
 
-    // Remove old swap for this token if exists
-    xSwap.swaps = xSwap.swaps.filter(
-      (s) => s.fromToken.address !== fromToken.address
-    );
-
-    // Add new swap
-    xSwap.swaps.push(swap);
+    // Remove old swap for this token if exists and add new one
+    // Create new array reference for reactivity
+    xSwap.swaps = [
+      ...xSwap.swaps.filter((s) => s.fromToken.address !== fromToken.address),
+      swap
+    ];
 
     return () => {
       // Cleanup on unmount
