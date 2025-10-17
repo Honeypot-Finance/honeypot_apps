@@ -26,7 +26,8 @@ const QuickModeSwapCalculator = observer(({
   toToken: Token; 
   isSelected: boolean;
 }) => {
-  const [typedValue, setTypedValue] = useState<string>(fromToken.balance.toString());
+  // In Quick mode use full balance 
+  const typedValue = fromToken.balance.toString();
 
   const {
     toggledTrade: trade,
@@ -57,10 +58,8 @@ const QuickModeSwapCalculator = observer(({
       fromToken,
       toToken,
       typedValue,
-      setTypedValue,
-      onUserInput: (field: SwapFieldType, value: string) => {
-        setTypedValue(value);
-      },
+      setTypedValue: () => {}, // Not used in Quick mode
+      onUserInput: () => {}, // Not used in Quick mode
       isSelected,
       setIsSelected: () => {},
       trade,
@@ -82,7 +81,7 @@ const QuickModeSwapCalculator = observer(({
         (s) => s.fromToken.address !== fromToken.address
       );
     };
-  }, [fromToken, toToken, typedValue, trade, bestCall, approvalState, isSelected]);
+  }, [fromToken, toToken,  trade, bestCall, approvalState, isSelected]);
 
   return null; // This component doesn't render anything
 });
@@ -99,6 +98,17 @@ export const QuickSwapTab = observer(() => {
     xSwap.swaps = xSwap.swaps.filter(swap => 
       !quickModeSelectedTokens.has(swap.fromToken.address)
     );
+  }, [quickModeOutputToken?.address]);
+
+  // Deselect any input token that matches the output token
+  useEffect(() => {
+    if (!quickModeOutputToken) return;
+    
+    const newSelected = new Set(quickModeSelectedTokens);
+    if (newSelected.has(quickModeOutputToken.address)) {
+      newSelected.delete(quickModeOutputToken.address);
+      setQuickModeSelectedTokens(newSelected);
+    }
   }, [quickModeOutputToken?.address]);
 
   // Get selected tokens array
@@ -238,10 +248,14 @@ export const QuickSwapTab = observer(() => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pr-2">
             {xSwap.sortedTokens?.map((token) => {
               const isSelected = quickModeSelectedTokens.has(token.address);
+              const isSameAsOutput = quickModeOutputToken?.address === token.address;
               return (
                 <div
                   key={token.address}
                   onClick={() => {
+                    // Prevent selecting if it's the same as output token
+                    if (isSameAsOutput) return;
+                    
                     const newSelected = new Set(quickModeSelectedTokens);
                     if (isSelected) {
                       newSelected.delete(token.address);
@@ -251,9 +265,11 @@ export const QuickSwapTab = observer(() => {
                     setQuickModeSelectedTokens(newSelected);
                   }}
                   className={cn(
-                    'p-4 rounded-2xl border-2 cursor-pointer transition-all',
-                    'bg-[#1A1A1A] hover:bg-[#252525]',
-                    isSelected
+                    'p-4 rounded-2xl border-2 transition-all',
+                    isSameAsOutput 
+                      ? 'opacity-50 cursor-not-allowed bg-[#1A1A1A] border-[#333333]'
+                      : 'cursor-pointer bg-[#1A1A1A] hover:bg-[#252525]',
+                    isSelected && !isSameAsOutput
                       ? 'border-[#FFCD4D] shadow-[2px_2px_0px_0px_#FFCD4D]'
                       : 'border-[#333333]'
                   )}
