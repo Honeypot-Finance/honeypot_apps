@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { VscCopy } from 'react-icons/vsc';
 import { ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { wallet } from '@honeypot/shared/lib/wallet';
@@ -22,42 +22,64 @@ const SwapTransactionHistory = observer(() => {
   const baseCurrency = currencies[SwapField.INPUT];
   const quoteCurrency = currencies[SwapField.OUTPUT];
 
+  // Store the base and quote currency addresses for comparison
+  const baseAddress = baseCurrency?.wrapped.address ?? zeroAddress;
+  const quoteAddress = quoteCurrency?.wrapped.address ?? zeroAddress;
+
+  // Debounce timer ref
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lastFetchParamsRef = useRef<string>('');
+
+  const loadTransactions = useCallback(async (currentPage: number, baseAddr: string, quoteAddr: string) => {
+    setLoading(true);
+    try {
+      const response = await fetchTransactions(
+        currentPage,
+        pageSize,
+        baseAddr,
+        quoteAddr
+      );
+
+      setTransactions(response.data);
+      setHasNextPage(response.pageInfo.hasNextPage);
+    } catch (error) {
+      console.error(
+        '[SwapTransactionHistory] Error loading transactions:',
+        error
+      );
+      setTransactions([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchTransactions, pageSize]);
+
   useEffect(() => {
-    const loadTransactions = async (currentPage: number) => {
-      setLoading(true);
-      try {
-        // Log the request details for debugging
-        // console.log('[SwapTransactionHistory] Loading transactions:', {
-        //   chainId: wallet.currentChainId,
-        //   page: currentPage,
-        //   baseCurrency: baseCurrency?.wrapped.address ?? zeroAddress,
-        //   quoteCurrency: quoteCurrency?.wrapped.address ?? zeroAddress,
-        // });
+    // Create a unique key for the current fetch parameters
+    const fetchParamsKey = `${baseAddress}-${quoteAddress}-${page}`;
 
-        const response = await fetchTransactions(
-          currentPage,
-          pageSize,
-          baseCurrency?.wrapped.address ?? zeroAddress,
-          quoteCurrency?.wrapped.address ?? zeroAddress
-        );
+    // Skip if the parameters haven't changed
+    if (lastFetchParamsRef.current === fetchParamsKey) {
+      return;
+    }
 
-        // console.log('[SwapTransactionHistory] Response:', response);
+    // Clear any existing debounce timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
 
-        setTransactions(response.data);
-        setHasNextPage(response.pageInfo.hasNextPage);
-      } catch (error) {
-        console.error(
-          '[SwapTransactionHistory] Error loading transactions:',
-          error
-        );
-        setTransactions([]);
-      } finally {
-        setLoading(false);
+    // Set a new debounce timer (500ms delay)
+    debounceTimerRef.current = setTimeout(() => {
+      lastFetchParamsRef.current = fetchParamsKey;
+      loadTransactions(page, baseAddress, quoteAddress);
+    }, 500);
+
+    // Cleanup function
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
       }
     };
-
-    loadTransactions(page);
-  }, [baseCurrency, page, pageSize, quoteCurrency, fetchTransactions]);
+  }, [baseAddress, quoteAddress, page, loadTransactions]);
 
   const formatTimeAgo = (timestamp: string) => {
     const now = Math.floor(Date.now() / 1000);
