@@ -70,7 +70,7 @@ const QuickModeSwapCalculator = observer(({
     // Remove old swap for this token if exists and add new one
     // Create new array reference for reactivity
     xSwap.swaps = [
-      ...xSwap.swaps.filter((s) => s.fromToken.address !== fromToken.address),
+      ...xSwap.swaps.filter((s) => s.fromToken.address?.toLowerCase() !== fromToken.address?.toLowerCase()),
       swap
     ];
 
