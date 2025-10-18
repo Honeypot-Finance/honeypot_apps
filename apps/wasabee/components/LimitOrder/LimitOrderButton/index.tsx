@@ -32,6 +32,7 @@ interface LimitOrderButtonProps {
   zeroToOne: boolean;
   limitOrderPlugin: boolean;
   tick?: number;
+  onSuccess?: () => void;
 }
 
 export const LimitOrderButton = ({
@@ -46,6 +47,7 @@ export const LimitOrderButton = ({
   zeroToOne,
   limitOrderPlugin,
   tick,
+  onSuccess,
 }: LimitOrderButtonProps) => {
   const { address: account } = useAccount();
   const publicClient = usePublicClient();
@@ -514,6 +516,11 @@ export const LimitOrderButton = ({
         message: `Limit order placed successfully!`,
       });
       prevTxStateRef.current = { isLoading: false, isSuccess: true, isError: false };
+
+      // Call onSuccess callback to trigger refresh
+      if (onSuccess) {
+        onSuccess();
+      }
     }
 
     if (isWriteError && !prevState.isError) {
@@ -532,6 +539,7 @@ export const LimitOrderButton = ({
     isWriteError,
     writeError,
     inputAmount,
+    onSuccess,
   ]);
 
   if (!account) return <Button onClick={() => open()}>Connect Wallet</Button>;

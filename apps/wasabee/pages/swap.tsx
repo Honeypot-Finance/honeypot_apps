@@ -60,6 +60,7 @@ const SwapPage = observer(() => {
     }
   }, [urlInputCurrency, urlOutputCurrency, defaultOutputToken]);
   const [klineRefreshKey, setKlineRefreshKey] = useState(0);
+  const [limitOrderRefreshKey, setLimitOrderRefreshKey] = useState(0);
 
   if (!wallet.currentChain?.supportDEX) {
     return (
@@ -133,6 +134,7 @@ const SwapPage = observer(() => {
                 toTokenAddress={outputCurrency ?? undefined}
                 isInputNative={!inputCurrency}
                 isOutputNative={!outputCurrency}
+                onOrderPlaced={() => setLimitOrderRefreshKey((k) => k + 1)}
               />
             </Tabs.Content>
           </Tabs.Root>
@@ -146,7 +148,7 @@ const SwapPage = observer(() => {
           className="w-full col-span-2 h-full"
         >
           {activeTab === 'limit' ? (
-            <LimitOrderHistory ownerAddress={wallet.account} />
+            <LimitOrderHistory ownerAddress={wallet.account} refreshKey={limitOrderRefreshKey} />
           ) : (
             <SwapTransactionHistory />
           )}

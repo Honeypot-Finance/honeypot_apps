@@ -16,19 +16,19 @@ import {
   TickMath,
   tickToPrice,
   tryParseTick,
-  TradeType,
   WNATIVE,
 } from '@cryptoalgebra/sdk';
 import { PoolState, usePool } from '@/lib/algebra/hooks/pools/usePool';
-import { useCurrency } from '@/lib/algebra/hooks/common/useCurrency';
 import { Address } from 'viem';
 import { LimitOrderButton } from './LimitOrderButton/index';
+import { usePublicClient } from 'wagmi';
 
 interface LimitOrderProps {
   fromTokenAddress?: string;
   toTokenAddress?: string;
   isInputNative?: boolean;
   isOutputNative?: boolean;
+  onOrderPlaced?: () => void;
 }
 
 const LimitOrder = observer(
@@ -37,23 +37,37 @@ const LimitOrder = observer(
     toTokenAddress,
     isInputNative = false,
     isOutputNative = false,
+    onOrderPlaced,
   }: LimitOrderProps) => {
-    const { typedValue, independentField } = useSwapState();
+    const { independentField } = useSwapState();
     const derivedSwapInfo = useDerivedSwapInfo();
-    const { currencies, parsedAmount, currencyBalances, inputError, tradeState } = derivedSwapInfo;
-    
+    const {
+      currencies,
+      parsedAmount,
+      currencyBalances,
+      inputError,
+      tradeState,
+    } = derivedSwapInfo;
+    const publicClient = usePublicClient();
+
     const [sellPrice, setSellPrice] = useState<string>('');
     const [wasInverted, setWasInverted] = useState(false);
     const [isRateFocused, setIsRateFocused] = useState(false);
-    const singleHopOnly = false;
-    const [initialSingleHop, setInitialSingleHop] = useState(singleHopOnly);
-    
+    const [poolPlugin, setPoolPlugin] = useState<Address | null>(null);
+    const [isPluginInitialized, setIsPluginInitialized] = useState(false);
+
     // Create derivedSwap object compatible with LimitOrderButton
     const derivedSwap = useMemo(() => {
       // For limit orders, we primarily care about the input amount the user typed
-      const inputAmount = independentField === SwapField.INPUT ? parsedAmount : tradeState?.trade?.inputAmount;
-      const outputAmount = independentField === SwapField.OUTPUT ? parsedAmount : tradeState?.trade?.outputAmount;
-      
+      const inputAmount =
+        independentField === SwapField.INPUT
+          ? parsedAmount
+          : tradeState?.trade?.inputAmount;
+      const outputAmount =
+        independentField === SwapField.OUTPUT
+          ? parsedAmount
+          : tradeState?.trade?.outputAmount;
+
       return {
         currencies,
         currencyBalances,
@@ -63,7 +77,14 @@ const LimitOrder = observer(
           [SwapField.OUTPUT]: outputAmount,
         },
       };
-    }, [currencies, currencyBalances, inputError, parsedAmount, tradeState, independentField]);
+    }, [
+      currencies,
+      currencyBalances,
+      inputError,
+      parsedAmount,
+      tradeState,
+      independentField,
+    ]);
 
     // Use MobX observer to properly track wallet connection state
     const poolDeployerAddress = useObserver(
@@ -72,7 +93,9 @@ const LimitOrder = observer(
     const initCodeHashManualOverride = useObserver(
       () => wallet.currentChain.contracts.algebraPoolInitCodeHash
     );
-    const walletAddress = useObserver(() => wallet.account);
+    const limitOrderManagerAddress = useObserver(
+      () => wallet.currentChain.contracts.limitOrderManager
+    );
     const chainId = wallet.currentChain.chainId;
 
     const tokenA = currencies[SwapField.INPUT]?.wrapped;
@@ -139,19 +162,85 @@ const LimitOrder = observer(
     const tick = limitOrderPool?.tickCurrent;
     const tickSpacing = limitOrderPool?.tickSpacing;
 
-    // Log pool information
+    // Step 1: Get the pool's plugin address
     useEffect(() => {
-      if (limitOrderPool) {
-        console.log('Pool information:', {
-          tickCurrent: limitOrderPool.tickCurrent,
-          tickSpacing: limitOrderPool.tickSpacing,
-          token0: limitOrderPool.token0.symbol,
-          token1: limitOrderPool.token1.symbol,
-          liquidity: limitOrderPool.liquidity.toString(),
-          sqrtRatioX96: limitOrderPool.sqrtRatioX96.toString(),
-        });
-      }
-    }, [limitOrderPool]);
+      const getPoolPlugin = async () => {
+        if (!limitOrderPoolAddress || !publicClient || !isPoolExists) {
+          setPoolPlugin(null);
+          setIsPluginInitialized(false);
+          return;
+        }
+
+        try {
+          const plugin = (await publicClient.readContract({
+            address: limitOrderPoolAddress,
+            abi: [
+              {
+                inputs: [],
+                name: 'plugin',
+                outputs: [{ name: '', type: 'address' }],
+                stateMutability: 'view',
+                type: 'function',
+              },
+            ],
+            functionName: 'plugin',
+          })) as Address;
+
+          setPoolPlugin(plugin);
+        } catch (error) {
+          setPoolPlugin(null);
+          setIsPluginInitialized(false);
+        }
+      };
+
+      getPoolPlugin();
+    }, [limitOrderPoolAddress, publicClient, isPoolExists]);
+
+    // Step 2: Check if the plugin is initialized in the limit order manager
+    useEffect(() => {
+      const checkPluginInitialization = async () => {
+        if (!poolPlugin || !limitOrderPoolAddress || !publicClient || !limitOrderManagerAddress) {
+          setIsPluginInitialized(false);
+          return;
+        }
+
+        try {
+          const initialized = (await publicClient.readContract({
+            address: limitOrderManagerAddress as Address,
+            abi: [
+              {
+                inputs: [
+                  {
+                    internalType: 'address',
+                    name: '',
+                    type: 'address',
+                  },
+                ],
+                name: 'initialized',
+                outputs: [
+                  {
+                    internalType: 'bool',
+                    name: '',
+                    type: 'bool',
+                  },
+                ],
+                stateMutability: 'view',
+                type: 'function',
+              },
+            ],
+            functionName: 'initialized',
+            args: [limitOrderPoolAddress],
+          })) as boolean;
+
+          setIsPluginInitialized(initialized);
+        } catch (error) {
+          setIsPluginInitialized(false);
+        }
+      };
+
+      checkPluginInitialization();
+    }, [poolPlugin, limitOrderPoolAddress, publicClient, limitOrderManagerAddress]);
+
 
     const tickStep = useCallback(
       (direction: 1 | -1) => {
@@ -224,16 +313,6 @@ const LimitOrder = observer(
         ? tryParseTick(token1, token0, sellPrice.toString(), tickSpacing)
         : tryParseTick(token0, token1, sellPrice.toString(), tickSpacing);
 
-      console.log('Validation check:', {
-        priceTick,
-        currentTick: tick,
-        sellingToken0: currencies.INPUT.wrapped.equals(token0.wrapped),
-        sellingToken1: currencies.INPUT.wrapped.equals(token1.wrapped),
-        invertPrice,
-        wasInverted,
-        sellPrice,
-      });
-
       if (priceTick === undefined) {
         return {
           blockCreation: true,
@@ -245,7 +324,6 @@ const LimitOrder = observer(
         currencies.INPUT.wrapped.equals(token0.wrapped) &&
         priceTick <= tick
       ) {
-        console.log('Blocking: Selling token0 but price is not above current');
         return {
           blockCreation: true,
           message: 'Sell price must be above current price when selling token0',
@@ -256,7 +334,6 @@ const LimitOrder = observer(
         currencies.INPUT.wrapped.equals(token1.wrapped) &&
         priceTick >= tick
       ) {
-        console.log('Blocking: Selling token1 but price is not below current');
         return {
           blockCreation: true,
           message: 'Sell price must be below current price when selling token1',
@@ -274,31 +351,7 @@ const LimitOrder = observer(
       wasInverted,
       tickSpacing,
     ]);
-    
-    // Debug logging for limit order state
-    console.log('LimitOrder state:', {
-      blockCreation,
-      message,
-      sellPrice,
-      initialSellPrice,
-      isPoolExists,
-      token0: !!token0,
-      token1: !!token1,
-      limitOrderPoolAddress,
-      tickSpacing,
-      wasInverted,
-      zeroToOne,
-      invertPrice,
-      currentTick: tick,
-      inputAmount: derivedSwap.parsedAmounts[SwapField.INPUT]?.toSignificant(),
-      priceTick: sellPrice ? (invertPrice
-        ? wasInverted
-          ? tryParseTick(token0, token1, sellPrice.toString(), tickSpacing)
-          : tryParseTick(token1, token0, sellPrice.toString(), tickSpacing)
-        : wasInverted
-        ? tryParseTick(token1, token0, sellPrice.toString(), tickSpacing)
-        : tryParseTick(token0, token1, sellPrice.toString(), tickSpacing)) : undefined,
-    });
+
 
     const [plusDisabled, minusDisabled] = useMemo(() => {
       if (
@@ -311,14 +364,6 @@ const LimitOrder = observer(
         tickSpacing === undefined ||
         tickSpacing === null
       ) {
-        console.log('Buttons disabled - missing data:', {
-          hasInput: !!currencies.INPUT,
-          hasOutput: !!currencies.OUTPUT,
-          hasToken0: !!token0,
-          hasToken1: !!token1,
-          tick,
-          tickSpacing,
-        });
         return [true, true];
       }
 
@@ -331,24 +376,8 @@ const LimitOrder = observer(
         : tryParseTick(token0, token1, sellPrice.toString(), tickSpacing);
 
       if (priceTick === undefined) {
-        console.log('Buttons disabled - priceTick is undefined:', {
-          sellPrice,
-          invertPrice,
-          wasInverted,
-          token0Symbol: token0.symbol,
-          token1Symbol: token1.symbol,
-        });
         return [true, true];
       }
-
-      console.log('Button state calculation:', {
-        priceTick,
-        currentTick: tick,
-        tickSpacing,
-        sellingToken0: currencies.INPUT.wrapped.equals(token0.wrapped),
-        sellingToken1: currencies.INPUT.wrapped.equals(token1.wrapped),
-        wasInverted,
-      });
 
       if (
         currencies.INPUT.wrapped.equals(token0.wrapped) &&
@@ -406,11 +435,7 @@ const LimitOrder = observer(
       if (initialSellPrice && !sellPrice) {
         setSellPrice(initialSellPrice);
       }
-    }, [initialSellPrice, sellPrice]);  // Removed invertPrice to prevent re-triggering
-
-    useEffect(() => {
-      setInitialSingleHop(singleHopOnly);
-    }, [singleHopOnly]);
+    }, [initialSellPrice, sellPrice]); // Removed invertPrice to prevent re-triggering
 
     return (
       <Container className="">
@@ -517,9 +542,11 @@ const LimitOrder = observer(
               setWasInverted(!wasInverted);
             }
           }}
-          disabled={showWrap || !isPoolExists || !sellPrice}
+          disabled={
+            showWrap || !isPoolExists || !isPluginInitialized || !sellPrice
+          }
           className={`w-full mb-2 py-2 rounded-xl text-sm transition-all ${
-            showWrap || !isPoolExists || !sellPrice
+            showWrap || !isPoolExists || !isPluginInitialized || !sellPrice
               ? 'bg-[#1A0F06] text-gray-600 cursor-not-allowed'
               : 'bg-[#2A1F14] hover:bg-[#3A2F24] text-white'
           }`}
@@ -531,7 +558,7 @@ const LimitOrder = observer(
         <LimitOrderButton
           derivedSwap={derivedSwap}
           disabled={blockCreation}
-          limitOrderPlugin={isPoolExists}
+          limitOrderPlugin={isPluginInitialized && isPoolExists}
           token0={token0}
           token1={token1}
           poolAddress={limitOrderPoolAddress}
@@ -540,6 +567,7 @@ const LimitOrder = observer(
           wasInverted={wasInverted}
           zeroToOne={zeroToOne}
           tick={tick}
+          onSuccess={onOrderPlaced}
         />
       </Container>
     );
