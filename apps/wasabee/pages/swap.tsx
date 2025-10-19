@@ -115,7 +115,7 @@ const SwapPage = observer(() => {
                 Limit Order
               </Tabs.Trigger>
             </Tabs.List>
-            
+
             <Tabs.Content value="swap" className="w-full">
               <SwapCardMultichainDesign
                 bordered={false}
@@ -127,7 +127,7 @@ const SwapPage = observer(() => {
                 onSwapSuccess={() => setKlineRefreshKey((k) => k + 1)}
               />
             </Tabs.Content>
-            
+
             <Tabs.Content value="limit" className="w-full">
               <LimitOrder
                 fromTokenAddress={inputCurrency ?? undefined}
@@ -148,7 +148,10 @@ const SwapPage = observer(() => {
           className="w-full col-span-2 h-full"
         >
           {activeTab === 'limit' ? (
-            <LimitOrderHistory ownerAddress={wallet.account} refreshKey={limitOrderRefreshKey} />
+            <LimitOrderHistory
+              ownerAddress={wallet.account}
+              refreshKey={limitOrderRefreshKey}
+            />
           ) : (
             <SwapTransactionHistory />
           )}
