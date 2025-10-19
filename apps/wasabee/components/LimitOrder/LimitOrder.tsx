@@ -567,7 +567,11 @@ const LimitOrder = observer(
           wasInverted={wasInverted}
           zeroToOne={zeroToOne}
           tick={tick}
-          onSuccess={onOrderPlaced}
+          onSuccess={() => {
+            if (onOrderPlaced) {
+              onOrderPlaced();
+            }
+          }}
         />
       </Container>
     );

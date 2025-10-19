@@ -19,6 +19,7 @@ import { wallet } from '@honeypot/shared';
 import { useEffect, useState, useRef } from 'react';
 import { limitOrderManagerABI } from '@honeypot/shared/lib/abis/algebra-contracts/ABIs/plugins/limitOrderManagerAbi';
 import { useToastify } from '@honeypot/shared/hooks/useContractToastify';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 interface LimitOrderButtonProps {
   derivedSwap: any;
@@ -51,6 +52,7 @@ export const LimitOrderButton = ({
 }: LimitOrderButtonProps) => {
   const { address: account } = useAccount();
   const publicClient = usePublicClient();
+  const { openConnectModal } = useConnectModal();
   const [detailedError, setDetailedError] = useState<string | null>(null);
 
   const currenChain = useObserver(() => wallet.currentChain);
@@ -517,9 +519,11 @@ export const LimitOrderButton = ({
       });
       prevTxStateRef.current = { isLoading: false, isSuccess: true, isError: false };
 
-      // Call onSuccess callback to trigger refresh
+      // Call onSuccess callback after a delay to allow subgraph to index
       if (onSuccess) {
-        onSuccess();
+        setTimeout(() => {
+          onSuccess();
+        }, 5000); // 5 second delay for subgraph indexing
       }
     }
 
@@ -542,7 +546,7 @@ export const LimitOrderButton = ({
     onSuccess,
   ]);
 
-  if (!account) return <Button onClick={() => open()}>Connect Wallet</Button>;
+  if (!account) return <Button onClick={openConnectModal}>Connect Wallet</Button>;
 
   if (!limitOrderPlugin)
     return (

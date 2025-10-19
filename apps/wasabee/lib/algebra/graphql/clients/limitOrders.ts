@@ -105,7 +105,13 @@ export async function fetchLimitOrders(
   try {
     const { data } = await client.query<LimitOrdersResponse>({
       query: gql(query),
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache', // Bypass all caching completely
+      context: {
+        headers: {
+          'x-request-time': Date.now().toString(), // Force unique request
+          'cache-control': 'no-cache', // HTTP cache control
+        },
+      },
     });
 
     console.log('[LimitOrders] Raw response:', data);

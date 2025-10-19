@@ -10,7 +10,7 @@ import { useWalletClient, usePublicClient } from 'wagmi';
 import { Address } from 'viem';
 import { limitOrderManagerABI } from '@honeypot/shared/lib/abis/algebra-contracts/ABIs/plugins/limitOrderManagerAbi';
 import { useToastify } from '@honeypot/shared/hooks/useContractToastify';
-import { Token, tickToPrice } from '@cryptoalgebra/sdk';
+import { Token, tickToPrice, Position, Price, ZERO, CurrencyAmount } from '@cryptoalgebra/sdk';
 
 interface LimitOrderHistoryProps {
   poolAddress?: string;
@@ -325,12 +325,7 @@ const LimitOrderHistory = observer(
         if (showLoading) {
           setLoading(true);
         }
-        console.log('[LimitOrderHistory] Loading orders with params:', {
-          ownerAddress,
-          poolAddress,
-          openPage,
-          closedPage,
-        });
+        console.log('[LimitOrderHistory] Fetching orders... refreshKey:', refreshKey, 'timestamp:', new Date().toISOString());
         try {
           // Fetch open orders
           const openResponse = await fetchOrders(
@@ -340,7 +335,6 @@ const LimitOrderHistory = observer(
             undefined, // Don't filter by pool for now
             true // isOpen = true
           );
-          console.log('[LimitOrderHistory] Open orders response:', openResponse);
 
           // Fetch closed orders
           const closedResponse = await fetchOrders(
@@ -350,7 +344,9 @@ const LimitOrderHistory = observer(
             undefined, // Don't filter by pool for now
             false // isOpen = false
           );
-          console.log('[LimitOrderHistory] Closed orders response:', closedResponse);
+
+          console.log('[LimitOrderHistory] Got response - Open:', openResponse.data.length, 'Closed:', closedResponse.data.length);
+          console.log('[LimitOrderHistory] First open order ID:', openResponse.data[0]?.id, 'Timestamp:', openResponse.data[0]?.placeTimestamp);
 
           // Enrich orders with token data and price ranges
           const [enrichedOpenOrders, enrichedClosedOrders] = await Promise.all([
@@ -358,6 +354,7 @@ const LimitOrderHistory = observer(
             Promise.all(closedResponse.data.map(enrichOrderWithTokenData)),
           ]);
 
+          console.log('[LimitOrderHistory] About to set state with', enrichedOpenOrders.length, 'open orders');
           setOpenOrders(enrichedOpenOrders);
           setHasNextOpenPage(openResponse.pageInfo.hasNextPage);
           setClosedOrders(enrichedClosedOrders);
@@ -378,7 +375,6 @@ const LimitOrderHistory = observer(
 
       // Set up polling to refresh orders every 5 seconds (without loading indicator to avoid flickering)
       const intervalId = setInterval(() => {
-        console.log('[LimitOrderHistory] Auto-refreshing orders...');
         loadOrders(false);
       }, 5000);
 
@@ -439,8 +435,51 @@ const LimitOrderHistory = observer(
       window.open(`${explorerUrl}/tx/${txHash}`, '_blank');
     };
 
-    const formatLiquidity = (liquidity: string) => {
-      return new BigNumber(liquidity).dividedBy(1e18).toFixed(6);
+    const calculateTokenAmount = (order: EnrichedLimitOrder) => {
+      if (!order.token0 || !order.token1) {
+        return { amount: '0', symbol: '' };
+      }
+
+      try {
+        const tickLower = typeof order.tickLower === 'string' ? parseInt(order.tickLower) : order.tickLower;
+        const tickUpper = typeof order.tickUpper === 'string' ? parseInt(order.tickUpper) : order.tickUpper;
+        const sellingToken = order.zeroToOne ? order.token0 : order.token1;
+        const L = new BigNumber(order.initialLiquidity);
+
+        // For limit orders (out-of-range positions):
+        // zeroToOne = true: selling token0, position below current price, use amount0 formula
+        // zeroToOne = false: selling token1, position above current price, use amount1 formula
+
+        let amount: BigNumber;
+
+        if (order.zeroToOne) {
+          // amount0 = L * (1/sqrt(P_lower) - 1/sqrt(P_upper))
+          // where sqrt(P) = sqrt(1.0001^tick)
+          const sqrtPLower = Math.sqrt(Math.pow(1.0001, tickLower));
+          const sqrtPUpper = Math.sqrt(Math.pow(1.0001, tickUpper));
+          amount = L.times(1 / sqrtPLower - 1 / sqrtPUpper);
+        } else {
+          // amount1 = L * (sqrt(P_upper) - sqrt(P_lower))
+          const sqrtPLower = Math.sqrt(Math.pow(1.0001, tickLower));
+          const sqrtPUpper = Math.sqrt(Math.pow(1.0001, tickUpper));
+          amount = L.times(sqrtPUpper - sqrtPLower);
+        }
+
+        // Create CurrencyAmount for proper decimal handling
+        const currencyAmount = CurrencyAmount.fromRawAmount(
+          sellingToken,
+          amount.toFixed(0)
+        );
+
+        return {
+          amount: currencyAmount.toSignificant(5),
+          symbol: sellingToken.symbol
+        };
+      } catch (error) {
+        console.error('Error calculating token amount:', error);
+        const sellingToken = order.zeroToOne ? order.token0 : order.token1;
+        return { amount: '0', symbol: sellingToken?.symbol || '' };
+      }
     };
 
     const calculateFilledPercentage = (order: LimitOrder) => {
@@ -457,7 +496,9 @@ const LimitOrderHistory = observer(
       return percentage.toFixed(2);
     };
 
-    const renderOrdersTable = (orders: EnrichedLimitOrder[], isOpen: boolean) => (
+    const renderOrdersTable = (orders: EnrichedLimitOrder[], isOpen: boolean) => {
+      console.log('[LimitOrderHistory] Rendering table. Orders count:', orders.length, 'First order:', orders[0]?.id);
+      return (
       <div className="overflow-x-auto -mx-6 px-6">
         <table className="w-full min-w-[900px]">
           <thead>
@@ -472,7 +513,7 @@ const LimitOrderHistory = observer(
                 Direction
               </th>
               <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[100px] whitespace-nowrap">
-                Liquidity
+                Amount
               </th>
               {isOpen && (
                 <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[100px] whitespace-nowrap">
@@ -489,9 +530,6 @@ const LimitOrderHistory = observer(
                 Status
               </th>
               <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[100px] whitespace-nowrap">
-                TX Hash
-              </th>
-              <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[100px] whitespace-nowrap">
                 Actions
               </th>
             </tr>
@@ -499,13 +537,13 @@ const LimitOrderHistory = observer(
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={isOpen ? 10 : 9} className="py-8 text-center text-gray-500">
+                <td colSpan={isOpen ? 9 : 8} className="py-8 text-center text-gray-500">
                   Loading...
                 </td>
               </tr>
             ) : orders.length === 0 ? (
               <tr>
-                <td colSpan={isOpen ? 10 : 9} className="py-8 text-center text-gray-500">
+                <td colSpan={isOpen ? 9 : 8} className="py-8 text-center text-gray-500">
                   <div className="flex flex-col gap-2">
                     <span>No {isOpen ? 'open' : 'closed'} orders found</span>
                     <span className="text-xs text-gray-600">
@@ -552,7 +590,10 @@ const LimitOrderHistory = observer(
                     </span>
                   </td>
                   <td className="py-4 text-sm text-white font-medium px-3 whitespace-nowrap">
-                    {formatLiquidity(order.liquidity)}
+                    {(() => {
+                      const tokenInfo = calculateTokenAmount(order);
+                      return `${tokenInfo.amount} ${tokenInfo.symbol}`;
+                    })()}
                   </td>
                   {isOpen && (
                     <td className="py-4 text-sm px-3 whitespace-nowrap">
@@ -596,18 +637,6 @@ const LimitOrderHistory = observer(
                     })()}
                   </td>
                   <td className="py-4 px-3">
-                    <button
-                      onClick={() =>
-                        openInExplorer(order.id.split('#')[0] || '')
-                      }
-                      className="text-sm text-white hover:text-gray-300 flex items-center gap-1 transition-colors whitespace-nowrap"
-                    >
-                      {order.id.split('#')[0].slice(0, 6)}...
-                      {order.id.split('#')[0].slice(-4)}
-                      <ExternalLink className="w-3 h-3" />
-                    </button>
-                  </td>
-                  <td className="py-4 px-3">
                     {isOpen && order.liquidity !== '0' && !order.killed ? (
                       <button
                         onClick={() => handleCancelOrder(order)}
@@ -632,6 +661,7 @@ const LimitOrderHistory = observer(
         </table>
       </div>
     );
+    };
 
     return (
       <div className="w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-4 sm:p-6">
@@ -658,7 +688,7 @@ const LimitOrderHistory = observer(
             </TabsList>
           </div>
 
-          <TabsContent value="open">
+          <TabsContent value="open" key={`open-${refreshKey}-${openOrders.length}`}>
             {renderOrdersTable(openOrders, true)}
 
             {/* Pagination for Open Orders */}
@@ -683,7 +713,7 @@ const LimitOrderHistory = observer(
             </div>
           </TabsContent>
 
-          <TabsContent value="closed">
+          <TabsContent value="closed" key={`closed-${refreshKey}-${closedOrders.length}`}>
             {renderOrdersTable(closedOrders, false)}
 
             {/* Pagination for Closed Orders */}

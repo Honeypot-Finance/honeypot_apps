@@ -11,23 +11,13 @@ import {
   NavbarMenu,
   NavbarMenuToggle,
 } from '@nextui-org/react';
-import React, { HtmlHTMLAttributes, useState, useEffect } from 'react';
+import React, { HtmlHTMLAttributes, useState } from 'react';
 import { WalletConnect } from '@/components/walletconnect/v3';
 import { Menu, appPathsList as menuList } from '@/config/allAppPath';
-import { DOMAIN_MAP } from '@/config/allAppPath';
 
-export const Header = (props: HtmlHTMLAttributes<any>) => {
+export const Header = (props: HtmlHTMLAttributes<HTMLDivElement>) => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isXl, setIsXl] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(min-width: 1280px)');
-    setIsXl(mediaQuery.matches);
-    const handler = (e: MediaQueryListEvent) => setIsXl(e.matches);
-    mediaQuery.addEventListener('change', handler);
-    return () => mediaQuery.removeEventListener('change', handler);
-  }, []);
 
   const listToNavbarItem = (list: Menu[], isSub?: boolean): React.ReactNode => {
     return list.map((m) =>
@@ -37,8 +27,8 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
             className={cn(
               'p-3 text-gray-300 text-base font-medium w-full rounded-lg transition-colors',
               m.path.some((p) => router.pathname.includes(p.path))
-                ? 'text-[#F59E0B] bg-[#271A0C]'
-                : 'hover:bg-[#271A0C] hover:text-white',
+                ? 'text-white bg-[#6B4423]'
+                : 'hover:bg-[#6B4423] hover:text-white',
               isSub ? 'pl-8' : ''
             )}
             onClick={() => setIsMenuOpen(false)}
@@ -54,13 +44,16 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
           className={cn(
             'block p-3 text-gray-300 text-base font-medium w-full rounded-lg transition-colors',
             router.pathname === m.path
-              ? 'text-[#F59E0B] bg-[#271A0C]'
-              : 'hover:bg-[#271A0C] hover:text-white',
+              ? 'text-white bg-[#6B4423]'
+              : 'hover:bg-[#6B4423] hover:text-white',
             isSub ? 'pl-8' : ''
           )}
           onClick={() => setIsMenuOpen(false)}
         >
-          {m.title}
+          <span className="flex items-center">
+            {m.title}
+            {m.afterContent}
+          </span>
         </Link>
       )
     );
@@ -72,7 +65,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
         classNames={{
-          base: 'bg-[#140D06]/80 backdrop-blur-md border-b border-[#333333] mb-5 sm:mb-10',
+          base: 'bg-[#1A0F06] backdrop-blur-md border-b border-[#2a2318] mb-5 sm:mb-10',
           wrapper:
             'max-w-full px-2 sm:px-4 md:px-8 xl:px-0 xl:max-w-[1200px] 2xl:max-w-[1500px] !h-auto py-4 ',
         }}
@@ -111,7 +104,7 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
 
         <NavbarMenu
           className={cn(
-            'lg:hidden pt-20 bg-[#140D06]/95 backdrop-blur-md border-t border-[#333333]',
+            'lg:hidden pt-20 bg-[#1A0F06]/95 backdrop-blur-md border-t border-[#2a2318]',
             'will-change-transform transform-gpu transition-all duration-200 ease-out',
             isMenuOpen
               ? 'opacity-100 translate-y-0'
