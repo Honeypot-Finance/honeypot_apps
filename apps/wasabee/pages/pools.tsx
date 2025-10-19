@@ -94,7 +94,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
 
   return (
     <div className="w-full flex items-center justify-center pb-6 sm:pb-12 pt-8">
-      <div className="w-full xl:mx-auto xl:max-w-[1200px] 2xl:max-w-[1500px] px-2 sm:px-4 md:px-8 xl:px-0">
+      <div className="w-full xl:mx-auto xl:max-w-[1200px] 2xl:max-w-[1500px] px-2 sm:px-4 md:px-8 xl:px-0  min-h-[100vh]">
         {/* TODO: Add pool bg img */}
         <Tabs
           selectedKey={currentTab}
@@ -108,7 +108,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
             tabList:
               'flex gap-0 rounded-none bg-transparent border-b-2 border-[#2a2318] mb-6 w-full',
             panel: cn(
-              'w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-0',
+              'w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-0 ',
               '!mt-0'
             ),
             tabContent: 'text-inherit',
