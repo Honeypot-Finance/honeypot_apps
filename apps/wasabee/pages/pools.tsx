@@ -37,55 +37,48 @@ const PoolsPage: NextLayoutPage = observer(() => {
   }
 
   return (
-    <div className="max-w-[1200px] mx-auto px-4 xl:px-0 font-gliker w-full mt-5">
-      {/* TODO: Add pool bg img */}
-      <Tabs
-        selectedKey={currentTab}
-        onSelectionChange={(key) =>
-          setCurrentTab(key as 'aquabera' | 'algebra')
-        }
-        classNames={{
-          tab: 'px-2 sm:px-3 sm:h-10 text-xs sm:text-sm',
-          base: 'relative w-full',
-          cursor: 'bg-[#202020] !text-white/80 px-2 py-3',
-          tabList:
-            'flex rounded-[16px] border border-[#333333] bg-[#271A0C] shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] p-2 sm:p-3 absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 max-w-[90%] sm:max-w-none',
-          panel: cn(
-            'flex flex-col h-full w-full gap-y-4 items-center bg-[#140D06] rounded-2xl text-white',
-            'px-4 sm:px-8 pt-[70px] pb-[70px]',
-            // "bg-[url('/images/card-container/honey/honey-border.png'),url('/images/card-container/dark/bottom-border.svg')]",
-            'bg-[position:-65px_top,_-85px_bottom]',
-            'bg-[size:auto_65px,_auto_65px]',
-            'bg-repeat-x',
-            '!mt-0',
-            'h-auto'
-          ),
-          tabContent: 'text-[#202020] text-sm sm:text-base',
-        }}
-        aria-label="Pool options"
-      >
-        <Tab
-          key="aquabera"
-          title={<span className="text-xs sm:text-base">Automated Vaults</span>}
-        >
-          <AquaberaList prefetchedData={vaultData} />
-        </Tab>
-        <Tab
-          key="algebra"
-          title={
-            <span className="text-xs sm:text-base">Concentrated Liquidity</span>
+    <div className="w-full flex items-center justify-center pb-6 sm:pb-12 pt-8">
+      <div className="w-full xl:mx-auto xl:max-w-[1200px] 2xl:max-w-[1500px] px-2 sm:px-4 md:px-8 xl:px-0">
+        <Tabs
+          selectedKey={currentTab}
+          onSelectionChange={(key) =>
+            setCurrentTab(key as 'aquabera' | 'algebra')
           }
+          classNames={{
+            tab: 'flex-1 h-12 text-base font-medium data-[selected=true]:text-white data-[selected=false]:text-gray-400',
+            base: 'relative w-full',
+            cursor: 'bg-[#6B4423] rounded-lg w-full',
+            tabList:
+              'flex gap-0 rounded-none bg-transparent border-b-2 border-[#2a2318] mb-6 w-full',
+            panel: cn(
+              'w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-0',
+              '!mt-0'
+            ),
+            tabContent: 'text-inherit',
+          }}
+          aria-label="Pool options"
         >
-          <PoolsList />
-        </Tab>
-      </Tabs>
-      
-      {/* Prefetch the pools tab component in background after initial load */}
-      {shouldPrefetch && (
-        <div style={{ position: 'absolute', left: '-9999px', top: '-9999px', visibility: 'hidden', pointerEvents: 'none' }}>
-           <PoolsList />
-        </div>
-      )}
+          <Tab
+            key="algebra"
+            title="Concentrated Liquidity"
+          >
+            <PoolsList />
+          </Tab>
+          <Tab
+            key="aquabera"
+            title="Automated Vaults"
+          >
+            <AquaberaList prefetchedData={vaultData} />
+          </Tab>
+        </Tabs>
+
+        {/* Prefetch the pools tab component in background after initial load */}
+        {shouldPrefetch && (
+          <div style={{ position: 'absolute', left: '-9999px', top: '-9999px', visibility: 'hidden', pointerEvents: 'none' }}>
+             <PoolsList />
+          </div>
+        )}
+      </div>
     </div>
   );
 });
