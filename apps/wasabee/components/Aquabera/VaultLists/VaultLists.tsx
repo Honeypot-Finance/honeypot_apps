@@ -60,14 +60,14 @@ export function AquaberaList({ prefetchedData }: AquaberaListProps) {
           selectedKey={selectedTab}
           onSelectionChange={(key) => setSelectedTab(key.toString())}
           classNames={{
-            tab: 'px-2 text-xs',
+            tab: 'px-4 py-2 text-sm font-medium',
             base: '',
             tabList:
-              'flex rounded-2xl border border-[#202020] bg-white p-4 shadow-[2px_2px_0px_0px_#000] py-2 px-2 z-10',
+              'flex rounded-lg border border-[#2a2318] bg-[#1A0F06] p-1 gap-1',
             cursor:
-              'bg-[#FFCD4D] border border-black shadow-[2px_2px_0px_0px_#000000] text-sm',
+              'bg-[#6B4423] rounded-md',
             panel: 'w-full',
-            tabContent: '!text-[#202020]',
+            tabContent: 'text-white group-data-[selected=true]:text-white group-data-[selected=false]:text-gray-400',
           }}
         >
           <Tab key="all" title="Vaults" />
@@ -77,8 +77,8 @@ export function AquaberaList({ prefetchedData }: AquaberaListProps) {
         <Dropdown>
           <DropdownTrigger>
             <NextUIButton
-              className="bg-white border border-[#2D2D2D] rounded-xl shadow-[2px_2px_0px_0px_#000] px-3 py-1.5 text-xs text-black"
-              endContent={<ChevronDown className="h-4 w-4 text-black" />}
+              className="bg-[#1A0F06] border border-[#2a2318] rounded-lg px-3 py-1.5 text-xs text-white"
+              endContent={<ChevronDown className="h-4 w-4 text-gray-400" />}
             >
               Sort by:{' '}
               {sortOptions.find((option) => option.key === sortField)?.label}
@@ -86,7 +86,7 @@ export function AquaberaList({ prefetchedData }: AquaberaListProps) {
           </DropdownTrigger>
           <DropdownMenu
             aria-label="Sort options"
-            className="bg-white border border-[#2D2D2D] rounded-xl shadow-[2px_2px_0px_0px_#000] p-1"
+            className="bg-[#1A0F06] border border-[#2a2318] rounded-lg p-1"
             onAction={(key) => {
               setSortField(key.toString());
             }}
@@ -94,7 +94,7 @@ export function AquaberaList({ prefetchedData }: AquaberaListProps) {
             {sortOptions.map((option) => (
               <DropdownItem
                 key={option.key}
-                className={`text-black text-sm p-2 ${sortField === option.key ? 'bg-[#FFCD4D]' : ''
+                className={`text-white text-sm p-2 rounded ${sortField === option.key ? 'bg-[#6B4423]' : ''
                   }`}
               >
                 {option.label}
@@ -110,14 +110,14 @@ export function AquaberaList({ prefetchedData }: AquaberaListProps) {
           selectedKey={selectedTab}
           onSelectionChange={(key) => setSelectedTab(key.toString())}
           classNames={{
-            tab: 'px-3 text-sm',
+            tab: 'px-4 py-2 text-sm font-medium min-w-[100px]',
             base: '',
             tabList:
-              'flex rounded-2xl border border-[#202020] bg-white p-4 shadow-[2px_2px_0px_0px_#000] py-2 px-2 z-10',
+              'flex rounded-lg border border-[#2a2318] bg-[#1A0F06] p-1 gap-1',
             cursor:
-              'bg-[#FFCD4D] border border-black shadow-[2px_2px_0px_0px_#000000] text-sm',
+              'bg-[#6B4423] rounded-md',
             panel: 'w-full',
-            tabContent: '!text-[#202020]',
+            tabContent: 'text-white group-data-[selected=true]:text-white group-data-[selected=false]:text-gray-400',
           }}
         >
           <Tab key="all" title="Vaults" />
@@ -130,10 +130,10 @@ export function AquaberaList({ prefetchedData }: AquaberaListProps) {
             value={search}
             type="text"
             onChange={(event) => handleSearch(event.target.value)}
-            className="border border-[#2D2D2D] bg-white text-black pl-10 pr-4 py-2 h-12 w-full rounded-2xl shadow-[2px_2px_0px_0px_#000] placeholder:text-[#4D4D4D]/70 focus:outline-none"
+            className="border border-[#2a2318] bg-[#1A0F06] text-white pl-10 pr-4 py-2 h-12 w-full rounded-lg placeholder:text-gray-500 focus:outline-none focus:border-[#6B4423]"
           />
           <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-[#4D4D4D]"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
             size={20}
           />
         </div>
@@ -146,10 +146,10 @@ export function AquaberaList({ prefetchedData }: AquaberaListProps) {
           value={search}
           type="text"
           onChange={(event) => handleSearch(event.target.value)}
-          className="border border-[#2D2D2D] bg-white text-black pl-10 pr-4 py-2 h-12 w-full rounded-2xl shadow-[2px_2px_0px_0px_#000] placeholder:text-[#4D4D4D]/70 focus:outline-none"
+          className="border border-[#2a2318] bg-[#1A0F06] text-white pl-10 pr-4 py-2 h-12 w-full rounded-lg placeholder:text-gray-500 focus:outline-none focus:border-[#6B4423]"
         />
         <Search
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-[#4D4D4D]"
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
           size={20}
         />
       </div>

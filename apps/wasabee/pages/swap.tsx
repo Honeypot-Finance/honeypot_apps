@@ -10,6 +10,9 @@ import KlineChart from './launch-detail/components/KlineChart';
 import { LoadingDisplay } from '@/components/LoadingDisplay/LoadingDisplay';
 import SwapTransactionHistory from '@/components/SwapTransactionHistory';
 import SwapCardMultichainDesign from '@/components/multichain-design/swap/SwapCard';
+import LimitOrder from '@/components/LimitOrder/LimitOrder';
+import LimitOrderHistory from '@/components/LimitOrder/LimitOrderHistory';
+import * as Tabs from '@radix-ui/react-tabs';
 
 const SwapPage = observer(() => {
   const searchParams = useSearchParams();
@@ -22,6 +25,7 @@ const SwapPage = observer(() => {
   const [outputCurrency, setOutputCurrency] = useState<string | undefined>(
     undefined
   );
+  const [activeTab, setActiveTab] = useState<string>('swap');
 
   const isInit = wallet.isInit;
 
@@ -56,6 +60,7 @@ const SwapPage = observer(() => {
     }
   }, [urlInputCurrency, urlOutputCurrency, defaultOutputToken]);
   const [klineRefreshKey, setKlineRefreshKey] = useState(0);
+  const [limitOrderRefreshKey, setLimitOrderRefreshKey] = useState(0);
 
   if (!wallet.currentChain?.supportDEX) {
     return (
@@ -90,15 +95,49 @@ const SwapPage = observer(() => {
           animate="visible"
           className="relative w-full flex flex-col items-center justify-start col-span-2 lg:col-span-1 overflow-visible"
         >
-          <SwapCardMultichainDesign
-            bordered={false}
-            fromTokenAddress={inputCurrency ?? undefined}
-            toTokenAddress={outputCurrency ?? undefined}
-            isInputNative={!inputCurrency}
-            isOutputNative={!outputCurrency}
-            isUpdatingPriceChart={true}
-            onSwapSuccess={() => setKlineRefreshKey((k) => k + 1)}
-          />
+          <Tabs.Root
+            defaultValue="swap"
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
+            <Tabs.List className="flex w-full mb-4 bg-gray-900/50 rounded-lg p-1">
+              <Tabs.Trigger
+                value="swap"
+                className="flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all data-[state=active]:bg-gray-800 data-[state=active]:text-white data-[state=inactive]:text-gray-400 hover:text-white"
+              >
+                Swap
+              </Tabs.Trigger>
+              <Tabs.Trigger
+                value="limit"
+                className="flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all data-[state=active]:bg-gray-800 data-[state=active]:text-white data-[state=inactive]:text-gray-400 hover:text-white"
+              >
+                Limit Order
+              </Tabs.Trigger>
+            </Tabs.List>
+
+            <Tabs.Content value="swap" className="w-full">
+              <SwapCardMultichainDesign
+                bordered={false}
+                fromTokenAddress={inputCurrency ?? undefined}
+                toTokenAddress={outputCurrency ?? undefined}
+                isInputNative={!inputCurrency}
+                isOutputNative={!outputCurrency}
+                isUpdatingPriceChart={true}
+                onSwapSuccess={() => setKlineRefreshKey((k) => k + 1)}
+              />
+            </Tabs.Content>
+
+            <Tabs.Content value="limit" className="w-full">
+              <LimitOrder
+                fromTokenAddress={inputCurrency ?? undefined}
+                toTokenAddress={outputCurrency ?? undefined}
+                isInputNative={!inputCurrency}
+                isOutputNative={!outputCurrency}
+                onOrderPlaced={() => setLimitOrderRefreshKey((k) => k + 1)}
+              />
+            </Tabs.Content>
+          </Tabs.Root>
         </motion.div>
 
         <motion.div
@@ -108,7 +147,14 @@ const SwapPage = observer(() => {
           transition={{ duration: 0.5 }}
           className="w-full col-span-2 h-full"
         >
-          <SwapTransactionHistory />
+          {activeTab === 'limit' ? (
+            <LimitOrderHistory
+              ownerAddress={wallet.account}
+              refreshKey={limitOrderRefreshKey}
+            />
+          ) : (
+            <SwapTransactionHistory />
+          )}
         </motion.div>
       </div>
     </div>

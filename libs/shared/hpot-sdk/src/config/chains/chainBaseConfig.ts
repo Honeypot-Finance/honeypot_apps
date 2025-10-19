@@ -138,7 +138,7 @@ export const berachainBartioTestnet: Chain = {
   blockExplorers: {
     default: {
       name: 'Berachain',
-      url: 'https://berascan.com/',
+      url: 'https://berascan.com',
     },
   },
   testnet: true,
@@ -170,7 +170,7 @@ export const berachainMainnet: Chain = {
   blockExplorers: {
     default: {
       name: 'Berachain',
-      url: 'https://berascan.com/',
+      url: 'https://berascan.com',
     },
   },
   testnet: true,

@@ -24,11 +24,13 @@ export type Menu = {
         icon?: StaticImageData;
         footer?: ReactNode;
         chatConfig?: PathChatConfig;
+        afterContent?: ReactNode;
       }[];
   title: string;
   routePath?: string;
   icon?: StaticImageData;
   chatConfig?: PathChatConfig;
+  afterContent?: ReactNode;
 };
 
 export type flatMenu = {
@@ -86,6 +88,16 @@ export const appPathsList: Menu[] = [
     path: `/bridge`,
     title: 'Bridge',
     routePath: '/bridge',
+  },
+  {
+    path: `/perp`,
+    title: 'Perp',
+    routePath: '/perp',
+    afterContent: (
+      <span className="ml-2 px-2 py-0.5 text-[10px] text-[#F59E0B] font-medium bg-[#6B4423]/20 border border-[#6B4423] rounded-full whitespace-nowrap">
+        Coming Soon
+      </span>
+    ),
   },
   // {
   //   path: `https://pot2pump.honeypotfinance.xyz/`,

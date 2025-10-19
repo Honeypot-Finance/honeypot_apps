@@ -5,6 +5,7 @@ export interface ContractAddresses {
   algebraPoolInitCodeHash: string;
   algebraFactory: Address;
   algebraPoolDeployer: Address;
+  algebraCustomPoolDeployer: Address;
   algebraPositionManager: Address;
   algebraNonfungiblePositionDescriptor: Address;
   algebraEntryPoint: Address;
@@ -19,6 +20,9 @@ export interface ContractAddresses {
   algebraPluginFactory: Address;
   algebraProxy: Address;
   algebraInterfaceMulticall: Address;
+  algebraLimitOrderPluginFactory: Address;
+  securityRegistry: Address;
+  limitOrderManager: Address;
   //launchpad
   ftoFactory: Address;
   ftoFacade: Address;
@@ -44,6 +48,7 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     algebraPoolInitCodeHash: zeroAddress,
     algebraFactory: zeroAddress,
     algebraPoolDeployer: zeroAddress,
+    algebraCustomPoolDeployer: zeroAddress,
     algebraPositionManager: zeroAddress,
     algebraNonfungiblePositionDescriptor: zeroAddress,
     algebraEntryPoint: zeroAddress,
@@ -58,7 +63,9 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     algebraPluginFactory: zeroAddress,
     algebraProxy: zeroAddress,
     algebraInterfaceMulticall: zeroAddress,
-
+    algebraLimitOrderPluginFactory: zeroAddress,
+    securityRegistry: zeroAddress,
+    limitOrderManager: zeroAddress,
     //launchpad
     ftoFactory: zeroAddress,
     ftoFacade: zeroAddress,
@@ -88,6 +95,8 @@ export const contractAddresses: Record<string, ContractAddresses> = {
       '0xb3fc09be5eb433d99b1ec89fd8435aaf5ffea75c1879e19028aa2414a14b3c85',
     algebraFactory: '0x7d53327D78EFD0b463bd8d7dc938C52402323b95',
     algebraPoolDeployer: '0x598f320907c2FFDBC715D591ffEcC3082bA14660',
+    algebraCustomPoolDeployer:
+      '0xc9cf812513d9983585eb40fcfe6fd49fbb6a45815663ec33b30a6c6c7de3683b',
     algebraPositionManager: '0xBB203aADbE36C125028a54584f5d48C1764317D0',
     algebraNonfungiblePositionDescriptor:
       '0x49719f4e6305a38685ab97bf79D4243467ea1A5d',
@@ -103,7 +112,10 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     algebraPluginFactory: '0x2158B835620683e2c02a0cb915d0B818b8FBE34b',
     algebraProxy: '0xa93C35A721Ec12d7a4e5701D630340c947c9104F',
     algebraInterfaceMulticall: '0xbBCcF56F3D3F5B81E37861e25F73205c2598fcB5',
-
+    algebraLimitOrderPluginFactory:
+      '0x7C00181E089d5B2500434f2638A2Be39eD5691fd',
+    securityRegistry: '0x7082Aa3F193fcCB8B49535D3Bae46F03eF6210b7',
+    limitOrderManager: '0x80337355C8AD5c595BC0e6Ce3E9eb90e8b6486e6',
     //launchpad
     ftoFactory: '0x7E0CCe2C9Ff537f8301dd40c652A03479B18dAef',
     ftoFacade: '0x0264D933F13eE993270591668CfF87b8D35Dd3b4',
@@ -131,6 +143,7 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     algebraPoolInitCodeHash: zeroAddress,
     algebraFactory: '0xad88D4ABbE0d0672f00eB3B83E6518608d82e95d',
     algebraPoolDeployer: '0xB6120De62561D702087142DE405EEB02c18873Bc',
+    algebraCustomPoolDeployer: zeroAddress,
     algebraPositionManager: '0x656D1e21C74a4abF6dDc94609dBC1F7E9D014E27',
     algebraNonfungiblePositionDescriptor:
       '0xb53fC1b41965F2A269Ef68B33351c5AA97095624',
@@ -146,6 +159,9 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     algebraPluginFactory: '0xEd762dfa37b3f0A9eC865AF262Dc9c946acFfb11',
     algebraProxy: '0xAdaf9B5875c86b7E1b671A180E0F917841c52608',
     algebraInterfaceMulticall: '0xA91E650084cC3f70F694d5De6B30b79facBC4cb1',
+    algebraLimitOrderPluginFactory: zeroAddress,
+    securityRegistry: zeroAddress,
+    limitOrderManager: zeroAddress,
 
     //launchpad
     ftoFactory: zeroAddress,
@@ -176,6 +192,7 @@ export const contractAddresses: Record<string, ContractAddresses> = {
       '0xb3fc09be5eb433d99b1ec89fd8435aaf5ffea75c1879e19028aa2414a14b3c85',
     algebraFactory: '0xE8B1932CecF2d3fB85033135D72c728893c80D86',
     algebraPoolDeployer: '0xb53fC1b41965F2A269Ef68B33351c5AA97095624',
+    algebraCustomPoolDeployer: zeroAddress,
     algebraPositionManager: '0x559066e029787e27153BC99Dcf9E540111F346f4',
     algebraNonfungiblePositionDescriptor:
       '0x34DD3Fc1A50ec71785FabCdC4bA50f61aAdb7865',
@@ -191,6 +208,9 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     algebraPluginFactory: '0x1Fb8CC6C93FD62BCB2908cA3431D57cE27cc22AE',
     algebraProxy: '0x2160E65c07aAFD809f4f39a94513a21FbE20b615',
     algebraInterfaceMulticall: '0x77383d6B0f22fdF4A337CE55eE371bf720EbB8B2',
+    algebraLimitOrderPluginFactory: zeroAddress,
+    securityRegistry: zeroAddress,
+    limitOrderManager: zeroAddress,
 
     //launchpad
     ftoFactory: zeroAddress,
@@ -220,6 +240,7 @@ export const contractAddresses: Record<string, ContractAddresses> = {
       '0xb3fc09be5eb433d99b1ec89fd8435aaf5ffea75c1879e19028aa2414a14b3c85',
     algebraFactory: '0xad88d4abbe0d0672f00eb3b83e6518608d82e95d',
     algebraPoolDeployer: '0xb6120de62561d702087142de405eeb02c18873bc',
+    algebraCustomPoolDeployer: zeroAddress,
     algebraPositionManager: '0x656d1e21c74a4abf6ddc94609dbc1f7e9d014e27',
     algebraNonfungiblePositionDescriptor:
       '0xb53fc1b41965f2a269ef68b33351c5aa97095624',
@@ -235,6 +256,9 @@ export const contractAddresses: Record<string, ContractAddresses> = {
     algebraPluginFactory: '0xed762dfa37b3f0a9ec865af262dc9c946acffb11',
     algebraProxy: '0xadaf9b5875c86b7e1b671a180e0f917841c52608',
     algebraInterfaceMulticall: '0xa91e650084cc3f70f694d5de6b30b79facbc4cb1',
+    algebraLimitOrderPluginFactory: zeroAddress,
+    securityRegistry: zeroAddress,
+    limitOrderManager: zeroAddress,
 
     //launchpad
     ftoFactory: zeroAddress,

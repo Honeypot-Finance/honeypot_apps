@@ -211,12 +211,12 @@ const PoolsTable = observer(
                   classNames={{
                     base: 'relative w-auto',
                     tabList:
-                      'flex rounded-2xl border border-[#202020] bg-white p-4 shadow-[2px_2px_0px_0px_#000] py-2 px-3.5 z-10',
+                      'flex rounded-lg border border-[#2a2318] bg-[#1A0F06] p-1 gap-1',
                     cursor:
-                      'bg-[#FFCD4D] border border-black shadow-[2px_2px_0px_0px_#000000] text-sm',
+                      'bg-[#6B4423] rounded-md',
                     panel: 'w-full',
-                    tab: 'px-2 sm:px-3 text-xs sm:text-sm',
-                    tabContent: '!text-[#202020]',
+                    tab: 'px-4 py-2 text-sm font-medium min-w-[100px]',
+                    tabContent: 'text-white group-data-[selected=true]:text-white group-data-[selected=false]:text-gray-400',
                   }}
                   onSelectionChange={(key) => {
                     if (key === 'myPools' && !wallet.account) {
@@ -323,10 +323,10 @@ const PoolsTable = observer(
                   value={search}
                   type="text"
                   onChange={(event) => setSearch(event.target.value)}
-                  className="border border-[#2D2D2D] bg-white text-black pl-10 pr-4 py-2 h-12 w-full rounded-2xl shadow-[2px_2px_0px_0px_#000] placeholder:text-[#4D4D4D]/70 focus:outline-none"
+                  className="border border-[#2a2318] bg-[#1A0F06] text-white pl-10 pr-4 py-2 h-12 w-full rounded-lg placeholder:text-gray-500 focus:outline-none focus:border-[#6B4423]"
                 />
                 <Search
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-[#4D4D4D]"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
                   size={20}
                 />
               </div>

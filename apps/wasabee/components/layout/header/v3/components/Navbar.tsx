@@ -45,11 +45,11 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 <DropdownTrigger>
                   <Button
                     className={cn(
-                      'h-10 px-4 py-2 font-medium bg-transparent text-base text-gray-300 hover:text-[#F59E0B] rounded-lg transition-colors',
+                      'h-10 px-4 py-2 font-medium bg-transparent text-base text-gray-300 hover:text-white rounded-lg transition-colors',
                       (menu.path as SubMenu[]).some(
                         (item) => item.routePath === router.pathname
                       )
-                        ? 'text-[#F59E0B]'
+                        ? 'text-white'
                         : ''
                     )}
                   >
@@ -58,7 +58,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 </DropdownTrigger>
                 <DropdownMenu
                   aria-label={menu.title}
-                  className="bg-[#1a1410] rounded-lg p-1 border border-[#333333] mt-2"
+                  className="bg-[#1A0F06] rounded-lg p-1 border border-[#2a2318] mt-2"
                   onAction={(key: Key) => {
                     const subMenu = (menu.path as SubMenu[]).find(
                       (item: SubMenu) => item.routePath === key
@@ -72,9 +72,9 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                     <DropdownItem
                       key={subMenu.routePath}
                       className={cn(
-                        'font-medium data-[hover=true]:bg-[#271A0C] data-[hover=true]:text-[#F59E0B] p-2 text-gray-300 rounded-md',
+                        'font-medium data-[hover=true]:bg-[#6B4423] data-[hover=true]:text-white p-2 text-gray-300 rounded-md',
                         router.pathname === subMenu.routePath
-                          ? 'text-[#F59E0B]'
+                          ? 'text-white bg-[#6B4423]'
                           : 'text-gray-300'
                       )}
                       startContent={
@@ -101,9 +101,9 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 <Button
                 key={menu.title}
                   className={cn(
-                  'h-10 px-4 py-2 font-medium bg-transparent text-base text-gray-300 hover:text-[#F59E0B] rounded-lg transition-colors',
+                  'h-10 px-4 py-2 font-medium bg-transparent text-base text-gray-300 hover:text-white rounded-lg transition-colors',
                   menu.routePath === router.pathname
-                    ? 'text-[#F59E0B]'
+                    ? 'text-white'
                     : ''
                   )}
                 onPress={() => {
@@ -112,7 +112,10 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                   }
                 }}
                 >
-                  {menu.title}
+                  <span className="flex items-center">
+                    {menu.title}
+                    {menu.afterContent}
+                  </span>
                 </Button>
             )
           )}
