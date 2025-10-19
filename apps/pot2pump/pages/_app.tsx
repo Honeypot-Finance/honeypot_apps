@@ -1,7 +1,6 @@
 import '@/styles/globals.css';
 import '@/styles/overrides/reactjs-popup.css';
 import '@/styles/overrides/toastify.css';
-//@ts-ignore
 import type { AppProps } from 'next/app';
 import { Layout } from '@/components/layout';
 import { NextLayoutPage } from '@/types/nextjs';
@@ -103,6 +102,7 @@ export default function App({
 
   return (
     <ErrorBoundary>
+      <Analytics />
       <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={queryClient}>
           <PersistQueryClientProvider

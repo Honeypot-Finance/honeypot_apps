@@ -1,0 +1,65 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10.10.0
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Run unit tests - Wasabee
+        run: pnpm nx test wasabee --coverage --watchAll=false
+
+      - name: Run unit tests - All-in-One Vault
+        run: pnpm nx test all-in-one-vault --coverage --watchAll=false
+
+      - name: Run unit tests - Leaderboard
+        run: pnpm nx test dreampad --coverage --watchAll=false
+
+      - name: Run unit tests - Pot2Pump
+        run: pnpm nx test pot2pump --coverage --watchAll=false
+
+      - name: Upload coverage report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: ./coverage
+
+      - name: Generate test summary
+        run: |
+          echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "### Coverage Reports" >> $GITHUB_STEP_SUMMARY
+          echo "- Wasabee: Coverage report generated" >> $GITHUB_STEP_SUMMARY
+          echo "- Pot2Pump: Coverage report generated" >> $GITHUB_STEP_SUMMARY
+          echo "- All-in-One Vault: Coverage report generated" >> $GITHUB_STEP_SUMMARY
+          echo "- Leaderboard: Coverage report generated" >> $GITHUB_STEP_SUMMARY

@@ -18,7 +18,7 @@ export const VaultTagContent = observer(
         className="flex items-center gap-2 rounded-full px-2 cursor-pointer"
         style={{ backgroundColor: bgColor, color: textColor }}
       >
-        <span className="text-sm">{tag}</span>
+        <span className="text-sm text-black">{tag}</span>
       </div>
     );
   }

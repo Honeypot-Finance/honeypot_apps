@@ -44,7 +44,7 @@ export const Pagination = observer(
                 ))}
               </motion.div>
               <div className="flex justify-around my-5">
-                {props.paginationState.filter.hasNextPage && (
+                {props.paginationState.filter?.hasNextPage && (
                   <Button
                     onPress={() => {
                       props.paginationState.loadMore();

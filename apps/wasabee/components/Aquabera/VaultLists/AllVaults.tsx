@@ -11,6 +11,7 @@ import { useSubgraphClient } from '@honeypot/shared';
 import VaultCard from './VaultCard';
 import { Skeleton } from '@nextui-org/react';
 import { useAccount } from 'wagmi';
+import { ProcessedVault } from '@/lib/cache/vaults-cache';
 
 type SortField =
   | 'pair'
@@ -28,6 +29,7 @@ interface AllAquaberaVaultsProps {
   onDataLoaded?: () => void;
   prefetchedData?: VaultsSortedByHoldersQuery | null;
   prefetchedContracts?: ICHIVaultContract[] | null;
+  prefetchedProcessedVaults?: ProcessedVault[] | null;
   prfetchedDataChainId: number | undefined;
 }
 
@@ -37,6 +39,7 @@ export function AllAquaberaVaults({
   onDataLoaded,
   prefetchedData,
   prefetchedContracts,
+  prefetchedProcessedVaults,
   prfetchedDataChainId,
 }: AllAquaberaVaultsProps) {
   const { chainId } = useAccount();
@@ -46,6 +49,11 @@ export function AllAquaberaVaults({
   const [vaultsContracts, setVaultsContracts] = useState<ICHIVaultContract[]>(
     []
   );
+  const [processedVaults, setProcessedVaults] = useState<ProcessedVault[]>(
+    []
+  );
+  const [isLoadingCachedData, setIsLoadingCachedData] = useState(false);
+  const [cacheError, setCacheError] = useState<string | null>(null);
 
   // Cache configuration
   const CACHE_KEY_PREFIX = chainId;
@@ -59,27 +67,88 @@ export function AllAquaberaVaults({
       .join('-')}`;
   }, [vaults]);
 
+  // Fetch cached vault data from API
+  const fetchCachedVaultData = async () => {
+   
+
+    try {
+      setIsLoadingCachedData(true);
+      setCacheError(null);
+      
+      console.log(`Fetching cached vault data for chain ${chainId}...`);
+      console.log(`Current chainId from useAccount: ${chainId}, type: ${typeof chainId}`);
+      const startTime = Date.now();
+      
+      
+    
+      const response = await fetch(`/api/vaults/cached?chainId=${chainId??80094}` );
+      if (!response.ok) {
+        throw new Error(`Failed to fetch cached vault data: ${response.statusText}`);
+      }
+      const data = await response.json();
+      const endTime = Date.now();
+      console.log(`Cached vault data fetched in ${endTime - startTime}ms for chain ${chainId}`);
+      console.log(`Received ${data.vaults?.length || 0} vaults from chain ${data.chainId}`);
+      if (data.success && data.vaults) {
+        setProcessedVaults(data.vaults);
+        if (onDataLoaded) {
+          onDataLoaded();
+        }
+      } else {
+        throw new Error('Invalid response format');
+      }
+    } catch (error) {
+      console.error('Error fetching cached vault data:', error);
+      setCacheError(error instanceof Error ? error.message : 'Unknown error');
+      
+      // Fallback strategies
+      if (prefetchedProcessedVaults && prefetchedProcessedVaults.length > 0) {
+        console.log('💾 Using prefetched processed vaults as fallback');
+        setProcessedVaults(prefetchedProcessedVaults);
+      } else if (prefetchedContracts && prefetchedContracts.length > 0) {
+        console.log('💾 Using prefetched contracts as fallback');
+        setVaultsContracts(prefetchedContracts);
+      } else {
+        console.log('❌ No fallback data available, will trigger subgraph fetch');
+        // Clear error to allow subgraph fetching
+        setCacheError(null);
+      }
+    } finally {
+      setIsLoadingCachedData(false);
+    }
+  };
+
   useEffect(() => {
+    console.log('🔄 AllVaults useEffect triggered', {
+      chainId,
+      hasPrefetchedProcessedVaults: !!prefetchedProcessedVaults,
+      prefetchedProcessedVaultsLength: prefetchedProcessedVaults?.length || 0,
+      prfetchedDataChainId,
+      chainsMatch: prfetchedDataChainId === chainId
+    });
+
     setVaults(undefined);
     setVaultsContracts([]);
+    setProcessedVaults([]);
+    setCacheError(null);
+    
+    // Priority 1: Use prefetched processed vaults (fastest)
     if (
-      prefetchedContracts &&
+      prefetchedProcessedVaults &&
       prfetchedDataChainId === chainId &&
-      prefetchedContracts.length > 0
+      prefetchedProcessedVaults.length > 0
     ) {
-      setVaultsContracts(prefetchedContracts);
-      return;
-    }
-
-    // If we have prefetched data and no search string
-    if (prefetchedData && prfetchedDataChainId === chainId && !searchString) {
-      setVaults(prefetchedData);
+      console.log('✅ Using prefetched processed vaults', prefetchedProcessedVaults.length);
+      setProcessedVaults(prefetchedProcessedVaults);
       if (onDataLoaded) {
         onDataLoaded();
       }
       return;
     }
-    getVaultsFromLocalStorage();
+
+    // Priority 2: Fetch from cached API
+    console.log('🔄 Fetching from cached API...');
+    fetchCachedVaultData();
 
   }, [chainId])
 
@@ -101,7 +170,7 @@ export function AllAquaberaVaults({
             const token0 = cached.token0
               ? Token.getToken({
                 address: cached.token0.address,
-                chainId: chainId?.toString()!,
+                chainId: chainId?.toString() || '80084',
                 name: cached.token0.name,
                 symbol: cached.token0.symbol,
                 decimals: cached.token0.decimals,
@@ -111,7 +180,7 @@ export function AllAquaberaVaults({
             const token1 = cached.token1
               ? Token.getToken({
                 address: cached.token1.address,
-                chainId: chainId?.toString()!,
+                chainId: chainId?.toString() || '80084',
                 name: cached.token1.name,
                 symbol: cached.token1.symbol,
                 decimals: cached.token1.decimals,
@@ -152,16 +221,27 @@ export function AllAquaberaVaults({
   const rowsPerPage = 10;
   const infoClient = useSubgraphClient('algebra_info');
 
+  // Fetch from subgraph as fallback when cache fails or for search
   useEffect(() => {
     const initVaults = async () => {
+      // Skip if we already have data
+      if (processedVaults.length > 0 || vaultsContracts.length > 0) return;
+      
+      // Skip if still loading cached data
+      if (isLoadingCachedData) return;
+      
+      // Skip if no wallet/client
       if (!wallet.isInit || !infoClient) return;
-            // If prefetched data is null (cleared), reset vaults state
-      if (prefetchedData === null) {
-        setVaults(undefined);
-      }
+      
+      // Only fetch from subgraph in these cases:
+      // 1. When searching (searchString exists)
+      // 2. When cache failed and we have no data (cacheError exists and no processedVaults)
+      const shouldFetchFromSubgraph = searchString || (cacheError && processedVaults.length === 0);
+      
+      if (!shouldFetchFromSubgraph) return;
 
       try {
-        // Load data regardless of searchString
+        console.log(`🔄 Fetching from subgraph - searchString: "${searchString}", cacheError: ${!!cacheError}`);
         const res = await getVaultPageData(infoClient, searchString);
         setVaults(res);
 
@@ -169,12 +249,12 @@ export function AllAquaberaVaults({
           onDataLoaded();
         }
       } catch (error) {
-        console.error('Error loading vaults:', error);
+        console.error('Error loading vaults from subgraph:', error);
       }
     };
 
     initVaults();
-  }, [searchString, onDataLoaded, infoClient, prefetchedData, chainId]);
+  }, [searchString, onDataLoaded, infoClient, processedVaults.length, vaultsContracts.length, isLoadingCachedData, cacheError]);
 
   useEffect(() => {
     if (!vaults?.ichiVaults?.length || !infoClient || !cacheKey) {
@@ -316,12 +396,16 @@ export function AllAquaberaVaults({
   };
 
   const pages = useMemo(() => {
-    if (!vaultsContracts.length) return 0;
+    const sourceVaults = processedVaults.length > 0 
+      ? processedVaults.map(convertProcessedToContract)
+      : vaultsContracts;
+      
+    if (!sourceVaults.length) return 0;
 
     // Calculate pages based on filtered results
-    let filteredCount = vaultsContracts.length;
+    let filteredCount = sourceVaults.length;
     if (searchString) {
-      filteredCount = vaultsContracts.filter((vault) => {
+      filteredCount = sourceVaults.filter((vault) => {
         const token0Symbol = vault.token0?.symbol?.toLowerCase() || '';
         const token1Symbol = vault.token1?.symbol?.toLowerCase() || '';
         const searchLower = searchString.toLowerCase();
@@ -335,23 +419,25 @@ export function AllAquaberaVaults({
     }
 
     return Math.ceil(filteredCount / rowsPerPage);
-  }, [vaultsContracts, searchString]);
+  }, [vaultsContracts, processedVaults, searchString]);
 
-  const [sortedVaults, setSortedVaults] = useState<ICHIVaultContract[]>([]);
+  const [sortedVaults, setSortedVaults] = useState<any[]>([]);
   const [isLoadingFromCache, setIsLoadingFromCache] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
 
   const isLoading = useMemo(() => {
-    const hasData = vaultsContracts.length > 0;
-    const hasPrefetchedData = prefetchedContracts && prefetchedContracts.length > 0;
+    const hasData = vaultsContracts.length > 0 || processedVaults.length > 0;
+    const hasPrefetchedData = (prefetchedContracts && prefetchedContracts.length > 0) || 
+                              (prefetchedProcessedVaults && prefetchedProcessedVaults.length > 0);
 
     // If we have prefetched data or actual data, never show loading
     if (hasData || hasPrefetchedData) {
       return false;
     }
 
-    return isLoadingFromCache;
-  }, [vaultsContracts.length, isLoadingFromCache, prefetchedContracts]);
+    // Show loading if we're fetching cached data or loading from cache
+    return isLoadingCachedData || isLoadingFromCache;
+  }, [vaultsContracts.length, processedVaults.length, isLoadingCachedData, isLoadingFromCache, prefetchedContracts, prefetchedProcessedVaults]);
 
   // Handle search changes - reset page and show loading state
   useEffect(() => {
@@ -371,11 +457,58 @@ export function AllAquaberaVaults({
     }
   }, [searchString]);
 
+  // Convert processed vault to compatible format for display
+  function convertProcessedToContract(vault: ProcessedVault): any {
+    // Recreate Token instances for compatibility with TokenLogo and other components
+    const token0 = vault.token0
+      ? Token.getToken({
+          address: vault.token0.address,
+          chainId: chainId?.toString() || '80084',
+          name: vault.token0.name,
+          symbol: vault.token0.symbol,
+          decimals: vault.token0.decimals,
+        })
+      : null;
+
+    const token1 = vault.token1
+      ? Token.getToken({
+          address: vault.token1.address,
+          chainId: chainId?.toString() || '80084',
+          name: vault.token1.name,
+          symbol: vault.token1.symbol,
+          decimals: vault.token1.decimals,
+        })
+      : null;
+
+
+
+    // Create a minimal vault-like object for display purposes
+    return {
+      address: vault.address,
+      apr: vault.apr,
+      detailedApr: vault.detailedApr,
+      tvlUSD: vault.tvlUSD,
+      token0,
+      token1,
+      pool: vault.pool,
+      name: vault?.name??'',
+      fee: vault?.fee??'',
+      allowToken0: vault.allowToken0,
+      allowToken1: vault.allowToken1,
+      vaultTag: vault.vaultTag,
+    };
+  }
+
   const sortAndFilter = () => {
+    // Prioritize processed vaults, fallback to vault contracts
+    const sourceVaults = processedVaults.length > 0 
+      ? processedVaults.map(convertProcessedToContract)
+      : vaultsContracts;
+
     // Filter vaults based on search string
-    let filteredVaults = vaultsContracts;
+    let filteredVaults = sourceVaults;
     if (searchString) {
-      filteredVaults = vaultsContracts.filter((vault) => {
+      filteredVaults = sourceVaults.filter((vault) => {
         const token0Symbol = vault.token0?.symbol?.toLowerCase() || '';
         const token1Symbol = vault.token1?.symbol?.toLowerCase() || '';
         const searchLower = searchString.toLowerCase();
@@ -434,19 +567,34 @@ export function AllAquaberaVaults({
   };
 
   useEffect(() => {
-    if (!vaultsContracts.length) return;
+    if (!vaultsContracts.length && !processedVaults.length) return;
     sortAndFilter();
-  }, [vaultsContracts, sortField, sortDirection, page, searchString]);
+  }, [vaultsContracts, processedVaults, sortField, sortDirection, page, searchString]);
 
   return (
     <div className="w-full">
       {/* Mobile view - card layout for small screens */}
       <div className="sm:hidden bg-[#140D06] rounded-2xl border border-[#2a2318] p-4">
+        {cacheError && (
+          <div className="text-center py-4 text-red-500 mb-4">
+            <p>Error loading vaults: {cacheError}</p>
+            <button 
+              onClick={() => fetchCachedVaultData()} 
+              className="mt-2 px-4 py-2 bg-red-500 text-white rounded"
+            >
+              Retry
+            </button>
+          </div>
+        )}
         {!isLoading && !isSearching ? (
-          vaultsContracts.length === 0 ? (
+          vaultsContracts.length === 0 && processedVaults.length === 0 ? (
             <>
               <div className="text-center py-8 text-gray-500">
                 No vaults available.
+                {/* Debug info */}
+                <div className="text-xs mt-2 text-gray-400">
+                  Chain: {chainId}, Loading: {isLoadingCachedData.toString()}, Error: {cacheError || 'none'}
+                </div>
               </div>
             </>
           ) : !sortedVaults.length ? (

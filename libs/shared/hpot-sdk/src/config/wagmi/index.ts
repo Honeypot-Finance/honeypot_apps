@@ -5,6 +5,11 @@ import {
   okxWallet,
   walletConnectWallet,
   metaMaskWallet,
+  binanceWallet,
+  safeWallet,
+  bybitWallet,
+  trustWallet,
+  phantomWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { injected, safe } from 'wagmi/connectors';
 import { cookieStorage, createStorage, Config, http } from 'wagmi';
@@ -64,6 +69,11 @@ const customWallets = () => {
     walletConnectWallet,
     bitgetWallet,
     okxWallet,
+    binanceWallet,
+    bybitWallet,
+    trustWallet,
+    phantomWallet,
+    safeWallet,
     // holdstationWallet,
     // berasigWallet,
   ];
@@ -138,13 +148,13 @@ export const createWagmiConfig = (overrideConfig?: Partial<Config>) => {
       ssr: true,
     } as any;
   }
-  
+
   // Set  wallet states to disconnected when creating new config
   shouldSetAllWalletsDisconnectedInStorage();
 
   // Safe access to networks - ensure it's an array even if undefined
   const safeNetworks = Array.isArray(networks) ? networks : [];
-  
+
   return getDefaultConfig({
     connectors: connectors(),
     appName: 'honeypot-finance',
@@ -156,7 +166,10 @@ export const createWagmiConfig = (overrideConfig?: Partial<Config>) => {
             try {
               return network?.chain?.rpcUrls?.default?.http?.[0];
             } catch (e) {
-              console.warn(`Network ${network?.chainId} has invalid chain config:`, e);
+              console.warn(
+                `Network ${network?.chainId} has invalid chain config:`,
+                e
+              );
               return false;
             }
           })
@@ -165,11 +178,13 @@ export const createWagmiConfig = (overrideConfig?: Partial<Config>) => {
             http(network.chain.rpcUrls.default.http[0]),
           ])
       ),
-      ...(berachainMainnet ? {
-        [berachainMainnet.id]: http(
-          'https://api.henlo-winnie.dev/v1/mainnet/08c3ed43-6326-4be6-9dc2-78a5f77b7382'
-        ),
-      } : {}),
+      ...(berachainMainnet
+        ? {
+            [berachainMainnet.id]: http(
+              'https://api.henlo-winnie.dev/v1/mainnet/08c3ed43-6326-4be6-9dc2-78a5f77b7382'
+            ),
+          }
+        : {}),
     },
     // @ts-expect-error - chains type mismatch with RainbowKit
     chains: safeNetworks

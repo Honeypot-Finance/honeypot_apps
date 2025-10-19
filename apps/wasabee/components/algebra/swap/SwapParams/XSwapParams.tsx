@@ -92,7 +92,7 @@ const XSwapParams = ({
       if (!trade || !tradeState.fee) return undefined;
       const fees = [];
 
-      for (const route of trade?.swaps) {
+      for (const route of trade?.swaps ?? []) {
         for (const pool of route.route.pools) {
           const address = computePoolAddress({
             tokenA: pool.token0,
@@ -186,8 +186,8 @@ const XSwapParams = ({
   if (wrapType !== WrapType.NOT_APPLICABLE) return;
 
   return trade ? (
-    <div className="flex flex-col w-full rounded-2xl cursor-pointer">
-      <div className="w-full custom-dashed p-4">
+    <div className="flex flex-col w-full rounded-2xl cursor-pointer ">
+      <div className="w-full custom-dashed p-4 bg-white/50">
         <div
           className="flex flex-col w-full"
           onClick={() => toggleExpanded(!isExpanded)}

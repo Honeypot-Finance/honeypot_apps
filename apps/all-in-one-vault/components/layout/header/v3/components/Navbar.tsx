@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import {
   Button,
   Dropdown,
@@ -95,25 +96,26 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
       />
       <div className="bg-[#FFCD4D] rounded-xl flex flex-col py-2 px-1.5 lg:py-4 lg:px-3 border-[1.5px] border-[#010101] shadow-[2px_4px_0px_0px_#FFF]">
         <div className="flex gap-1 lg:gap-2 lg:py-1 flex-wrap max-w-[280px] lg:max-w-none lg:flex-nowrap">
-          {menuList.map((menu) => (
-            <Button
-              key={menu.title}
-              className={cn(
-                'h-8 py-0 font-bold bg-transparent text-sm lg:text-base text-black hover:bg-[#202020]/80 hover:text-white',
-                menu.title === 'Dex' && 'hidden',
-                (menu.routePath || menu.path) === router.pathname
-                  ? 'bg-[#202020] text-white'
-                  : ''
-              )}
-              onPress={() => {
-                if (typeof menu.path === 'string') {
-                  router.push(menu.path);
-                }
-              }}
-            >
-              {menu.title}
-            </Button>
-          ))}
+          {menuList.map((menu) => {
+            const targetPath = menu.routePath || menu.path;
+            const isActive = targetPath === router.pathname;
+
+            if (typeof targetPath !== 'string') return null;
+
+            return (
+              <Link
+                key={menu.title}
+                href={targetPath}
+                className={cn(
+                  'h-8 px-3 flex items-center justify-center font-bold text-sm lg:text-base text-black hover:bg-[#202020]/80 hover:text-white cursor-pointer rounded-lg transition-colors',
+                  menu.title === 'Dex' && 'hidden',
+                  isActive ? 'bg-[#202020] text-white' : 'bg-transparent'
+                )}
+              >
+                {menu.title}
+              </Link>
+            );
+          })}
           <Dropdown className="plus-dropdown">
             <DropdownTrigger
               className={cn(

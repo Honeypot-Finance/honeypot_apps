@@ -53,6 +53,12 @@ const nextConfig = {
   ],
   // Add webpack optimizations
   webpack: (config, { dev, isServer }) => {
+    // Ignore optional dependencies that cause warnings
+    config.ignoreWarnings = [
+      { module: /node_modules\/pino\/lib\/tools\.js/ },
+      /Can't resolve 'pino-pretty'/,
+    ];
+
     // Fix module resolution issues
     config.resolve = {
       ...config.resolve,
@@ -61,6 +67,7 @@ const nextConfig = {
         fs: false,
         net: false,
         tls: false,
+        'pino-pretty': false, // Ignore pino-pretty as it's optional
       },
 
       extensionAlias: {

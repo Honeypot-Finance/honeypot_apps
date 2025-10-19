@@ -26,6 +26,16 @@ export function AquaberaList({ prefetchedData }: AquaberaListProps) {
   const [sortField, setSortField] = useState('apr');
   const [dataLoaded, setDataLoaded] = useState(false);
 
+  // Debug log
+  console.log('🏗️ AquaberaList prefetchedData:', {
+    hasAllVaults: !!prefetchedData?.allVaults,
+    hasAllVaultContracts: !!prefetchedData?.allVaultContracts,
+    hasProcessedVaults: !!prefetchedData?.processedVaults,
+    processedVaultsLength: prefetchedData?.processedVaults?.length || 0,
+    chainId: prefetchedData?.chainId,
+    isLoading: prefetchedData?.isLoading
+  });
+
   const sortOptions = [
     { key: 'apr', label: 'APR' },
     { key: 'tvl', label: 'TVL' },
@@ -153,6 +163,7 @@ export function AquaberaList({ prefetchedData }: AquaberaListProps) {
             onDataLoaded={handleDataLoaded}
             prefetchedData={prefetchedData?.allVaults}
             prefetchedContracts={prefetchedData?.allVaultContracts}
+            prefetchedProcessedVaults={prefetchedData?.processedVaults}
             prfetchedDataChainId={prefetchedData?.chainId}
           />
         ) : (

@@ -66,8 +66,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
     config,
   });
 
-  // Initialize vault data prefetching for instant pools page loading
-  useVaultDataPrefetch();
+
 
   useEffect(() => {
     wallet.initWallet(walletClient);
@@ -158,6 +157,7 @@ export default function App({
 
   return (
     <ErrorBoundary>
+      <Analytics />
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
           <PersistQueryClientProvider
