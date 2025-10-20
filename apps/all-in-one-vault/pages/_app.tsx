@@ -92,7 +92,7 @@ export default function App({
 
   const persister = createSyncStoragePersister({
     serialize,
-    storage: undefined,
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
     deserialize,
   });
 

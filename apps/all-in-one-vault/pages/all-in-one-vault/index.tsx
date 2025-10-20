@@ -1,7 +1,7 @@
 import CardContainer from '@/components/card-contianer/v3';
 import SelectionSection from './components/selection-section';
 import AllInOneVaultTable from './components/all-in-one-vault-table';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useChainId } from 'wagmi';
 import { useBerachainGuard } from '@/hooks/useBerachainGuard';
 import StatCard from './components/stat-card';
@@ -10,6 +10,7 @@ export default function AllInOneVault() {
   const [refetchReceiptsFn, setRefetchReceiptsFn] = useState<
     (() => void) | null
   >(null);
+  const [mounted, setMounted] = useState(false);
 
   const chainId = useChainId();
   const {
@@ -19,6 +20,10 @@ export default function AllInOneVault() {
     onConfirmNetworkChange,
   } = useBerachainGuard();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handleRefetchReceipts = useCallback(() => {
     if (refetchReceiptsFn && typeof refetchReceiptsFn === 'function') {
       refetchReceiptsFn();
@@ -26,6 +31,11 @@ export default function AllInOneVault() {
       console.warn('Refetch function not available yet');
     }
   }, [refetchReceiptsFn]);
+
+  // Prevent hydration mismatch by only rendering after client-side mount
+  if (!mounted) {
+    return null;
+  }
 
   // Check if the current chain is Berachain
   if (!isOnBerachain) {
