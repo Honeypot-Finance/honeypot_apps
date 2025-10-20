@@ -377,7 +377,7 @@ export function InputSectionComponent({
           )}
         </div>
         {/* Row 2: Input Fields - This row ensures perfect alignment */}
-        <div className="w-full relative">
+        <div className="w-full relative h-[48px]">
           <WarppedNextSelect
             placeholder={
               isDisabled ? 'Connect wallet to select token' : 'Select a token'
@@ -482,7 +482,7 @@ export function InputSectionComponent({
             <Button
               isIconOnly
               variant="light"
-              className="absolute right-8 top-1/2 transform -translate-y-1/2 h-8 w-8 min-w-8 bg-transparent hover:bg-gray-100 rounded-md z-10"
+              className="absolute right-8 top-1/2 -translate-y-1/2 h-8 w-8 min-w-8 p-0 bg-transparent hover:bg-gray-100 rounded-md z-10 flex items-center justify-center"
               onPress={() =>
                 window.open(
                   `https://berascan.com/address/${selectedToken}`,
