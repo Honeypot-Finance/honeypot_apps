@@ -572,6 +572,12 @@ export const berachainNetwork = new Network({
       isPopular: true,
       isStableCoin: true,
     },
+    '0xa32bFAf94E37911D08531212d32EADe94389243b': {
+      name: 'PBTC',
+      symbol: 'Pots Buy This Coin',
+      decimals: 18,
+      logoURI: '/images/icons/tokens/pbtc.png',
+    },
     '0x9b37d542114070518a44e200fdcd8e4be737297f': {
       name: 'Honeypot Finance',
       symbol: 'HPOT',

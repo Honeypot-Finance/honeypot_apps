@@ -12,8 +12,7 @@ import { erc20Abi } from 'viem';
 import { Token, TokenLogo } from '@honeypot/shared';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { observer } from 'mobx-react-lite';
-import { cn } from '@nextui-org/react';
-import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 // Hardcoded block list for tokens to hide from selection
 const TOKEN_BLOCK_LIST = [
@@ -55,6 +54,7 @@ export function InputSectionComponent({
   tokenBalance,
   userAddress,
 }: InputSectionProps) {
+  const router = useRouter();
   const [internalSelectedToken, setInternalSelectedToken] = useState<string>(
     selectedToken || ''
   );
@@ -182,6 +182,65 @@ export function InputSectionComponent({
   console.log('tokenInfoData:', tokenInfoData);
   console.log('tokenInfoLoading:', tokenInfoLoading);
   console.log('tokenInfoError:', tokenInfoError);
+
+  // Auto-select token from URL parameter
+  useEffect(() => {
+    const selectBurnToken = router.query.selectburntoken as string;
+
+    if (selectBurnToken && tokenSupportList.length > 0 && !isDisabled && tokenInfoData) {
+      // Normalize the address to lowercase for comparison
+      const normalizedAddress = selectBurnToken.toLowerCase();
+
+      // Check if the token exists in the supported list
+      const tokenExists = tokenSupportList.some(
+        (token: { id: string }) => token.id.toLowerCase() === normalizedAddress
+      );
+
+      if (tokenExists && !internalSelectedToken) {
+        console.log('Auto-selecting token from URL:', selectBurnToken);
+        // Trigger the token selection
+        setInternalSelectedToken(selectBurnToken);
+        onTokenChange?.(selectBurnToken);
+
+        // Find and set token data
+        const selectedTokenData = tokenSupportList.find(
+          (token: { id: string; weight: string }) =>
+            token.id.toLowerCase() === normalizedAddress
+        );
+
+        // Set token name from tokenInfoData
+        const tokenInfo = tokenInfoData?.[selectBurnToken];
+        if (setTokenName && tokenInfo) {
+          setTokenName(tokenInfo.symbol);
+        }
+
+        if (selectedTokenData) {
+          const weightValue = parseFloat(selectedTokenData.weight) / 1e4;
+          console.log('Auto-selected token weight:', weightValue);
+
+          if (setWeightPerCurrentToken) {
+            setWeightPerCurrentToken(weightValue.toString());
+          }
+
+          // Calculate and set summary data
+          if (setSummaryData) {
+            const newSummaryData = calculateSummaryData(
+              selectBurnToken,
+              amount || '',
+              weightValue,
+              totalWeight,
+              tokenBalance
+            );
+            if (newSummaryData) {
+              setSummaryData(newSummaryData);
+            }
+          }
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query.selectburntoken, tokenSupportList, isDisabled, tokenInfoData]);
+
   const { address } = useAccount();
 
   const { data: newTokenBalance } = useReadContract({
