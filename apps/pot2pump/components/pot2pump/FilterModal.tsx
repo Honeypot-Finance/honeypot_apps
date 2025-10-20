@@ -42,7 +42,7 @@ export const Filter = observer(
     useEffect(() => {
       if (!wallet.isInit) return;
 
-      const raiseTokens = wallet.currentChain.raisedTokenData.map((token) =>
+      const raiseTokens = wallet.currentChain.raisedTokenData?.map((token) =>
         Token.getToken({
           address: token.address,
           force: true,

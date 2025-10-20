@@ -141,7 +141,7 @@ const pop2PumpQuery = `
 export const pot2PumpListToMemePairList = (
   pot2Pump: Partial<Pot2Pump>[]
 ): MemePairContract[] => {
-  return pot2Pump.map(pot2PumpToMemePair);
+  return pot2Pump?.map(pot2PumpToMemePair);
 };
 
 export const pot2PumpToMemePair = (

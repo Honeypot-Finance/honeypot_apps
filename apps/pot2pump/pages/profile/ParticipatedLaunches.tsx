@@ -49,7 +49,7 @@ export const ParticipatedLaunches = observer(() => {
       <div className="text-4xl flex justify-between  gap-4 absolute top-8 left-6">
         <div>Participated Launch</div>
         <div className="flex gap-4 text-sm z-10">
-          {canClaimPot2PumpList.length > 0 && (
+          {canClaimPot2PumpList?.length > 0 && (
             <Button
               onClick={async () => {
                 setClaimAllLoading(true);
