@@ -213,21 +213,21 @@ const SwapParamsV3 = () => {
                 </span>
               </div>
 
-              <div className="flex items-center py-3 justify-between">
+              {/* <div className="flex items-center py-3 justify-between">
                 <span className="text-gray-400 text-sm font-medium">LP Fee</span>
                 <span className="text-gray-400 text-sm font-medium">
                   {LPFeeString}
                 </span>
-              </div>
+              </div> */}
 
-              <div className="flex items-center py-3 justify-between">
+              {/* <div className="flex items-center py-3 justify-between">
                 <span className="text-gray-400 text-sm font-medium">
                   Slippage tolerance
                 </span>
                 <span className="text-gray-400 text-sm font-medium">
                   {allowedSlippage.toFixed(2)}%
                 </span>
-              </div>
+              </div> */}
             </div>
           )}
         </div>

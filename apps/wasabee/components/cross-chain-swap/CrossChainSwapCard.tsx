@@ -1248,13 +1248,13 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                     <span className="text-[#E7CDB1]">1.00%</span>
                   </div>
 
-                  <div className="flex justify-between text-sm">
+                  {/* <div className="flex justify-between text-sm">
                     <span className="text-[#998877]">LP Fee:</span>
                     <span className="text-[#E7CDB1]">
                       {(parseFloat(fromAmount || '0') * 0.0039).toFixed(4)}{' '}
                       {fromToken?.symbol}
                     </span>
-                  </div>
+                  </div> */}
 
                   <div className="flex justify-between text-sm">
                     <span className="text-[#998877]">Minimum Received:</span>

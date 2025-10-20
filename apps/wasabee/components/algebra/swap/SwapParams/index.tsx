@@ -192,20 +192,20 @@ const SwapParams = () => {
                   }`}
             </span>
           </div>
-          <div className="flex items-center justify-between">
+          {/* <div className="flex items-center justify-between">
             <span className="font-semibold">LP Fee</span>
             <span>{LPFeeString}</span>
-          </div>
+          </div> */}
           <div className="flex items-center justify-between">
             <span className="font-semibold">Price impact</span>
             <span>
               <PriceImpact priceImpact={priceImpact} />
             </span>
           </div>
-          <div className="flex items-center justify-between">
+          {/* <div className="flex items-center justify-between">
             <span className="font-semibold">Slippage tolerance</span>
             <span>{allowedSlippage.toFixed(2)}%</span>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

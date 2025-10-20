@@ -1,22 +1,22 @@
-import Loader from "@/components/algebra/common/Loader";
-import { ALGEBRA_ROUTER } from "@/config/algebra/addresses";
-import { MAX_UINT128 } from "@/config/algebra/max-uint128";
-import { usePoolPlugins } from "@/lib/algebra/hooks/pools/usePoolPlugins";
+import Loader from '@/components/algebra/common/Loader';
+import { ALGEBRA_ROUTER } from '@/config/algebra/addresses';
+import { MAX_UINT128 } from '@/config/algebra/max-uint128';
+import { usePoolPlugins } from '@/lib/algebra/hooks/pools/usePoolPlugins';
 import useWrapCallback, {
   WrapType,
-} from "@/lib/algebra/hooks/swap/useWrapCallback";
+} from '@/lib/algebra/hooks/swap/useWrapCallback';
 import {
   useDerivedSwapInfo,
   useSwapState,
-} from "@/lib/algebra/state/swapStore";
+} from '@/lib/algebra/state/swapStore';
 import {
   computeRealizedLPFeePercent,
   warningSeverity,
-} from "@/lib/algebra/utils/swap/prices";
-import { AlgebraBasePluginContract } from "@/services/contract/algebra/algebra-base-plugin";
-import { AlgebraPoolContract } from "@/services/contract/algebra/algebra-pool-contract";
-import { SwapField } from "@/types/algebra/types/swap-field";
-import { TradeState } from "@/types/algebra/types/trade-state";
+} from '@/lib/algebra/utils/swap/prices';
+import { AlgebraBasePluginContract } from '@/services/contract/algebra/algebra-base-plugin';
+import { AlgebraPoolContract } from '@/services/contract/algebra/algebra-pool-contract';
+import { SwapField } from '@/types/algebra/types/swap-field';
+import { TradeState } from '@/types/algebra/types/trade-state';
 import {
   ADDRESS_ZERO,
   computePoolAddress,
@@ -25,10 +25,10 @@ import {
   Trade,
   TradeType,
   unwrappedToken,
-} from "@cryptoalgebra/sdk";
-import { ChevronDownIcon, ChevronRightIcon, ZapIcon } from "lucide-react";
-import { Fragment, useEffect, useMemo, useState } from "react";
-import { Address } from "viem";
+} from '@cryptoalgebra/sdk';
+import { ChevronDownIcon, ChevronRightIcon, ZapIcon } from 'lucide-react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Address } from 'viem';
 
 const SwapParams = () => {
   const {
@@ -85,20 +85,20 @@ const SwapParams = () => {
                   false,
                   BigInt(
                     trade!.tradeType === TradeType.EXACT_INPUT
-                      ? (trade?.inputAmount?.toExact() ?? 0)
-                      : (trade?.outputAmount?.toExact() ?? 0)
+                      ? trade?.inputAmount?.toExact() ?? 0
+                      : trade?.outputAmount?.toExact() ?? 0
                   ),
                   MAX_UINT128,
                   false,
-                  "0x",
+                  '0x',
                 ],
                 { account: address as Address }
               )
               .then((v) => v.result as [string, number, number]);
           } catch (error) {
-            beforeSwap = ["", 0, 0];
+            beforeSwap = ['', 0, 0];
           }
-          const [, overrideFee, pluginFee] = beforeSwap || ["", 0, 0];
+          const [, overrideFee, pluginFee] = beforeSwap || ['', 0, 0];
 
           if (overrideFee) {
             fees.push(overrideFee + pluginFee);
@@ -130,7 +130,7 @@ const SwapParams = () => {
 
   const LPFeeString = realizedLPFee
     ? `${realizedLPFee.toSignificant(4)} ${realizedLPFee.currency.symbol}`
-    : "-";
+    : '-';
 
   if (wrapType !== WrapType.NOT_APPLICABLE) return;
 
@@ -155,14 +155,14 @@ const SwapParams = () => {
               <span>{`${slidingFee?.toFixed(4)}% fee`}</span>
             </div>
           )}
-          <div className={`ml-auto duration-300 ${isExpanded && "rotate-180"}`}>
+          <div className={`ml-auto duration-300 ${isExpanded && 'rotate-180'}`}>
             <ChevronDownIcon strokeWidth={2} size={16} />
           </div>
         </button>
       </div>
       <div
         className={`h-0 duration-300 will-change-[height] overflow-hidden bg-card-dark rounded-xl ${
-          isExpanded && "h-[180px]"
+          isExpanded && 'h-[180px]'
         }`}
       >
         <div className="flex flex-col gap-2.5 px-3 py-2 rounded-xl">
@@ -175,8 +175,8 @@ const SwapParams = () => {
           <div className="flex items-center justify-between">
             <span className="font-semibold">
               {trade.tradeType === TradeType.EXACT_INPUT
-                ? "Minimum received"
-                : "Maximum sent"}
+                ? 'Minimum received'
+                : 'Maximum sent'}
             </span>
             <span>
               {trade.tradeType === TradeType.EXACT_INPUT
@@ -198,10 +198,10 @@ const SwapParams = () => {
               <PriceImpact priceImpact={priceImpact} />
             </span>
           </div>
-          <div className="flex items-center justify-between">
+          {/* <div className="flex items-center justify-between">
             <span className="font-semibold">Slippage tolerance</span>
             <span>{allowedSlippage.toFixed(2)}%</span>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
@@ -240,14 +240,14 @@ const PriceImpact = ({ priceImpact }: { priceImpact: Percent | undefined }) => {
 
   const color =
     severity === 3 || severity === 4
-      ? "text-red-400"
+      ? 'text-red-400'
       : severity === 2
-        ? "text-yellow-400"
-        : "text-white";
+      ? 'text-yellow-400'
+      : 'text-white';
 
   return (
     <span className={color}>
-      {priceImpact ? `${priceImpact.multiply(-1).toFixed(2)}%` : "-"}
+      {priceImpact ? `${priceImpact.multiply(-1).toFixed(2)}%` : '-'}
     </span>
   );
 };

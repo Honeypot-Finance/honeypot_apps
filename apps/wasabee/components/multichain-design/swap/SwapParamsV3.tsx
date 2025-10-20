@@ -73,10 +73,10 @@ const SwapParamsV3 = () => {
             <span className="text-white">1.00%</span>
           </div>
 
-          <div className="flex items-center justify-between text-sm">
+          {/* <div className="flex items-center justify-between text-sm">
             <span className="text-gray-400">LP Fee:</span>
             <span className="text-white">0.39 BERA</span>
-          </div>
+          </div> */}
 
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-400">Minimum Received:</span>

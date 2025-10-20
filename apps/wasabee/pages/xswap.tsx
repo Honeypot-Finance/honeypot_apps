@@ -72,7 +72,16 @@ const XSwapPage = observer(() => {
           }}
           aria-label="XSwap modes"
         >
-          <Tab key="manual" title={<span className="text-xs sm:text-base">Manual</span>}>
+          <Tab
+            key="quick"
+            title={<span className="text-xs sm:text-base">Quick</span>}
+          >
+            <QuickSwapTab />
+          </Tab>
+          <Tab
+            key="manual"
+            title={<span className="text-xs sm:text-base">Manual</span>}
+          >
             {!isMobile && (
               <div className="md:grid hidden w-full  grid-cols-12 p-2 rounded-lg items-center justify-center text-center">
                 <div className="col-span-1">
@@ -159,9 +168,6 @@ const XSwapPage = observer(() => {
                 </Button>
               )}
             </div>
-          </Tab>
-          <Tab key="quick" title={<span className="text-xs sm:text-base">Quick</span>}>
-            <QuickSwapTab />
           </Tab>
         </Tabs>
       </HoneyContainer>
