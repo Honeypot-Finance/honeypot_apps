@@ -157,16 +157,14 @@ export const QuickSwapTab = observer(() => {
       selectedSwaps.some(swap => !swap.trade || !swap.trade.outputAmount)
     );
 
-    const value = selectedSwaps.reduce((acc, swap) => {
-      return acc.plus(
-        new BigNumber(swap.trade?.outputAmount?.toFixed(18) ?? '0')
-          .times(swap.toToken.derivedUSD.toString())
-      );
-    }, new BigNumber(0));
-
     const amount = selectedSwaps.reduce((acc, swap) => {
       return acc.plus(swap.trade?.outputAmount?.toFixed(18) ?? '0');
     }, new BigNumber(0));
+
+    // Calculate value using output token's current price
+    const value = quickModeOutputToken 
+      ? amount.times(quickModeOutputToken.derivedUSD.toString())
+      : new BigNumber(0);
 
     // Calculate average conversion rate (total output / total input in USD)
     const avgRate = totalInputValue.gt(0) 
@@ -179,7 +177,7 @@ export const QuickSwapTab = observer(() => {
       isCalculating: calculating,
       averageRate: avgRate.toString()
     };
-  }, [quickModeSelectedTokens, xSwap.swaps, selectedTokens, totalInputValue]);
+  }, [quickModeSelectedTokens, xSwap.swaps, selectedTokens, totalInputValue, quickModeOutputToken]);
 
   // Check if any swaps need approval
   const needsApproval = useMemo(() => {
@@ -352,13 +350,37 @@ export const QuickSwapTab = observer(() => {
                           )}
                         </div>
                         <div className="text-white/60 text-sm">
-                          {DynamicFormatAmount({
-                            amount: new BigNumber(token.balance.toString())
-                              .times(token.derivedUSD.toString())
-                              .toString(),
-                            decimals: 2,
-                            endWith: '$',
-                          })}
+                          {(() => {
+                            let price = token.derivedUSD;
+                            
+                            // If native token has no price, try to get WBERA's price
+                            if ((!price || price === '0') && token.isNative) {
+                              const wbera = wallet.currentChain.validatedTokens?.find(
+                                t => t.symbol === 'WBERA'
+                              );
+                              
+                              console.log('BERA price debug:', {
+                                tokenSymbol: token.symbol,
+                                tokenPrice: token.derivedUSD,
+                                wberaFound: !!wbera,
+                                wberaPrice: wbera?.derivedUSD,
+                                allTokens: wallet.currentChain.validatedTokens?.map(t => ({
+                                  symbol: t.symbol,
+                                  price: t.derivedUSD
+                                }))
+                              });
+                              
+                              price = wbera?.derivedUSD || '0';
+                            }
+                            
+                            return DynamicFormatAmount({
+                              amount: new BigNumber(token.balance.toString())
+                                .times(price)
+                                .toString(),
+                              decimals: 2,
+                              endWith: '$',
+                            });
+                          })()}
                         </div>
                       </div>
                     </div>
@@ -479,7 +501,9 @@ export const QuickSwapTab = observer(() => {
                     </div>
                     <div className="text-white/60 text-sm">
                       {DynamicFormatAmount({
-                        amount: totalInputValue.toString(),
+                        amount: new BigNumber(totalOutputValue).gt(0) 
+                          ? totalOutputValue 
+                          : totalInputValue.toString(),
                         decimals: 2,
                         endWith: '$',
                       })}
