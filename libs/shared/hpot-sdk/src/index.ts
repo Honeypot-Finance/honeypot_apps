@@ -11,4 +11,5 @@ export * from './lib/priceFeed';
 export * from './services';
 export * from './components/TruncateText';
 export * from './lib/trpc/trpc';
-export * from './server/service/userContacts';
+// Note: server-side modules like userContacts should not be exported here
+// as they contain Node.js-only dependencies (postgres) that cannot be bundled for the client
