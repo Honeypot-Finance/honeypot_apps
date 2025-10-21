@@ -29,6 +29,9 @@ const QuickModeSwapCalculator = observer(({
   // In Quick mode use full balance 
   const typedValue = fromToken.balance.toString();
 
+  // Only calculate swap if balance is meaningful (> 0.000001)
+  const shouldCalculate = new BigNumber(typedValue).gt(0.000001);
+
   const {
     toggledTrade: trade,
     allowedSlippage,
@@ -40,19 +43,26 @@ const QuickModeSwapCalculator = observer(({
       ? zeroAddress
       : (toToken.address as Address),
     independentField: SwapField.INPUT,
-    typedValue: typedValue,
+    typedValue: shouldCalculate ? typedValue : '0',
   });
 
   const { approvalState } = useApproveCallbackFromTrade(
-    trade,
+    shouldCalculate ? trade : undefined,
     allowedSlippage
   );
 
-  const { bestCall } = useSwapCallback(trade, allowedSlippage, approvalState);
+  const { bestCall } = useSwapCallback(
+    shouldCalculate ? trade : undefined, 
+    allowedSlippage, 
+    approvalState
+  );
 
   // Register this swap with xSwap service
   useEffect(() => {
-    if (!isSelected) return;
+    if (!isSelected || !shouldCalculate) return;
+
+    // Only register if we have a valid trade
+    if (!trade) return;
 
     const swap: XChildSwap = {
       fromToken,
@@ -80,7 +90,7 @@ const QuickModeSwapCalculator = observer(({
         (s) => s.fromToken.address !== fromToken.address
       );
     };
-  }, [fromToken, toToken,  trade, bestCall, approvalState, isSelected]);
+  }, [fromToken, toToken, trade, bestCall, approvalState, isSelected, shouldCalculate]);
 
   return null; // This component doesn't render anything
 });
@@ -128,9 +138,23 @@ export const QuickSwapTab = observer(() => {
   }, [selectedTokens]);
 
   // Calculate total output value and amount from registered swaps
-  const { totalOutputValue, totalOutputAmount } = useMemo(() => {
+  const { totalOutputValue, totalOutputAmount, isCalculating, averageRate } = useMemo(() => {
     const selectedSwaps = xSwap.swaps.filter(swap => 
       quickModeSelectedTokens.has(swap.fromToken.address)
+    );
+
+    // Count selected tokens with meaningful balance
+    const validSelectedTokens = selectedTokens.filter(token => 
+      new BigNumber(token.balance.toString()).gt(0.000001)
+    );
+
+    // Check if we're still calculating trades:
+    // 1. Valid tokens selected but swaps not registered yet
+    // 2. Swaps registered but trades not calculated yet
+    // 3. Trades exist but no output amounts yet
+    const calculating = validSelectedTokens.length > 0 && (
+      selectedSwaps.length < validSelectedTokens.length ||
+      selectedSwaps.some(swap => !swap.trade || !swap.trade.outputAmount)
     );
 
     const value = selectedSwaps.reduce((acc, swap) => {
@@ -144,11 +168,18 @@ export const QuickSwapTab = observer(() => {
       return acc.plus(swap.trade?.outputAmount?.toFixed(18) ?? '0');
     }, new BigNumber(0));
 
+    // Calculate average conversion rate (total output / total input in USD)
+    const avgRate = totalInputValue.gt(0) 
+      ? amount.div(totalInputValue)
+      : new BigNumber(0);
+
     return { 
       totalOutputValue: value.toString(), 
-      totalOutputAmount: amount.toString() 
+      totalOutputAmount: amount.toString(),
+      isCalculating: calculating,
+      averageRate: avgRate.toString()
     };
-  }, [quickModeSelectedTokens, xSwap.swaps]);
+  }, [quickModeSelectedTokens, xSwap.swaps, selectedTokens, totalInputValue]);
 
   // Check if any swaps need approval
   const needsApproval = useMemo(() => {
@@ -196,6 +227,29 @@ export const QuickSwapTab = observer(() => {
 
   return (
     <div className="w-full flex flex-col gap-6">
+      <style jsx>{`
+        @keyframes shimmer {
+          0% {
+            background-position: -1000px 0;
+          }
+          100% {
+            background-position: 1000px 0;
+          }
+        }
+        .shimmer {
+          animation: shimmer 2s infinite linear;
+          background: linear-gradient(
+            to right,
+            #2a2a2a 0%,
+            #3a3a3a 20%,
+            #2a2a2a 40%,
+            #2a2a2a 100%
+          );
+          background-size: 1000px 100%;
+          border-radius: 8px;
+        }
+      `}</style>
+      
       {/* Hidden swap calculators for selected tokens */}
       {selectedTokens.map(token => 
         quickModeOutputToken && (
@@ -216,9 +270,14 @@ export const QuickSwapTab = observer(() => {
             variant="bordered"
             className="bg-transparent border-[#333333] text-white text-xs"
             onPress={() => {
-              // Select all tokens
-              const allAddresses = new Set(xSwap.sortedTokens?.map(t => t.address) || []);
-              setQuickModeSelectedTokens(allAddresses);
+              // Select all tokens with meaningful balance (> 0.000001)
+              const validAddresses = new Set(
+                xSwap.sortedTokens
+                  ?.filter(t => new BigNumber(t.balance.toString()).gt(0.000001))
+                  .filter(t => t.address !== quickModeOutputToken?.address)
+                  .map(t => t.address) || []
+              );
+              setQuickModeSelectedTokens(validAddresses);
             }}
           >
             Select All
@@ -248,12 +307,15 @@ export const QuickSwapTab = observer(() => {
             {xSwap.sortedTokens?.map((token) => {
               const isSelected = quickModeSelectedTokens.has(token.address);
               const isSameAsOutput = quickModeOutputToken?.address === token.address;
+              const hasLowBalance = new BigNumber(token.balance.toString()).lte(0.000001);
+              const isDisabled = isSameAsOutput || hasLowBalance;
+              
               return (
                 <div
                   key={token.address}
                   onClick={() => {
-                    // Prevent selecting if it's the same as output token
-                    if (isSameAsOutput) return;
+                    // Prevent selecting if disabled
+                    if (isDisabled) return;
                     
                     const newSelected = new Set(quickModeSelectedTokens);
                     if (isSelected) {
@@ -265,10 +327,10 @@ export const QuickSwapTab = observer(() => {
                   }}
                   className={cn(
                     'p-4 rounded-2xl border-2 transition-all',
-                    isSameAsOutput 
+                    isDisabled 
                       ? 'opacity-50 cursor-not-allowed bg-[#1A1A1A] border-[#333333]'
                       : 'cursor-pointer bg-[#1A1A1A] hover:bg-[#252525]',
-                    isSelected && !isSameAsOutput
+                    isSelected && !isDisabled
                       ? 'border-[#FFCD4D] shadow-[2px_2px_0px_0px_#FFCD4D]'
                       : 'border-[#333333]'
                   )}
@@ -277,12 +339,17 @@ export const QuickSwapTab = observer(() => {
                     <div className="flex items-center gap-3">
                       <TokenLogo token={token} size={40} />
                       <div>
-                        <div className="text-white font-bold text-base">
+                        <div className="text-white font-bold text-base flex items-center gap-2">
                           {DynamicFormatAmount({
                             amount: token.balance.toString(),
                             decimals: 4,
                           })}{' '}
                           {token.symbol}
+                          {hasLowBalance && (
+                            <span className="text-xs text-red-400 font-normal">
+                              (too low)
+                            </span>
+                          )}
                         </div>
                         <div className="text-white/60 text-sm">
                           {DynamicFormatAmount({
@@ -297,6 +364,7 @@ export const QuickSwapTab = observer(() => {
                     </div>
                     <Checkbox
                       isSelected={isSelected}
+                      isDisabled={isDisabled}
                       className="pointer-events-none"
                     />
                   </div>
@@ -382,26 +450,42 @@ export const QuickSwapTab = observer(() => {
             {/* Output amount display */}
             <div className="bg-[#252525] rounded-xl p-6 mb-4">
               <div className="text-center">
-                <div className="text-5xl font-bold text-white mb-2 flex items-center justify-center gap-2">
-                  <span>
-                    {DynamicFormatAmount({
-                      amount: totalOutputAmount,
-                      decimals: 4,
-                    })}
-                  </span>
-                  {quickModeOutputToken && (
-                    <span className="text-2xl text-white/60">
-                      {quickModeOutputToken.symbol}
-                    </span>
-                  )}
-                </div>
-                <div className="text-white/60 text-sm">
-                  {DynamicFormatAmount({
-                    amount: totalInputValue.toString(),
-                    decimals: 2,
-                    endWith: '$',
-                  })}
-                </div>
+                {isCalculating ? (
+                  <>
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <div className="shimmer h-12 w-48"></div>
+                      {quickModeOutputToken && (
+                        <span className="text-2xl text-white/60">
+                          {quickModeOutputToken.symbol}
+                        </span>
+                      )}
+                    </div>
+                    <div className="shimmer h-4 w-24 mx-auto"></div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-5xl font-bold text-white mb-2 flex items-center justify-center gap-2">
+                      <span>
+                        {DynamicFormatAmount({
+                          amount: totalOutputAmount,
+                          decimals: 4,
+                        })}
+                      </span>
+                      {quickModeOutputToken && (
+                        <span className="text-2xl text-white/60">
+                          {quickModeOutputToken.symbol}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-white/60 text-sm">
+                      {DynamicFormatAmount({
+                        amount: totalInputValue.toString(),
+                        decimals: 2,
+                        endWith: '$',
+                      })}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
