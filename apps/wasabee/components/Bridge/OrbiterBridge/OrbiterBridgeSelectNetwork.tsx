@@ -1,6 +1,6 @@
 import { orbiterBridgeService } from '@/services/orbiterBridge';
 import { Select, SelectItem } from '@nextui-org/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { orbiterNetworks } from '@/config/orbiterConfig';
 import { wallet } from '@honeypot/shared/lib/wallet';

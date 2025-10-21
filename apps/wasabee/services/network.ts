@@ -1,4 +1,4 @@
-import { Network } from '@honeypot/shared/config/chains/network';
+import { Network } from '@honeypot/shared/config/chains/chain';
 class NetworkManager {
   private static instance: NetworkManager;
   private selectedNetwork: Network | null = null;

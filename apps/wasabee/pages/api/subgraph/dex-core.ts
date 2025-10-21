@@ -1,5 +1,5 @@
 import { DEFAULT_CHAIN_ID } from '@/config/algebra/default-chain-id';
-import { networksMap } from '@honeypot/shared/config/chains/network';
+import { networksMap } from '@honeypot/shared/config/chains/chain';
 import type { NextApiResponse, NextApiRequest, PageConfig } from 'next';
 
 export default async function handler(

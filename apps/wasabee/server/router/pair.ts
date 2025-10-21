@@ -7,7 +7,7 @@ import { Address, getContract } from 'viem';
 import { createPublicClientByChain } from '@/lib/client';
 import IUniswapV2Pair from '@uniswap/v2-core/build/IUniswapV2Pair.json';
 import PQueue from 'p-queue';
-import { networksMap } from '@honeypot/shared/config/chains/network';
+import { networksMap } from '@honeypot/shared/config/chains/chain';
 import { kv } from '@/lib/kv';
 import { pairQueryOutput } from '@/types/pair';
 import { indexer } from '@/services/indexer/indexer';

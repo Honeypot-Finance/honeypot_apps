@@ -13,7 +13,7 @@ import { zeroAddress } from 'viem';
 import {
   getSubgraphClientByChainId,
   useSubgraphClient,
-} from '@honeypot/shared/lib/contract/token/token';
+} from '@honeypot/shared/hooks/useSubgraphClients';
 import { DEFAULT_CHAIN_ID } from '@/config/algebra/default-chain-id';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { ApolloClient } from '@apollo/client';

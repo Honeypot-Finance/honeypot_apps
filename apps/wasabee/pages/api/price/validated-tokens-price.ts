@@ -1,6 +1,6 @@
 import type { NextApiResponse, NextApiRequest, PageConfig } from 'next';
 import { appRouter, caller } from '@/server/_app';
-import { networksMap } from '@honeypot/shared/config/chains/network';
+import { networksMap } from '@honeypot/shared/config/chains/chain';
 
 export default async function handler(
   request: NextApiRequest,

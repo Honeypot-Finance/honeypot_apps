@@ -1,4 +1,5 @@
-import { Network, networksMap, NetworkManager } from '@honeypot/shared/config/chains/network';
+import { Network, networksMap } from '@honeypot/shared/config/chains/chain';
+import { NetworkManager } from '@honeypot/shared/config/chains/network';
 import React, { useState, useEffect } from 'react';
 
 const NetworkSelect: React.FC = () => {

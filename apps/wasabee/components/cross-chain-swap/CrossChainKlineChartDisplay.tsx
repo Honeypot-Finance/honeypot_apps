@@ -7,7 +7,7 @@ import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { RotateCcw } from 'lucide-react';
 import { getBaseUrl } from '@/lib/trpc';
 import { TbChartArea, TbChartHistogram } from 'react-icons/tb';
-import { networksMap } from '@honeypot/shared/config/chains/network';
+import { networksMap } from '@honeypot/shared/config/chains/chain';
 
 // TradingView type definitions
 declare global {

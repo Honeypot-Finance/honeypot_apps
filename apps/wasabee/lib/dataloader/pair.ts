@@ -6,7 +6,7 @@ import { getCacheKey } from '../cache';
 import { factoryABI } from '../abis/factory';
 import { ERC20ABI } from '../abis/erc20';
 import { kv } from '../kv';
-import { networksMap } from '@honeypot/shared/config/chains/network';
+import { networksMap } from '@honeypot/shared/config/chains/chain';
 import { ethers } from 'ethers';
 
 // 2. Set up your client with desired chain & transport.

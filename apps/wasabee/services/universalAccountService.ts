@@ -5,7 +5,7 @@ import {
   SUPPORTED_TOKEN_TYPE,
   UniversalAccount as ParticleUniversalAccount 
 } from '@particle-network/universal-account-sdk';
-import { Network, networks } from '@honeypot/shared/config/chains/network';
+import { Network, networks } from '@honeypot/shared/config/chains/chain';
 
 interface UniversalChain {
   chainId: number;

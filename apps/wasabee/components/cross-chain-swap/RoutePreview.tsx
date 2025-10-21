@@ -1,6 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Network } from '@honeypot/shared/config/chains/network';
+import { Network } from '@honeypot/shared/config/chains/chain';
 import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
 import { ArrowRight, Clock, DollarSign, Zap, Route } from 'lucide-react';
