@@ -397,7 +397,7 @@ export const QuickSwapTab = observer(() => {
                 </div>
                 <div className="text-white/60 text-sm">
                   {DynamicFormatAmount({
-                    amount: totalOutputValue,
+                    amount: totalInputValue.toString(),
                     decimals: 2,
                     endWith: '$',
                   })}
@@ -410,26 +410,6 @@ export const QuickSwapTab = observer(() => {
               <div className="flex justify-between text-white/60">
                 <span>Selected tokens:</span>
                 <span className="text-white">{quickModeSelectedTokens.size}</span>
-              </div>
-              <div className="flex justify-between text-white/60">
-                <span>Total value in:</span>
-                <span className="text-white">
-                  {DynamicFormatAmount({
-                    amount: totalInputValue.toString(),
-                    decimals: 2,
-                    endWith: '$',
-                  })}
-                </span>
-              </div>
-              <div className="flex justify-between text-white/60">
-                <span>Total value out:</span>
-                <span className="text-white">
-                  {DynamicFormatAmount({
-                    amount: totalOutputValue,
-                    decimals: 2,
-                    endWith: '$',
-                  })}
-                </span>
               </div>
             </div>
           </div>
