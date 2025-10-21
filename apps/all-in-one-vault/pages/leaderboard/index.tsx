@@ -7,7 +7,7 @@ import DreampadLeaderboard from './components/dreampad-leaderboard';
 import PointsLeaderboard from './components/points-leaderboard';
 
 export default function Leaderboard() {
-  const [selectedTab, setSelectedTab] = useState<string>('pot2pump');
+  const [selectedTab, setSelectedTab] = useState<string>('points');
 
   return (
     <div className="w-full flex flex-col justify-center items-center px-4 font-gliker">
@@ -32,18 +32,19 @@ export default function Leaderboard() {
               tabContent: 'text-white',
               panel: 'pt-6',
             }}
+            defaultSelectedKey={'points'}
           >
-            <Tab key="pot2pump" title="Meme">
-              <Pot2PumpLeaderboard />
+            <Tab key="points" title="Points">
+              <PointsLeaderboard />
             </Tab>
             <Tab key="wasabee" title="Dex">
               <WasabeeLeaderboard />
             </Tab>
+            <Tab key="pot2pump" title="Meme">
+              <Pot2PumpLeaderboard />
+            </Tab>
             <Tab key="dreampad" title="Launchpad">
               <DreampadLeaderboard />
-            </Tab>
-            <Tab key="points" title="Points">
-              <PointsLeaderboard />
             </Tab>
           </Tabs>
         </div>

@@ -68,11 +68,6 @@ export const appPathsList: Menu[] = [
     title: 'All-in-One Vault',
     routePath: '/all-in-one-vault',
   },
-  {
-    path: 'https://nft.honeypotfinance.xyz/staking',
-    title: 'NFT Staking',
-    routePath: 'https://nft.honeypotfinance.xyz/staking',
-  },
   // {
   //   path: `https://pot2pump.honeypotfinance.xyz/`,
   //   title: "Pot2Pump",

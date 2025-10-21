@@ -34,7 +34,8 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
           // Check if this dropdown contains our plus button items
           if (
             htmlEl.textContent?.includes('Wasabee DEX') ||
-            htmlEl.textContent?.includes('Pot2Pump')
+            htmlEl.textContent?.includes('Pot2Pump') ||
+            htmlEl.textContent?.includes('NFT Staking')
           ) {
             htmlEl.style.setProperty(
               'background-color',
@@ -188,6 +189,32 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 key="pot2pump"
               >
                 Pot2Pump
+              </DropdownItem>
+              <DropdownItem
+                href="https://nft.honeypotfinance.xyz/staking"
+                style={{
+                  backgroundColor: '#202020',
+                  color: 'white',
+                }}
+                className="text-white hover:bg-[#3a3a3a] data-[hover=true]:bg-[#3a3a3a] data-[hover=true]:text-white"
+                onPress={() =>
+                  window.open(
+                    'https://nft.honeypotfinance.xyz/staking',
+                    '_self'
+                  )
+                }
+                startContent={
+                  <Image
+                    src="/images/bera/beekeeperBear.png"
+                    alt="nft staking"
+                    width={16}
+                    height={16}
+                    className="w-4 h-4 rounded-full"
+                  />
+                }
+                key="nft-staking"
+              >
+                NFT Staking
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
