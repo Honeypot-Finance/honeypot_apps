@@ -11,3 +11,4 @@ export * from './lib/priceFeed';
 export * from './services';
 export * from './components/TruncateText';
 export * from './lib/trpc/trpc';
+export * from './server/service/userContacts';
