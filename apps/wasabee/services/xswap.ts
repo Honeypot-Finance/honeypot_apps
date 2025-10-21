@@ -1,14 +1,14 @@
 import { makeAutoObservable, reaction, autorun } from 'mobx';
 import { wallet } from '@honeypot/shared/lib/wallet';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { SwapFieldType } from '@/types/algebra/types/swap-field';
 import BigNumber from 'bignumber.js';
 import { Trade, TradeType } from '@cryptoalgebra/sdk';
 import { Currency } from '@cryptoalgebra/sdk';
 import { SwapCallEstimate } from '@/lib/algebra/hooks/swap/useSwapCallback';
 import { SuccessfulCall } from '@/lib/algebra/hooks/swap/useSwapCallback';
-import { ContractWrite } from '@honeypot/shared';
+import { ContractWrite } from '@honeypot/shared/lib/utils/utils';
 import { Token as IndexerToken } from '@/lib/algebra/graphql/generated/graphql';
 import {
   ApprovalState,

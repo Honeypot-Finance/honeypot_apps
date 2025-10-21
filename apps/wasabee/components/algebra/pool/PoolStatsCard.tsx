@@ -2,15 +2,15 @@ import {
   Pool,
   useActiveFarmingsQuery,
 } from '@/lib/algebra/graphql/generated/graphql';
-import { DynamicFormatAmount } from '@honeypot/shared';
+import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
 import { useMemo } from 'react';
 import { calculatePercentageChange } from '@/lib/utils';
 import { Address } from 'viem';
 
-import { Token } from '@honeypot/shared';
-import { TokenLogo } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
+import { TokenLogo } from '@honeypot/shared/components/TokenLogo/TokenLogo';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 
 interface PoolStatsCardProps {
   pool: Pool | null | undefined;

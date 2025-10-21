@@ -20,7 +20,7 @@ import {
   useReadAlgebraPoolToken0,
   useReadAlgebraPoolToken1,
 } from '@honeypot/shared/wagmi-generated';
-import { DynamicFormatAmount } from '@honeypot/shared';
+import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Button } from '@nextui-org/react';
 import Container from '@/components/multichain-design/Container';

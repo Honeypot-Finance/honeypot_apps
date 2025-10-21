@@ -1,5 +1,5 @@
-import { Token } from '@honeypot/shared';
-import { TokenLogo } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
+import { TokenLogo } from '@honeypot/shared/components/TokenLogo/TokenLogo';
 import { observer } from 'mobx-react-lite';
 import {
   OptionsDropdown,
@@ -10,7 +10,7 @@ import { itemSlideVariants } from '@/lib/animation';
 import { useEffect } from 'react';
 import BigNumber from 'bignumber.js';
 import { portfolio } from '@/services/portfolio';
-import { DynamicFormatAmount } from '@honeypot/shared';
+import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
 
 interface TokenBalanceCardProps {
   token: Token;

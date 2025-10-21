@@ -15,7 +15,7 @@ import { Address, decodeErrorResult } from 'viem';
 import { useWriteLimitOrderManagerPlace } from '@honeypot/shared/wagmi-generated';
 import { useLimitOrderInfo } from '@/hooks/useLimitOrderInfo';
 import { useObserver } from 'mobx-react-lite';
-import { wallet } from '@honeypot/shared';
+import { wallet } from '@honeypot/shared/lib/contract/token/token';
 import { useEffect, useState, useRef } from 'react';
 import { limitOrderManagerABI } from '@honeypot/shared/lib/abis/algebra-contracts/ABIs/plugins/limitOrderManagerAbi';
 import { useToastify } from '@honeypot/shared/hooks/useContractToastify';

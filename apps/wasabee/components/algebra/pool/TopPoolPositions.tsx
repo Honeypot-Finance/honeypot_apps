@@ -10,7 +10,7 @@ import {
 import { useMemo, useState, useEffect } from 'react';
 import { Button, Link } from '@nextui-org/react';
 import { LoadingContainer } from '@/components/LoadingDisplay/LoadingDisplay';
-import { DynamicFormatAmount } from '@honeypot/shared';
+import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
 import { Copy } from '@/components/Copy';
 import { truncate } from '@/lib/format';
 import { ChevronUp, ChevronDown } from 'lucide-react';

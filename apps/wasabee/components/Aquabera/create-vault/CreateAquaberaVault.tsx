@@ -1,14 +1,14 @@
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import TokenCardV3 from '@/components/algebra/swap/TokenCard/TokenCardV3';
 import { computePoolAddress, Currency } from '@cryptoalgebra/sdk';
 
-import { ICHIVaultContract } from '@honeypot/shared';
+import { ICHIVaultContract } from '@honeypot/shared/lib/contract/aquabera/ICHIVault-contract';
 import { Button } from '@/components/button';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { TokenSelector } from '@honeypot/shared';
+import { TokenSelector } from '@honeypot/shared/components/TokenSelector';
 import { PoolState, usePool } from '@/lib/algebra/hooks/pools/usePool';
 import { Address } from 'viem';
 import { Token as AlgebraToken } from '@cryptoalgebra/sdk';

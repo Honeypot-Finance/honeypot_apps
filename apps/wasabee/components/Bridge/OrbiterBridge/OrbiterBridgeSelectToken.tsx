@@ -1,8 +1,8 @@
 import { orbiterBridgeService } from '@/services/orbiterBridge';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { useEffect, useState } from 'react';
-import { TokenSelector } from '@honeypot/shared';
-import { Token } from '@honeypot/shared';
+import { TokenSelector } from '@honeypot/shared/components/TokenSelector';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { observer } from 'mobx-react-lite';
 
 export const OrbiterBridgeSelectToken = observer(() => {

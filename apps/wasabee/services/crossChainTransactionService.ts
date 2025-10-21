@@ -1,5 +1,6 @@
 import { makeAutoObservable } from 'mobx';
-import { Token, Network } from '@honeypot/shared';
+import { Network } from '@honeypot/shared/config/chains/network';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 
 export interface CrossChainTransaction {
   id: string;

@@ -1,9 +1,9 @@
 import { createCache } from '@/lib/kv';
 import { getVaultPageData, getSingleVaultDetails } from '@/lib/algebra/graphql/clients/vaults';
 import { VaultsSortedByHoldersQuery } from '@/lib/algebra/graphql/generated/graphql';
-import { ICHIVaultContract } from '@honeypot/shared';
+import { ICHIVaultContract } from '@honeypot/shared/lib/contract/aquabera/ICHIVault-contract';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { getSubgraphClientByChainId } from '@honeypot/shared';
+import { getSubgraphClientByChainId } from '@honeypot/shared/hooks/useSubgraphClients';
 import { DEFAULT_CHAIN_ID } from '@/config/algebra/default-chain-id';
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 

@@ -11,7 +11,7 @@ import { VscCopy } from 'react-icons/vsc';
 import * as clipboard from 'clipboard-polyfill';
 import { ShareMediaDisplay } from '../ShareSocialMedialPopUp/ShareSocialMedialPopUp';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { BiLink, BiWallet } from 'react-icons/bi';
 import { popmodal } from '@/services/popmodal';
 import { WrappedToastify } from '@/lib/wrappedToastify';

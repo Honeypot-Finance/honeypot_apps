@@ -10,7 +10,7 @@ import { useDepositsQuery } from '../../graphql/generated/graphql';
 import { useReadAlgebraPositionManagerBalanceOf } from '@honeypot/shared/wagmi-generated';
 import { useObserver } from 'mobx-react-lite';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 
 export interface PositionFromTokenId {
   tokenId: number;

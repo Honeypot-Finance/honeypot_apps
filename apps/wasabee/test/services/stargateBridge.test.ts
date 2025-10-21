@@ -1,5 +1,5 @@
 import { StargateBridge } from '../../services/stargateBridge';
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { wallet } from '@honeypot/shared/lib/wallet';
 
 // Mock wallet

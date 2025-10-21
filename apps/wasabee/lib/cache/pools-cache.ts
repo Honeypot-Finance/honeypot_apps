@@ -1,5 +1,5 @@
 import { createCache } from '@/lib/kv';
-import { getSubgraphClientByChainId } from '@honeypot/shared';
+import { getSubgraphClientByChainId } from '@honeypot/shared/hooks/useSubgraphClients';
 import { DEFAULT_CHAIN_ID } from '@/config/algebra/default-chain-id';
 import {
   PoolsListDocument,

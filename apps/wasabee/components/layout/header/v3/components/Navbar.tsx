@@ -8,7 +8,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from '@nextui-org/react';
-import { DOMAIN_MAP } from '@honeypot/shared';
+import { DOMAIN_MAP } from '@honeypot/shared/config/allAppPath';
 import { Menu } from '@/config/allAppPath';
 import Image from 'next/image';
 import { Key } from 'react';

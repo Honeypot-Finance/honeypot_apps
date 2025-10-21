@@ -28,7 +28,7 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { deserialize, serialize } from 'wagmi';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 import { createWagmiConfig } from '@honeypot/shared/config/wagmi';
 import { NextUIProvider } from '@nextui-org/react';
 import { merge } from 'lodash';

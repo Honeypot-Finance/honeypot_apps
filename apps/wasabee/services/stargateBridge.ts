@@ -10,7 +10,7 @@
 
 import { makeAutoObservable, reaction } from 'mobx';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import {
   stargateSupportedChain,
   stargateSupportedToken,

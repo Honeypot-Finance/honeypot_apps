@@ -15,7 +15,7 @@ import { useUserPools } from '@/lib/algebra/graphql/clients/pool';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import BigNumber from 'bignumber.js';
 import { calculatePercentageChange } from '@/lib/utils';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 const mappingSortKeys: Record<any, Pool_OrderBy> = {
   tvlUSD: Pool_OrderBy.TotalValueLockedUsd,
   price: Pool_OrderBy.Token0Price,

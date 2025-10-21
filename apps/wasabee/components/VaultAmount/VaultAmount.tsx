@@ -1,12 +1,12 @@
 import { Input } from '@/components/input';
 import { InputProps } from '@nextui-org/react';
 
-import { Token } from '@honeypot/shared';
-import { TokenSelector } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
+import { TokenSelector } from '@honeypot/shared/components/TokenSelector';
 import { cn } from '@/lib/tailwindcss';
-import { TokenLogo } from '@honeypot/shared';
+import { TokenLogo } from '@honeypot/shared/components/TokenLogo/TokenLogo';
 
-import { ICHIVaultContract } from '@honeypot/shared';
+import { ICHIVaultContract } from '@honeypot/shared/lib/contract/aquabera/ICHIVault-contract';
 import { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 

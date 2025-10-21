@@ -29,7 +29,7 @@ import { SwapField, SwapFieldType } from '@/types/algebra/types/swap-field';
 import TokenCardV3 from '../TokenCard/TokenCardV3';
 import { ExchangeSvg } from '@/components/svg/exchange';
 import { chart } from '@honeypot/shared/services';
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { Token as AlgebraToken } from '@cryptoalgebra/sdk';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { AlgebraPoolContract } from '@/services/contract/algebra/algebra-pool-contract';
@@ -42,14 +42,14 @@ import {
   SelectState,
   SelectItem,
 } from '@/components/ItemSelect/v3';
-import { TokenSelector } from '@honeypot/shared';
+import { TokenSelector } from '@honeypot/shared/components/TokenSelector';
 import { ChevronDoubleRightIcon } from '@heroicons/react/24/outline';
 import { BigNumber } from 'bignumber.js';
 import SwapParamsV3Independent from '../SwapParams/SwapParamsV3Independent';
 import XSwapParams from '../SwapParams/XSwapParams';
 import { xSwap } from '@/services/xswap';
 import { observer } from 'mobx-react-lite';
-import { DynamicFormatAmount } from '@honeypot/shared';
+import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
 import { ApprovalState } from '@/types/algebra/types/approve-state';
 import { useApproveCallbackFromTrade } from '@/lib/algebra/hooks/common/useApprove';
 

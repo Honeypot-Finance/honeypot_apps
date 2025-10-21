@@ -1,4 +1,4 @@
-import { networks } from '@honeypot/shared';
+import { networks } from '@honeypot/shared/config/chains/network';
 
 export const orbiterNetworks = networks.map((network) => ({
   id: network.chainId,

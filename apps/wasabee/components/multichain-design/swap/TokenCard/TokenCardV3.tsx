@@ -5,12 +5,12 @@ import { Currency, Percent, ExtendedNative } from '@cryptoalgebra/sdk';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useAccount, useBalance, useWatchBlockNumber } from 'wagmi';
 import { Address, zeroAddress } from 'viem';
-import { TokenSelector } from '@honeypot/shared';
+import { TokenSelector } from '@honeypot/shared/components/TokenSelector';
 import { Token as AlgebraToken } from '@cryptoalgebra/sdk';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { Slider } from '@nextui-org/react';
 import { debounce } from 'lodash';
 

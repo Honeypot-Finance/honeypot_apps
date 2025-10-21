@@ -16,7 +16,7 @@ import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { DynamicFormatAmount } from '@honeypot/shared';
+import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
 import { format } from 'date-fns';
 
 interface PoolChartProps {

@@ -1,4 +1,4 @@
-import { ICHIVaultContract } from '@honeypot/shared';
+import { ICHIVaultContract } from '@honeypot/shared/lib/contract/aquabera/ICHIVault-contract';
 
 import {
   AccountVaultSharesDocument,
@@ -15,10 +15,10 @@ import {
 } from '../generated/graphql';
 import { Address } from 'viem';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { poolQueryToContract } from './pool';
 import BigNumber from 'bignumber.js';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 import { ApolloClient } from '@apollo/client';
 import { createClientHook } from '../clientUtils';
 

@@ -7,9 +7,9 @@ import { makeAutoObservable } from 'mobx';
 import { get } from 'http';
 import { getContract } from 'viem';
 import { algebraPoolABI } from '@/lib/abis/algebra-contracts/ABIs';
-import { AsyncState, ContractWrite } from '@honeypot/shared';
+import { AsyncState, ContractWrite } from '@honeypot/shared/lib/utils/utils';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 
 export class AlgebraPoolContract implements BaseContract {
   static poolMap: Record<string, AlgebraPoolContract> = {};

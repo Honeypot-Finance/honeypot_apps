@@ -1,6 +1,6 @@
 import { WalletSvg } from '@/components/svg/wallet';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { Tooltip } from '@nextui-org/react';
 import clsx from 'clsx';
 import React from 'react';

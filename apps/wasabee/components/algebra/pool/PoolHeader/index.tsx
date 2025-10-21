@@ -1,13 +1,13 @@
 import CurrencyLogo from '@/components/algebra/common/CurrencyLogo';
 import PageTitle from '@/components/algebra/common/PageTitle';
 import { Skeleton } from '@/components/algebra/ui/skeleton';
-import { TokenLogo } from '@honeypot/shared';
+import { TokenLogo } from '@honeypot/shared/components/TokenLogo/TokenLogo';
 import { useCurrency } from '@/lib/algebra/hooks/common/useCurrency';
 import { formatPercent } from '@/lib/algebra/utils/common/formatPercent';
 import { AlgebraPoolContract } from '@/services/contract/algebra/algebra-pool-contract';
 import { Address } from 'viem';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { Pool } from '@cryptoalgebra/sdk';
 import { observer } from 'mobx-react-lite';
 import { wallet } from '@honeypot/shared/lib/wallet';

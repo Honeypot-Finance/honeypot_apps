@@ -9,7 +9,7 @@ import { farmingCenterABI } from '@/lib/abis/algebra-contracts/ABIs';
 import { Deposit } from '../../graphql/generated/graphql';
 import { TransactionType } from '../../state/pendingTransactionsStore';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 
 export function useFarmStake({
   tokenId,

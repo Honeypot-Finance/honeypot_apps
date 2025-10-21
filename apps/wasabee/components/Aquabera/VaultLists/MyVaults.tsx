@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
-import { TokenLogo } from '@honeypot/shared';
+import { TokenLogo } from '@honeypot/shared/components/TokenLogo/TokenLogo';
 import { getAccountVaultsList } from '@/lib/algebra/graphql/clients/vaults';
 import { AccountVaultSharesQuery } from '@/lib/algebra/graphql/generated/graphql';
 
-import { ICHIVaultContract } from '@honeypot/shared';
+import { ICHIVaultContract } from '@honeypot/shared/lib/contract/aquabera/ICHIVault-contract';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { useEffect, useState } from 'react';
 import { Currency } from '@cryptoalgebra/sdk';
@@ -13,7 +13,7 @@ import { DepositToVaultModal } from '../modals/DepositToVaultModal';
 import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { observer } from 'mobx-react-lite';
 import MyVaultRow from './MyVaultRow';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 import { Button } from '@/components/algebra/ui/button';
 
 type SortField =

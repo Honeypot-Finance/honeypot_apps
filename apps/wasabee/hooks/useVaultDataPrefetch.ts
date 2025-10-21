@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 import {
   getVaultPageData,
   getSingleVaultDetails,
 } from '@/lib/algebra/graphql/clients/vaults';
 import { VaultsSortedByHoldersQuery } from '@/lib/algebra/graphql/generated/graphql';
-import { ICHIVaultContract } from '@honeypot/shared';
+import { ICHIVaultContract } from '@honeypot/shared/lib/contract/aquabera/ICHIVault-contract';
 import { ProcessedVault } from '@/lib/cache/vaults-cache';
 import { useChainId } from 'wagmi';
 interface VaultDataStore {

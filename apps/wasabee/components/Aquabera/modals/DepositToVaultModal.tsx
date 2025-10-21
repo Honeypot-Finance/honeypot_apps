@@ -2,9 +2,9 @@ import { Modal, ModalContent, ModalHeader, ModalBody } from '@nextui-org/react';
 import { Button } from '@/components/button/button-next';
 import { useCallback, useState } from 'react';
 
-import { ICHIVaultContract } from '@honeypot/shared';
+import { ICHIVaultContract } from '@honeypot/shared/lib/contract/aquabera/ICHIVault-contract';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { Address, maxInt256 } from 'viem';
 import TokenCardV3 from '@/components/algebra/swap/TokenCard/TokenCardV3';
 import { wallet } from '@honeypot/shared/lib/wallet';
@@ -16,7 +16,7 @@ import {
   useReadIchiVaultAllowToken0,
   useReadIchiVaultAllowToken1,
 } from '@honeypot/shared/wagmi-generated';
-import { ContractWrite } from '@honeypot/shared';
+import { ContractWrite } from '@honeypot/shared/lib/utils/utils';
 import BigNumber from 'bignumber.js';
 import { observer } from 'mobx-react-lite';
 

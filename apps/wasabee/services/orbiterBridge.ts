@@ -6,11 +6,11 @@ import {
   Router,
 } from '@orbiter-finance/bridge-sdk';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { action, makeAutoObservable, reaction } from 'mobx';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import BigNumber from 'bignumber.js';
-import { ContractWrite } from '@honeypot/shared';
+import { ContractWrite } from '@honeypot/shared/lib/utils/utils';
 import { OrbiterRouterV3 } from './contract/orbiter/OrbiterRouterV3';
 import { simulateContract } from 'viem/actions';
 import Web3 from 'web3';

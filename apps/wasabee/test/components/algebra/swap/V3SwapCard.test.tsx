@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { V3SwapCard } from '@/components/algebra/swap/V3SwapCard';
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 
 // Mock child components
 jest.mock('@/components/algebra/swap/SwapPair/SwapPairV3', () => {

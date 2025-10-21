@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 import {
   getSubgraphClientByChainId,
   useSubgraphClient,
-} from '@honeypot/shared';
+} from '@honeypot/shared/lib/contract/token/token';
 import { wallet } from '@honeypot/shared/lib/wallet';
 
 export const LEADERBOARD_QUERY = gql`

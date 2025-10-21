@@ -1,5 +1,5 @@
-import { DynamicFormatAmount } from '@honeypot/shared';
-import { Token } from '@honeypot/shared';
+import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { xSwap, XChildSwap } from '@/services/xswap';
 import { Button, Select, SelectItem, Checkbox } from '@nextui-org/react';
@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import BigNumber from 'bignumber.js';
 import { observer } from 'mobx-react-lite';
 import { useState, useEffect, useMemo } from 'react';
-import { TokenLogo } from '@honeypot/shared';
+import { TokenLogo } from '@honeypot/shared/components/TokenLogo/TokenLogo';
 import { useDerivedSwapInfoWithoutSwapState } from '@/lib/algebra/state/swapStore';
 import { useApproveCallbackFromTrade } from '@/lib/algebra/hooks/common/useApprove';
 import { useSwapCallback } from '@/lib/algebra/hooks/swap/useSwapCallback';

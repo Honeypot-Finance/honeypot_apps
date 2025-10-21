@@ -8,7 +8,7 @@ import ChainSelector from './ChainSelector';
 import TokenSelector from './TokenSelector';
 import { crossChainSwapService } from '@/services/crossChainSwap';
 import { crossChainTransactionService } from '@/services/crossChainTransactionService';
-import { WrappedToastify } from '@honeypot/shared';
+import { WrappedToastify } from '@honeypot/shared/lib/utils/wrappedToastify';
 import { trpcClient } from '@honeypot/shared/lib/trpc/trpc';
 import { toast } from 'react-toastify';
 

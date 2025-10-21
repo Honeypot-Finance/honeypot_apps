@@ -11,7 +11,7 @@ import {
   TransactionType,
   Transaction,
 } from '../generated/graphql';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 type ParticipantTransaction = {
   id: string;
   account: {

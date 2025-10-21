@@ -1,7 +1,7 @@
 import type { NextApiResponse, NextApiRequest, PageConfig } from 'next';
 import { getAccountSwapsWithPools } from '@/lib/algebra/graphql/clients/account';
 import { getSingleBitgetParticipantInfo } from '@/lib/algebra/graphql/clients/bitget_event';
-import { getSubgraphClientByChainId } from '@honeypot/shared';
+import { getSubgraphClientByChainId } from '@honeypot/shared/hooks/useSubgraphClients';
 import { DEFAULT_CHAIN_ID } from '@/config/algebra/default-chain-id';
 
 export default async function handler(

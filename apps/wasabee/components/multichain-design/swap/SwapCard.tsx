@@ -1,7 +1,7 @@
 import SwapPairV3 from './SwapPair/SwapPairV3';
 import SwapButtonV3 from './SwapButton/SwapButtonV3';
 import SwapParamsV3 from './SwapParams/SwapParamsV3';
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import Container from '../Container';
 import Settings from '../Buttons/SettingButton';
 

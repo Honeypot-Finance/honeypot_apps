@@ -3,13 +3,13 @@ import { Modal, ModalContent, ModalHeader, ModalBody } from '@nextui-org/react';
 import { Button } from '@/components/button/button-next';
 import { useCallback, useState } from 'react';
 
-import { ICHIVaultContract } from '@honeypot/shared';
+import { ICHIVaultContract } from '@honeypot/shared/lib/contract/aquabera/ICHIVault-contract';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { ContractWrite } from '@honeypot/shared';
+import { ContractWrite } from '@honeypot/shared/lib/utils/utils';
 import { Slider } from '@nextui-org/react';
 import BigNumber from 'bignumber.js';
-import { DynamicFormatAmount } from '@honeypot/shared';
-import { TokenLogo } from '@honeypot/shared';
+import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
+import { TokenLogo } from '@honeypot/shared/components/TokenLogo/TokenLogo';
 
 interface WithdrawFromVaultModalProps {
   isOpen: boolean;

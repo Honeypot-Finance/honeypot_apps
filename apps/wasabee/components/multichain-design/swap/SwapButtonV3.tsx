@@ -16,7 +16,7 @@ import {
 } from '@/lib/algebra/utils/swap/prices';
 import { useToastify } from '@/lib/hooks/useContractToastify';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { ApprovalState } from '@/types/algebra/types/approve-state';
 import { SwapField } from '@/types/algebra/types/swap-field';

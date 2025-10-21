@@ -1,4 +1,4 @@
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import BigNumber from 'bignumber.js';
 import { BaseContract } from '@/services/contract';
 import { wallet } from '@honeypot/shared/lib/wallet';

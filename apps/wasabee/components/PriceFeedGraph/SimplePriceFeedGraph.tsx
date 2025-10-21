@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { FaSpinner } from 'react-icons/fa';
 import { IoCaretDown, IoCaretUp } from 'react-icons/io5';
 import HoneyStickSvg from '../svg/HoneyStick';
-import { TokenLogo } from '@honeypot/shared';
+import { TokenLogo } from '@honeypot/shared/components/TokenLogo/TokenLogo';
 
 const Chart = dynamic(() => import('react-apexcharts'), {
   loading: () => <p>Loading...</p>,

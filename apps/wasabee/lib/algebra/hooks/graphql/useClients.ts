@@ -1,4 +1,4 @@
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 
 export function useClients() {
   const infoClient = useSubgraphClient('algebra_info');

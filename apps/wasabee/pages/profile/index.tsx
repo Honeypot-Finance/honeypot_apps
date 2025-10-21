@@ -19,7 +19,7 @@ import Image from 'next/image';
 import Copy from '@/components/Copy/v3';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/router';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 
 export const Profile = observer(() => {
   const { chainId } = useAccount();

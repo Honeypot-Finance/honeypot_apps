@@ -27,7 +27,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAccount, useContractWrite } from 'wagmi';
 import { useSimulateAlgebraPositionManagerMulticall } from '@honeypot/shared/wagmi-generated';
 import { HoneyContainer } from '@/components/CardContianer';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 
 interface RemoveLiquidityModalProps {
   positionId: number;

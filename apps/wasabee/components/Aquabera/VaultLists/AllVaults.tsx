@@ -1,13 +1,14 @@
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { getSingleVaultDetails, Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
+import { getSingleVaultDetails } from '@honeypot/shared/lib/graphql';
 import { useEffect, useState, useMemo } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/algebra/ui/button';
 import { getVaultPageData } from '@/lib/algebra/graphql/clients/vaults';
 import { VaultsSortedByHoldersQuery } from '@/lib/algebra/graphql/generated/graphql';
-import { ICHIVaultContract } from '@honeypot/shared';
+import { ICHIVaultContract } from '@honeypot/shared/lib/contract/aquabera/ICHIVault-contract';
 import VaultRow from './VaulltRow';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 import VaultCard from './VaultCard';
 import { Skeleton } from '@nextui-org/react';
 import { useAccount } from 'wagmi';

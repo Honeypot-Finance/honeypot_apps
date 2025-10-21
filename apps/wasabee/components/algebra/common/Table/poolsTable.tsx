@@ -5,10 +5,10 @@ import { useEffect, useState } from 'react';
 import { Tab, Tabs, Tooltip } from '@nextui-org/react';
 import { popmodal } from '@/services/popmodal';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/algebra/ui/button';
-import { TokenLogo } from '@honeypot/shared';
+import { TokenLogo } from '@honeypot/shared/components/TokenLogo/TokenLogo';
 import CreatePoolForm from '../../create-pool/CreatePoolForm';
 import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { LoadingDisplay } from '@/components/LoadingDisplay/LoadingDisplay';

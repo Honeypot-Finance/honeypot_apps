@@ -36,7 +36,7 @@ import { FormattedPosition } from '@/types/algebra/types/formatted-position';
 import { Address, zeroAddress } from 'viem';
 import { cn } from '@/lib/tailwindcss';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import CardContainer from '@/components/CardContianer/v3';
 import { useRouter } from 'next/router';
 import { wallet } from '@honeypot/shared/lib/wallet';

@@ -5,7 +5,7 @@ import {
   PoolDayData,
   PoolHourData,
 } from '../generated/graphql';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 import { ApolloClient } from '@apollo/client';
 import { createClientHook } from '../clientUtils';
 

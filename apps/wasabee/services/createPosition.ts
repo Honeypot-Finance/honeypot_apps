@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 
-import { Token } from '@honeypot/shared';
-import { AsyncState } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
+import { AsyncState } from '@honeypot/shared/lib/utils/utils';
 import { AlgebraPoolContract } from './contract/algebra/algebra-pool-contract';
 
 class CreatePositionV3 {

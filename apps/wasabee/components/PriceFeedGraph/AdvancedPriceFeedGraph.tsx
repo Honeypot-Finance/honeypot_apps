@@ -3,7 +3,8 @@ import { Button } from '@nextui-org/react';
 import EChartsReact from 'echarts-for-react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { PairContract, Token } from '@honeypot/shared';
+import { PairContract } from '@honeypot/shared/lib/contract/dex/liquidity/pair-contract';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { useAccount } from 'wagmi';
 import dynamic from 'next/dynamic';
 import Script from 'next/script';

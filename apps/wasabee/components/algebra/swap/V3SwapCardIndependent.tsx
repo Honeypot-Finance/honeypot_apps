@@ -4,7 +4,7 @@ import SwapParamsV3 from './SwapParams/SwapParamsV3';
 import CardContainer from '../../CardContianer/v3';
 import PoweredByAlgebra from '../common/PoweredByAlgebra';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { SwapFieldType } from '@/types/algebra/types/swap-field';
 import { SwapField } from '@/types/algebra/types/swap-field';
 import { useCallback, useState } from 'react';

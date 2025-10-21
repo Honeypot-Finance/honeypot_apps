@@ -19,7 +19,8 @@ import {
 } from '@/lib/algebra/state/swapStore';
 import { SwapField, SwapFieldType } from '@/types/algebra/types/swap-field';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { Token, TokenSelector } from '@honeypot/shared';
+import { TokenSelector } from '@honeypot/shared/components/TokenSelector';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { formatBalance } from '@/lib/algebra/utils/common/formatBalance';
 import { useUSDCValue } from '@/lib/algebra/hooks/common/useUSDCValue';
 import { useAccount, useBalance, useWatchBlockNumber } from 'wagmi';

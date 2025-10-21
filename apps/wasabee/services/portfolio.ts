@@ -1,12 +1,12 @@
 import { makeAutoObservable, reaction } from 'mobx';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import BigNumber from 'bignumber.js';
-import { AsyncState } from '@honeypot/shared';
+import { AsyncState } from '@honeypot/shared/lib/utils/utils';
 import { getMultipleTokensData } from '@/lib/algebra/graphql/clients/token';
 import { getSingleAccountDetails } from '@/lib/algebra/graphql/clients/account';
-import { getSubgraphClientByChainId } from '@honeypot/shared';
+import { getSubgraphClientByChainId } from '@honeypot/shared/hooks/useSubgraphClients';
 
 class Portfolio {
   tokens: Token[] = [];

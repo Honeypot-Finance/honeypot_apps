@@ -5,8 +5,8 @@ import { useAccount, useBalance } from 'wagmi';
 import { Address } from 'viem';
 import { formatCurrency } from '@/lib/algebra/utils/common/formatCurrency';
 
-import { Token } from '@honeypot/shared';
-import { TokenLogo } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
+import { TokenLogo } from '@honeypot/shared/components/TokenLogo/TokenLogo';
 import { cn } from '@/lib/utils';
 import { HiOutlineSwitchHorizontal, HiSwitchVertical } from 'react-icons/hi';
 import { wallet } from '@honeypot/shared/lib/wallet';

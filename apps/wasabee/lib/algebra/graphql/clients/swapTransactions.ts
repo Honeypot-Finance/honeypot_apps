@@ -1,5 +1,5 @@
 import { ApolloClient, gql } from '@apollo/client';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 import { zeroAddress } from 'viem';
 
 type SwapTransaction = {

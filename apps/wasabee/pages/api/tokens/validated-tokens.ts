@@ -1,5 +1,5 @@
 import type { NextApiResponse, NextApiRequest, PageConfig } from 'next';
-import { networksMap } from '@honeypot/shared';
+import { networksMap } from '@honeypot/shared/config/chains/network';
 import { DOMAIN_MAP } from '@/config/allAppPath';
 
 export default async function handler(

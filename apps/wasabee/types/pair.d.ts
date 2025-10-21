@@ -1,4 +1,4 @@
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 
 declare type pairQueryOutput = Record<
   string,

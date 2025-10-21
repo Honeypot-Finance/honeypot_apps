@@ -8,7 +8,7 @@ import {
   AccountSwapsWithPoolsQueryVariables,
 } from '../generated/graphql';
 import { All_Accounts, SINGLE_ACCOUNT_DETAILS } from '../queries/account';
-import { useSubgraphClient } from '@honeypot/shared';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 import { ApolloClient } from '@apollo/client';
 import { createClientHook } from '../clientUtils';
 

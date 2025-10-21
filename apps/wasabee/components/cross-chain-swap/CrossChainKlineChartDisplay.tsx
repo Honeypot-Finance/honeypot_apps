@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { chart } from '@honeypot/shared/services';
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { RotateCcw } from 'lucide-react';
 import { getBaseUrl } from '@/lib/trpc';
 import { TbChartArea, TbChartHistogram } from 'react-icons/tb';
-import { networksMap } from '@honeypot/shared';
+import { networksMap } from '@honeypot/shared/config/chains/network';
 
 // TradingView type definitions
 declare global {

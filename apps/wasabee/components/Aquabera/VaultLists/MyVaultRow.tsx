@@ -1,12 +1,12 @@
-import { TokenLogo } from '@honeypot/shared';
+import { TokenLogo } from '@honeypot/shared/components/TokenLogo/TokenLogo';
 
-import { getSingleVaultDetails } from '@honeypot/shared';
-import { DynamicFormatAmount } from '@honeypot/shared';
-import { useSubgraphClient } from '@honeypot/shared';
+import { getSingleVaultDetails } from '@honeypot/shared/lib/graphql';
+import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
+import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 
-import { ICHIVaultContract } from '@honeypot/shared';
+import { ICHIVaultContract } from '@honeypot/shared/lib/contract/aquabera/ICHIVault-contract';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import {
   useReadIchiVaultAllowToken0,

@@ -3,7 +3,7 @@ import { QuickSwapTab } from '@/components/algebra/swap/xswap/QuickSwapTab';
 import { HoneyContainer } from '@/components/CardContianer';
 import { LoadingDisplay } from '@/components/LoadingDisplay/LoadingDisplay';
 import { useMediaQuery } from '@/lib/algebra/hooks/common/useMediaQuery';
-import { DynamicFormatAmount } from '@honeypot/shared';
+import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { xSwap } from '@/services/xswap';
 import { Button, Tabs, Tab } from '@nextui-org/react';

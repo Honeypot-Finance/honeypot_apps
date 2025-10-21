@@ -1,5 +1,5 @@
 import { FormattedPosition } from '@/types/algebra/types/formatted-position';
-import { DynamicFormatAmount } from '@honeypot/shared';
+import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
 import { ChevronRight } from 'lucide-react';
 
 interface MyPositionsCardProps {

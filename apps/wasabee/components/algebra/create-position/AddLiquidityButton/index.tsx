@@ -21,7 +21,7 @@ import { useMemo } from 'react';
 import { useAccount, useContractWrite } from 'wagmi';
 import { useSimulateAlgebraPositionManagerMulticall } from '@honeypot/shared/wagmi-generated';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { ContractWrite } from '@honeypot/shared';
+import { ContractWrite } from '@honeypot/shared/lib/utils/utils';
 import { useObserver } from 'mobx-react-lite';
 interface AddLiquidityButtonProps {
   baseCurrency: Currency | undefined | null;

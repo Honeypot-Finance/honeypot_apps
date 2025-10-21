@@ -1,5 +1,5 @@
-import { TokenLogo } from '@honeypot/shared';
-import { ICHIVaultContract } from '@honeypot/shared';
+import { TokenLogo } from '@honeypot/shared/components/TokenLogo/TokenLogo';
+import { ICHIVaultContract } from '@honeypot/shared/lib/contract/aquabera/ICHIVault-contract';
 import { observer } from 'mobx-react-lite';
 import { VaultTag } from '../VaultTag';
 import Link from 'next/link';

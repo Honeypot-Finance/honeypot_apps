@@ -1,5 +1,6 @@
 import Loader from '@/components/algebra/common/Loader';
-import { DynamicFormatAmount, TokenLogo } from '@honeypot/shared';
+import { TokenLogo } from '@honeypot/shared/components/TokenLogo/TokenLogo';
+import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
 import { MAX_UINT128 } from '@/config/algebra/max-uint128';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { usePoolPlugins } from '@/lib/algebra/hooks/pools/usePoolPlugins';
@@ -18,7 +19,7 @@ import {
 import { AlgebraBasePluginContract } from '@/services/contract/algebra/algebra-base-plugin';
 import { AlgebraPoolContract } from '@/services/contract/algebra/algebra-pool-contract';
 
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { SwapField, SwapFieldType } from '@/types/algebra/types/swap-field';
 import { TradeState } from '@/types/algebra/types/trade-state';
 import {

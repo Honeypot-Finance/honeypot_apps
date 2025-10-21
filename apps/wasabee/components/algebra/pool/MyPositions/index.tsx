@@ -2,7 +2,7 @@ import { myPositionsColumns } from '@/components/algebra/common/Table/myPosition
 import { Address } from 'viem';
 import MyPositionsTable from '@/components/algebra/common/Table/myPositionsTable';
 import { FormattedPosition } from '@/types/algebra/types/formatted-position';
-import { DynamicFormatAmount } from '@honeypot/shared';
+import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
 import { useState, useEffect, useCallback } from 'react';
 import PositionCard from '@/components/algebra/position/PositionCard';
 import { X } from 'lucide-react';

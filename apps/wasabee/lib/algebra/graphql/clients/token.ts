@@ -12,7 +12,7 @@ import {
   Token,
 } from '../generated/graphql';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { getSubgraphClientByChainId } from '@honeypot/shared';
+import { getSubgraphClientByChainId } from '@honeypot/shared/hooks/useSubgraphClients';
 
 let tokenRequestIds: string[] = [];
 let tokenRequestTimeout: NodeJS.Timeout | null = null;

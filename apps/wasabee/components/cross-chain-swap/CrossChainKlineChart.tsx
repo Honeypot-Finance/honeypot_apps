@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import dynamic from 'next/dynamic';
 import { chart } from '@honeypot/shared/services';
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { crossChainSwapService } from '@/services/crossChainSwap';
 import { wallet } from '@honeypot/shared/lib/wallet';
 

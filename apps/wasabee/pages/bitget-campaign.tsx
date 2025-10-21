@@ -1,8 +1,8 @@
 import HoneyContainer from '@/components/CardContianer/v3';
-import { TokenLogo } from '@honeypot/shared';
+import { TokenLogo } from '@honeypot/shared/components/TokenLogo/TokenLogo';
 import { useBitgetEvents } from '@/lib/algebra/graphql/clients/bitget_event';
 import { DynamicFormatAmount } from '@honeypot/shared/lib/utils';
-import { Token } from '@honeypot/shared';
+import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { Button } from '@/components/ui/button';
 import { observer } from 'mobx-react-lite';
