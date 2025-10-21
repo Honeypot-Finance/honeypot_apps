@@ -61,7 +61,10 @@ export async function fetchLimitOrders(
     whereConditions.push(`pool: "${poolAddress.toLowerCase()}"`);
   }
 
-  const whereClause = whereConditions.length > 0 ? `where: { ${whereConditions.join(', ')} }` : '';
+  const whereClause =
+    whereConditions.length > 0
+      ? `where: { ${whereConditions.join(', ')} }`
+      : '';
 
   const query = `
     query GetLimitOrders {
@@ -91,17 +94,6 @@ export async function fetchLimitOrders(
     }
   `;
 
-  console.log('[LimitOrders] Fetching with query:', query);
-  console.log('[LimitOrders] Filters:', {
-    owner,
-    ownerLowerCase: owner?.toLowerCase(),
-    poolAddress,
-    isOpen,
-    page,
-    pageSize,
-    whereClause
-  });
-
   try {
     const { data } = await client.query<LimitOrdersResponse>({
       query: gql(query),
@@ -114,9 +106,6 @@ export async function fetchLimitOrders(
       },
     });
 
-    console.log('[LimitOrders] Raw response:', data);
-    console.log('[LimitOrders] Number of orders returned:', data.limitOrders?.length || 0);
-
     let filteredData = data.limitOrders;
 
     // Filter by open/closed status based on old component logic
@@ -126,21 +115,10 @@ export async function fetchLimitOrders(
         // An order is closed if it's either fully filled (liquidity = 0) or killed/cancelled
         const isClosed = order.liquidity === '0' || order.killed === true;
         const shouldInclude = isOpen ? !isClosed : isClosed;
-        console.log('[LimitOrders] Order:', {
-          id: order.id,
-          owner: order.owner,
-          liquidity: order.liquidity,
-          killed: order.killed,
-          isClosed,
-          isOpen,
-          shouldInclude
-        });
+
         return shouldInclude;
       });
-      console.log(`[LimitOrders] Filtered ${beforeFilter} -> ${filteredData.length} orders (isOpen: ${isOpen})`);
     }
-
-    console.log('[LimitOrders] Filtered data:', filteredData);
 
     return {
       status: 'success',

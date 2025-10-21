@@ -19,9 +19,11 @@ import {
   WNATIVE,
 } from '@cryptoalgebra/sdk';
 import { PoolState, usePool } from '@/lib/algebra/hooks/pools/usePool';
-import { Address } from 'viem';
+import { Address, decodeErrorResult } from 'viem';
 import { LimitOrderButton } from './LimitOrderButton/index';
-import { usePublicClient } from 'wagmi';
+import { usePublicClient, useAccount } from 'wagmi';
+import { useLimitOrderInfo } from '@/hooks/useLimitOrderInfo';
+import { limitOrderManagerABI } from '@honeypot/shared/lib/abis/algebra-contracts/ABIs/plugins/limitOrderManagerAbi';
 
 interface LimitOrderProps {
   fromTokenAddress?: string;
@@ -49,12 +51,14 @@ const LimitOrder = observer(
       tradeState,
     } = derivedSwapInfo;
     const publicClient = usePublicClient();
+    const { address: account } = useAccount();
 
     const [sellPrice, setSellPrice] = useState<string>('');
-    const [wasInverted, setWasInverted] = useState(false);
     const [isRateFocused, setIsRateFocused] = useState(false);
     const [poolPlugin, setPoolPlugin] = useState<Address | null>(null);
     const [isPluginInitialized, setIsPluginInitialized] = useState(false);
+    const [simulationError, setSimulationError] = useState<string | null>(null);
+    const [simulationSuccess, setSimulationSuccess] = useState(false);
 
     // Create derivedSwap object compatible with LimitOrderButton
     const derivedSwap = useMemo(() => {
@@ -144,23 +148,135 @@ const LimitOrder = observer(
 
       const { tickCurrent, tickSpacing } = limitOrderPool;
 
-      // Determine the correct tick direction based on which token we're selling
-      // If selling token0 (zeroToOne=true), we need tick above current
-      // If selling token1 (zeroToOne=false), we need tick below current
-      const targetTick = zeroToOne
-        ? Math.min(tickCurrent + tickSpacing, TickMath.MAX_TICK)
-        : Math.max(tickCurrent - tickSpacing, TickMath.MIN_TICK);
+      // Limit order ranges are [tickLower, tickUpper] where tickUpper = tickLower + tickSpacing
+      // For the order to be valid, currentTick must NOT be in this range
+      let targetTick: number;
+
+      if (zeroToOne) {
+        // Selling token0 - need range ABOVE current
+        // Need tickLower > tickCurrent (so entire range is above)
+        // Use ceil to round up to next aligned tick above current
+        targetTick = Math.ceil((tickCurrent + 1) / tickSpacing) * tickSpacing;
+        targetTick = Math.min(targetTick, TickMath.MAX_TICK);
+      } else {
+        // Selling token1 - need range BELOW current
+        // Need tickUpper < tickCurrent (so entire range is below)
+        // tickUpper = tickLower + tickSpacing < tickCurrent
+        // tickLower < tickCurrent - tickSpacing
+        // Use floor to get largest aligned tick that satisfies this
+        targetTick =
+          Math.floor((tickCurrent - tickSpacing) / tickSpacing) * tickSpacing;
+        targetTick = Math.max(targetTick, TickMath.MIN_TICK);
+      }
 
       const _newPrice = invertPrice
         ? getTickToPrice(token1, token0, targetTick)
         : getTickToPrice(token0, token1, targetTick);
 
+      console.log('[INITIAL PRICE] Calculating nearest valid:', {
+        tickCurrent,
+        targetTick,
+        rangeWillBe: `[${targetTick}, ${targetTick + tickSpacing}]`,
+        tickSpacing,
+        zeroToOne,
+        distanceFromCurrent: Math.abs(targetTick - tickCurrent),
+        price: _newPrice?.toSignificant(8),
+      });
+
       return _newPrice?.toSignificant(8);
     }, [limitOrderPool, token0, token1, invertPrice, currencies, zeroToOne]);
+
+    // Calculate the actual current market rate using tickCurrent directly
+    const currentMarketRate = useMemo(() => {
+      if (!limitOrderPool || !currencies[SwapField.INPUT]) return '';
+
+      const { tickCurrent } = limitOrderPool;
+
+      const _marketPrice = invertPrice
+        ? getTickToPrice(token1, token0, tickCurrent)
+        : getTickToPrice(token0, token1, tickCurrent);
+
+      return _marketPrice?.toSignificant(8);
+    }, [limitOrderPool, token0, token1, invertPrice, currencies]);
 
     const isPoolExists = limitOrderPoolExists === PoolState.EXISTS;
     const tick = limitOrderPool?.tickCurrent;
     const tickSpacing = limitOrderPool?.tickSpacing;
+
+    // Calculate input amount for simulation
+    const inputAmount = useMemo(() => {
+      return independentField === SwapField.INPUT
+        ? parsedAmount
+        : tradeState?.trade?.inputAmount;
+    }, [independentField, parsedAmount, tradeState]);
+
+    // Calculate limit order tick for simulation
+    // baseToken/quoteToken determines price direction
+    const [baseToken, quoteToken] = [token0, token1];
+
+    const limitOrderTick = useMemo(() => {
+      if (!baseToken || !quoteToken || !sellPrice || !tickSpacing)
+        return undefined;
+      return tryParseTick(baseToken, quoteToken, sellPrice, tickSpacing);
+    }, [baseToken, quoteToken, sellPrice, tickSpacing]);
+
+    // Get limit order info for simulation
+    const limitOrder = useLimitOrderInfo(
+      limitOrderPoolAddress,
+      inputAmount,
+      limitOrderTick,
+      tickSpacing
+    );
+
+    // Debug logging for limit order calculation
+    useEffect(() => {
+      if (sellPrice && inputAmount && tick !== undefined) {
+        const parsedTick = tryParseTick(
+          baseToken,
+          quoteToken,
+          sellPrice,
+          tickSpacing
+        );
+        const alignedTick =
+          parsedTick !== undefined && tickSpacing
+            ? Math.round(parsedTick / tickSpacing) * tickSpacing
+            : undefined;
+
+        console.log('[LIMIT ORDER DEBUG]', {
+          sellPrice,
+          inputAmount: inputAmount.toSignificant(),
+          limitOrderTick,
+          parsedTickFromPrice: parsedTick,
+          alignedTickLower: alignedTick,
+          tickSpacing,
+          currentTick: tick,
+          zeroToOne,
+          tickDistance: alignedTick !== undefined ? alignedTick - tick : 'N/A',
+          isAboveCurrent:
+            alignedTick !== undefined ? alignedTick > tick : 'N/A',
+          limitOrder: limitOrder
+            ? {
+                tickLower: limitOrder.tickLower,
+                tickUpper: limitOrder.tickUpper,
+                liquidity: limitOrder.liquidity?.toString(),
+                isValid: limitOrder.liquidity?.toString() !== '0',
+              }
+            : null,
+          baseToken: baseToken?.symbol,
+          quoteToken: quoteToken?.symbol,
+        });
+      }
+    }, [
+      sellPrice,
+      inputAmount,
+      limitOrderTick,
+      limitOrder,
+      tick,
+      zeroToOne,
+      baseToken,
+      quoteToken,
+      tickSpacing,
+    ]);
 
     // Step 1: Get the pool's plugin address
     useEffect(() => {
@@ -199,7 +315,12 @@ const LimitOrder = observer(
     // Step 2: Check if the plugin is initialized in the limit order manager
     useEffect(() => {
       const checkPluginInitialization = async () => {
-        if (!poolPlugin || !limitOrderPoolAddress || !publicClient || !limitOrderManagerAddress) {
+        if (
+          !poolPlugin ||
+          !limitOrderPoolAddress ||
+          !publicClient ||
+          !limitOrderManagerAddress
+        ) {
           setIsPluginInitialized(false);
           return;
         }
@@ -239,8 +360,215 @@ const LimitOrder = observer(
       };
 
       checkPluginInitialization();
-    }, [poolPlugin, limitOrderPoolAddress, publicClient, limitOrderManagerAddress]);
+    }, [
+      poolPlugin,
+      limitOrderPoolAddress,
+      publicClient,
+      limitOrderManagerAddress,
+    ]);
 
+    // Step 3: Simulate contract call whenever price changes
+    useEffect(() => {
+      const simulateTransaction = async () => {
+        // Only run if dev mode is enabled
+        const isDev = process.env.NEXT_PUBLIC_DEV === 'true';
+
+        console.log(
+          '[SIMULATION] Effect triggered - sellPrice:',
+          sellPrice,
+          'inputAmount:',
+          inputAmount?.toSignificant()
+        );
+
+        // Reset states
+        setSimulationError(null);
+        setSimulationSuccess(false);
+
+        // Check if we have all required data
+        const missingData = {
+          token0: !token0,
+          token1: !token1,
+          inputAmount: !inputAmount,
+          limitOrder: !limitOrder,
+          limitOrderManagerAddress: !limitOrderManagerAddress,
+          account: !account,
+          publicClient: !publicClient,
+          sellPrice: !sellPrice,
+          liquidity:
+            !limitOrder?.liquidity ||
+            BigInt(limitOrder.liquidity.toString()) === BigInt(0),
+        };
+
+        const hasMissingData = Object.values(missingData).some((v) => v);
+
+        if (hasMissingData) {
+          console.log(
+            '[SIMULATION] Skipped - Missing data:',
+            Object.entries(missingData)
+              .filter(([_, missing]) => missing)
+              .map(([key]) => key),
+            {
+              limitOrderTick,
+              limitOrderLiquidity: limitOrder?.liquidity?.toString(),
+            }
+          );
+          return;
+        }
+
+        // Ensure tick is aligned
+        if (tickSpacing && limitOrder.tickLower % tickSpacing !== 0) {
+          console.log('[SIMULATION] Skipped - Tick not aligned:', {
+            tickLower: limitOrder.tickLower,
+            tickSpacing,
+            remainder: limitOrder.tickLower % tickSpacing,
+          });
+          return;
+        }
+
+        // Prepare simulation parameters for logging
+        const simulationParams = {
+          token0: token0.symbol,
+          token1: token1.symbol,
+          inputAmount: inputAmount.toSignificant(),
+          sellPrice,
+          limitOrderTick,
+          tickLower: limitOrder.tickLower,
+          tickUpper: limitOrder.tickUpper,
+          liquidity: limitOrder.liquidity.toString(),
+          zeroToOne,
+          currentTick: tick,
+          tickSpacing,
+        };
+
+        try {
+          if (isDev) {
+            console.log(
+              '[SIMULATION] Starting simulation with:',
+              simulationParams
+            );
+          }
+
+          await publicClient.simulateContract({
+            address: limitOrderManagerAddress as Address,
+            abi: limitOrderManagerABI,
+            functionName: 'place',
+            args: [
+              {
+                deployer:
+                  '0x0000000000000000000000000000000000000000' as Address,
+                token0: token0.address as Address,
+                token1: token1.address as Address,
+              },
+              limitOrder.tickLower,
+              zeroToOne,
+              BigInt(limitOrder.liquidity.toString()),
+            ],
+            value: inputAmount?.currency.isNative
+              ? BigInt(inputAmount.quotient.toString())
+              : BigInt(0),
+            account,
+          });
+
+          setSimulationSuccess(true);
+          // Always log simulation success to console
+          console.log(
+            '[SIMULATION] ✅ Success! This limit order can be placed.'
+          );
+          console.log('[SIMULATION] Parameters:', simulationParams);
+          if (isDev) {
+            console.log(
+              '[SIMULATION] Successful simulation details available in dev mode'
+            );
+          }
+        } catch (error: any) {
+          let errorMessage = 'Unknown error';
+
+          // Try to extract error name
+          if (error.cause?.data) {
+            try {
+              const decoded = decodeErrorResult({
+                abi: limitOrderManagerABI,
+                data: error.cause.data,
+              });
+              errorMessage =
+                decoded.errorName || decoded.args?.[0] || errorMessage;
+            } catch (e) {
+              // Continue with other extraction methods
+            }
+          }
+
+          // Walk through error chain
+          if (
+            errorMessage === 'Unknown error' &&
+            typeof error.walk === 'function'
+          ) {
+            try {
+              const errors = [...error.walk()];
+              for (const err of errors) {
+                if (err.data && err.data !== '0x') {
+                  try {
+                    const decoded = decodeErrorResult({
+                      abi: limitOrderManagerABI,
+                      data: err.data,
+                    });
+                    errorMessage = decoded.errorName || errorMessage;
+                    break;
+                  } catch (e) {
+                    // Continue
+                  }
+                }
+              }
+            } catch (e) {
+              // Continue
+            }
+          }
+
+          // Try other error properties
+          if (errorMessage === 'Unknown error') {
+            if (error.shortMessage) {
+              errorMessage = error.shortMessage;
+            } else if (error.message) {
+              const match = error.message.match(/error: (\w+)/);
+              if (match) {
+                errorMessage = match[1];
+              } else {
+                errorMessage = error.message;
+              }
+            }
+          }
+
+          setSimulationError(errorMessage);
+
+          // Always log simulation errors to console
+          console.log('[SIMULATION] ❌ Failed:', errorMessage);
+          console.log('[SIMULATION] Parameters:', simulationParams);
+          if (isDev) {
+            console.log('[SIMULATION] Full error:', {
+              message: error.message,
+              shortMessage: error.shortMessage,
+              cause: error.cause,
+              data: error.data,
+              details: error.details,
+            });
+          }
+        }
+      };
+
+      simulateTransaction();
+    }, [
+      token0,
+      token1,
+      inputAmount,
+      limitOrder,
+      limitOrderManagerAddress,
+      account,
+      publicClient,
+      sellPrice,
+      zeroToOne,
+      tick,
+      tickSpacing,
+      limitOrderTick,
+    ]);
 
     const tickStep = useCallback(
       (direction: 1 | -1) => {
@@ -306,10 +634,6 @@ const LimitOrder = observer(
       }
 
       const priceTick = invertPrice
-        ? wasInverted
-          ? tryParseTick(token0, token1, sellPrice.toString(), tickSpacing)
-          : tryParseTick(token1, token0, sellPrice.toString(), tickSpacing)
-        : wasInverted
         ? tryParseTick(token1, token0, sellPrice.toString(), tickSpacing)
         : tryParseTick(token0, token1, sellPrice.toString(), tickSpacing);
 
@@ -326,7 +650,7 @@ const LimitOrder = observer(
       ) {
         return {
           blockCreation: true,
-          message: 'Sell price must be above current price when selling token0',
+          message: 'Price must be above market',
         };
       }
 
@@ -336,7 +660,7 @@ const LimitOrder = observer(
       ) {
         return {
           blockCreation: true,
-          message: 'Sell price must be below current price when selling token1',
+          message: 'Price must be below market',
         };
       }
 
@@ -348,10 +672,8 @@ const LimitOrder = observer(
       invertPrice,
       sellPrice,
       tick,
-      wasInverted,
       tickSpacing,
     ]);
-
 
     const [plusDisabled, minusDisabled] = useMemo(() => {
       if (
@@ -368,10 +690,6 @@ const LimitOrder = observer(
       }
 
       const priceTick = invertPrice
-        ? wasInverted
-          ? tryParseTick(token0, token1, sellPrice.toString(), tickSpacing)
-          : tryParseTick(token1, token0, sellPrice.toString(), tickSpacing)
-        : wasInverted
         ? tryParseTick(token1, token0, sellPrice.toString(), tickSpacing)
         : tryParseTick(token0, token1, sellPrice.toString(), tickSpacing);
 
@@ -383,13 +701,13 @@ const LimitOrder = observer(
         currencies.INPUT.wrapped.equals(token0.wrapped) &&
         priceTick - tickSpacing <= tick
       )
-        return wasInverted ? [true, false] : [false, true];
+        return [false, true];
 
       if (
         currencies.INPUT.wrapped.equals(token1.wrapped) &&
         priceTick + tickSpacing >= tick - tickSpacing
       )
-        return wasInverted ? [true, false] : [false, true];
+        return [false, true];
 
       return [false, false];
     }, [
@@ -399,43 +717,65 @@ const LimitOrder = observer(
       invertPrice,
       sellPrice,
       tick,
-      wasInverted,
       tickSpacing,
     ]);
 
-    const handleSetSellPrice = useCallback(
-      (value: string, invert = false) => {
-        const tick = tryParseTick(token0, token1, value, tickSpacing);
+    const setToMarketPrice = useCallback(
+      () => {
+        if (!limitOrderPool || !token0 || !token1 || !tickSpacing) return;
 
-        const newPrice = getTickToPrice(token0, token1, tick);
+        const { tickCurrent } = limitOrderPool;
 
-        if (!newPrice) {
-          setSellPrice('');
-          return;
+        // Use same logic as initialSellPrice
+        let targetTick: number;
+
+        if (zeroToOne) {
+          // Selling token0 - need range ABOVE current
+          // Need tickLower > tickCurrent
+          targetTick = Math.ceil((tickCurrent + 1) / tickSpacing) * tickSpacing;
+          targetTick = Math.min(targetTick, TickMath.MAX_TICK);
+        } else {
+          // Selling token1 - need range BELOW current
+          // Need tickUpper < tickCurrent
+          // tickLower < tickCurrent - tickSpacing
+          targetTick =
+            Math.floor((tickCurrent - tickSpacing) / tickSpacing) * tickSpacing;
+          targetTick = Math.max(targetTick, TickMath.MIN_TICK);
         }
 
-        const limitOrderPrice = invert
-          ? newPrice.invert().toSignificant(8)
-          : newPrice.toSignificant(8);
+        const _newPrice = invertPrice
+          ? getTickToPrice(token1, token0, targetTick)
+          : getTickToPrice(token0, token1, targetTick);
 
-        setSellPrice(limitOrderPrice);
+        if (_newPrice) {
+          const limitOrderPrice = _newPrice.toSignificant(8);
+          setSellPrice(limitOrderPrice);
+          console.log('[SET TO MARKET] Set to nearest valid price:', {
+            tickCurrent,
+            targetTick,
+            rangeWillBe: `[${targetTick}, ${targetTick + tickSpacing}]`,
+            tickSpacing,
+            zeroToOne,
+            distanceFromCurrent: Math.abs(targetTick - tickCurrent),
+            direction: zeroToOne ? 'above market' : 'below market',
+            price: limitOrderPrice,
+          });
+        }
       },
-      [token0, token1, tickSpacing]
+      [limitOrderPool, token0, token1, tickSpacing, zeroToOne, invertPrice]
     );
 
-    const setToMarketPrice = useCallback(
-      (invert: boolean) => {
-        if (!initialSellPrice) return;
-        handleSetSellPrice(initialSellPrice, invert);
-      },
-      [initialSellPrice, handleSetSellPrice]
-    );
-
+    // Auto-set initial price when tokens are selected
     useEffect(() => {
       if (initialSellPrice && !sellPrice) {
         setSellPrice(initialSellPrice);
       }
-    }, [initialSellPrice, sellPrice]); // Removed invertPrice to prevent re-triggering
+    }, [initialSellPrice, sellPrice]);
+
+    // Reset price when tokens change
+    useEffect(() => {
+      setSellPrice('');
+    }, [currencies.INPUT, currencies.OUTPUT]);
 
     return (
       <Container className="">
@@ -470,8 +810,9 @@ const LimitOrder = observer(
               Sell {currencies[SwapField.INPUT]?.symbol || 'Token'} at rate
             </span>
             <button
-              onClick={() => setToMarketPrice(false)}
+              onClick={setToMarketPrice}
               className="text-sm text-[#4A9EFF] hover:text-[#6AB2FF] font-medium transition-colors"
+              title="Sets price to the nearest valid limit order price"
             >
               Set to market
             </button>
@@ -525,34 +866,24 @@ const LimitOrder = observer(
                 </button>
               </div>
             </div>
-            {initialSellPrice && (
-              <div className="text-xs text-gray-500 mt-2">
-                Market rate: {initialSellPrice}{' '}
-                {currencies[SwapField.OUTPUT]?.symbol || ''}
+
+            {/* Show simulation result in dev mode */}
+            {process.env.NEXT_PUBLIC_DEV === 'true' && sellPrice && (
+              <div className="mt-2">
+                {simulationSuccess && (
+                  <div className="text-xs text-green-500 font-medium">
+                    ✅ Simulation: Can place order
+                  </div>
+                )}
+                {simulationError && (
+                  <div className="text-xs text-red-500 font-medium">
+                    ❌ Simulation: {simulationError}
+                  </div>
+                )}
               </div>
             )}
           </div>
         </div>
-
-        {/* Invert Price Button */}
-        <button
-          onClick={() => {
-            if (sellPrice) {
-              handleSetSellPrice(sellPrice, true);
-              setWasInverted(!wasInverted);
-            }
-          }}
-          disabled={
-            showWrap || !isPoolExists || !isPluginInitialized || !sellPrice
-          }
-          className={`w-full mb-2 py-2 rounded-xl text-sm transition-all ${
-            showWrap || !isPoolExists || !isPluginInitialized || !sellPrice
-              ? 'bg-[#1A0F06] text-gray-600 cursor-not-allowed'
-              : 'bg-[#2A1F14] hover:bg-[#3A2F24] text-white'
-          }`}
-        >
-          Invert Price
-        </button>
 
         {/* Place Order Button */}
         <LimitOrderButton
@@ -564,7 +895,7 @@ const LimitOrder = observer(
           poolAddress={limitOrderPoolAddress}
           sellPrice={sellPrice}
           tickSpacing={tickSpacing}
-          wasInverted={wasInverted}
+          wasInverted={false}
           zeroToOne={zeroToOne}
           tick={tick}
           onSuccess={() => {

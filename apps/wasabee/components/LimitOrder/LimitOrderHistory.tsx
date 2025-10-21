@@ -3,14 +3,24 @@ import { observer } from 'mobx-react-lite';
 import { VscCopy } from 'react-icons/vsc';
 import { ExternalLink, ChevronLeft, ChevronRight, XCircle } from 'lucide-react';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { useLimitOrders, LimitOrder } from '@/lib/algebra/graphql/clients/limitOrders';
+import {
+  useLimitOrders,
+  LimitOrder,
+} from '@/lib/algebra/graphql/clients/limitOrders';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../algebra/ui/tabs';
 import BigNumber from 'bignumber.js';
 import { useWalletClient, usePublicClient } from 'wagmi';
 import { Address } from 'viem';
 import { limitOrderManagerABI } from '@honeypot/shared/lib/abis/algebra-contracts/ABIs/plugins/limitOrderManagerAbi';
 import { useToastify } from '@honeypot/shared/hooks/useContractToastify';
-import { Token, tickToPrice, Position, Price, ZERO, CurrencyAmount } from '@cryptoalgebra/sdk';
+import {
+  Token,
+  tickToPrice,
+  Position,
+  Price,
+  ZERO,
+  CurrencyAmount,
+} from '@cryptoalgebra/sdk';
 
 interface LimitOrderHistoryProps {
   poolAddress?: string;
@@ -39,7 +49,9 @@ const LimitOrderHistory = observer(
     const { fetchOrders } = useLimitOrders();
     const { data: walletClient } = useWalletClient();
     const publicClient = usePublicClient();
-    const [cancellingOrders, setCancellingOrders] = useState<Set<string>>(new Set());
+    const [cancellingOrders, setCancellingOrders] = useState<Set<string>>(
+      new Set()
+    );
     const [txState, setTxState] = useState({
       isLoading: false,
       isSuccess: false,
@@ -49,7 +61,11 @@ const LimitOrderHistory = observer(
 
     useToastify({
       ...txState,
-      title: txState.isLoading ? 'Cancelling Order' : txState.isSuccess ? 'Order Cancelled' : 'Cancel Failed',
+      title: txState.isLoading
+        ? 'Cancelling Order'
+        : txState.isSuccess
+        ? 'Order Cancelled'
+        : 'Cancel Failed',
     });
 
     const enrichOrderWithTokenData = async (
@@ -66,7 +82,9 @@ const LimitOrderHistory = observer(
               {
                 inputs: [],
                 name: 'token0',
-                outputs: [{ internalType: 'address', name: '', type: 'address' }],
+                outputs: [
+                  { internalType: 'address', name: '', type: 'address' },
+                ],
                 stateMutability: 'view',
                 type: 'function',
               },
@@ -79,7 +97,9 @@ const LimitOrderHistory = observer(
               {
                 inputs: [],
                 name: 'token1',
-                outputs: [{ internalType: 'address', name: '', type: 'address' }],
+                outputs: [
+                  { internalType: 'address', name: '', type: 'address' },
+                ],
                 stateMutability: 'view',
                 type: 'function',
               },
@@ -165,7 +185,9 @@ const LimitOrderHistory = observer(
         // zeroToOne = false means selling token1 for token0
         const priceRange = order.zeroToOne
           ? `≤ ${limitPrice.toSignificant(6)} ${token1.symbol}/${token0.symbol}`
-          : `≥ ${limitPrice.invert().toSignificant(6)} ${token0.symbol}/${token1.symbol}`;
+          : `≥ ${limitPrice.invert().toSignificant(6)} ${token0.symbol}/${
+              token1.symbol
+            }`;
 
         console.log('Final limit price display:', priceRange);
 
@@ -309,7 +331,8 @@ const LimitOrderHistory = observer(
           isLoading: false,
           isSuccess: false,
           isError: true,
-          message: error.shortMessage || error.message || 'Failed to cancel order',
+          message:
+            error.shortMessage || error.message || 'Failed to cancel order',
         });
       } finally {
         setCancellingOrders((prev) => {
@@ -325,7 +348,7 @@ const LimitOrderHistory = observer(
         if (showLoading) {
           setLoading(true);
         }
-        console.log('[LimitOrderHistory] Fetching orders... refreshKey:', refreshKey, 'timestamp:', new Date().toISOString());
+
         try {
           // Fetch open orders
           const openResponse = await fetchOrders(
@@ -345,16 +368,12 @@ const LimitOrderHistory = observer(
             false // isOpen = false
           );
 
-          console.log('[LimitOrderHistory] Got response - Open:', openResponse.data.length, 'Closed:', closedResponse.data.length);
-          console.log('[LimitOrderHistory] First open order ID:', openResponse.data[0]?.id, 'Timestamp:', openResponse.data[0]?.placeTimestamp);
-
           // Enrich orders with token data and price ranges
           const [enrichedOpenOrders, enrichedClosedOrders] = await Promise.all([
             Promise.all(openResponse.data.map(enrichOrderWithTokenData)),
             Promise.all(closedResponse.data.map(enrichOrderWithTokenData)),
           ]);
 
-          console.log('[LimitOrderHistory] About to set state with', enrichedOpenOrders.length, 'open orders');
           setOpenOrders(enrichedOpenOrders);
           setHasNextOpenPage(openResponse.pageInfo.hasNextPage);
           setClosedOrders(enrichedClosedOrders);
@@ -441,8 +460,14 @@ const LimitOrderHistory = observer(
       }
 
       try {
-        const tickLower = typeof order.tickLower === 'string' ? parseInt(order.tickLower) : order.tickLower;
-        const tickUpper = typeof order.tickUpper === 'string' ? parseInt(order.tickUpper) : order.tickUpper;
+        const tickLower =
+          typeof order.tickLower === 'string'
+            ? parseInt(order.tickLower)
+            : order.tickLower;
+        const tickUpper =
+          typeof order.tickUpper === 'string'
+            ? parseInt(order.tickUpper)
+            : order.tickUpper;
         const sellingToken = order.zeroToOne ? order.token0 : order.token1;
         const L = new BigNumber(order.initialLiquidity);
 
@@ -473,7 +498,7 @@ const LimitOrderHistory = observer(
 
         return {
           amount: currencyAmount.toSignificant(5),
-          symbol: sellingToken.symbol
+          symbol: sellingToken.symbol,
         };
       } catch (error) {
         console.error('Error calculating token amount:', error);
@@ -496,158 +521,179 @@ const LimitOrderHistory = observer(
       return percentage.toFixed(2);
     };
 
-    const renderOrdersTable = (orders: EnrichedLimitOrder[], isOpen: boolean) => {
-      console.log('[LimitOrderHistory] Rendering table. Orders count:', orders.length, 'First order:', orders[0]?.id);
+    const renderOrdersTable = (
+      orders: EnrichedLimitOrder[],
+      isOpen: boolean
+    ) => {
       return (
-      <div className="overflow-x-auto -mx-6 px-6">
-        <table className="w-full min-w-[900px]">
-          <thead>
-            <tr className="border-b border-[#2a2318]">
-              <th className="text-left text-sm text-gray-500 font-normal pb-4 pl-2 min-w-[100px] whitespace-nowrap">
-                Time
-              </th>
-              <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[120px] whitespace-nowrap">
-                Pair
-              </th>
-              <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[120px] whitespace-nowrap">
-                Direction
-              </th>
-              <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[100px] whitespace-nowrap">
-                Amount
-              </th>
-              {isOpen && (
-                <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[100px] whitespace-nowrap">
-                  Filled %
+        <div className="overflow-x-auto -mx-6 px-6">
+          <table className="w-full min-w-[900px]">
+            <thead>
+              <tr className="border-b border-[#2a2318]">
+                <th className="text-left text-sm text-gray-500 font-normal pb-4 pl-2 min-w-[100px] whitespace-nowrap">
+                  Time
                 </th>
-              )}
-              <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[180px] whitespace-nowrap">
-                Price Range
-              </th>
-              <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[80px] whitespace-nowrap">
-                Status
-              </th>
-              <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[100px] whitespace-nowrap">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={isOpen ? 8 : 7} className="py-8 text-center text-gray-500">
-                  Loading...
-                </td>
+                <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[120px] whitespace-nowrap">
+                  Pair
+                </th>
+                <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[120px] whitespace-nowrap">
+                  Direction
+                </th>
+                <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[100px] whitespace-nowrap">
+                  Amount
+                </th>
+                {isOpen && (
+                  <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[100px] whitespace-nowrap">
+                    Filled %
+                  </th>
+                )}
+                <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[180px] whitespace-nowrap">
+                  Price Range
+                </th>
+                <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[80px] whitespace-nowrap">
+                  Status
+                </th>
+                <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[100px] whitespace-nowrap">
+                  Actions
+                </th>
               </tr>
-            ) : orders.length === 0 ? (
-              <tr>
-                <td colSpan={isOpen ? 8 : 7} className="py-8 text-center text-gray-500">
-                  <div className="flex flex-col gap-2">
-                    <span>No {isOpen ? 'open' : 'closed'} orders found</span>
-                    <span className="text-xs text-gray-600">
-                      Chain:{' '}
-                      {wallet.currentChain?.displayName ||
-                        wallet.currentChain?.chain?.name ||
-                        'Unknown'}{' '}
-                      (ID: {wallet.currentChainId})
-                    </span>
-                  </div>
-                </td>
-              </tr>
-            ) : (
-              orders.map((order, index) => (
-                <tr
-                  key={order.id}
-                  className={`border-b border-[#2a2318] transition-colors ${
-                    index % 2 === 0
-                      ? 'bg-transparent hover:bg-[#0A0704]'
-                      : 'bg-[#1F1409] hover:bg-[#241809]'
-                  }`}
-                >
-                  <td className="py-4 text-sm text-white pl-2 whitespace-nowrap">
-                    {formatTimeAgo(
-                      order.closeTimestamp && order.closeTimestamp !== '0'
-                        ? order.closeTimestamp
-                        : order.placeTimestamp
-                    )}
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan={isOpen ? 8 : 7}
+                    className="py-8 text-center text-gray-500"
+                  >
+                    Loading...
                   </td>
-                  <td className="py-4 text-sm text-white px-3 whitespace-nowrap">
-                    {order.token0 && order.token1
-                      ? `${order.token0.symbol} / ${order.token1.symbol}`
-                      : `Pool: ${order.pool.slice(0, 6)}...${order.pool.slice(-4)}`}
+                </tr>
+              ) : orders.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={isOpen ? 8 : 7}
+                    className="py-8 text-center text-gray-500"
+                  >
+                    <div className="flex flex-col gap-2">
+                      <span>No {isOpen ? 'open' : 'closed'} orders found</span>
+                      <span className="text-xs text-gray-600">
+                        Chain:{' '}
+                        {wallet.currentChain?.displayName ||
+                          wallet.currentChain?.chain?.name ||
+                          'Unknown'}{' '}
+                        (ID: {wallet.currentChainId})
+                      </span>
+                    </div>
                   </td>
-                  <td className="py-4 text-sm px-3 whitespace-nowrap">
-                    <span
-                      className={`${
-                        order.zeroToOne ? 'text-red-500' : 'text-green-500'
-                      }`}
-                    >
-                      {order.zeroToOne
-                        ? `Sell ${order.token0?.symbol || 'Token0'}`
-                        : `Sell ${order.token1?.symbol || 'Token1'}`}
-                    </span>
-                  </td>
-                  <td className="py-4 text-sm text-white font-medium px-3 whitespace-nowrap">
-                    {(() => {
-                      const tokenInfo = calculateTokenAmount(order);
-                      return `${tokenInfo.amount} ${tokenInfo.symbol}`;
-                    })()}
-                  </td>
-                  {isOpen && (
+                </tr>
+              ) : (
+                orders.map((order, index) => (
+                  <tr
+                    key={order.id}
+                    className={`border-b border-[#2a2318] transition-colors ${
+                      index % 2 === 0
+                        ? 'bg-transparent hover:bg-[#0A0704]'
+                        : 'bg-[#1F1409] hover:bg-[#241809]'
+                    }`}
+                  >
+                    <td className="py-4 text-sm text-white pl-2 whitespace-nowrap">
+                      {formatTimeAgo(
+                        order.closeTimestamp && order.closeTimestamp !== '0'
+                          ? order.closeTimestamp
+                          : order.placeTimestamp
+                      )}
+                    </td>
+                    <td className="py-4 text-sm text-white px-3 whitespace-nowrap">
+                      {order.token0 && order.token1
+                        ? `${order.token0.symbol} / ${order.token1.symbol}`
+                        : `Pool: ${order.pool.slice(0, 6)}...${order.pool.slice(
+                            -4
+                          )}`}
+                    </td>
                     <td className="py-4 text-sm px-3 whitespace-nowrap">
-                      <div className="flex items-center gap-1">
-                        <span className={`font-medium ${
-                          parseFloat(calculateFilledPercentage(order)) === 100
-                            ? 'text-green-500'
-                            : parseFloat(calculateFilledPercentage(order)) > 0
-                              ? 'text-yellow-500'
-                              : 'text-gray-400'
-                        }`}>
-                          {calculateFilledPercentage(order)}%
+                      <span
+                        className={`${
+                          order.zeroToOne ? 'text-red-500' : 'text-green-500'
+                        }`}
+                      >
+                        {order.zeroToOne
+                          ? `Sell ${order.token0?.symbol || 'Token0'}`
+                          : `Sell ${order.token1?.symbol || 'Token1'}`}
+                      </span>
+                    </td>
+                    <td className="py-4 text-sm text-white font-medium px-3 whitespace-nowrap">
+                      {(() => {
+                        const tokenInfo = calculateTokenAmount(order);
+                        return `${tokenInfo.amount} ${tokenInfo.symbol}`;
+                      })()}
+                    </td>
+                    {isOpen && (
+                      <td className="py-4 text-sm px-3 whitespace-nowrap">
+                        <div className="flex items-center gap-1">
+                          <span
+                            className={`font-medium ${
+                              parseFloat(calculateFilledPercentage(order)) ===
+                              100
+                                ? 'text-green-500'
+                                : parseFloat(calculateFilledPercentage(order)) >
+                                  0
+                                ? 'text-yellow-500'
+                                : 'text-gray-400'
+                            }`}
+                          >
+                            {calculateFilledPercentage(order)}%
+                          </span>
+                        </div>
+                      </td>
+                    )}
+                    <td className="py-4 text-sm text-gray-400 px-3 whitespace-nowrap">
+                      <div className="flex flex-col">
+                        <span>
+                          {order.priceRange ||
+                            `${order.tickLower} → ${order.tickUpper}`}
+                        </span>
+                        <span className="text-xs text-gray-600">
+                          Tick: {order.tickLower}
                         </span>
                       </div>
                     </td>
-                  )}
-                  <td className="py-4 text-sm text-gray-400 px-3 whitespace-nowrap">
-                    <div className="flex flex-col">
-                      <span>{order.priceRange || `${order.tickLower} → ${order.tickUpper}`}</span>
-                      <span className="text-xs text-gray-600">Tick: {order.tickLower}</span>
-                    </div>
-                  </td>
-                  <td className="py-4 px-3 whitespace-nowrap">
-                    {(() => {
-                      const status = getOrderStatus(order);
-                      return (
-                        <span className={`text-sm ${status.color}`}>
-                          {status.label}
-                        </span>
-                      );
-                    })()}
-                  </td>
-                  <td className="py-4 px-3">
-                    {isOpen && order.liquidity !== '0' && !order.killed ? (
-                      <button
-                        onClick={() => handleCancelOrder(order)}
-                        disabled={cancellingOrders.has(order.id)}
-                        className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
-                          cancellingOrders.has(order.id)
-                            ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                            : 'bg-red-600 hover:bg-red-700 text-white'
-                        }`}
-                      >
-                        <XCircle className="w-4 h-4" />
-                        {cancellingOrders.has(order.id) ? 'Cancelling...' : 'Cancel'}
-                      </button>
-                    ) : (
-                      <span className="text-sm text-gray-500">-</span>
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    );
+                    <td className="py-4 px-3 whitespace-nowrap">
+                      {(() => {
+                        const status = getOrderStatus(order);
+                        return (
+                          <span className={`text-sm ${status.color}`}>
+                            {status.label}
+                          </span>
+                        );
+                      })()}
+                    </td>
+                    <td className="py-4 px-3">
+                      {isOpen && order.liquidity !== '0' && !order.killed ? (
+                        <button
+                          onClick={() => handleCancelOrder(order)}
+                          disabled={cancellingOrders.has(order.id)}
+                          className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                            cancellingOrders.has(order.id)
+                              ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                              : 'bg-red-600 hover:bg-red-700 text-white'
+                          }`}
+                        >
+                          <XCircle className="w-4 h-4" />
+                          {cancellingOrders.has(order.id)
+                            ? 'Cancelling...'
+                            : 'Cancel'}
+                        </button>
+                      ) : (
+                        <span className="text-sm text-gray-500">-</span>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      );
     };
 
     return (
@@ -675,7 +721,10 @@ const LimitOrderHistory = observer(
             </TabsList>
           </div>
 
-          <TabsContent value="open" key={`open-${refreshKey}-${openOrders.length}`}>
+          <TabsContent
+            value="open"
+            key={`open-${refreshKey}-${openOrders.length}`}
+          >
             {renderOrdersTable(openOrders, true)}
 
             {/* Pagination for Open Orders */}
@@ -688,7 +737,9 @@ const LimitOrderHistory = observer(
                 <ChevronLeft className="w-5 h-5 sm:w-4 sm:h-4" />
               </button>
 
-              <span className="text-gray-400 px-4 text-sm sm:text-base">Page {openPage}</span>
+              <span className="text-gray-400 px-4 text-sm sm:text-base">
+                Page {openPage}
+              </span>
 
               <button
                 onClick={() => setOpenPage((p) => p + 1)}
@@ -700,7 +751,10 @@ const LimitOrderHistory = observer(
             </div>
           </TabsContent>
 
-          <TabsContent value="closed" key={`closed-${refreshKey}-${closedOrders.length}`}>
+          <TabsContent
+            value="closed"
+            key={`closed-${refreshKey}-${closedOrders.length}`}
+          >
             {renderOrdersTable(closedOrders, false)}
 
             {/* Pagination for Closed Orders */}
@@ -713,7 +767,9 @@ const LimitOrderHistory = observer(
                 <ChevronLeft className="w-5 h-5 sm:w-4 sm:h-4" />
               </button>
 
-              <span className="text-gray-400 px-4 text-sm sm:text-base">Page {closedPage}</span>
+              <span className="text-gray-400 px-4 text-sm sm:text-base">
+                Page {closedPage}
+              </span>
 
               <button
                 onClick={() => setClosedPage((p) => p + 1)}

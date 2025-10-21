@@ -603,14 +603,15 @@ export const LimitOrderButton = ({
 
     // Map known error names to user-friendly messages
     const errorMap: Record<string, string> = {
-      InRange: 'Price is in current range',
+      InRange: 'Price must be outside market range',
       CrossedRange: 'Price crossed the range',
-      ZeroLiquidity: 'Zero liquidity provided',
+      ZeroLiquidity: 'Invalid price - zero liquidity',
       InsufficientLiquidity: 'Insufficient liquidity',
-      NotPlugin: 'Pool plugin not enabled',
+      NotPlugin: 'Limit orders not enabled for this pool',
       NotPoolManagerToken: 'Invalid token',
       Filled: 'Order already filled',
       NotFilled: 'Order not filled',
+      'execution reverted': 'Transaction would fail',
     };
 
     const friendlyError = errorMap[errorMessage] || errorMessage;
@@ -620,64 +621,72 @@ export const LimitOrderButton = ({
         : friendlyError;
   }
 
-  return (
-    <div className="flex flex-col gap-2">
-      {/* Show error message if there is one */}
-      {(inputError || displayError) && (
-        <Button disabled className="text-red-500">
-          {displayError ||
-            (typeof inputError === 'string'
-              ? inputError
-              : (inputError as any)?.message ||
-                (inputError as any)?.shortMessage ||
-                'Error')}
-        </Button>
-      )}
-      <Button
-        disabled={
-          disabled ||
-          isPlaceLoading ||
-          approvalState === ApprovalState.PENDING ||
-          isPending ||
-          !isReady ||
-          !!simulationError
-        }
-        onClick={() => {
-          console.log(
-            '[PLACE LIMIT ORDER]',
-            {
-              token0,
-              token1,
-              inputAmount,
-              limitOrder,
-              disabled,
-              inputError,
-              needAllowance,
-              simulationSuccess: !!simulationData && !simulationError,
-            },
-            isReady && [
-              {
-                token0: token0.address as Address,
-                token1: token1.address as Address,
-              },
-              limitOrder?.tickLower,
-              zeroToOne,
-              BigInt(limitOrder?.liquidity?.toString() || 0),
-            ]
-          );
+  // Determine button text based on state
+  const getButtonText = () => {
+    if (isPlaceLoading || isPending) return <Loader />;
+    if (!inputAmount) return 'Enter an amount';
+    if (inputError) {
+      return typeof inputError === 'string'
+        ? inputError
+        : (inputError as any)?.message || (inputError as any)?.shortMessage || 'Error';
+    }
+    if (!limitOrder?.liquidity || BigInt(limitOrder.liquidity.toString()) === BigInt(0)) {
+      return 'Invalid price range';
+    }
+    if (tickSpacing && limitOrder?.tickLower % tickSpacing !== 0) {
+      return 'Price not aligned to tick';
+    }
+    if (simulationError && displayError) {
+      return displayError;
+    }
+    return 'Place an order';
+  };
 
-          if (simulationData && !simulationError) {
-            placeLimitOrderConfig && placeLimitOrder(placeLimitOrderConfig);
-          } else {
-            console.error(
-              'Cannot place order: simulation failed',
-              simulationError
-            );
-          }
-        }}
-      >
-        {isPlaceLoading || isPending ? <Loader /> : 'Place an order'}
-      </Button>
-    </div>
+  return (
+    <Button
+      disabled={
+        disabled ||
+        isPlaceLoading ||
+        approvalState === ApprovalState.PENDING ||
+        isPending ||
+        !isReady ||
+        !!simulationError
+      }
+      onClick={() => {
+        console.log(
+          '[PLACE LIMIT ORDER]',
+          {
+            token0,
+            token1,
+            inputAmount,
+            limitOrder,
+            disabled,
+            inputError,
+            needAllowance,
+            simulationSuccess: !!simulationData && !simulationError,
+          },
+          isReady && [
+            {
+              token0: token0.address as Address,
+              token1: token1.address as Address,
+            },
+            limitOrder?.tickLower,
+            zeroToOne,
+            BigInt(limitOrder?.liquidity?.toString() || 0),
+          ]
+        );
+
+        if (simulationData && !simulationError) {
+          placeLimitOrderConfig && placeLimitOrder(placeLimitOrderConfig);
+        } else {
+          console.error(
+            'Cannot place order: simulation failed',
+            simulationError
+          );
+        }
+      }}
+    >
+      {getButtonText()}
+    </Button>
   );
 };

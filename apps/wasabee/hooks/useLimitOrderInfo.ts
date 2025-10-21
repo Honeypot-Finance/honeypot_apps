@@ -36,9 +36,14 @@ export function useLimitOrderInfo(
         alignedTickUpper,
         spacing,
         poolTickCurrent: pool.tickCurrent,
+        amount0: amount0.toString(),
+        amount1: amount1.toString(),
+        token0: pool.token0.symbol,
+        token1: pool.token1.symbol,
+        inputCurrency: amount.currency.symbol,
       });
 
-      return Position.fromAmounts({
+      const position = Position.fromAmounts({
         pool,
         tickLower: alignedTickLower,
         tickUpper: alignedTickUpper,
@@ -46,6 +51,15 @@ export function useLimitOrderInfo(
         amount1,
         useFullPrecision: true,
       });
+
+      console.log('Position result:', {
+        liquidity: position.liquidity.toString(),
+        tickLower: position.tickLower,
+        tickUpper: position.tickUpper,
+        isTickInRange: pool.tickCurrent >= alignedTickLower && pool.tickCurrent < alignedTickUpper,
+      });
+
+      return position;
     } else {
       return undefined;
     }
