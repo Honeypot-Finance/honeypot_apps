@@ -523,9 +523,6 @@ const LimitOrderHistory = observer(
               <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[180px] whitespace-nowrap">
                 Price Range
               </th>
-              <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[100px] whitespace-nowrap">
-                Owner
-              </th>
               <th className="text-left text-sm text-gray-500 font-normal pb-4 px-3 min-w-[80px] whitespace-nowrap">
                 Status
               </th>
@@ -537,13 +534,13 @@ const LimitOrderHistory = observer(
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={isOpen ? 9 : 8} className="py-8 text-center text-gray-500">
+                <td colSpan={isOpen ? 8 : 7} className="py-8 text-center text-gray-500">
                   Loading...
                 </td>
               </tr>
             ) : orders.length === 0 ? (
               <tr>
-                <td colSpan={isOpen ? 9 : 8} className="py-8 text-center text-gray-500">
+                <td colSpan={isOpen ? 8 : 7} className="py-8 text-center text-gray-500">
                   <div className="flex flex-col gap-2">
                     <span>No {isOpen ? 'open' : 'closed'} orders found</span>
                     <span className="text-xs text-gray-600">
@@ -615,16 +612,6 @@ const LimitOrderHistory = observer(
                       <span>{order.priceRange || `${order.tickLower} → ${order.tickUpper}`}</span>
                       <span className="text-xs text-gray-600">Tick: {order.tickLower}</span>
                     </div>
-                  </td>
-                  <td className="py-4 px-3">
-                    <button
-                      onClick={() => copyToClipboard(order.owner)}
-                      className="text-sm text-[#FFA931] hover:text-[#FFB951] flex items-center gap-1 transition-colors whitespace-nowrap"
-                    >
-                      {order.owner.slice(0, 6)}...
-                      {order.owner.slice(-4)}
-                      <VscCopy className="w-3 h-3" />
-                    </button>
                   </td>
                   <td className="py-4 px-3 whitespace-nowrap">
                     {(() => {
