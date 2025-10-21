@@ -55,7 +55,7 @@ export const OrbiterBridgeSelectNetwork = observer(({ type }: Props) => {
       onChange={(e) => handleSelectionChange(e.target.value)}
       className="max-w-xs"
     >
-      {selectionList.map((network) => (
+      {selectionList.map((network: { id: number; name: string }) => (
         <SelectItem key={network.id} value={network.id}>
           {network.name}
         </SelectItem>
