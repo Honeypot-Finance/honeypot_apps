@@ -94,7 +94,13 @@ export const appPathsList: Menu[] = [
     title: 'Perp',
     routePath: '/perp',
     afterContent: (
-      <span className="ml-2 px-2 py-0.5 text-[10px] text-[#F59E0B] font-medium bg-[#6B4423]/20 border border-[#6B4423] rounded-full whitespace-nowrap">
+      <span
+        className="ml-2 px-2 py-0.5 text-[10px] font-medium rounded-md whitespace-nowrap"
+        style={{
+          color: '#FF5C91',
+          backgroundColor: '#FF5C9133',
+        }}
+      >
         Coming Soon
       </span>
     ),

@@ -65,7 +65,7 @@ export const Header = (props: HtmlHTMLAttributes<HTMLDivElement>) => {
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
         classNames={{
-          base: 'bg-[#1A0F06] backdrop-blur-md border-b border-[#2a2318] mb-5 sm:mb-10',
+          base: 'bg-transaparent backdrop-blur-md border-b border-transparent mb-5 sm:mb-10 backdrop-blur-none',
           wrapper:
             'max-w-full px-2 sm:px-4 md:px-8 xl:px-0 xl:max-w-[1200px] 2xl:max-w-[1500px] !h-auto py-4 ',
         }}

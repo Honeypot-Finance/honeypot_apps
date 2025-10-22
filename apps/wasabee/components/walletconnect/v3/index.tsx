@@ -10,13 +10,34 @@ import { mock } from 'wagmi/connectors';
 import { useObserver } from 'mobx-react-lite';
 import { wallet } from '@honeypot/shared/lib/wallet';
 
-const ConnectButtonCustom = (props: ButtonHTMLAttributes<any>) => {
+const ConnectButtonCustom = (
+  props: ButtonHTMLAttributes<any> & {
+    chainIcon?: string;
+    chainName?: string;
+  }
+) => {
+  const { chainIcon, chainName, children, ...buttonProps } = props;
+
   return (
     <button
       type="button"
-      className="inline-flex h-10 px-4 justify-center items-center gap-2 bg-[#271A0C] rounded-[100px] text-white font-medium shadow-sm hover:bg-[#1a1410] transition-all whitespace-nowrap border border-[#333333]"
-      {...props}
-    ></button>
+      className="inline-flex h-10 px-4 justify-center items-center gap-2 bg-[#271A0C] rounded-[100px] text-white font-medium border-transparent border-none hover:bg-[#1a1410] transition-all whitespace-nowrap"
+      {...buttonProps}
+    >
+      {children}
+      {chainIcon && chainName && (
+        <>
+          <Image
+            src={chainIcon}
+            alt={chainName}
+            width={18}
+            height={18}
+            className="rounded-full"
+          />
+          <span className="text-white">{chainName}</span>
+        </>
+      )}
+    </button>
   );
 };
 
@@ -56,7 +77,7 @@ export const WalletConnect = () => {
               <div className="flex items-center gap-x-2 lg:gap-x-3">
                 <Link
                   href="/profile"
-                  className="flex items-center justify-center bg-[#271A0C] rounded-full p-1.5 lg:p-2 shrink-0 border border-[#333333] hover:bg-[#1a1410] transition-all"
+                  className="flex items-center justify-center bg-[#271A0C] rounded-xl p-1.5 lg:p-2 shrink-0 hover:bg-[#1a1410] transition-all"
                 >
                   <BsPerson
                     size={24}
@@ -98,6 +119,8 @@ export const WalletConnect = () => {
                       <ConnectButtonCustom
                         onClick={openChainModal}
                         className="text-xs sm:text-sm lg:text-base"
+                        chainIcon={currentChain?.iconUrl}
+                        chainName={currentChain?.displayName}
                       >
                         Wrong network
                       </ConnectButtonCustom>
@@ -110,24 +133,26 @@ export const WalletConnect = () => {
                         type="button"
                         className="flex cursor-pointer bg-[#271A0C] text-white px-3 lg:px-4 py-1.5 lg:py-2 rounded-2xl gap-1.5 lg:gap-2 items-center shrink-0 text-xs sm:text-sm lg:text-base border border-[#333333] hover:bg-[#1a1410] transition-all"
                       >
-                        <Image
-                          src={currentChain?.iconUrl}
-                          alt="icon"
-                          width={18}
-                          height={18}
-                          className="lg:w-5 lg:h-5 rounded-full"
-                        />
+                        {chain.hasIcon && chain.iconUrl && (
+                          <Image
+                            src={chain.iconUrl}
+                            alt="icon"
+                            width={18}
+                            height={18}
+                            className="lg:w-5 lg:h-5 rounded-full"
+                          />
+                        )}
                         <div className="text-nowrap text-white">
-                          {currentChain?.displayName}
+                          {chain.name}
                         </div>
                       </button>
                       <button
                         onClick={openAccountModal}
                         type="button"
-                        className="flex cursor-pointer bg-[#FB9A1B] text-black px-3 lg:px-4 py-1.5 lg:py-2 rounded-2xl gap-1.5 lg:gap-2 items-center shrink-0 text-xs sm:text-sm lg:text-base border border-[#C87304] hover:bg-[#1a1410] transition-all"
+                        className="flex cursor-pointer bg-[#271A0C] text-white px-3 lg:px-4 py-1.5 lg:py-2 rounded-2xl gap-1.5 lg:gap-2 items-center shrink-0 text-xs sm:text-sm lg:text-base hover:bg-[#1a1410] transition-all"
                       >
                         <BiWallet size={18} className="lg:w-5 lg:h-5" />
-                        <span className="whitespace-nowrap text-black">
+                        <span className="whitespace-nowrap text-white">
                           {account.displayName}
                         </span>
                       </button>
