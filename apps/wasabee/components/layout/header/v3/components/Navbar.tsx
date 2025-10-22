@@ -21,6 +21,7 @@ interface SubMenu {
   icon?: {
     src: string;
   };
+  textColor?: string;
 }
 
 export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
@@ -55,7 +56,9 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                       : 'opacity-50'
                   }`}
                 >
-                  {menu.title}
+                  <span style={{ color: menu.textColor || 'inherit' }}>
+                    {menu.title}
+                  </span>
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -77,6 +80,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                       backgroundColor: router.pathname === subMenu.routePath
                         ? '#6B4423'
                         : 'transparent',
+                      color: subMenu.textColor || 'inherit',
                     }}
                     className={`font-medium text-white data-[hover=true]:bg-[#6B4423] data-[hover=true]:opacity-100 p-2 rounded-md transition-all ${
                       router.pathname === subMenu.routePath ? 'opacity-100' : 'opacity-50'
@@ -118,7 +122,11 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                 }
               }}
             >
-              <span className="flex items-center">
+              <span
+                className="flex items-center"
+                style={{ color: menu.textColor || 'inherit' }}
+              >
+                {menu.beforeContent}
                 {menu.title}
                 {menu.afterContent}
               </span>
