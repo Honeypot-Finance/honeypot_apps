@@ -16,6 +16,7 @@ import { formatAmountWithAlphabetSymbol } from '@/lib/algebra/utils/common/forma
 import { Position, ZERO } from '@cryptoalgebra/sdk';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   useEffect,
   useMemo,
@@ -329,29 +330,22 @@ const PoolPage = observer(() => {
 
   return (
     <div className="container mx-auto font-gliker">
-      <div className="px-2 sm:px-4 md:px-8">
+      <div className="max-w-screen-xl mx-auto px-2 sm:px-4 md:px-8">
         <Button
           onClick={() => router.push('/pools')}
           className="flex items-center gap-2 text-white text-xl px-0"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-          <span>Back to Pools</span>
+          <Image
+            src="/images/icons/left_arrow.svg"
+            alt="Back"
+            width={27}
+            height={27}
+          />
+          <span className="text-white/70">Back to Pools</span>
         </Button>
       </div>
       <PageContainer>
-        <CardContainer className="gap-y-6">
+        <CardContainer className="gap-y-6 border-none bg-transparent !px-0">
           <LoadingContainer isLoading={!poolEntity}>
             <PoolHeader
               pool={poolEntity}

@@ -102,7 +102,7 @@ const PoolHeader = observer(
 
             {/* Token title - mobile only */}
             {token0?.symbol && token1?.symbol ? (
-              <h1 className="scroll-m-20 text-xl font-bold tracking-tight">
+              <h1 className="scroll-m-20 text-xl tracking-tight">
                 {`${token0?.symbol} / ${token1?.symbol}`}
               </h1>
             ) : (
@@ -126,7 +126,7 @@ const PoolHeader = observer(
               {/* Left side: Logos and title */}
               <div className="flex items-center gap-3.5">
                 <TokenPairLogos />
-                <h1 className="scroll-m-20 text-2xl font-bold tracking-tight md:text-3xl lg:text-4xl">
+                <h1 className="scroll-m-20 text-2xl tracking-tight md:text-3xl lg:text-4xl">
                   {`${token0?.symbol} / ${token1?.symbol}`}
                 </h1>
                 <span className="px-3 py-2 font-medium rounded-full text-[#479FFF] border border-[#E18A20]/40 bg-[#E18A20]/20">{`${poolFee}`}</span>

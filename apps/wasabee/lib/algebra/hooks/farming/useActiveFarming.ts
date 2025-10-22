@@ -64,7 +64,8 @@ export function useActiveFarming({
     if (!farmings?.eternalFarmings) return;
     if (!poolInfo) return;
     if (!rewardToken) return;
-    if (!bonusRewardToken) return;
+    // Only require bonusRewardToken if the farming has one
+    if (activeFarming?.bonusRewardToken && !bonusRewardToken) return;
     if (!activeFarming || !rewardToken.token) {
       console.debug("Active farming not found");
       setFarmingInfo(null);
@@ -74,7 +75,7 @@ export function useActiveFarming({
     setFarmingInfo({
       farming: activeFarming,
       rewardToken: rewardToken.token,
-      bonusRewardToken: bonusRewardToken.token ?? null,
+      bonusRewardToken: bonusRewardToken?.token ?? null,
       pool: poolInfo.pool,
     });
   }, [farmings, rewardToken, bonusRewardToken, poolInfo, activeFarming]);
