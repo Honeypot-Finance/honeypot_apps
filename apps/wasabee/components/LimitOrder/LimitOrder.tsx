@@ -415,6 +415,10 @@ const LimitOrder = observer(
           return;
         }
 
+        // TypeScript type guards - all required data is definitely defined here
+        if (!limitOrder || !token0 || !token1 || !inputAmount || !publicClient)
+          return;
+
         // Ensure tick is aligned
         if (tickSpacing && limitOrder.tickLower % tickSpacing !== 0) {
           console.log('[SIMULATION] Skipped - Tick not aligned:', {
@@ -489,9 +493,11 @@ const LimitOrder = observer(
               const decoded = decodeErrorResult({
                 abi: limitOrderManagerABI,
                 data: error.cause.data,
-              });
+              }) as unknown as { errorName?: string; args?: unknown[] };
               errorMessage =
-                decoded.errorName || decoded.args?.[0] || errorMessage;
+                decoded.errorName ||
+                (decoded.args?.[0] as string) ||
+                errorMessage;
             } catch (e) {
               // Continue with other extraction methods
             }
@@ -665,15 +671,7 @@ const LimitOrder = observer(
       }
 
       return { blockCreation: false, message: '' };
-    }, [
-      token0,
-      token1,
-      currencies,
-      invertPrice,
-      sellPrice,
-      tick,
-      tickSpacing,
-    ]);
+    }, [token0, token1, currencies, invertPrice, sellPrice, tick, tickSpacing]);
 
     const [plusDisabled, minusDisabled] = useMemo(() => {
       if (
@@ -710,60 +708,49 @@ const LimitOrder = observer(
         return [false, true];
 
       return [false, false];
-    }, [
-      token0,
-      token1,
-      currencies,
-      invertPrice,
-      sellPrice,
-      tick,
-      tickSpacing,
-    ]);
+    }, [token0, token1, currencies, invertPrice, sellPrice, tick, tickSpacing]);
 
-    const setToMarketPrice = useCallback(
-      () => {
-        if (!limitOrderPool || !token0 || !token1 || !tickSpacing) return;
+    const setToMarketPrice = useCallback(() => {
+      if (!limitOrderPool || !token0 || !token1 || !tickSpacing) return;
 
-        const { tickCurrent } = limitOrderPool;
+      const { tickCurrent } = limitOrderPool;
 
-        // Use same logic as initialSellPrice
-        let targetTick: number;
+      // Use same logic as initialSellPrice
+      let targetTick: number;
 
-        if (zeroToOne) {
-          // Selling token0 - need range ABOVE current
-          // Need tickLower > tickCurrent
-          targetTick = Math.ceil((tickCurrent + 1) / tickSpacing) * tickSpacing;
-          targetTick = Math.min(targetTick, TickMath.MAX_TICK);
-        } else {
-          // Selling token1 - need range BELOW current
-          // Need tickUpper < tickCurrent
-          // tickLower < tickCurrent - tickSpacing
-          targetTick =
-            Math.floor((tickCurrent - tickSpacing) / tickSpacing) * tickSpacing;
-          targetTick = Math.max(targetTick, TickMath.MIN_TICK);
-        }
+      if (zeroToOne) {
+        // Selling token0 - need range ABOVE current
+        // Need tickLower > tickCurrent
+        targetTick = Math.ceil((tickCurrent + 1) / tickSpacing) * tickSpacing;
+        targetTick = Math.min(targetTick, TickMath.MAX_TICK);
+      } else {
+        // Selling token1 - need range BELOW current
+        // Need tickUpper < tickCurrent
+        // tickLower < tickCurrent - tickSpacing
+        targetTick =
+          Math.floor((tickCurrent - tickSpacing) / tickSpacing) * tickSpacing;
+        targetTick = Math.max(targetTick, TickMath.MIN_TICK);
+      }
 
-        const _newPrice = invertPrice
-          ? getTickToPrice(token1, token0, targetTick)
-          : getTickToPrice(token0, token1, targetTick);
+      const _newPrice = invertPrice
+        ? getTickToPrice(token1, token0, targetTick)
+        : getTickToPrice(token0, token1, targetTick);
 
-        if (_newPrice) {
-          const limitOrderPrice = _newPrice.toSignificant(8);
-          setSellPrice(limitOrderPrice);
-          console.log('[SET TO MARKET] Set to nearest valid price:', {
-            tickCurrent,
-            targetTick,
-            rangeWillBe: `[${targetTick}, ${targetTick + tickSpacing}]`,
-            tickSpacing,
-            zeroToOne,
-            distanceFromCurrent: Math.abs(targetTick - tickCurrent),
-            direction: zeroToOne ? 'above market' : 'below market',
-            price: limitOrderPrice,
-          });
-        }
-      },
-      [limitOrderPool, token0, token1, tickSpacing, zeroToOne, invertPrice]
-    );
+      if (_newPrice) {
+        const limitOrderPrice = _newPrice.toSignificant(8);
+        setSellPrice(limitOrderPrice);
+        console.log('[SET TO MARKET] Set to nearest valid price:', {
+          tickCurrent,
+          targetTick,
+          rangeWillBe: `[${targetTick}, ${targetTick + tickSpacing}]`,
+          tickSpacing,
+          zeroToOne,
+          distanceFromCurrent: Math.abs(targetTick - tickCurrent),
+          direction: zeroToOne ? 'above market' : 'below market',
+          price: limitOrderPrice,
+        });
+      }
+    }, [limitOrderPool, token0, token1, tickSpacing, zeroToOne, invertPrice]);
 
     // Auto-set initial price when tokens are selected
     useEffect(() => {
