@@ -70,12 +70,15 @@ export const Header = (props: HtmlHTMLAttributes<HTMLDivElement>) => {
             'max-w-full px-2 sm:px-4 md:px-8 xl:px-0 xl:max-w-[1200px] 2xl:max-w-[1500px] !h-auto py-4 ',
         }}
       >
-        <NavbarContent className="flex gap-2 md:gap-8" justify="start">
+        <NavbarContent className="md:hidden !basis-auto !grow-0 !flex-grow-0 w-auto" justify="start">
           <NavbarMenuToggle
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-            className="text-white md:hidden h-8 w-8"
+            className="text-white h-8 w-8"
           />
-          <NavbarBrand className="hidden md:flex gap-4 items-center flex-shrink-0">
+        </NavbarContent>
+
+        <NavbarContent className="hidden md:flex gap-2" justify="start">
+          <NavbarBrand className="flex gap-4 items-center flex-shrink-0">
             <Link href="/" className="flex items-center gap-2 cursor-pointer">
               <Image
                 width={40}
