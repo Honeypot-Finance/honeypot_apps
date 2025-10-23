@@ -257,7 +257,7 @@ describe('Portfolio', () => {
         {
           balance: new BigNumber(100),
           derivedUSD: undefined,
-        } as MockToken,
+        } as unknown as MockToken,
         {
           balance: new BigNumber(50),
           derivedUSD: new BigNumber(2),
