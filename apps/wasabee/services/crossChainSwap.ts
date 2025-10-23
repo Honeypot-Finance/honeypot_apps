@@ -251,10 +251,17 @@ class CrossChainSwapService {
     );
     
     console.log('SDK tokens for chain', chainId, ':', sdkTokens);
-    
+
     const tokens: Token[] = [];
-    const network = getNetworks().find((n: any) => n.chainId === chainId);
+    const networks = getNetworks();
+    const network = networks?.find((n: any) => n.chainId === chainId);
     const TokenClass = sharedLib?.Token;
+
+    // If networks or TokenClass not loaded yet, return empty array
+    if (!networks || !TokenClass) {
+      console.warn('Networks or Token class not loaded yet');
+      return [];
+    }
     
     // Convert to our Token format
     sdkTokens.forEach(sdkToken => {
@@ -1774,7 +1781,8 @@ class CrossChainSwapService {
   // Get RPC URL for a specific chain from the network configuration
   private getRpcUrl(chainId: number): string {
     // Try to get RPC URL from network configuration first
-    const network = getNetworks().find((n: any) => n.chainId === chainId);
+    const networks = getNetworks();
+    const network = networks?.find((n: any) => n.chainId === chainId);
     if (network && network.chain && network.chain.rpcUrls) {
       // Use the default RPC URL from the chain config
       const defaultRpc = network.chain.rpcUrls.default?.http?.[0];
@@ -1932,7 +1940,8 @@ class CrossChainSwapService {
         if (!this.fromToken.isNative && this.fromToken.address !== zeroAddress) {
           // For ERC20 tokens, check allowance
           const { createPublicClient, http, parseUnits } = await import('viem');
-          const network = getNetworks().find((n: any) => n.chainId.toString() === this.fromToken!.chainId);
+          const networks = getNetworks();
+          const network = networks?.find((n: any) => n.chainId.toString() === this.fromToken!.chainId);
           
           if (network) {
             const publicClient = createPublicClient({
