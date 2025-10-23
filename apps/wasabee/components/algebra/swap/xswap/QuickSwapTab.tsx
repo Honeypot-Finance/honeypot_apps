@@ -128,7 +128,7 @@ export const QuickSwapTab = observer(() => {
   }, [quickModeSelectedTokens]);
 
   // Calculate total input value
-  const totalInputValue = useMemo(() => {
+  const totalInputAmount= useMemo(() => {
     return selectedTokens.reduce((acc, token) => {
       return acc.plus(
         new BigNumber(token.balance.toString())
@@ -167,8 +167,8 @@ export const QuickSwapTab = observer(() => {
       : new BigNumber(0);
 
     // Calculate average conversion rate (total output / total input in USD)
-    const avgRate = totalInputValue.gt(0) 
-      ? amount.div(totalInputValue)
+    const avgRate = totalInputAmount.gt(0) 
+      ? amount.div(totalInputAmount)
       : new BigNumber(0);
 
     return { 
@@ -177,7 +177,7 @@ export const QuickSwapTab = observer(() => {
       isCalculating: calculating,
       averageRate: avgRate.toString()
     };
-  }, [quickModeSelectedTokens, xSwap.swaps, selectedTokens, totalInputValue, quickModeOutputToken]);
+  }, [quickModeSelectedTokens, xSwap.swaps, selectedTokens, totalInputAmount, quickModeOutputToken]);
 
   // Check if any swaps need approval
   const needsApproval = useMemo(() => {
@@ -358,19 +358,7 @@ export const QuickSwapTab = observer(() => {
                               const wbera = wallet.currentChain.validatedTokens?.find(
                                 t => t.symbol === 'WBERA'
                               );
-                              
-                              console.log('BERA price debug:', {
-                                tokenSymbol: token.symbol,
-                                tokenPrice: token.derivedUSD,
-                                wberaFound: !!wbera,
-                                wberaPrice: wbera?.derivedUSD,
-                                allTokens: wallet.currentChain.validatedTokens?.map(t => ({
-                                  symbol: t.symbol,
-                                  price: t.derivedUSD
-                                }))
-                              });
-                              
-                              price = wbera?.derivedUSD || '0';
+                                  price = wbera?.derivedUSD || '0';
                             }
                             
                             return DynamicFormatAmount({
@@ -503,7 +491,7 @@ export const QuickSwapTab = observer(() => {
                       {DynamicFormatAmount({
                         amount: new BigNumber(totalOutputValue).gt(0) 
                           ? totalOutputValue 
-                          : totalInputValue.toString(),
+                          : totalInputAmount.toString(),
                         decimals: 2,
                         endWith: '$',
                       })}
@@ -541,7 +529,7 @@ export const QuickSwapTab = observer(() => {
             isDisabled={
               quickModeSelectedTokens.size === 0 || 
               !quickModeOutputToken ||
-              totalInputValue.eq(0)
+              totalInputAmount.eq(0)
             }
             onPress={handleSwap}
             className="min-w-[320px] h-14 bg-[#FFCD4D] border border-black shadow-[2px_2px_0px_0px_#000000] text-black text-lg font-semibold rounded-2xl hover:bg-[#fff6e0] hover:border-black hover:shadow-[2px_2px_0px_0px_#000000] transition-all duration-300"
