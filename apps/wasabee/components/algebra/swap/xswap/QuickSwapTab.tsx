@@ -16,6 +16,7 @@ import { zeroAddress } from 'viem';
 import { Address } from 'viem';
 import { ApprovalState } from '@/types/algebra/types/approve-state';
 
+  const  DUSD=0.000001;
 // Hidden swap component to calculate trade for a token
 const QuickModeSwapCalculator = observer(({ 
   fromToken, 
@@ -30,7 +31,7 @@ const QuickModeSwapCalculator = observer(({
   const typedValue = fromToken.balance.toString();
 
   // Only calculate swap if balance is meaningful (> 0.000001)
-  const shouldCalculate = new BigNumber(typedValue).gt(0.000001);
+  const shouldCalculate = new BigNumber(typedValue).gt(DUSD);
 
   const {
     toggledTrade: trade,
@@ -138,14 +139,14 @@ export const QuickSwapTab = observer(() => {
   }, [selectedTokens]);
 
   // Calculate total output value and amount from registered swaps
-  const { totalOutputValue, totalOutputAmount, isCalculating, averageRate } = useMemo(() => {
+  const { totalOutputValue, totalMemoisedOutputAmount, isCalculating, averageRate } = useMemo(() => {
     const selectedSwaps = xSwap.swaps.filter(swap => 
       quickModeSelectedTokens.has(swap.fromToken.address)
     );
 
     // Count selected tokens with meaningful balance
     const validSelectedTokens = selectedTokens.filter(token => 
-      new BigNumber(token.balance.toString()).gt(0.000001)
+      new BigNumber(token.balance.toString()).gt(DUSD)
     );
 
     // Check if we're still calculating trades:
@@ -157,23 +158,23 @@ export const QuickSwapTab = observer(() => {
       selectedSwaps.some(swap => !swap.trade || !swap.trade.outputAmount)
     );
 
-    const amount = selectedSwaps.reduce((acc, swap) => {
+    const totalOutputAmount= selectedSwaps.reduce((acc, swap) => {
       return acc.plus(swap.trade?.outputAmount?.toFixed(18) ?? '0');
     }, new BigNumber(0));
 
     // Calculate value using output token's current price
     const value = quickModeOutputToken 
-      ? amount.times(quickModeOutputToken.derivedUSD.toString())
+      ? totalOutputAmount.times(quickModeOutputToken.derivedUSD.toString())
       : new BigNumber(0);
 
     // Calculate average conversion rate (total output / total input in USD)
     const avgRate = totalInputAmount.gt(0) 
-      ? amount.div(totalInputAmount)
+      ? totalOutputAmount.div(totalInputAmount)
       : new BigNumber(0);
 
     return { 
       totalOutputValue: value.toString(), 
-      totalOutputAmount: amount.toString(),
+      totalMemoisedOutputAmount: totalOutputAmount.toString(),
       isCalculating: calculating,
       averageRate: avgRate.toString()
     };
@@ -271,7 +272,7 @@ export const QuickSwapTab = observer(() => {
               // Select all tokens with meaningful balance (> 0.000001)
               const validAddresses = new Set(
                 xSwap.sortedTokens
-                  ?.filter(t => new BigNumber(t.balance.toString()).gt(0.000001))
+                  ?.filter(t => new BigNumber(t.balance.toString()).gt(DUSD))
                   .filter(t => t.address !== quickModeOutputToken?.address)
                   .map(t => t.address) || []
               );
@@ -305,7 +306,7 @@ export const QuickSwapTab = observer(() => {
             {xSwap.sortedTokens?.map((token) => {
               const isSelected = quickModeSelectedTokens.has(token.address);
               const isSameAsOutput = quickModeOutputToken?.address === token.address;
-              const hasLowBalance = new BigNumber(token.balance.toString()).lte(0.000001);
+              const hasLowBalance = new BigNumber(token.balance.toString()).lte(DUSD);
               const isDisabled = isSameAsOutput || hasLowBalance;
               
               return (
@@ -477,7 +478,7 @@ export const QuickSwapTab = observer(() => {
                     <div className="text-5xl font-bold text-white mb-2 flex items-center justify-center gap-2">
                       <span>
                         {DynamicFormatAmount({
-                          amount: totalOutputAmount,
+                          amount: totalMemoisedOutputAmount,
                           decimals: 4,
                         })}
                       </span>
