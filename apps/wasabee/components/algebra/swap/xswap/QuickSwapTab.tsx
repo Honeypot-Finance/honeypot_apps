@@ -16,7 +16,7 @@ import { zeroAddress } from 'viem';
 import { Address } from 'viem';
 import { ApprovalState } from '@/types/algebra/types/approve-state';
 
-  const  DUSD=0.000001;
+  const  DUST=0.000001;
 // Hidden swap component to calculate trade for a token
 const QuickModeSwapCalculator = observer(({ 
   fromToken, 
@@ -31,7 +31,7 @@ const QuickModeSwapCalculator = observer(({
   const typedValue = fromToken.balance.toString();
 
   // Only calculate swap if balance is meaningful (> 0.000001)
-  const shouldCalculate = new BigNumber(typedValue).gt(DUSD);
+  const shouldCalculate = new BigNumber(typedValue).gt(DUST);
 
   const {
     toggledTrade: trade,
@@ -146,7 +146,7 @@ export const QuickSwapTab = observer(() => {
 
     // Count selected tokens with meaningful balance
     const validSelectedTokens = selectedTokens.filter(token => 
-      new BigNumber(token.balance.toString()).gt(DUSD)
+      new BigNumber(token.balance.toString()).gt(DUST)
     );
 
     // Check if we're still calculating trades:
@@ -272,7 +272,7 @@ export const QuickSwapTab = observer(() => {
               // Select all tokens with meaningful balance (> 0.000001)
               const validAddresses = new Set(
                 xSwap.sortedTokens
-                  ?.filter(t => new BigNumber(t.balance.toString()).gt(DUSD))
+                  ?.filter(t => new BigNumber(t.balance.toString()).gt(DUST))
                   .filter(t => t.address !== quickModeOutputToken?.address)
                   .map(t => t.address) || []
               );
@@ -306,7 +306,7 @@ export const QuickSwapTab = observer(() => {
             {xSwap.sortedTokens?.map((token) => {
               const isSelected = quickModeSelectedTokens.has(token.address);
               const isSameAsOutput = quickModeOutputToken?.address === token.address;
-              const hasLowBalance = new BigNumber(token.balance.toString()).lte(DUSD);
+              const hasLowBalance = new BigNumber(token.balance.toString()).lte(DUST);
               const isDisabled = isSameAsOutput || hasLowBalance;
               
               return (
