@@ -47,6 +47,8 @@ module.exports = {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     // Map ES modules to CommonJS versions or mocks
     '^uuid$': '<rootDir>/__mocks__/uuid.js',
+    '^superjson$': '<rootDir>/__mocks__/superjson.js',
+    '^localforage$': '<rootDir>/__mocks__/localforage.js',
   },
   testMatch: ['<rootDir>/**/*.test.{ts,tsx}'],
   globals: {
