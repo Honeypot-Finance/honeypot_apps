@@ -167,10 +167,10 @@ describe('All-in-One Vault Leaderboard Hub', () => {
   });
 
   describe('Tab Functionality', () => {
-    it('should show Pot2Pump leaderboard by default', () => {
+    it('should show Points leaderboard by default', () => {
       renderWithProviders(<Leaderboard />);
 
-      expect(screen.getByTestId('pot2pump-leaderboard')).toBeInTheDocument();
+      expect(screen.getByTestId('points-leaderboard')).toBeInTheDocument();
       expect(
         screen.queryByTestId('wasabee-leaderboard')
       ).not.toBeInTheDocument();
@@ -178,7 +178,7 @@ describe('All-in-One Vault Leaderboard Hub', () => {
         screen.queryByTestId('dreampad-leaderboard')
       ).not.toBeInTheDocument();
       expect(
-        screen.queryByTestId('points-leaderboard')
+        screen.queryByTestId('pot2pump-leaderboard')
       ).not.toBeInTheDocument();
     });
 
@@ -338,7 +338,8 @@ describe('All-in-One Vault Leaderboard Hub', () => {
       renderWithProviders(<Leaderboard />);
 
       // Verify that child components are rendered (they should handle their own props)
-      expect(screen.getByTestId('pot2pump-leaderboard')).toBeInTheDocument();
+      // Points is the default tab
+      expect(screen.getByTestId('points-leaderboard')).toBeInTheDocument();
     });
 
     it('should handle child component errors gracefully', () => {
@@ -372,10 +373,11 @@ describe('All-in-One Vault Leaderboard Hub', () => {
 
       const tabs = screen.getAllByRole('tab');
       expect(tabs).toHaveLength(4);
-      expect(tabs[0]).toHaveTextContent('Meme');
+      // Tabs are in order: Points, Dex, Meme, Launchpad (as defined in component)
+      expect(tabs[0]).toHaveTextContent('Points');
       expect(tabs[1]).toHaveTextContent('Dex');
-      expect(tabs[2]).toHaveTextContent('Launchpad');
-      expect(tabs[3]).toHaveTextContent('Points');
+      expect(tabs[2]).toHaveTextContent('Meme');
+      expect(tabs[3]).toHaveTextContent('Launchpad');
     });
 
     it('should support keyboard navigation', async () => {
