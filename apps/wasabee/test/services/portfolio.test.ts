@@ -1,5 +1,4 @@
 
-import { portfolio } from '../../services/portfolio';
 import BigNumber from 'bignumber.js';
 
 // Define types for better type safety
@@ -31,65 +30,86 @@ interface MockNativeToken {
   balance: BigNumber;
 }
 
-// Mock the shared library
-jest.mock('@honeypot/shared', () => {
-  const BigNumber = require('bignumber.js');
-  return {
-    Token: {
-      getToken: jest.fn().mockImplementation((config) => ({
-        ...config,
-        balance: new BigNumber(config.address === '0x123' ? 100 : 50),
-        derivedUSD: config.derivedUSD || '1.0',
-        getBalance: jest.fn().mockResolvedValue(new BigNumber(100)),
-        getIndexerTokenData: jest.fn().mockResolvedValue({}),
-      })),
+// Create mock wallet object BEFORE the mocks
+const createMockWallet = () => ({
+  account: '0x123456789abcdef',
+  isInit: true,
+  currentChainId: 1,
+  publicClient: {
+    getBalance: jest.fn().mockResolvedValue(BigInt(100 * 10**18)),
+  },
+  walletClient: {},
+  currentChain: {
+    validatedTokens: [
+      {
+        address: '0x123',
+        symbol: 'TEST1',
+        name: 'Test Token 1',
+        decimals: 18,
+        derivedUSD: '2.5',
+      },
+      {
+        address: '0x456',
+        symbol: 'TEST2',
+        name: 'Test Token 2',
+        decimals: 6,
+        derivedUSD: '1.0',
+      },
+    ],
+    nativeToken: {
+      address: '0x0',
+      symbol: 'ETH',
+      name: 'Ethereum',
+      decimals: 18,
+      derivedUSD: '2000',
+      balance: new BigNumber(1),
     },
-    AsyncState: jest.fn().mockImplementation((fn) => ({
-      call: fn,
-      isLoading: false,
-      error: null,
-    })),
-    getSubgraphClientByChainId: jest.fn().mockReturnValue({}),
-  };
+    validatedTokensInfo: {},
+  },
 });
 
-// Mock wallet
-jest.mock('@honeypot/shared/lib/wallet', () => {
-  const BigNumber = require('bignumber.js');
-  return {
-    wallet: {
-      account: '0x123456789abcdef',
-      isInit: true,
-      currentChainId: 1,
-      currentChain: {
-        validatedTokens: [
-          {
-            address: '0x123',
-            symbol: 'TEST1',
-            name: 'Test Token 1',
-            decimals: 18,
-            derivedUSD: '2.5',
-          },
-          {
-            address: '0x456',
-            symbol: 'TEST2',
-            name: 'Test Token 2',
-            decimals: 6,
-            derivedUSD: '1.0',
-          },
-        ],
-        nativeToken: {
-          address: '0x0',
-          symbol: 'ETH',
-          name: 'Ethereum',
-          decimals: 18,
-          derivedUSD: '2000',
-          balance: new BigNumber(1),
-        },
-      },
+// Mock wallet FIRST before other imports use it
+jest.mock('@honeypot/shared/lib/wallet/wallet', () => ({
+  wallet: createMockWallet(),
+}));
+
+jest.mock('@honeypot/shared/lib/wallet', () => ({
+  wallet: createMockWallet(),
+}));
+
+// Mock viem's getContract function
+jest.mock('viem', () => ({
+  ...jest.requireActual('viem'),
+  getContract: jest.fn().mockReturnValue({
+    read: {
+      balanceOf: jest.fn().mockResolvedValue(BigInt(100 * 10**18)),
+      allowance: jest.fn().mockResolvedValue(BigInt(0)),
+      name: jest.fn().mockResolvedValue('Test Token'),
+      symbol: jest.fn().mockResolvedValue('TEST'),
+      decimals: jest.fn().mockResolvedValue(18),
+      totalSupply: jest.fn().mockResolvedValue(BigInt(1000000 * 10**18)),
     },
-  };
-});
+    write: {},
+  }),
+}));
+
+// Mock AsyncState from the specific path used in portfolio.ts
+jest.mock('@honeypot/shared/lib/utils/utils', () => ({
+  ...jest.requireActual('@honeypot/shared/lib/utils/utils'),
+  AsyncState: jest.fn().mockImplementation((fn) => ({
+    call: fn,
+    isLoading: false,
+    error: null,
+  })),
+}));
+
+// Mock getSubgraphClientByChainId from the specific path
+jest.mock('@honeypot/shared/hooks/useSubgraphClients', () => ({
+  getSubgraphClientByChainId: jest.fn().mockReturnValue({}),
+}));
+
+// Now import portfolio after all mocks are set up
+import { portfolio } from '../../services/portfolio';
 
 // Mock graphql clients
 jest.mock('../../lib/algebra/graphql/clients/token', () => ({
