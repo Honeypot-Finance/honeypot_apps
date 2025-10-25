@@ -418,11 +418,15 @@ const LimitOrderHistory = observer(
     };
 
     const getOrderStatus = (order: LimitOrder) => {
-      const isClosed = order.liquidity === '0';
       const isKilled = order.killed;
+      const isFilled =
+        (order.epoch?.filled && order.epoch.filled !== '0') ||
+        (order.epoch?.fillTimestamp && order.epoch.fillTimestamp !== '0');
 
-      if (isClosed) {
-        if (isKilled) return { label: 'Cancelled', color: 'text-red-500' };
+      if (isKilled) {
+        return { label: 'Cancelled', color: 'text-red-500' };
+      }
+      if (isFilled) {
         return { label: 'Filled', color: 'text-green-500' };
       }
       return { label: 'Active', color: 'text-yellow-500' };
@@ -598,7 +602,10 @@ const LimitOrderHistory = observer(
                   >
                     <td className="py-4 text-sm text-white pl-2 whitespace-nowrap">
                       {formatTimeAgo(
-                        order.closeTimestamp && order.closeTimestamp !== '0'
+                        order.epoch?.fillTimestamp &&
+                          order.epoch.fillTimestamp !== '0'
+                          ? order.epoch.fillTimestamp
+                          : order.closeTimestamp && order.closeTimestamp !== '0'
                           ? order.closeTimestamp
                           : order.placeTimestamp
                       )}
@@ -668,24 +675,30 @@ const LimitOrderHistory = observer(
                       })()}
                     </td>
                     <td className="py-4 px-3">
-                      {isOpen && order.liquidity !== '0' && !order.killed ? (
-                        <button
-                          onClick={() => handleCancelOrder(order)}
-                          disabled={cancellingOrders.has(order.id)}
-                          className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
-                            cancellingOrders.has(order.id)
-                              ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                              : 'bg-red-600 hover:bg-red-700 text-white'
-                          }`}
-                        >
-                          <XCircle className="w-4 h-4" />
-                          {cancellingOrders.has(order.id)
-                            ? 'Cancelling...'
-                            : 'Cancel'}
-                        </button>
-                      ) : (
-                        <span className="text-sm text-gray-500">-</span>
-                      )}
+                      {(() => {
+                        const isFilled =
+                          (order.epoch?.filled && order.epoch.filled !== '0') ||
+                          (order.epoch?.fillTimestamp &&
+                            order.epoch.fillTimestamp !== '0');
+                        return isOpen && !isFilled && !order.killed ? (
+                          <button
+                            onClick={() => handleCancelOrder(order)}
+                            disabled={cancellingOrders.has(order.id)}
+                            className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                              cancellingOrders.has(order.id)
+                                ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                                : 'bg-red-600 hover:bg-red-700 text-white'
+                            }`}
+                          >
+                            <XCircle className="w-4 h-4" />
+                            {cancellingOrders.has(order.id)
+                              ? 'Cancelling...'
+                              : 'Cancel'}
+                          </button>
+                        ) : (
+                          <span className="text-sm text-gray-500">-</span>
+                        );
+                      })()}
                     </td>
                   </tr>
                 ))

@@ -16,6 +16,9 @@ export type LimitOrder = {
   closeTimestamp: string;
   epoch: {
     id: string;
+    filled: string;
+    totalLiquidity: string;
+    fillTimestamp: string;
   };
   poolData?: {
     token0: {
@@ -89,6 +92,9 @@ export async function fetchLimitOrders(
         closeTimestamp
         epoch {
           id
+          filled
+          totalLiquidity
+          fillTimestamp
         }
       }
     }
@@ -108,12 +114,17 @@ export async function fetchLimitOrders(
 
     let filteredData = data.limitOrders;
 
-    // Filter by open/closed status based on old component logic
+    // Filter by open/closed status based on epoch data
     if (isOpen !== undefined) {
       const beforeFilter = filteredData.length;
       filteredData = filteredData.filter((order) => {
-        // An order is closed if it's either fully filled (liquidity = 0) or killed/cancelled
-        const isClosed = order.liquidity === '0' || order.killed === true;
+        // An order is closed if:
+        // 1. It was filled (epoch.filled > 0 or epoch.fillTimestamp is set)
+        // 2. It was killed/cancelled
+        const isFilled =
+          (order.epoch?.filled && order.epoch.filled !== '0') ||
+          (order.epoch?.fillTimestamp && order.epoch.fillTimestamp !== '0');
+        const isClosed = isFilled || order.killed === true;
         const shouldInclude = isOpen ? !isClosed : isClosed;
 
         return shouldInclude;
