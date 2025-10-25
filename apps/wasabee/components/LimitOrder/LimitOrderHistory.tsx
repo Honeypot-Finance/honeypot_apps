@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { VscCopy } from 'react-icons/vsc';
-import { ExternalLink, ChevronLeft, ChevronRight, XCircle } from 'lucide-react';
+import { ExternalLink, ChevronLeft, ChevronRight, XCircle, Coins } from 'lucide-react';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import {
   useLimitOrders,
@@ -57,15 +57,23 @@ const LimitOrderHistory = observer(
       isSuccess: false,
       isError: false,
       message: '',
+      action: '' as 'cancel' | 'withdraw' | '',
     });
 
     useToastify({
       ...txState,
-      title: txState.isLoading
-        ? 'Cancelling Order'
-        : txState.isSuccess
-        ? 'Order Cancelled'
-        : 'Cancel Failed',
+      title:
+        txState.action === 'withdraw'
+          ? txState.isLoading
+            ? 'Claiming Tokens'
+            : txState.isSuccess
+            ? 'Tokens Claimed'
+            : 'Claim Failed'
+          : txState.isLoading
+          ? 'Cancelling Order'
+          : txState.isSuccess
+          ? 'Order Cancelled'
+          : 'Cancel Failed',
     });
 
     const enrichOrderWithTokenData = async (
@@ -228,13 +236,14 @@ const LimitOrderHistory = observer(
       }
     };
 
-    const handleCancelOrder = async (order: EnrichedLimitOrder) => {
+    const handleWithdrawOrder = async (order: EnrichedLimitOrder) => {
       if (!walletClient || !publicClient || !wallet.account) {
         setTxState({
           isLoading: false,
           isSuccess: false,
           isError: true,
           message: 'Please connect your wallet',
+          action: 'withdraw',
         });
         return;
       }
@@ -248,6 +257,111 @@ const LimitOrderHistory = observer(
           isSuccess: false,
           isError: true,
           message: 'Limit order manager not configured for this chain',
+          action: 'withdraw',
+        });
+        return;
+      }
+
+      setCancellingOrders((prev) => new Set(prev).add(order.id));
+      setTxState({
+        isLoading: true,
+        isSuccess: false,
+        isError: false,
+        message: 'Withdrawing tokens from filled order...',
+        action: 'withdraw',
+      });
+
+      try {
+        console.log('Withdrawing order:', {
+          epoch: order.epoch.id,
+          to: wallet.account,
+        });
+
+        const { request } = await publicClient.simulateContract({
+          address: limitOrderManagerAddress,
+          abi: limitOrderManagerABI,
+          functionName: 'withdraw',
+          args: [BigInt(order.epoch.id), wallet.account as Address],
+          account: wallet.account as Address,
+        });
+
+        const hash = await walletClient.writeContract(request);
+        console.log('Withdraw transaction submitted:', hash);
+
+        // Wait for transaction
+        await publicClient.waitForTransactionReceipt({ hash });
+
+        setTxState({
+          isLoading: false,
+          isSuccess: true,
+          isError: false,
+          message: 'Tokens withdrawn successfully!',
+          action: 'withdraw',
+        });
+
+        // Refresh orders after a short delay
+        setTimeout(() => {
+          refreshOrders();
+          setTxState({
+            isLoading: false,
+            isSuccess: false,
+            isError: false,
+            message: '',
+            action: '',
+          });
+        }, 2000);
+      } catch (error: any) {
+        console.error('Error withdrawing tokens:', error);
+        setTxState({
+          isLoading: false,
+          isSuccess: false,
+          isError: true,
+          message:
+            error.shortMessage ||
+            error.message ||
+            'Failed to withdraw tokens. Already claimed?',
+          action: 'withdraw',
+        });
+        setTimeout(() => {
+          setTxState({
+            isLoading: false,
+            isSuccess: false,
+            isError: false,
+            message: '',
+            action: '',
+          });
+        }, 3000);
+      } finally {
+        setCancellingOrders((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(order.id);
+          return newSet;
+        });
+      }
+    };
+
+    const handleCancelOrder = async (order: EnrichedLimitOrder) => {
+      if (!walletClient || !publicClient || !wallet.account) {
+        setTxState({
+          isLoading: false,
+          isSuccess: false,
+          isError: true,
+          message: 'Please connect your wallet',
+          action: 'cancel',
+        });
+        return;
+      }
+
+      const limitOrderManagerAddress = wallet.currentChain.contracts
+        .limitOrderManager as Address;
+
+      if (!limitOrderManagerAddress) {
+        setTxState({
+          isLoading: false,
+          isSuccess: false,
+          isError: true,
+          message: 'Limit order manager not configured for this chain',
+          action: 'cancel',
         });
         return;
       }
@@ -258,6 +372,7 @@ const LimitOrderHistory = observer(
           isSuccess: false,
           isError: true,
           message: 'Token data not available',
+          action: 'cancel',
         });
         return;
       }
@@ -268,6 +383,7 @@ const LimitOrderHistory = observer(
         isSuccess: false,
         isError: false,
         message: 'Cancelling limit order...',
+        action: 'cancel',
       });
 
       try {
@@ -313,6 +429,7 @@ const LimitOrderHistory = observer(
           isSuccess: true,
           isError: false,
           message: 'Limit order cancelled successfully!',
+          action: 'cancel',
         });
 
         // Refresh orders after a short delay
@@ -323,6 +440,7 @@ const LimitOrderHistory = observer(
             isSuccess: false,
             isError: false,
             message: '',
+            action: '',
           });
         }, 2000);
       } catch (error: any) {
@@ -333,6 +451,7 @@ const LimitOrderHistory = observer(
           isError: true,
           message:
             error.shortMessage || error.message || 'Failed to cancel order',
+          action: 'cancel',
         });
       } finally {
         setCancellingOrders((prev) => {
@@ -680,24 +799,48 @@ const LimitOrderHistory = observer(
                           (order.epoch?.filled && order.epoch.filled !== '0') ||
                           (order.epoch?.fillTimestamp &&
                             order.epoch.fillTimestamp !== '0');
-                        return isOpen && !isFilled && !order.killed ? (
-                          <button
-                            onClick={() => handleCancelOrder(order)}
-                            disabled={cancellingOrders.has(order.id)}
-                            className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
-                              cancellingOrders.has(order.id)
-                                ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                                : 'bg-red-600 hover:bg-red-700 text-white'
-                            }`}
-                          >
-                            <XCircle className="w-4 h-4" />
-                            {cancellingOrders.has(order.id)
-                              ? 'Cancelling...'
-                              : 'Cancel'}
-                          </button>
-                        ) : (
-                          <span className="text-sm text-gray-500">-</span>
-                        );
+
+                        // Show Cancel button for open orders that aren't filled
+                        if (isOpen && !isFilled && !order.killed) {
+                          return (
+                            <button
+                              onClick={() => handleCancelOrder(order)}
+                              disabled={cancellingOrders.has(order.id)}
+                              className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                                cancellingOrders.has(order.id)
+                                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                                  : 'bg-red-600 hover:bg-red-700 text-white'
+                              }`}
+                            >
+                              <XCircle className="w-4 h-4" />
+                              {cancellingOrders.has(order.id)
+                                ? 'Cancelling...'
+                                : 'Cancel'}
+                            </button>
+                          );
+                        }
+
+                        // Show Claim button for filled orders (in closed tab)
+                        if (!isOpen && isFilled && !order.killed) {
+                          return (
+                            <button
+                              onClick={() => handleWithdrawOrder(order)}
+                              disabled={cancellingOrders.has(order.id)}
+                              className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                                cancellingOrders.has(order.id)
+                                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                                  : 'bg-green-600 hover:bg-green-700 text-white'
+                              }`}
+                            >
+                              <Coins className="w-4 h-4" />
+                              {cancellingOrders.has(order.id)
+                                ? 'Claiming...'
+                                : 'Claim'}
+                            </button>
+                          );
+                        }
+
+                        return <span className="text-sm text-gray-500">-</span>;
                       })()}
                     </td>
                   </tr>
