@@ -53,8 +53,6 @@ export async function fetchLimitOrders(
   poolAddress?: string,
   isOpen?: boolean
 ): Promise<LimitOrdersResult> {
-  const skip = (page - 1) * pageSize;
-
   // Build where clause based on old component structure
   const whereConditions: string[] = [];
   if (owner) {
@@ -69,11 +67,13 @@ export async function fetchLimitOrders(
       ? `where: { ${whereConditions.join(', ')} }`
       : '';
 
+  // Fetch a large number of orders to handle client-side filtering
+  // This ensures pagination works correctly after filtering
   const query = `
     query GetLimitOrders {
       limitOrders(
-        first: ${pageSize}
-        skip: ${skip}
+        first: 1000
+        skip: 0
         orderBy: placeTimestamp
         orderDirection: desc
         ${whereClause}
@@ -116,27 +116,45 @@ export async function fetchLimitOrders(
 
     // Filter by open/closed status based on epoch data
     if (isOpen !== undefined) {
-      const beforeFilter = filteredData.length;
       filteredData = filteredData.filter((order) => {
         // An order is closed if:
-        // 1. It was filled (epoch.filled > 0 or epoch.fillTimestamp is set)
+        // 1. It was filled (liquidity is 0 or significantly reduced from initial)
         // 2. It was killed/cancelled
-        const isFilled =
+        // 3. The entire epoch was filled
+        // 4. It was claimed (closeTimestamp !== '0')
+        const currentLiquidity = BigInt(order.liquidity || '0');
+        const initialLiquidity = BigInt(order.initialLiquidity || '0');
+
+        // Order is filled if current liquidity is 0 or significantly less than initial
+        const isOrderFilled = currentLiquidity === BigInt(0) ||
+                             (initialLiquidity > BigInt(0) && currentLiquidity < initialLiquidity);
+
+        // Also check if the entire epoch was filled
+        const isEpochFilled =
           (order.epoch?.filled && order.epoch.filled !== '0') ||
           (order.epoch?.fillTimestamp && order.epoch.fillTimestamp !== '0');
-        const isClosed = isFilled || order.killed === true;
+
+        // Check if order was claimed
+        const isClaimed = order.closeTimestamp && order.closeTimestamp !== '0';
+
+        const isClosed = isOrderFilled || isEpochFilled || order.killed === true || isClaimed;
         const shouldInclude = isOpen ? !isClosed : isClosed;
 
         return shouldInclude;
       });
     }
 
+    // Apply client-side pagination AFTER filtering
+    const skip = (page - 1) * pageSize;
+    const paginatedData = filteredData.slice(skip, skip + pageSize);
+    const hasNextPage = skip + pageSize < filteredData.length;
+
     return {
       status: 'success',
       message: 'Success',
-      data: filteredData,
+      data: paginatedData,
       pageInfo: {
-        hasNextPage: data.limitOrders.length === pageSize,
+        hasNextPage: hasNextPage,
       },
     };
   } catch (error) {

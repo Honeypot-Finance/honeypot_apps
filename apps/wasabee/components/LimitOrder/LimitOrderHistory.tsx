@@ -44,6 +44,7 @@ const LimitOrderHistory = observer(
     const [closedPage, setClosedPage] = useState(1);
     const [hasNextOpenPage, setHasNextOpenPage] = useState(false);
     const [hasNextClosedPage, setHasNextClosedPage] = useState(false);
+    const [showOnlyUnclaimed, setShowOnlyUnclaimed] = useState(false);
     const pageSize = 10;
 
     const { fetchOrders } = useLimitOrders();
@@ -541,9 +542,13 @@ const LimitOrderHistory = observer(
       const isFilled =
         (order.epoch?.filled && order.epoch.filled !== '0') ||
         (order.epoch?.fillTimestamp && order.epoch.fillTimestamp !== '0');
+      const isClaimed = order.closeTimestamp && order.closeTimestamp !== '0';
 
       if (isKilled) {
         return { label: 'Cancelled', color: 'text-red-500' };
+      }
+      if (isClaimed) {
+        return { label: 'Claimed', color: 'text-blue-500' };
       }
       if (isFilled) {
         return { label: 'Filled', color: 'text-green-500' };
@@ -648,6 +653,14 @@ const LimitOrderHistory = observer(
       orders: EnrichedLimitOrder[],
       isOpen: boolean
     ) => {
+      // Filter orders based on unclaimed checkbox
+      const displayOrders = !isOpen && showOnlyUnclaimed
+        ? orders.filter(order => {
+            const isClaimed = order.closeTimestamp && order.closeTimestamp !== '0';
+            return !isClaimed;
+          })
+        : orders;
+
       return (
         <div className="overflow-x-auto -mx-6 px-6">
           <table className="w-full min-w-[900px]">
@@ -691,14 +704,14 @@ const LimitOrderHistory = observer(
                     Loading...
                   </td>
                 </tr>
-              ) : orders.length === 0 ? (
+              ) : displayOrders.length === 0 ? (
                 <tr>
                   <td
                     colSpan={isOpen ? 8 : 7}
                     className="py-8 text-center text-gray-500"
                   >
                     <div className="flex flex-col gap-2">
-                      <span>No {isOpen ? 'open' : 'closed'} orders found</span>
+                      <span>No {isOpen ? 'open' : showOnlyUnclaimed ? 'unclaimed' : 'closed'} orders found</span>
                       <span className="text-xs text-gray-600">
                         Chain:{' '}
                         {wallet.currentChain?.displayName ||
@@ -710,7 +723,7 @@ const LimitOrderHistory = observer(
                   </td>
                 </tr>
               ) : (
-                orders.map((order, index) => (
+                displayOrders.map((order, index) => (
                   <tr
                     key={order.id}
                     className={`border-b border-[#2a2318] transition-colors ${
@@ -799,6 +812,7 @@ const LimitOrderHistory = observer(
                           (order.epoch?.filled && order.epoch.filled !== '0') ||
                           (order.epoch?.fillTimestamp &&
                             order.epoch.fillTimestamp !== '0');
+                        const isClaimed = order.closeTimestamp && order.closeTimestamp !== '0';
 
                         // Show Cancel button for open orders that aren't filled
                         if (isOpen && !isFilled && !order.killed) {
@@ -820,8 +834,8 @@ const LimitOrderHistory = observer(
                           );
                         }
 
-                        // Show Claim button for filled orders (in closed tab)
-                        if (!isOpen && isFilled && !order.killed) {
+                        // Show Claim button for filled orders that haven't been claimed yet
+                        if (!isOpen && isFilled && !order.killed && !isClaimed) {
                           return (
                             <button
                               onClick={() => handleWithdrawOrder(order)}
@@ -861,20 +875,33 @@ const LimitOrderHistory = observer(
         >
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <h2 className="text-xl font-semibold text-white">Limit Orders</h2>
-            <TabsList className="bg-[#1A0F06] w-full sm:w-auto">
-              <TabsTrigger
-                value="open"
-                className="data-[state=active]:bg-[#2A1F14] data-[state=active]:text-white text-gray-400 flex-1 sm:flex-initial"
-              >
-                Opened Orders
-              </TabsTrigger>
-              <TabsTrigger
-                value="closed"
-                className="data-[state=active]:bg-[#2A1F14] data-[state=active]:text-white text-gray-400 flex-1 sm:flex-initial"
-              >
-                Closed Orders
-              </TabsTrigger>
-            </TabsList>
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+              {activeTab === 'closed' && (
+                <label className="flex items-center gap-2 text-sm text-gray-400 cursor-pointer hover:text-white transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={showOnlyUnclaimed}
+                    onChange={(e) => setShowOnlyUnclaimed(e.target.checked)}
+                    className="w-4 h-4 rounded border-gray-600 bg-[#1A0F06] text-green-600 focus:ring-green-500 focus:ring-offset-0 cursor-pointer"
+                  />
+                  <span>Show only unclaimed</span>
+                </label>
+              )}
+              <TabsList className="bg-[#1A0F06] w-full sm:w-auto">
+                <TabsTrigger
+                  value="open"
+                  className="data-[state=active]:bg-[#2A1F14] data-[state=active]:text-white text-gray-400 flex-1 sm:flex-initial"
+                >
+                  Opened Orders
+                </TabsTrigger>
+                <TabsTrigger
+                  value="closed"
+                  className="data-[state=active]:bg-[#2A1F14] data-[state=active]:text-white text-gray-400 flex-1 sm:flex-initial"
+                >
+                  Closed Orders
+                </TabsTrigger>
+              </TabsList>
+            </div>
           </div>
 
           <TabsContent
