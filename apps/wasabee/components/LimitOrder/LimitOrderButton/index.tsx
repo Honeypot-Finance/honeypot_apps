@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/button';
 import { useNeedAllowance } from '@/lib/algebra/hooks/common/useNeedAllowance';
 import { useApprove } from '@/lib/algebra/hooks/common/useApprove';
 import { Token, tryParseTick } from '@cryptoalgebra/sdk';
@@ -546,7 +546,7 @@ export const LimitOrderButton = ({
     onSuccess,
   ]);
 
-  if (!account) return <Button onClick={openConnectModal}>Connect Wallet</Button>;
+  if (!account) return <Button onPress={openConnectModal}>Connect Wallet</Button>;
 
   if (!limitOrderPlugin)
     return (
@@ -573,7 +573,7 @@ export const LimitOrderButton = ({
     return (
       <Button
         disabled={approvalState === ApprovalState.PENDING}
-        onClick={() => approvalCallback && approvalCallback()}
+        onPress={() => approvalCallback && approvalCallback()}
       >
         {approvalState === ApprovalState.PENDING ? (
           <Loader />
@@ -652,7 +652,7 @@ export const LimitOrderButton = ({
         !isReady ||
         !!simulationError
       }
-      onClick={() => {
+      onPress={() => {
         console.log(
           '[PLACE LIMIT ORDER]',
           {
