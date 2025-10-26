@@ -335,9 +335,10 @@ const TokenCardV3 = ({
   }, [value]);
 
   const balanceString = useMemo(() => {
+    if (!account) return '';
     if (isLoading || !balance) return 'Loading...';
     return formatBalance(balance.formatted);
-  }, [balance, isLoading]);
+  }, [balance, isLoading, account]);
 
   const handleInput = useMemo(
     () =>

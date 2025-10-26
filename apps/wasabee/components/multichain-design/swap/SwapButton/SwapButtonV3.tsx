@@ -16,6 +16,7 @@ import {
   warningSeverity,
 } from '@/lib/algebra/utils/swap/prices';
 import { useToastify } from '@/lib/hooks/useContractToastify';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { wallet } from '@honeypot/shared/lib/wallet';
@@ -25,6 +26,7 @@ import { TradeState } from '@/types/algebra/types/trade-state';
 import { useCallback, useEffect, useMemo } from 'react';
 
 const SwapButtonV3 = ({ onSwapSuccess }: { onSwapSuccess?: () => void }) => {
+  const { openConnectModal } = useConnectModal();
   const { isExpertMode } = useUserState();
   const { independentField, typedValue } = useSwapState();
   const {
@@ -194,6 +196,15 @@ const SwapButtonV3 = ({ onSwapSuccess }: { onSwapSuccess?: () => void }) => {
         )}
       </Button>
     );
+
+  // Handle wallet not connected - show clickable button
+  if (swapInputError === 'Connect Wallet') {
+    return (
+      <Button onPress={() => openConnectModal?.()}>
+        Connect Wallet
+      </Button>
+    );
+  }
 
   if (routeNotFound && userHasSpecifiedInputOutput)
     return (

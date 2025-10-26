@@ -61,10 +61,11 @@ const TokenCard = ({
   });
 
   const balanceString = useMemo(() => {
+    if (!account) return '';
     if (isLoading || !balance) return 'Loading...';
 
     return formatBalance(balance.formatted);
-  }, [balance, isLoading]);
+  }, [balance, isLoading, account]);
 
   const handleInput = useCallback((value: string) => {
     if (value === '.') value = '0.';
