@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
+import { useRouter } from 'next/router';
 import { NextLayoutPage } from '@/types/nextjs';
 import { trpcClient } from '@/lib/trpc';
 import { WrappedToastify } from '@/lib/wrappedToastify';
 
 const PerpPage: NextLayoutPage = observer(() => {
+  const router = useRouter();
   const [inviteCode, setInviteCode] = useState('');
   const [error, setError] = useState('');
   const [isShaking, setIsShaking] = useState(false);
@@ -12,6 +14,13 @@ const PerpPage: NextLayoutPage = observer(() => {
   const [email, setEmail] = useState('');
   const [emailSubmitted, setEmailSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check URL parameter to auto-open waitlist modal
+  useEffect(() => {
+    if (router.query.waitlist === 'true' || router.query.join === 'waitlist') {
+      setShowWaitlistModal(true);
+    }
+  }, [router.query]);
 
   const handleSubmit = () => {
     // Placeholder validation - all codes are rejected for now
