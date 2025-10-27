@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { observer } from 'mobx-react-lite';
 import { VscCopy } from 'react-icons/vsc';
 import { ExternalLink, ChevronLeft, ChevronRight, XCircle, Coins } from 'lucide-react';
@@ -34,6 +34,22 @@ type EnrichedLimitOrder = LimitOrder & {
   priceRange?: string;
 };
 
+// Token metadata cache to avoid redundant RPC calls
+interface TokenMetadata {
+  symbol: string;
+  decimals: number;
+  address: string;
+}
+
+interface PoolTokens {
+  token0: string;
+  token1: string;
+}
+
+// Global cache (shared across component instances for the same chain)
+const tokenCache = new Map<string, TokenMetadata>();
+const poolTokensCache = new Map<string, PoolTokens>();
+
 const LimitOrderHistory = observer(
   ({ poolAddress, ownerAddress, refreshKey }: LimitOrderHistoryProps) => {
     const [openOrders, setOpenOrders] = useState<EnrichedLimitOrder[]>([]);
@@ -61,6 +77,20 @@ const LimitOrderHistory = observer(
       action: '' as 'cancel' | 'withdraw' | '',
     });
 
+    // Track enriched orders to avoid re-enriching
+    const enrichedOrdersCache = useRef<Map<string, EnrichedLimitOrder>>(new Map());
+    const lastChainId = useRef(wallet.currentChainId);
+
+    // Clear cache when chain changes
+    useEffect(() => {
+      if (lastChainId.current !== wallet.currentChainId) {
+        tokenCache.clear();
+        poolTokensCache.clear();
+        enrichedOrdersCache.current.clear();
+        lastChainId.current = wallet.currentChainId;
+      }
+    });
+
     useToastify({
       ...txState,
       title:
@@ -77,117 +107,164 @@ const LimitOrderHistory = observer(
           : 'Cancel Failed',
     });
 
+    const getTokenMetadata = async (tokenAddress: string): Promise<TokenMetadata> => {
+      // Create cache key with chainId to avoid cross-chain collisions
+      const cacheKey = `${wallet.currentChainId}-${tokenAddress.toLowerCase()}`;
+
+      // Check cache first
+      const cached = tokenCache.get(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      if (!publicClient) {
+        throw new Error('Public client not available');
+      }
+
+      // Fetch token metadata
+      const erc20Abi = [
+        {
+          inputs: [],
+          name: 'symbol',
+          outputs: [{ internalType: 'string', name: '', type: 'string' }],
+          stateMutability: 'view',
+          type: 'function',
+        },
+        {
+          inputs: [],
+          name: 'decimals',
+          outputs: [{ internalType: 'uint8', name: '', type: 'uint8' }],
+          stateMutability: 'view',
+          type: 'function',
+        },
+      ];
+
+      const [symbol, decimals] = await Promise.all([
+        publicClient.readContract({
+          address: tokenAddress as Address,
+          abi: erc20Abi,
+          functionName: 'symbol',
+        }),
+        publicClient.readContract({
+          address: tokenAddress as Address,
+          abi: erc20Abi,
+          functionName: 'decimals',
+        }),
+      ]);
+
+      const metadata: TokenMetadata = {
+        symbol: symbol as string,
+        decimals: decimals as number,
+        address: tokenAddress,
+      };
+
+      // Cache the result
+      tokenCache.set(cacheKey, metadata);
+      return metadata;
+    };
+
+    const getPoolTokens = async (poolAddress: string): Promise<PoolTokens> => {
+      // Create cache key with chainId
+      const cacheKey = `${wallet.currentChainId}-${poolAddress.toLowerCase()}`;
+
+      // Check cache first
+      const cached = poolTokensCache.get(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      if (!publicClient) {
+        throw new Error('Public client not available');
+      }
+
+      // Fetch token addresses from pool
+      const [token0Address, token1Address] = await Promise.all([
+        publicClient.readContract({
+          address: poolAddress as Address,
+          abi: [
+            {
+              inputs: [],
+              name: 'token0',
+              outputs: [
+                { internalType: 'address', name: '', type: 'address' },
+              ],
+              stateMutability: 'view',
+              type: 'function',
+            },
+          ],
+          functionName: 'token0',
+        }),
+        publicClient.readContract({
+          address: poolAddress as Address,
+          abi: [
+            {
+              inputs: [],
+              name: 'token1',
+              outputs: [
+                { internalType: 'address', name: '', type: 'address' },
+              ],
+              stateMutability: 'view',
+              type: 'function',
+            },
+          ],
+          functionName: 'token1',
+        }),
+      ]);
+
+      const poolTokens: PoolTokens = {
+        token0: token0Address as string,
+        token1: token1Address as string,
+      };
+
+      // Cache the result
+      poolTokensCache.set(cacheKey, poolTokens);
+      return poolTokens;
+    };
+
     const enrichOrderWithTokenData = async (
       order: LimitOrder
     ): Promise<EnrichedLimitOrder> => {
       if (!publicClient) return order;
 
       try {
-        // Fetch token addresses and metadata from pool
-        const [token0Address, token1Address] = await Promise.all([
-          publicClient.readContract({
-            address: order.pool as Address,
-            abi: [
-              {
-                inputs: [],
-                name: 'token0',
-                outputs: [
-                  { internalType: 'address', name: '', type: 'address' },
-                ],
-                stateMutability: 'view',
-                type: 'function',
-              },
-            ],
-            functionName: 'token0',
-          }),
-          publicClient.readContract({
-            address: order.pool as Address,
-            abi: [
-              {
-                inputs: [],
-                name: 'token1',
-                outputs: [
-                  { internalType: 'address', name: '', type: 'address' },
-                ],
-                stateMutability: 'view',
-                type: 'function',
-              },
-            ],
-            functionName: 'token1',
-          }),
+        // Check if we've already enriched this order
+        const cachedEnrichedOrder = enrichedOrdersCache.current.get(order.id);
+        if (cachedEnrichedOrder) {
+          // Update order data while keeping token metadata
+          return {
+            ...order,
+            token0: cachedEnrichedOrder.token0,
+            token1: cachedEnrichedOrder.token1,
+            priceRange: cachedEnrichedOrder.priceRange,
+          };
+        }
+
+        // Get pool tokens (cached)
+        const poolTokens = await getPoolTokens(order.pool);
+
+        // Get token metadata (cached)
+        const [token0Metadata, token1Metadata] = await Promise.all([
+          getTokenMetadata(poolTokens.token0),
+          getTokenMetadata(poolTokens.token1),
         ]);
-
-        // Fetch token metadata
-        const erc20Abi = [
-          {
-            inputs: [],
-            name: 'symbol',
-            outputs: [{ internalType: 'string', name: '', type: 'string' }],
-            stateMutability: 'view',
-            type: 'function',
-          },
-          {
-            inputs: [],
-            name: 'decimals',
-            outputs: [{ internalType: 'uint8', name: '', type: 'uint8' }],
-            stateMutability: 'view',
-            type: 'function',
-          },
-        ];
-
-        const [token0Symbol, token0Decimals, token1Symbol, token1Decimals] =
-          await Promise.all([
-            publicClient.readContract({
-              address: token0Address as Address,
-              abi: erc20Abi,
-              functionName: 'symbol',
-            }),
-            publicClient.readContract({
-              address: token0Address as Address,
-              abi: erc20Abi,
-              functionName: 'decimals',
-            }),
-            publicClient.readContract({
-              address: token1Address as Address,
-              abi: erc20Abi,
-              functionName: 'symbol',
-            }),
-            publicClient.readContract({
-              address: token1Address as Address,
-              abi: erc20Abi,
-              functionName: 'decimals',
-            }),
-          ]);
 
         const token0 = new Token(
           wallet.currentChainId,
-          token0Address as string,
-          token0Decimals as number,
-          token0Symbol as string
+          token0Metadata.address,
+          token0Metadata.decimals,
+          token0Metadata.symbol
         );
         const token1 = new Token(
           wallet.currentChainId,
-          token1Address as string,
-          token1Decimals as number,
-          token1Symbol as string
+          token1Metadata.address,
+          token1Metadata.decimals,
+          token1Metadata.symbol
         );
 
         // Calculate limit price (use tickLower as the limit execution price)
         const tickLower = Number(order.tickLower);
 
-        console.log('Calculating limit price for order:', {
-          orderId: order.id,
-          tickLower,
-          token0Symbol: token0.symbol,
-          token1Symbol: token1.symbol,
-          zeroToOne: order.zeroToOne,
-        });
-
         const limitPrice = tickToPrice(token0, token1, tickLower);
-
-        console.log('Limit price object:', {
-          limitPrice: limitPrice.toSignificant(6),
-        });
 
         // For limit orders, show the execution price with direction
         // zeroToOne = true means selling token0 for token1
@@ -198,14 +275,17 @@ const LimitOrderHistory = observer(
               token1.symbol
             }`;
 
-        console.log('Final limit price display:', priceRange);
-
-        return {
+        const enrichedOrder: EnrichedLimitOrder = {
           ...order,
           token0,
           token1,
           priceRange,
         };
+
+        // Cache the enriched order
+        enrichedOrdersCache.current.set(order.id, enrichedOrder);
+
+        return enrichedOrder;
       } catch (error) {
         console.error('Error enriching order:', error, {
           orderId: order.id,
@@ -311,16 +391,19 @@ const LimitOrderHistory = observer(
             action: '',
           });
         }, 2000);
-      } catch (error: any) {
+      } catch (error) {
         console.error('Error withdrawing tokens:', error);
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : (error as { shortMessage?: string; message?: string })?.shortMessage ||
+              (error as { shortMessage?: string; message?: string })?.message ||
+              'Failed to withdraw tokens. Already claimed?';
         setTxState({
           isLoading: false,
           isSuccess: false,
           isError: true,
-          message:
-            error.shortMessage ||
-            error.message ||
-            'Failed to withdraw tokens. Already claimed?',
+          message: errorMessage,
           action: 'withdraw',
         });
         setTimeout(() => {
@@ -444,14 +527,19 @@ const LimitOrderHistory = observer(
             action: '',
           });
         }, 2000);
-      } catch (error: any) {
+      } catch (error) {
         console.error('Error cancelling order:', error);
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : (error as { shortMessage?: string; message?: string })?.shortMessage ||
+              (error as { shortMessage?: string; message?: string })?.message ||
+              'Failed to cancel order';
         setTxState({
           isLoading: false,
           isSuccess: false,
           isError: true,
-          message:
-            error.shortMessage || error.message || 'Failed to cancel order',
+          message: errorMessage,
           action: 'cancel',
         });
       } finally {
@@ -512,10 +600,11 @@ const LimitOrderHistory = observer(
       // Initial load with loading indicator
       loadOrders(true);
 
-      // Set up polling to refresh orders every 5 seconds (without loading indicator to avoid flickering)
+      // Set up polling to refresh orders every 15 seconds (without loading indicator to avoid flickering)
+      // Reduced frequency + caching significantly reduces RPC calls
       const intervalId = setInterval(() => {
         loadOrders(false);
-      }, 5000);
+      }, 15000);
 
       // Cleanup interval on unmount or dependency change
       return () => {
@@ -556,31 +645,32 @@ const LimitOrderHistory = observer(
       return { label: 'Active', color: 'text-yellow-500' };
     };
 
-    const copyToClipboard = (text: string) => {
-      navigator.clipboard.writeText(text);
-    };
+    // Utility functions (keeping for potential future use)
+    // const copyToClipboard = (text: string) => {
+    //   navigator.clipboard.writeText(text);
+    // };
 
-    const openInExplorer = (txHash: string) => {
-      let explorerUrl = 'https://etherscan.io';
+    // const openInExplorer = (txHash: string) => {
+    //   let explorerUrl = 'https://etherscan.io';
 
-      if (wallet.currentChainId === 56) {
-        explorerUrl = 'https://bscscan.com';
-      } else if (wallet.currentChainId === 137) {
-        explorerUrl = 'https://polygonscan.com';
-      } else if (wallet.currentChainId === 42161) {
-        explorerUrl = 'https://arbiscan.io';
-      } else if (wallet.currentChainId === 10) {
-        explorerUrl = 'https://optimistic.etherscan.io';
-      } else if (wallet.currentChainId === 8453) {
-        explorerUrl = 'https://basescan.org';
-      } else if (wallet.currentChainId === 80084) {
-        explorerUrl = 'https://bartio.beratrail.io';
-      } else if (wallet.currentChainId === 80094) {
-        explorerUrl = 'https://berascan.com';
-      }
+    //   if (wallet.currentChainId === 56) {
+    //     explorerUrl = 'https://bscscan.com';
+    //   } else if (wallet.currentChainId === 137) {
+    //     explorerUrl = 'https://polygonscan.com';
+    //   } else if (wallet.currentChainId === 42161) {
+    //     explorerUrl = 'https://arbiscan.io';
+    //   } else if (wallet.currentChainId === 10) {
+    //     explorerUrl = 'https://optimistic.etherscan.io';
+    //   } else if (wallet.currentChainId === 8453) {
+    //     explorerUrl = 'https://basescan.org';
+    //   } else if (wallet.currentChainId === 80084) {
+    //     explorerUrl = 'https://bartio.beratrail.io';
+    //   } else if (wallet.currentChainId === 80094) {
+    //     explorerUrl = 'https://berascan.com';
+    //   }
 
-      window.open(`${explorerUrl}/tx/${txHash}`, '_blank');
-    };
+    //   window.open(`${explorerUrl}/tx/${txHash}`, '_blank');
+    // };
 
     const calculateTokenAmount = (order: EnrichedLimitOrder) => {
       if (!order.token0 || !order.token1) {
