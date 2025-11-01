@@ -573,8 +573,8 @@ export const berachainNetwork = new Network({
       isStableCoin: true,
     },
     '0xa32bFAf94E37911D08531212d32EADe94389243b': {
-      name: 'PBTC',
-      symbol: 'Pots Buy This Coin',
+      name: 'Pots Buy This Coin',
+      symbol: 'PBTC',
       decimals: 18,
       logoURI: '/images/icons/tokens/pbtc.png',
     },

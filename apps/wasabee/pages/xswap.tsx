@@ -51,7 +51,7 @@ const XSwapPage = observer(() => {
 
   return (
     <div className="w-full px-4 py-4 flex gap-4 justify-start items-start text-xs">
-      <HoneyContainer className="w-full max-w-[1024px] mx-auto">
+      <HoneyContainer className="w-full max-w-[1440px] mx-auto">
         <Tabs
           classNames={{
             tab: 'px-2 sm:px-3 sm:h-10 text-xs sm:text-sm',

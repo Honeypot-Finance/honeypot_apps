@@ -302,7 +302,7 @@ export const QuickSwapTab = observer(() => {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold">Select token to swap</h3>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pr-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 max-h-[60vh] overflow-y-auto pr-2">
             {xSwap.sortedTokens?.map((token) => {
               const isSelected = quickModeSelectedTokens.has(token.address);
               const isSameAsOutput = quickModeOutputToken?.address === token.address;
@@ -334,26 +334,30 @@ export const QuickSwapTab = observer(() => {
                       : 'border-[#333333]'
                   )}
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
                       <TokenLogo token={token} size={40} />
-                      <div>
-                        <div className="text-white font-bold text-base flex items-center gap-2">
-                          {DynamicFormatAmount({
-                            amount: token.balance.toString(),
-                            decimals: 4,
-                          })}{' '}
-                          {token.symbol}
+                      <div className="flex flex-col gap-0 flex-1 min-w-0 overflow-hidden">
+                        <div className="flex items-center gap-2">
+                          <span className="text-white font-bold text-base">
+                            {DynamicFormatAmount({
+                              amount: token.balance.toString(),
+                              decimals: 4,
+                            })}
+                          </span>
                           {hasLowBalance && (
-                            <span className="text-xs text-red-400 font-normal">
+                            <span className="text-xs text-red-400 font-normal whitespace-nowrap">
                               (too low)
                             </span>
                           )}
                         </div>
-                        <div className="text-white/60 text-sm">
+                        <div className="text-white/80 text-sm">
+                          {token.symbol}
+                        </div>
+                        <div className="text-white/60 text-sm whitespace-nowrap">
                           {(() => {
                             let price = token.derivedUSD;
-                            
+
                             // If native token has no price, try to get WBERA's price
                             if ((!price || price === '0') && token.isNative) {
                               const wbera = wallet.currentChain.validatedTokens?.find(
@@ -361,7 +365,7 @@ export const QuickSwapTab = observer(() => {
                               );
                                   price = wbera?.derivedUSD || '0';
                             }
-                            
+
                             return DynamicFormatAmount({
                               amount: new BigNumber(token.balance.toString())
                                 .times(price)
@@ -376,7 +380,7 @@ export const QuickSwapTab = observer(() => {
                     <Checkbox
                       isSelected={isSelected}
                       isDisabled={isDisabled}
-                      className="pointer-events-none"
+                      className="pointer-events-none ml-2 flex-shrink-0"
                     />
                   </div>
                 </div>
@@ -466,7 +470,7 @@ export const QuickSwapTab = observer(() => {
                     <div className="flex items-center justify-center gap-2 mb-2">
                       <div className="shimmer h-12 w-48"></div>
                       {quickModeOutputToken && (
-                        <span className="text-2xl text-white/60">
+                        <span className="text-xl sm:text-2xl text-white/60">
                           {quickModeOutputToken.symbol}
                         </span>
                       )}
@@ -475,7 +479,7 @@ export const QuickSwapTab = observer(() => {
                   </>
                 ) : (
                   <>
-                    <div className="text-5xl font-bold text-white mb-2 flex items-center justify-center gap-2">
+                    <div className="text-3xl sm:text-5xl font-bold text-white mb-2 flex items-center justify-center gap-2">
                       <span>
                         {DynamicFormatAmount({
                           amount: totalMemoisedOutputAmount,
@@ -483,7 +487,7 @@ export const QuickSwapTab = observer(() => {
                         })}
                       </span>
                       {quickModeOutputToken && (
-                        <span className="text-2xl text-white/60">
+                        <span className="text-xl sm:text-2xl text-white/60">
                           {quickModeOutputToken.symbol}
                         </span>
                       )}
