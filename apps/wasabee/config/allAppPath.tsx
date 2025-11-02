@@ -129,7 +129,7 @@ export const appPathsList: Menu[] = [
           backgroundColor: '#FF5C9133',
         }}
       >
-        Coming Soon
+        Beta
       </span>
     ),
   },
