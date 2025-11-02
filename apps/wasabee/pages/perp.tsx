@@ -48,7 +48,7 @@ const PerpPage: NextLayoutPage = observer(() => {
           // Show success toast
           WrappedToastify.success({
             title: 'Welcome to the waitlist!',
-            message: 'We\'ll notify you when our Perp DEX launches.',
+            message: "We'll notify you when our Perp DEX launches.",
           });
 
           // Close modal after 2 seconds
@@ -201,7 +201,7 @@ const PerpPage: NextLayoutPage = observer(() => {
                 {/* Character Image */}
                 <div className="w-full">
                   <img
-                    src="/images/perp/perp-character.png"
+                    src="/images/perp/perp-character.jpeg"
                     alt="Perp Character"
                     className="w-full h-auto object-cover"
                   />
