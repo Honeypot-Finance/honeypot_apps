@@ -156,7 +156,7 @@ const MyPositions = ({
             columns={myPositionsColumns}
             data={positions.filter((pos) => pos.liquidityUSD > 0)}
             action={handlePositionSelect}
-            selectedRow={modal.selectedId || undefined}
+            selectedRow={modal.selectedId !== null ? Number(modal.selectedId) : undefined}
             showPagination={false}
           />
         </div>
