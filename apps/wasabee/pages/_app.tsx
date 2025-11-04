@@ -33,6 +33,7 @@ import { createWagmiConfig } from '@honeypot/shared/config/wagmi';
 import { NextUIProvider } from '@nextui-org/react';
 import { merge } from 'lodash';
 import { useVaultDataPrefetch } from '@/hooks/useVaultDataPrefetch';
+import { useChainFromUrl } from '@/hooks/useChainFromUrl';
 
 const config = createWagmiConfig();
 
@@ -66,7 +67,8 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
     config,
   });
 
-
+  // Automatically switch chain based on URL parameter
+  useChainFromUrl();
 
   useEffect(() => {
     wallet.initWallet(walletClient);

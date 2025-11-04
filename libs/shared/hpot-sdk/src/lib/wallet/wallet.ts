@@ -81,10 +81,16 @@ export class Wallet {
 
   changeChain(chainId: number) {
     this.currentChainId = chainId;
-    this.walletClient.switchChain({
-      id: chainId,
-    });
-    this.initWallet(this.walletClient);
+    if (this.walletClient) {
+      this.walletClient.switchChain({
+        id: chainId,
+      });
+      this.initWallet(this.walletClient);
+    } else {
+      // If walletClient is not available, just update the chainId
+      // The wallet will use this chainId when it initializes
+      console.log('[Wallet.changeChain] WalletClient not available, setting chainId only');
+    }
   }
 
   async initWallet(walletClient?: WalletClient) {
@@ -92,7 +98,13 @@ export class Wallet {
     console.log('[Wallet.initWallet] networks from import:', networks);
     console.log('[Wallet.initWallet] networks count:', networks?.length);
     this.networks = networks;
-    this.currentChainId = walletClient?.chain?.id || DEFAULT_CHAIN_ID;
+
+    // Only update currentChainId if it hasn't been explicitly set (e.g., from URL parameter)
+    // If currentChainId is already set to something other than DEFAULT_CHAIN_ID, preserve it
+    const hasExplicitChainId = this.currentChainId && this.currentChainId !== DEFAULT_CHAIN_ID;
+    if (!hasExplicitChainId) {
+      this.currentChainId = walletClient?.chain?.id || DEFAULT_CHAIN_ID;
+    }
     console.log('[Wallet.initWallet] currentChainId:', this.currentChainId);
     // Use safe localStorage helper for server-side compatibility
     const mockAccount = safeLocalStorage.getItem('mockAccount');
