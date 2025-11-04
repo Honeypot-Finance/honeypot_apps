@@ -440,19 +440,28 @@ const PoolPage = observer(() => {
 });
 
 const NoPositions = ({ poolId }: { poolId: Address }) => (
-  <div className=" flex flex-col items-start animate-fade-in font-bold px-8 py-16 rounded-[24px] border border-black bg-white shadow-[4px_4px_0px_0px_#D29A0D]">
-    <h2 className="text-2xl font-bold text-black">
-      {`You don't have positions for this pool`}
+  <div className="flex flex-col items-center justify-center animate-fade-in py-16 px-8">
+    <Image
+      src="/images/bera/labo-bera.svg"
+      alt="No positions"
+      width={200}
+      height={200}
+      className="mb-6"
+    />
+    <h2 className="text-2xl font-bold text-white mb-2">
+      You don't have positions for this pool
     </h2>
-    <p className="text-black text-md font-semibold my-4">{`Let's create one!`}</p>
+    <p className="text-gray-400 text-base mb-6">
+      Create a position in a few easy steps!
+    </p>
     <Button className="gap-2" asChild>
       <Link
         className={cn(
-          'flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#2D2D2D] bg-[#FFCD4D] rounded-2xl shadow-[2px_2px_0px_0px_#000] hover:bg-[#FFD666]'
+          'flex items-center gap-x-2 px-6 py-3 cursor-pointer bg-[#FDB500] rounded-lg hover:bg-[#FFD666] text-black font-medium'
         )}
         href={`/new-position/${poolId.toLowerCase()}`}
       >
-        <Plus className="text-black" />
+        <Plus className="text-black w-5 h-5" />
         <span className="text-black">Create Position</span>
       </Link>
     </Button>
