@@ -16,7 +16,6 @@ interface CustomBarProps {
   width: number;
   height: number;
   fill: string;
-  percent: number | undefined;
   isCurrent: boolean;
 }
 
@@ -44,7 +43,6 @@ const CustomBar = ({
   width,
   height,
   fill,
-  percent,
   isCurrent,
 }: CustomBarProps) => {
   return (
@@ -55,21 +53,11 @@ const CustomBar = ({
           <stop offset="1" stopColor="rgba(35, 133, 222, 0.05)" />
         </linearGradient>
       </defs>
-      {percent && (
-        <text
-          x={x + 10}
-          y={y - 10}
-          fill="#202020"
-          fontSize={'14px'}
-          fontWeight={600}
-          textAnchor="middle"
-        >{`${percent.toFixed(0)}%`}</text>
-      )}
       {isCurrent && (
         <text
           x={x + 10}
           y={y - 10}
-          fill="#202020"
+          fill="#FFFFFF"
           fontSize={'14px'}
           fontWeight={600}
           textAnchor="middle"
@@ -200,7 +188,7 @@ export function Chart({
                   <text
                     x={props.x}
                     y={props.y + 20}
-                    fill="black"
+                    fill="#FFFFFF"
                     textAnchor="middle"
                     fontSize={'12px'}
                     width={'12px'}
@@ -223,25 +211,6 @@ export function Chart({
               fill="#2172E5"
               isAnimationActive={false}
               shape={(props: any) => {
-                const price = props[isSorted ? 'price0' : 'price1'];
-                let percent = 0;
-                if (
-                  price === +Number(leftPrice).toFixed(8) ||
-                  price === +Number(rightPrice).toFixed(8)
-                ) {
-                  const currentPriceIdx = formattedData.findIndex(
-                    (v: any) => v.isCurrent
-                  );
-                  const currentPriceRealIndex =
-                    formattedData[currentPriceIdx].index;
-                  percent =
-                    (props.payload.index < currentPriceRealIndex ? -1 : 1) *
-                    ((Math.max(props.payload.index, currentPriceRealIndex) -
-                      Math.min(props.payload.index, currentPriceRealIndex)) /
-                      currentPriceRealIndex) *
-                    100;
-                }
-
                 // If no other positions, set a default height
                 const isInRange =
                   props.payload.price0 >= Number(leftPrice) &&
@@ -265,7 +234,6 @@ export function Chart({
                     x={x}
                     y={y}
                     fill={props.fill}
-                    percent={percent}
                     isCurrent={props.isCurrent}
                   />
                 );

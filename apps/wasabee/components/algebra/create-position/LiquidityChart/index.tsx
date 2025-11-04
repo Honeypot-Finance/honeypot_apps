@@ -1,4 +1,4 @@
-import { useInfoTickData } from "@/lib/algebra/hooks/pools/usePoolTickData";
+import { useInfoTickData } from '@/lib/algebra/hooks/pools/usePoolTickData';
 
 import {
   CurrencyAmount,
@@ -8,12 +8,12 @@ import {
   Price,
   Currency,
   ADDRESS_ZERO,
-} from "@cryptoalgebra/sdk";
-import { useEffect, useMemo, useState } from "react";
-import { Chart } from "./chart";
-import { Skeleton } from "@/components/algebra/ui/skeleton";
-import { MAX_UINT128 } from "@/config/algebra/max-uint128";
-import { useMintState, Presets } from "@/lib/algebra/state/mintStore";
+} from '@cryptoalgebra/sdk';
+import { useEffect, useMemo, useState } from 'react';
+import { Chart } from './chart';
+import { Skeleton } from '@/components/algebra/ui/skeleton';
+import { MAX_UINT128 } from '@/config/algebra/max-uint128';
+import { useMintState, Presets } from '@/lib/algebra/state/mintStore';
 interface LiquidityChartProps {
   currencyA: Currency | undefined;
   currencyB: Currency | undefined;
@@ -195,7 +195,7 @@ const LiquidityChart = ({
   // const handleZoomOut = () => setZoom((zoom) => zoom - ZOOM_STEP)
 
   return (
-    <div className="w-full rounded-2xl border border-[rgba(90,74,74,1)] bg-card-dark shadow-[1px_2px_0px_0px_rgba(32,32,32,1),1px_1px_0px_0px_rgba(32,32,32,1)]  p-4">
+    <div className="w-full rounded-2xl bg-[#1F150A]  p-4">
       <div className="flex w-full h-full">
         {formattedData ? (
           <Chart

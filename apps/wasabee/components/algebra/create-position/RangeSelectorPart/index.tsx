@@ -80,17 +80,17 @@ const RangeSelectorPart = ({
   }, [initialTokenPrice, value]);
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-y-3  ">
-      <div className="text-[rgba(32,32,32,1)] flex items-center justify-between px-2 font-gliker">
-        <span className="text-base text-black">{title.toUpperCase()}</span>
+    <div className="flex-1 w-full flex flex-col gap-y-2 min-w-[200px]">
+      <div className="flex items-center justify-between px-2 font-gliker">
+        <span className="text-sm uppercase !text-white">{title}</span>
       </div>
 
-      <div className="w-full  h-[64px] rounded-2xl border bg-card-dark border-[rgba(90,74,74,1)] shadow-[1px_2px_0px_0px_rgba(32,32,32,1),1px_1px_0px_0px_rgba(32,32,32,1)]  flex items-center justify-between px-4 py-2.5 gap-x-2">
+      <div className="w-full h-[56px] rounded-lg border bg-[#271A0C] border-[#3B2712] flex items-center justify-between px-3 py-2 gap-x-2">
         <Button
           variant={'ghost'}
           onClick={handleDecrement}
           disabled={decrementDisabled || disabled}
-          className="min-w-[40px] h-[40px] rounded-xl bg-[rgba(255,230,163,1)] hover:bg-[#ffd666] text-black border-none font-bold text-xl disabled:opacity-50"
+          className="min-w-[36px] h-[36px] rounded-md bg-[#FFA931] hover:bg-[#FFB951] text-black border-none font-bold text-lg disabled:opacity-30 disabled:cursor-not-allowed"
         >
           -
         </Button>
@@ -107,13 +107,13 @@ const RangeSelectorPart = ({
           }}
           placeholder={'0.00'}
           className={cn(
-            'text-right',
+            'text-center',
             '!bg-transparent',
             '[&_*]:!bg-transparent',
             'data-[invalid=true]:!bg-transparent',
             'border-none',
-            'text-black',
-            'text-xl',
+            'text-white',
+            'text-lg',
             'font-medium'
           )}
           classNames={{
@@ -124,14 +124,14 @@ const RangeSelectorPart = ({
               '!transition-none',
               'data-[invalid=true]:!bg-transparent',
               'group-data-[invalid=true]:!bg-transparent',
-              'pr-5'
+              'px-2'
             ),
             input: cn(
               '!bg-transparent',
-              '!text-[#202020]',
-              'text-right',
-              'text-xl',
-              '!pr-0',
+              '!text-white',
+              'text-center',
+              'text-lg',
+              '!px-0',
               '[appearance:textfield]',
               '[&::-webkit-outer-spin-button]:appearance-none',
               '[&::-webkit-inner-spin-button]:appearance-none',
@@ -144,7 +144,7 @@ const RangeSelectorPart = ({
           variant={'ghost'}
           onClick={handleIncrement}
           disabled={incrementDisabled || disabled}
-          className="min-w-[40px] h-[40px] rounded-xl bg-[rgba(255,230,163,1)] hover:bg-[#ffd666] text-black border-none font-bold text-xl disabled:opacity-50"
+          className="min-w-[36px] h-[36px] rounded-md bg-[#FFA931] hover:bg-[#FFB951] text-black border-none font-bold text-lg disabled:opacity-30 disabled:cursor-not-allowed"
         >
           +
         </Button>

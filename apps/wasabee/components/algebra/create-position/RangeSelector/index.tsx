@@ -49,7 +49,7 @@ const RangeSelector = ({
 
   return (
     <>
-      <div className="flex gap-4 flex-col md:flex-row">
+      <div className="flex gap-4 flex-col md:flex-row md:flex-wrap">
         <RangeSelectorPart
           value={
             mintInfo.ticksAtLimit[Bound.LOWER]

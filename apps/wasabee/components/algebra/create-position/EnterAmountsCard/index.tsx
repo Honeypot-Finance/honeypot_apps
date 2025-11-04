@@ -55,10 +55,7 @@ const EnterAmountCard = ({
   }
 
   return (
-    <div
-      className="w-full rounded-2xl border bg-white  py-2 h-[80px] px-4
-     border-[rgba(0,0,0,1)]"
-    >
+    <div className="w-full rounded-lg border bg-[#1F150A] py-3 px-4 border-[#3B2712]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {currency && (
@@ -70,7 +67,7 @@ const EnterAmountCard = ({
               })}
             />
           )}
-          <span className="font-medium text-black font-gliker text-xl">
+          <span className="font-medium text-white font-gliker text-lg">
             {currency
               ? currency.wrapped.address.toLowerCase() ===
                 wallet.currentChain.nativeToken.address.toLowerCase()
@@ -83,7 +80,7 @@ const EnterAmountCard = ({
           {currency?.wrapped.address ===
             wallet.currentChain.nativeToken.address && (
             <HiOutlineSwitchHorizontal
-              className="w-5 h-5 text-black cursor-pointer min-w-5 min-h-5 z-10"
+              className="w-5 h-5 text-white cursor-pointer min-w-5 min-h-5 z-10 hover:text-[#FDB500] transition-colors"
               onClick={() => setUseNative(!useNative)}
             />
           )}
@@ -102,8 +99,8 @@ const EnterAmountCard = ({
               '[&_*]:!bg-transparent',
               'data-[invalid=true]:!bg-transparent',
               'border-none',
-              'text-black',
-              'text-xl',
+              'text-white',
+              'text-lg',
               'font-medium',
               'w-[160px]',
               'font-gliker',
@@ -117,13 +114,13 @@ const EnterAmountCard = ({
                 '!transition-none',
                 'data-[invalid=true]:!bg-transparent',
                 'group-data-[invalid=true]:!bg-transparent',
-                'pr-5'
+                'pr-3'
               ),
               input: cn(
                 '!bg-transparent',
-                '!text-[#202020]',
+                '!text-white',
                 'text-right',
-                'text-xl',
+                'text-lg',
                 '!pr-0',
                 '[appearance:textfield]',
                 '[&::-webkit-outer-spin-button]:appearance-none',
@@ -133,13 +130,13 @@ const EnterAmountCard = ({
             }}
           />
           {currency && account && (
-            <div className="flex items-center gap-2 text-sm text-[#202020] font-gliker">
-              <span className="text-[rgba(77,77,77,1)]">
+            <div className="flex items-center gap-2 text-sm font-gliker">
+              <span className="text-gray-400">
                 Balance: {balanceString}
               </span>
               <button
                 onClick={setMax}
-                className="text-[#FFCD4D] hover:text-[#ffd666] font-medium transition-colors"
+                className="text-[#FDB500] hover:text-[#FFD666] font-medium transition-colors"
               >
                 Max
               </button>
