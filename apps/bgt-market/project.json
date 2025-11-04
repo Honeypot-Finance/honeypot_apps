@@ -10,7 +10,7 @@
       "command": "npx graphql-codegen --config {projectRoot}/algebra_codegen.ts"
     },
     "build": {
-      "executor": "@nrwl/next:build",
+      "executor": "@nx/next:build",
       "options": {
         "outputPath": "apps/bgt-market/",
         "postcssConfig": "apps/bgt-market/postcss.config.js"

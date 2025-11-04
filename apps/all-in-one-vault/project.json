@@ -8,7 +8,7 @@
 
   "targets": {
     "build": {
-      "executor": "@nrwl/next:build",
+      "executor": "@nx/next:build",
       "options": {
         "outputPath": "apps/all-in-one-vault",
         "postcssConfig": "apps/all-in-one-vault/postcss.config.js",

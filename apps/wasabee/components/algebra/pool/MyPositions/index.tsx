@@ -2,12 +2,10 @@ import { myPositionsColumns } from '@/components/algebra/common/Table/myPosition
 import { Address } from 'viem';
 import MyPositionsTable from '@/components/algebra/common/Table/myPositionsTable';
 import { FormattedPosition } from '@/types/algebra/types/formatted-position';
-import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
 import { useState, useEffect, useCallback } from 'react';
 import PositionCard from '@/components/algebra/position/PositionCard';
 import { X } from 'lucide-react';
 import MyPositionsCard from './MyPositionsCard';
-import { Button } from '@nextui-org/react';
 
 // Custom hook for managing position selection and modal
 const usePositionModal = (
@@ -24,23 +22,30 @@ const usePositionModal = (
 
   // Update selectedId when initialSelectedId changes from parent
   useEffect(() => {
-    console.log('usePositionModal - initialSelectedId changed to:', initialSelectedId);
+    console.log(
+      'usePositionModal - initialSelectedId changed to:',
+      initialSelectedId
+    );
     setSelectedId(initialSelectedId || null);
   }, [initialSelectedId]);
 
   // Update position when selectedId changes
   useEffect(() => {
-    console.log('usePositionModal - selectedId:', selectedId, typeof selectedId);
+    console.log(
+      'usePositionModal - selectedId:',
+      selectedId,
+      typeof selectedId
+    );
     console.log('usePositionModal - positions:', positions);
     if (selectedId !== null && selectedId !== undefined) {
-      const foundPosition = positions.find(
-        (pos) => {
-          const posId = typeof pos.id === 'bigint' ? Number(pos.id) : Number(pos.id);
-          const compareId = typeof selectedId === 'bigint' ? Number(selectedId) : selectedId;
-          console.log('Comparing posId:', posId, 'with selectedId:', compareId);
-          return posId === compareId;
-        }
-      );
+      const foundPosition = positions.find((pos) => {
+        const posId =
+          typeof pos.id === 'bigint' ? Number(pos.id) : Number(pos.id);
+        const compareId =
+          typeof selectedId === 'bigint' ? Number(selectedId) : selectedId;
+        console.log('Comparing posId:', posId, 'with selectedId:', compareId);
+        return posId === compareId;
+      });
       console.log('usePositionModal - foundPosition:', foundPosition);
       setPosition(foundPosition);
       setIsOpen(!!foundPosition);
@@ -93,35 +98,16 @@ const MyPositions = ({
   // Handler for position selection that updates both local and parent state
   const handlePositionSelect = useCallback(
     (positionId: number | bigint | null) => {
-      console.log('handlePositionSelect called with:', positionId, typeof positionId);
+      console.log(
+        'handlePositionSelect called with:',
+        positionId,
+        typeof positionId
+      );
       modal.selectPosition(positionId);
       selectPosition(positionId as any);
     },
     [modal, selectPosition]
   );
-
-  // Calculate total liquidity and fees
-  const totalLiquidity = positions.reduce(
-    (sum, pos) => sum + Number(pos.liquidityUSD || 0),
-    0
-  );
-  const totalFees = positions.reduce(
-    (sum, pos) => sum + Number(pos.feesUSD || 0),
-    0
-  );
-
-  // Format the values
-  const formattedTVL = DynamicFormatAmount({
-    amount: totalLiquidity.toString(),
-    decimals: 4,
-    endWith: '',
-  });
-
-  const formattedFees = DynamicFormatAmount({
-    amount: totalFees.toString(),
-    decimals: 2,
-    endWith: '',
-  });
 
   useEffect(() => {
     console.log('MyPositions - positions:', positions);
@@ -156,7 +142,9 @@ const MyPositions = ({
             columns={myPositionsColumns}
             data={positions.filter((pos) => pos.liquidityUSD > 0)}
             action={handlePositionSelect}
-            selectedRow={modal.selectedId !== null ? Number(modal.selectedId) : undefined}
+            selectedRow={
+              modal.selectedId !== null ? Number(modal.selectedId) : undefined
+            }
             showPagination={false}
           />
         </div>
@@ -212,10 +200,10 @@ const MyPositions = ({
 
             <div className="p-4">
               <PositionCard
-              selectedPosition={modal.position}
-              farming={farming}
-              closedFarmings={closedFarmings}
-            />
+                selectedPosition={modal.position}
+                farming={farming}
+                closedFarmings={closedFarmings}
+              />
             </div>
           </div>
         </div>
