@@ -4,8 +4,8 @@ import { ChevronRight } from 'lucide-react';
 
 interface MyPositionsCardProps {
   positions: FormattedPosition[];
-  selectedPosition: number | null;
-  onSelectPosition: (positionId: number) => void;
+  selectedPosition: number | bigint | null;
+  onSelectPosition: (positionId: number | bigint) => void;
 }
 
 const MyPositionsCard = ({
