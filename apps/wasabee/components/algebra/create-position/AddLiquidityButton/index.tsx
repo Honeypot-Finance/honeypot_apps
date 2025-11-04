@@ -56,10 +56,13 @@ export const AddLiquidityButton = ({
     console.log('mintInfo', mintInfo);
     console.log('ALGEBRA_POSITION_MANAGER', ALGEBRA_POSITION_MANAGER);
     if (!account || !mintInfo.position) {
-      console.log('Missing account or position:', { account, position: mintInfo.position });
+      console.log('Missing account or position:', {
+        account,
+        position: mintInfo.position,
+      });
       return { calldata: undefined, value: undefined };
     }
-    
+
     if (JSBI.EQ(mintInfo.position.liquidity, ZERO)) {
       console.log('Position liquidity is zero');
       return { calldata: undefined, value: undefined };
@@ -138,7 +141,7 @@ export const AddLiquidityButton = ({
     return (
       <Button
         disabled
-        className="w-full border-[0] h-[56px] rounded-[12px] !text-[18px]"
+        className="w-full h-[56px] rounded-[12px] !text-[18px] !bg-[#FB9A1B] !border-[3px] !border-[#C87304] text-black font-semibold opacity-50"
       >
         {mintInfo.errorMessage}
       </Button>
@@ -150,7 +153,7 @@ export const AddLiquidityButton = ({
         {showApproveA && (
           <Button
             disabled={approvalStateA === ApprovalState.PENDING}
-            className="w-full border-[0] h-[56px] rounded-[12px] !text-[18px]"
+            className="w-full h-[56px] rounded-[12px] !text-[18px] !bg-[#FB9A1B] !border-[3px] !border-[#C87304] text-black font-semibold hover:bg-[#FFA931]"
             onClick={() => approvalCallbackA && approvalCallbackA()}
           >
             {approvalStateA === ApprovalState.PENDING ? (
@@ -163,7 +166,7 @@ export const AddLiquidityButton = ({
         {showApproveB && (
           <Button
             disabled={approvalStateB === ApprovalState.PENDING}
-            className="w-full border-[0] h-[56px] rounded-[12px] !text-[18px]"
+            className="w-full h-[56px] rounded-[12px] !text-[18px] !bg-[#FB9A1B] !border-[3px] !border-[#C87304] text-black font-semibold hover:bg-[#FFA931]"
             onClick={() => approvalCallbackB && approvalCallbackB()}
           >
             {approvalStateB === ApprovalState.PENDING ? (
@@ -184,7 +187,7 @@ export const AddLiquidityButton = ({
         console.log('calldata', calldata);
         console.log('value', value);
         console.log('error', error);
-        
+
         if (addLiquidityConfig && addLiquidityConfig.request) {
           addLiquidity(addLiquidityConfig.request);
         } else if (calldata && value !== undefined && isReady) {
@@ -203,11 +206,11 @@ export const AddLiquidityButton = ({
             hasValue: value !== undefined,
             isReady,
             hasConfig: !!addLiquidityConfig,
-            error
+            error,
           });
         }
       }}
-      className="whitespace-nowrap w-full border-[0] h-[56px] rounded-[12px] !text-[18px]"
+      className="whitespace-nowrap w-full h-[56px] rounded-[12px] !text-[18px] !bg-[#FB9A1B] !border-[3px] !border-[#C87304] text-black font-semibold hover:bg-[#FFA931] disabled:opacity-50"
     >
       {isAddingLiquidityLoading ? <Loader /> : 'Create Position'}
     </Button>

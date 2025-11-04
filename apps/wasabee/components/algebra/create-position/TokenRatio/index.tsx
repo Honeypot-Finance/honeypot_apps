@@ -62,12 +62,12 @@ const TokenRatio = ({ mintInfo }: TokenRatioProps) => {
   }, [mintInfo, tickLowerAtLimit, tickUpperAtLimit]);
 
   return (
-    <div className="relative flex h-[40px] bg-white rounded-xl">
+    <div className="relative flex h-[40px] rounded-xl">
       {/* FIXME： remove honeypot-button */}
       <div className="flex w-full h-full font-semibold gap-x-2">
         {Number(token0Ratio) > 0 && (
           <div
-            className={`flex items-center justify-between pl-1 pr-2 h-full bg-[#ffd666] border border-[#000] rounded-[8px] duration-300 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}
+            className={`flex items-center justify-between pl-1 pr-2 h-full bg-[#FFAA33] border border-[#000] rounded-[8px] duration-300 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}
             style={{ width: `${token0Ratio}%` }}
           >
             <TokenLogo
@@ -84,7 +84,7 @@ const TokenRatio = ({ mintInfo }: TokenRatioProps) => {
         )}
         {Number(token1Ratio) > 0 && (
           <div
-            className={`flex items-center justify-between  pr-1 pl-2 h-full bg-[rgba(243,208,166,1)] duration-300 relative rounded-[8px] border border-[#000] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}
+            className={`flex items-center justify-between  pr-1 pl-2 h-full bg-[#FFD499] duration-300 relative rounded-[8px] border border-[#000] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}
             style={{ width: `${token1Ratio}%` }}
           >
             <TokenLogo

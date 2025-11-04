@@ -2,19 +2,19 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@/components/algebra/ui/hover-card";
-import TokenRatio from "../TokenRatio";
-import { Currency } from "@cryptoalgebra/sdk";
-import { usePositionAPR } from "@/lib/algebra/hooks/positions/usePositionAPR";
-import { getPoolAPR } from "@/lib/algebra/utils/pool/getPoolAPR";
-import AddLiquidityButton from "../AddLiquidityButton";
-import { Address } from "viem";
-import { useEffect, useState } from "react";
-import EnterAmounts from "../EnterAmounts";
-import IncreaseLiquidityButton from "@/components/algebra/position/IncreaseLiquidityButton";
-import { IDerivedMintInfo } from "@/lib/algebra/state/mintStore";
-import { ManageLiquidity } from "@/types/algebra/types/manage-liquidity";
-import { useRouter } from "next/router";
+} from '@/components/algebra/ui/hover-card';
+import TokenRatio from '../TokenRatio';
+import { Currency } from '@cryptoalgebra/sdk';
+import { usePositionAPR } from '@/lib/algebra/hooks/positions/usePositionAPR';
+import { getPoolAPR } from '@/lib/algebra/utils/pool/getPoolAPR';
+import AddLiquidityButton from '../AddLiquidityButton';
+import { Address } from 'viem';
+import { useEffect, useState } from 'react';
+import EnterAmounts from '../EnterAmounts';
+import IncreaseLiquidityButton from '@/components/algebra/position/IncreaseLiquidityButton';
+import { IDerivedMintInfo } from '@/lib/algebra/state/mintStore';
+import { ManageLiquidity } from '@/types/algebra/types/manage-liquidity';
+import { useRouter } from 'next/router';
 
 interface AmountsSectionProps {
   tokenId?: number;
@@ -27,7 +27,7 @@ interface AmountsSectionProps {
   setUseNative: (useNative: boolean) => void;
 }
 
-type NewPositionPageParams = Record<"pool", Address>;
+type NewPositionPageParams = Record<'pool', Address>;
 
 const AmountsSection = ({
   tokenId,
@@ -76,19 +76,19 @@ const AmountsSection = ({
       <div className="w-full rounded-lg border bg-[#1F150A] border-[#3B2712] p-4">
         <div className="flex justify-between items-center">
           <div>
-            <div className="text-xs text-gray-400 font-gliker uppercase mb-1">
+            <div className="text-xs text-[#E7CDB1] font-gliker uppercase mb-1">
               Estimated Position APR
             </div>
-            <div className="text-lg font-bold text-[#FDB500] font-gliker">
-              {apr ? `${apr.toFixed(2)}%` : "0%"}
+            <div className="text-lg font-bold text-[#BFEECA] font-gliker">
+              {apr ? `${apr.toFixed(2)}%` : '0%'}
             </div>
           </div>
           <div className="text-right">
-            <div className="text-xs font-medium text-gray-400 font-gliker uppercase mb-1">
+            <div className="text-xs font-medium text-[#E7CDB1] font-gliker uppercase mb-1">
               Pool APR
             </div>
-            <div className="text-lg font-bold text-[#4A80F9] font-gliker">
-              {poolAPR !== undefined ? `${poolAPR}%` : "0%"}
+            <div className="text-lg font-bold text-[#BFEECA] font-gliker">
+              {poolAPR !== undefined ? `${poolAPR}%` : '0%'}
             </div>
           </div>
         </div>
