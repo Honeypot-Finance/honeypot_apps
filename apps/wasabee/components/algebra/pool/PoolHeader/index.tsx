@@ -12,7 +12,7 @@ import { Pool } from '@cryptoalgebra/sdk';
 import { observer } from 'mobx-react-lite';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { Button, Link } from '@nextui-org/react';
-import Settings from '@/components/algebra/common/Settings';
+import { MdOutlineLoop } from 'react-icons/md';
 
 interface PoolHeaderProps {
   pool: Pool | null;
@@ -58,7 +58,7 @@ const PoolHeader = observer(
       <div
         className={`inline-flex flex-wrap ${
           isMobile ? 'flex-row' : 'md:flex-nowrap'
-        } rounded-[16px] border-2 border-black bg-white shadow-[4px_4px_0px_0px_#000] gap-x-3 p-2 ${
+        } gap-x-3 ${
           isMobile ? 'w-full' : 'w-full md:w-auto'
         } gap-2`}
       >
@@ -67,7 +67,8 @@ const PoolHeader = observer(
             href={`/swap?inputCurrency=${token0?.address}&outputCurrency=${token1?.address}`}
             className="w-full md:w-auto"
           >
-            <Button className="w-full rounded-[8px] border border-black bg-[#FFCD4D] p-2 text-[#202020] shadow-[2px_2px_0px_0px_#000] hover:translate-y-[2px] hover:shadow-[2px_1px_0px_0px_#000] active:translate-y-[2px] active:shadow-none">
+            <Button className="w-full rounded-xl bg-white hover:bg-gray-100 py-4 px-6 text-black font-medium flex items-center gap-2 min-w-[120px] justify-center h-12">
+              <MdOutlineLoop className="w-5 h-5" />
               Swap
             </Button>
           </Link>
@@ -79,14 +80,18 @@ const PoolHeader = observer(
             as="a"
           >
             <Button
-              className="w-full rounded-[8px] border border-black bg-[#FFCD4D] p-2 text-[#202020] shadow-[2px_2px_0px_0px_#000] hover:translate-y-[2px] hover:shadow-[2px_1px_0px_0px_#000] active:translate-y-[2px] active:shadow-none"
+              className="w-full rounded-xl bg-[#6B4423] hover:bg-[#7D5434] py-4 px-6 text-white font-medium flex items-center gap-2 min-w-[160px] justify-center h-12"
               onPress={() => {
                 if (typeof window !== 'undefined') {
                   window.location.href = `/new-position/${poolId}`;
                 }
               }}
             >
-              Create Position
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                <path d="M12 8V16M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              Create position
             </Button>
           </Link>
         )}
@@ -114,9 +119,6 @@ const PoolHeader = observer(
               <span className="px-2 py-1 text-sm font-medium rounded-full text-[#479FFF] border border-[#E18A20]/40 bg-[#E18A20]/20">{`${poolFee}`}</span>
             )}
           </div>
-
-          {/* Settings - mobile only */}
-          <div>{token0?.symbol && token1?.symbol && <Settings />}</div>
         </div>
 
         {/* Desktop view: Custom layout with buttons before settings */}
@@ -132,10 +134,9 @@ const PoolHeader = observer(
                 <span className="px-3 py-2 font-medium rounded-full text-[#479FFF] border border-[#E18A20]/40 bg-[#E18A20]/20">{`${poolFee}`}</span>
               </div>
 
-              {/* Right side: Buttons and settings */}
+              {/* Right side: Buttons */}
               <div className="flex items-center gap-4">
                 <ActionButtons />
-                <Settings />
               </div>
             </div>
           </div>
