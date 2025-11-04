@@ -58,9 +58,7 @@ const PoolHeader = observer(
       <div
         className={`inline-flex flex-wrap ${
           isMobile ? 'flex-row' : 'md:flex-nowrap'
-        } gap-x-3 ${
-          isMobile ? 'w-full' : 'w-full md:w-auto'
-        } gap-2`}
+        } gap-x-3 ${isMobile ? 'w-full' : 'w-full md:w-auto'} gap-2`}
       >
         {token0?.address && token1?.address && (
           <Link
@@ -87,9 +85,26 @@ const PoolHeader = observer(
                 }
               }}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                <path d="M12 8V16M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+                <path
+                  d="M12 8V16M8 12H16"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
               Create position
             </Button>
@@ -131,7 +146,7 @@ const PoolHeader = observer(
                 <h1 className="scroll-m-20 text-2xl tracking-tight md:text-3xl lg:text-4xl">
                   {`${token0?.symbol} / ${token1?.symbol}`}
                 </h1>
-                <span className="px-3 py-2 font-medium rounded-full text-[#479FFF] border border-[#E18A20]/40 bg-[#E18A20]/20">{`${poolFee}`}</span>
+                <span className="px-3 py-1 font-medium rounded-md text-white border border-[#5A4A4A]/40 bg-[#FFFFFF0D]">{`${poolFee}`}</span>
               </div>
 
               {/* Right side: Buttons */}

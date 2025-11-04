@@ -106,13 +106,13 @@ const MyPositionsTable = <TData, TValue>({
             <TableRow
               key={row.id}
               data-state={row.getIsSelected() && 'selected'}
-              className={`border-b border-gray-100 ${
-                isSelected ? 'bg-gray-50' : ''
+              className={`border-b border-[#3B2712] bg-transparent text-white ${
+                isSelected ? 'bg-[#271A0C]' : ''
               } ${(action || link) && 'cursor-pointer'} ${
                 action || link
                   ? isSelected
-                    ? 'hover:bg-gray-100'
-                    : 'hover:bg-gray-50'
+                    ? 'hover:bg-[#2D2115]'
+                    : 'hover:bg-[#1C1208]'
                   : ''
               } ${
                 isStatusActive && !expandActive && 'collapse border-0 opacity-0'
@@ -135,7 +135,7 @@ const MyPositionsTable = <TData, TValue>({
               }}
             >
               {row.getVisibleCells().map((cell: any) => (
-                <TableCell key={cell.id} className="px-6 py-4 text-left">
+                <TableCell key={cell.id} className="px-6 py-5 text-left text-white">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
               ))}
@@ -159,16 +159,16 @@ const MyPositionsTable = <TData, TValue>({
 
   return (
     <Table>
-      <TableHeader className="[&_tr]:border-b [&_tr]:border-opacity-30">
+      <TableHeader className="[&_tr]:border-b-0">
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow
             key={headerGroup.id}
-            className="hover:bg-transparent border-[#D9D7E0]/5"
+            className="hover:bg-transparent border-0"
           >
             {headerGroup.headers.map((header) => (
               <TableHead
                 key={header.id}
-                className="px-6 py-4 rounded-xl text-black font-semibold [&_svg]:mt-auto"
+                className="px-6 py-4 text-xs text-gray-400 font-medium uppercase [&_svg]:mt-auto"
               >
                 {header.isPlaceholder
                   ? null
@@ -181,7 +181,7 @@ const MyPositionsTable = <TData, TValue>({
           </TableRow>
         ))}
       </TableHeader>
-      <TableBody className="[&_tr]:border-opacity-30 text-[16px] transition-all [&_tr]:bg-[#271A0C] [&_tr]:hover:bg-[#56391b]">
+      <TableBody className="text-sm transition-all">
         {table.getRowModel().rows?.length === 0 ||
         (!filterStatus.Open &&
           !filterStatus.Closed &&
@@ -194,10 +194,10 @@ const MyPositionsTable = <TData, TValue>({
         (noFarmingPositions && noClosedPositions && !filterStatus.Open) ||
         (noFarmingPositions && !filterStatus.Open && !filterStatus.Closed) ||
         (noClosedPositions && !filterStatus.Open && !filterStatus.OnFarming) ? (
-          <TableRow className="hover:bg-card h-full border-0">
+          <TableRow className="hover:bg-transparent h-full border-0">
             <TableCell
               colSpan={columns.length}
-              className="h-24 text-center bg-[#271A0C"
+              className="h-24 text-center text-gray-400"
             >
               No results.
             </TableCell>

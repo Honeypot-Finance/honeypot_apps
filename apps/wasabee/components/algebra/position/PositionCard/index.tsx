@@ -129,48 +129,65 @@ const PositionCard = ({
 
   if (!selectedPosition || loading)
     return (
-      <div className="flex flex-col gap-4 rounded-3xl p-4 bg-[#271A0C] border border-[#F7931A20] w-full h-full">
-        <div className="text-black flex flex-col gap-2 text-center justify-center items-center h-full">
+      <div className="flex flex-col gap-4 rounded-lg p-6 bg-[#140E06] border border-[#3B2712] w-full h-full min-h-[400px]">
+        <div className="text-gray-400 flex flex-col gap-2 text-center justify-center items-center h-full">
           Select a position to view details
         </div>
       </div>
     );
 
   return (
-    <div className="flex flex-col gap-4 rounded-3xl p-4 bg-[#271A0C] border border-[#F7931A20]">
-      {/* Header with position info */}
-      <div className="flex justify-between items-start">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-xl font-bold">{`Position #${selectedPosition?.id}`}</h2>
-          <div className="text-xs uppercase text-gray-500">LIQUIDITY</div>
-          <div className="text-lg text-[#479FFF]">
-            {positionLiquidityUSD || <Skeleton className="w-16 h-5" />}
-          </div>
-          <div className="text-xs uppercase text-gray-500 mt-1">APR</div>
-          <div className="text-lg text-[#F4AB36]">
-            {positionAPR || <Skeleton className="w-16 h-5" />}
+    <div className="flex flex-col gap-4 rounded-lg p-0 bg-transparent text-white">
+      {/* Header and Stats Section */}
+      <div className="bg-[#271A0C] rounded-lg p-4">
+        <div className="flex gap-4 mb-4">
+          {/* Left side - Stats */}
+          <div className="flex-1">
+            <h2 className="text-lg font-bold text-white mb-3">{`Position #${selectedPosition?.id}`}</h2>
+
+            <div className="space-y-3">
+              <div>
+                <div className="text-xs uppercase text-gray-400 mb-1">LIQUIDITY</div>
+                <div className="text-base font-semibold text-white">
+                  {positionLiquidityUSD || <Skeleton className="w-16 h-5 bg-[#3B2712]" />}
+                </div>
+              </div>
+
+              <div>
+                <div className="text-xs uppercase text-gray-400 mb-1">APR</div>
+                <div className="text-base font-semibold text-[#FDB500]">
+                  {positionAPR || <Skeleton className="w-16 h-5 bg-[#3B2712]" />}
+                </div>
+              </div>
+
+              <div>
+                <div className="text-xs uppercase text-gray-400 mb-1">UNCOLLECTED FEES</div>
+                <div className="text-base font-semibold text-white">{positionFeesUSD}</div>
+              </div>
+            </div>
           </div>
 
-          {/* Collect fees with simple vertical layout, no border */}
-          <div className="flex flex-col gap-2">
-            <div className="text-lg text-[#479FFF]">{positionFeesUSD}</div>
-            <button
-              className="bg-[#F4AB36]/30 text-black px-4 py-1.5 rounded-lg text-sm disabled:opacity-50"
-              onClick={handleCollectFees}
-              disabled={zeroRewards || isLoading}
-            >
-              {isLoading ? 'Collecting...' : 'Collect fees'}
-            </button>
+          {/* Right side - NFT */}
+          <div className="flex-shrink-0">
+            <PositionNFT positionId={selectedPosition.id} />
           </div>
         </div>
-        <PositionNFT positionId={selectedPosition.id} />
+
+        <button
+          className="w-full bg-[#6B4423] hover:bg-[#7D5434] text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={handleCollectFees}
+          disabled={zeroRewards || isLoading}
+        >
+          {isLoading ? 'Collecting...' : 'Collect fees'}
+        </button>
       </div>
 
       {/* Token Ratio */}
-      <div>
+      <div className="bg-[#271A0C] rounded-lg p-3">
+        <div className="text-xs uppercase text-gray-400 mb-2">TOKEN RATIO</div>
         <TokenRatio mintInfo={mintInfo} />
         {positionEntity && (
-          <div className="flex justify-between text-sm text-gray-700 mt-2">
+          <div className="flex justify-between text-sm text-gray-300 mt-3">
             <div>{`${positionEntity.amount0.toFixed(2)} ${
               currencyA?.symbol
             }`}</div>
@@ -181,32 +198,17 @@ const PositionCard = ({
         )}
       </div>
 
-      {/* Divider */}
-      <div className="border-t border-[#F7931A20]"></div>
-
-      {/* Chart */}
-      <div>
-        {pool && positionEntity && (
-          <PositionRangeChart pool={pool} position={positionEntity} />
-        )}
-      </div>
-
-      {/* Divider */}
-      <div className="border-t border-[#F7931A20]"></div>
-
       {/* Action buttons */}
-      <div>
+      <div className="space-y-2">
         {positionEntity && (
-          <div className="mb-2">
-            <IncreaseLiquidityModal
-              tokenId={Number(selectedPosition.id)}
-              currencyA={currencyA}
-              currencyB={currencyB}
-              mintInfo={mintInfo}
-              useNative={useNative}
-              setUseNative={setUseNative}
-            />
-          </div>
+          <IncreaseLiquidityModal
+            tokenId={Number(selectedPosition.id)}
+            currencyA={currencyA}
+            currencyB={currencyB}
+            mintInfo={mintInfo}
+            useNative={useNative}
+            setUseNative={setUseNative}
+          />
         )}
         {positionEntity && Number(positionEntity.liquidity) > 0 && (
           <RemoveLiquidityModal positionId={selectedPosition.id} />
@@ -214,27 +216,23 @@ const PositionCard = ({
       </div>
 
       {positionInFarming && farming && !positionInEndedFarming && (
-        <>
-          <div className="border-t border-[#F7931A20]"></div>
-          <div>
-            <ActiveFarmingCard
-              farming={farming}
-              selectedPosition={positionInFarming}
-            />
-          </div>
-        </>
+        <div className="bg-[#271A0C] rounded-lg p-3">
+          <div className="text-xs uppercase text-gray-400 mb-2">FARMING</div>
+          <ActiveFarmingCard
+            farming={farming}
+            selectedPosition={positionInFarming}
+          />
+        </div>
       )}
 
       {positionInEndedFarming && (
-        <>
-          <div className="border-t border-[#F7931A20]"></div>
-          <div>
-            <ClosedFarmingCard
-              positionInEndedFarming={positionInEndedFarming}
-              selectedPosition={selectedPosition}
-            />
-          </div>
-        </>
+        <div className="bg-[#271A0C] rounded-lg p-3">
+          <div className="text-xs uppercase text-gray-400 mb-2">CLOSED FARMING</div>
+          <ClosedFarmingCard
+            positionInEndedFarming={positionInEndedFarming}
+            selectedPosition={selectedPosition}
+          />
+        </div>
       )}
     </div>
   );

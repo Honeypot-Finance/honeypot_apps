@@ -304,6 +304,8 @@ const PoolPage = observer(() => {
         feesUSD: formatFeesUSD(idx),
         apr: formatAPR(idx),
         inFarming: Boolean(currentPosition?.eternalFarming),
+        position: position, // Add position entity for range visualization
+        poolEntity: poolEntity, // Add pool entity for range visualization
       } as FormattedPosition;
     });
   }, [
@@ -361,17 +363,13 @@ const PoolPage = observer(() => {
 
             <Tabs
               classNames={{
-                tab: 'px-2 sm:px-3 sm:h-10 text-xs sm:text-sm bg-[#86715B]',
-                base: 'relative w-full',
-                tabList:
-                  'flex rounded-[16px] border border-[#202020] bg-white shadow-[4px_4px_0px_0px_#202020,-4px_4px_0px_0px_#202020] p-2 sm:p-3 z-10 max-w-[90%] sm:max-w-none mx-auto absolute left-1/2 -translate-x-1/2 z-10',
-                cursor: 'bg-[#202020] !text-white/80 px-2 py-3',
-                panel: cn(
-                  'flex flex-col h-full w-full gap-y-4 items-center rounded-2xl text-[#202020]',
-                  '!mt-0',
-                  'h-auto'
-                ),
-                tabContent: 'text-[#202020] text-sm sm:text-base',
+                base: 'relative w-full [&>div]:!mt-0 [&>div]:!pt-0',
+                tabList: 'flex rounded-lg bg-[#1A0F06] p-1 gap-1 w-auto !mb-0 !pb-0',
+                cursor: 'bg-[#6B4423] rounded-md',
+                panel: 'w-full !mt-0 !pt-0',
+                tab: 'px-4 py-2 text-sm font-medium min-w-[100px]',
+                tabContent:
+                  'text-white group-data-[selected=true]:text-white group-data-[selected=false]:text-white group-data-[selected=false]:opacity-50',
               }}
             >
               <Tab
@@ -393,60 +391,45 @@ const PoolPage = observer(() => {
                   <span className="text-xs sm:text-base">My Positions</span>
                 }
               >
-                <div className="w-full bg-black rounded-2xl p-4 custom-dashed-3xl border-white">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 gap-y-8 w-full lg:gap-8">
-                    <div className="lg:col-span-2">
-                      {!account ? (
-                        <NoAccount />
-                      ) : positionsLoading ||
-                        isFarmingLoading ||
-                        areDepositsLoading ? (
-                        <LoadingState />
-                      ) : noPositions ? (
-                        <NoPositions poolId={poolId ? poolId : zeroAddress} />
-                      ) : (
-                        <>
-                          {/* <MyPositionsToolbar
-                        positionsData={positionsData}
-                        poolId={poolId ? poolId : zeroAddress}
-                      /> */}
-                          <MyPositions
-                            positions={positionsData}
-                            poolId={poolId ? poolId : zeroAddress}
-                            selectedPosition={selectedPosition?.id}
-                            selectPosition={(positionId) =>
-                              selectPosition((prev) =>
-                                prev === positionId ? null : positionId
-                              )
-                            }
+                {!account ? (
+                  <NoAccount />
+                ) : positionsLoading ||
+                  isFarmingLoading ||
+                  areDepositsLoading ? (
+                  <LoadingState />
+                ) : noPositions ? (
+                  <NoPositions poolId={poolId ? poolId : zeroAddress} />
+                ) : (
+                  <>
+                    <MyPositions
+                      positions={positionsData}
+                      poolId={poolId ? poolId : zeroAddress}
+                      selectedPosition={selectedPosition?.id}
+                      selectPosition={(positionId) =>
+                        selectPosition((prev) =>
+                          prev === positionId ? null : positionId
+                        )
+                      }
+                      farming={farmingInfo}
+                      closedFarmings={closedFarmings}
+                    />
+                    {farmingInfo &&
+                      deposits &&
+                      !isFarmingLoading &&
+                      !areDepositsLoading && (
+                        <div className="mt-8">
+                          <h2 className="font-semibold text-xl text-white mb-4">
+                            Farming
+                          </h2>
+                          <ActiveFarming
+                            deposits={deposits && deposits.deposits}
+                            farming={farmingInfo}
+                            positionsData={positionsData}
                           />
-                          {farmingInfo &&
-                            deposits &&
-                            !isFarmingLoading &&
-                            !areDepositsLoading && (
-                              <div>
-                                <h2 className="font-semibold text-xl text-left mt-12">
-                                  Farming
-                                </h2>
-                                <ActiveFarming
-                                  deposits={deposits && deposits.deposits}
-                                  farming={farmingInfo}
-                                  positionsData={positionsData}
-                                />
-                              </div>
-                            )}
-                        </>
+                        </div>
                       )}
-                    </div>
-                    <div className="flex flex-col gap-8 w-full h-full col-span-1">
-                      <PositionCard
-                        farming={farmingInfo}
-                        closedFarmings={closedFarmings}
-                        selectedPosition={selectedPosition}
-                      />
-                    </div>
-                  </div>
-                </div>
+                  </>
+                )}
               </Tab>
             </Tabs>
           </LoadingContainer>

@@ -142,85 +142,51 @@ export default function TopPoolPositions({
 
   return (
     <LoadingContainer isLoading={loading}>
-      <div className="w-full custom-dashed-3xl p-4 md:p-6 bg-white rounded-[24px]">
+      <div className="w-full p-6 bg-[#140E06] rounded-lg border border-[#3B2712]">
         {/* Desktop View */}
         <div className="hidden md:block w-full overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr>
-                <th className="py-4 px-6 text-[#4D4D4D]">
-                  <div className="flex items-center gap-2 ">
-                    <span className="text-black">OWNER</span>
-                  </div>
+                <th className="py-4 px-6 text-xs text-gray-400 font-medium uppercase text-left">
+                  OWNER
                 </th>
-                <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
+                <th className="py-4 px-6 cursor-pointer text-xs text-gray-400 font-medium uppercase text-left">
                   <div
                     className="flex items-center gap-2"
                     onClick={() => handleSort(Position_OrderBy.TickUpperPrice0)}
                   >
-                    <span className="text-black">RANGE</span>
-                    <div className="flex flex-col">
-                      <ChevronUp
-                        className={`h-3 w-3 ${
-                          sortField === Position_OrderBy.TickUpperPrice0 &&
-                          sortDirection === 'asc'
-                            ? 'text-black'
-                            : 'text-[#4D4D4D]'
-                        }`}
-                      />
-                      <ChevronDown
-                        className={`h-3 w-3 ${
-                          sortField === Position_OrderBy.TickUpperPrice0 &&
-                          sortDirection === 'desc'
-                            ? 'text-black'
-                            : 'text-[#4D4D4D]'
-                        }`}
-                      />
-                    </div>
+                    <span>RANGE</span>
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
                   </div>
                 </th>
-                <th className="py-4 px-6 cursor-pointer text-[#4D4D4D]">
+                <th className="py-4 px-6 text-xs text-gray-400 font-medium uppercase text-left">
+                  POOL
+                </th>
+                <th className="py-4 px-6 cursor-pointer text-xs text-gray-400 font-medium uppercase text-left">
                   <div
                     className="flex items-center gap-2"
                     onClick={() => handleSort(Position_OrderBy.Liquidity)}
                   >
-                    <span className="text-black">LIQUIDITY</span>
-                    <div className="flex flex-col">
-                      <ChevronUp
-                        className={`h-3 w-3 ${
-                          sortField === Position_OrderBy.Liquidity &&
-                          sortDirection === 'asc'
-                            ? 'text-black'
-                            : 'text-[#4D4D4D]'
-                        }`}
-                      />
-                      <ChevronDown
-                        className={`h-3 w-3 ${
-                          sortField === Position_OrderBy.Liquidity &&
-                          sortDirection === 'desc'
-                            ? 'text-black'
-                            : 'text-[#4D4D4D]'
-                        }`}
-                      />
-                    </div>
+                    <span>LIQUIDITY</span>
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
                   </div>
                 </th>
-                <th className="py-4 px-6 text-center text-[#4D4D4D]">
-                  <div className="flex items-center gap-2 justify-center">
-                    <span className="text-black">APR</span>
-                  </div>
+                <th className="py-4 px-6 text-xs text-gray-400 font-medium uppercase text-left">
+                  APR
                 </th>
-                <th className="py-4 px-6 text-center text-[#4D4D4D]">
-                  <div className="flex items-center gap-2 justify-center">
-                    <span className="text-black">COPY POSITION</span>
-                  </div>
+                <th className="py-4 px-6 text-xs text-gray-400 font-medium uppercase text-right">
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#4D4D4D]">
+            <tbody>
               {!positions.length ? (
-                <tr className="hover:bg-white border-white h-full">
-                  <td colSpan={5} className="h-24 text-center text-black">
+                <tr className="hover:bg-transparent border-0 h-full">
+                  <td colSpan={6} className="h-24 text-center text-gray-400">
                     No results.
                   </td>
                 </tr>
@@ -322,17 +288,17 @@ export default function TopPoolPositions({
             <Button
               disabled={page === 1}
               onClick={() => setPage(Math.max(1, page - 1))}
-              className="px-3 py-1 text-sm"
+              className="px-3 py-1 text-sm bg-[#6B4423] hover:bg-[#7D5434] text-white rounded-lg disabled:opacity-50"
             >
               Previous
             </Button>
-            <span className="text-sm text-[#4D4D4D]">
+            <span className="text-sm text-white">
               Page {page} of {totalPages}
             </span>
             <Button
               disabled={page === totalPages}
               onClick={() => setPage(Math.min(totalPages, page + 1))}
-              className="px-3 py-1 text-sm"
+              className="px-3 py-1 text-sm bg-[#6B4423] hover:bg-[#7D5434] text-white rounded-lg disabled:opacity-50"
             >
               Next
             </Button>
@@ -511,78 +477,111 @@ export const PositionRow = ({
     );
   }
 
+  // Calculate the range visualization
+  const currentPrice = poolEntity?.token0Price?.toSignificant(6);
+  const lowerPrice = positionEntity?.token0PriceLower.toSignificant(6);
+  const upperPrice = positionEntity?.token0PriceUpper.toSignificant(6);
+
+  // Calculate positions for the slider visualization
+  // Current tick is always at 50% (middle)
+  let rangeStart = 20; // where the range starts (left boundary)
+  let rangeEnd = 60; // where the range ends (right boundary)
+  let currentPricePosition = 50; // current tick is always in the middle
+  let isInRange = true;
+
+  if (currentPrice && lowerPrice && upperPrice) {
+    const current = parseFloat(currentPrice);
+    const lower = parseFloat(lowerPrice);
+    const upper = parseFloat(upperPrice);
+
+    // Check if in range
+    isInRange = current >= lower && current <= upper;
+
+    // Current price is always at the center (50%)
+    // Calculate the visual range based on the position range
+    const range = upper - lower;
+    const visualRange = range * 3; // Show 3x the range width for context
+
+    // Calculate where the position boundaries fall relative to current price
+    const lowerOffset = ((lower - current) / visualRange) * 100;
+    const upperOffset = ((upper - current) / visualRange) * 100;
+
+    // Position relative to middle (50%)
+    rangeStart = 50 + lowerOffset;
+    rangeEnd = 50 + upperOffset;
+
+    // Clamp values to 0-100
+    rangeStart = Math.max(0, Math.min(100, rangeStart));
+    rangeEnd = Math.max(0, Math.min(100, rangeEnd));
+  }
+
   return (
-    <tr className="hover:bg-gray-50">
-      <td className="py-4 px-6 text-black">{truncate(position.owner, 6)}</td>
-      <td className="py-4 px-6 text-black">
-        {Number(position.tickUpper.price0) > Number.MAX_SAFE_INTEGER ? (
-          'FULL RANGE'
-        ) : (
-          <>
-            {DynamicFormatAmount({
-              amount: positionEntity?.token0PriceLower.toFixed(18) ?? '0',
-              decimals: 5,
-            })}{' '}
-            -{' '}
-            {DynamicFormatAmount({
-              amount: positionEntity?.token0PriceUpper.toFixed(18) ?? '0',
-              decimals: 5,
-            })}{' '}
-          </>
-        )}
-        <br />
+    <tr className="border-b border-[#3B2712] bg-transparent text-white hover:bg-[#1C1208]">
+      <td className="py-5 px-6 text-white text-sm font-normal">
+        {truncate(position.owner, 6)}
+      </td>
+      <td className="py-5 px-6 text-white text-sm font-normal">
+        <div className="flex items-center gap-2 group relative">
+          <div className="h-1.5 w-32 bg-[#E8DEF880] rounded-full overflow-visible relative">
+            {/* Range section - blue when in range, red when out of range */}
+            <div
+              className={`absolute h-full rounded-full ${isInRange ? 'bg-[#4A80F9]' : 'bg-red-500'}`}
+              style={{
+                left: `${rangeStart}%`,
+                width: `${rangeEnd - rangeStart}%`
+              }}
+            ></div>
+            {/* Left boundary line */}
+            <div
+              className={`absolute top-1/2 -translate-y-1/2 w-0.5 h-3.5 ${isInRange ? 'bg-[#4A80F9]' : 'bg-red-500'}`}
+              style={{ left: `${rangeStart}%` }}
+            ></div>
+            {/* Right boundary line */}
+            <div
+              className={`absolute top-1/2 -translate-y-1/2 w-0.5 h-3.5 ${isInRange ? 'bg-[#4A80F9]' : 'bg-red-500'}`}
+              style={{ left: `${rangeEnd}%` }}
+            ></div>
+            {/* Current price indicator line - only show when in range */}
+            {isInRange && (
+              <div
+                className="absolute top-1/2 -translate-y-1/2 w-0.5 h-3.5 bg-white z-10"
+                style={{ left: `${currentPricePosition}%` }}
+              ></div>
+            )}
+          </div>
+          {/* Tooltip */}
+          <div className="absolute bottom-full left-0 mb-2 px-3 py-2 bg-[#1A1A1A] text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10 shadow-lg">
+            <div className="font-medium mb-1">Range: {lowerPrice} - {upperPrice}</div>
+            <div className="text-gray-300">Current: {currentPrice}</div>
+            <div className={`${isInRange ? 'text-green-400' : 'text-red-400'}`}>
+              {isInRange ? 'In Range' : 'Out of Range'}
+            </div>
+          </div>
+        </div>
+      </td>
+      <td className="py-5 px-6 text-white text-sm font-normal">
         {position.token0.symbol}/{position.token1.symbol}
       </td>
-      <td className="py-4 px-6 text-black">
+      <td className="py-5 px-6 text-white text-sm font-normal">
         {liquidityUSD !== null ? (
-          <span
-            className="text-[#479FFF] font-medium cursor-help relative group "
-            title={`${DynamicFormatAmount({
-              amount: position.depositedToken0,
-              decimals: 3,
-              endWith: '',
-            })} ${position.token0.symbol} + ${DynamicFormatAmount({
-              amount: position.depositedToken1,
-              decimals: 3,
-              endWith: '',
-            })} ${position.token1.symbol}`}
-          >
+          <span>
             $
             {DynamicFormatAmount({
               amount: liquidityUSD.toString(),
               decimals: 2,
-              endWith: '',
-              className: 'text-black',
+              endWith: 'K',
             })}
-            {/* Tooltip */}
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
-              {DynamicFormatAmount({
-                amount: position.depositedToken0,
-                decimals: 3,
-                endWith: '',
-              })}{' '}
-              {position.token0.symbol}
-              <br />
-              {DynamicFormatAmount({
-                amount: position.depositedToken1,
-                decimals: 3,
-                endWith: '',
-              })}{' '}
-              {position.token1.symbol}
-            </div>
           </span>
         ) : (
           'Loading...'
         )}
       </td>
-      <td className="py-4 px-6 text-black text-center">
-        <span className="text-[#F7931A] font-medium">
-          {apr ? `${apr.toFixed(2)}%` : 'Loading...'}
-        </span>
+      <td className="py-5 px-6 text-white text-sm font-normal">
+        {apr ? `${apr.toFixed(2)}%` : 'Loading...'}
       </td>
-      <td className="py-4 px-6 text-black text-center">
+      <td className="py-5 px-6 text-right">
         <Button
-          className="border border-[#2D2D2D] bg-[#FFCD4D] hover:bg-[#FFD56A] text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-3 py-1.5 text-xs"
+          className="px-4 py-2 bg-[#6B4423] hover:bg-[#7D5434] text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
           onClick={() => {
             const url = `/new-position/${position.pool.id}?leftrange=${
               positionEntity?.token0PriceLower.toFixed(18) ?? '0'

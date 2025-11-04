@@ -1,7 +1,8 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { HeaderItem } from './common';
-import { formatUSD } from '@/lib/algebra/utils/common/formatUSD';
 import { DynamicFormatAmount } from '@/lib/algebra/utils/common/formatAmount';
+import { Pool } from '@cryptoalgebra/sdk';
+import { Position as PositionEntity } from '@cryptoalgebra/sdk';
 
 interface MyPosition {
   id: number;
@@ -10,99 +11,126 @@ interface MyPosition {
   liquidityUSD: number;
   feesUSD: number;
   apr: number;
+  position?: PositionEntity;
+  poolEntity?: Pool;
 }
 
 export const myPositionsColumns: ColumnDef<MyPosition>[] = [
   {
     accessorKey: 'id',
-    header: () => <HeaderItem className="ml-2">ID</HeaderItem>,
+    header: () => <HeaderItem>OWNER</HeaderItem>,
     cell: ({ getValue }) => (
-      <span className="font-medium">{`#${getValue()}`}</span>
+      <span className="text-white font-normal text-sm">{`0xf...${String(getValue()).slice(-4)}`}</span>
+    ),
+  },
+  {
+    accessorKey: 'range',
+    header: () => <HeaderItem>RANGE</HeaderItem>,
+    cell: ({ row }) => {
+      const position = row.original.position;
+      const poolEntity = row.original.poolEntity;
+      const isInRange = !row.original.outOfRange;
+
+      // Default values
+      let rangeStart = 35;
+      let rangeEnd = 65;
+      const currentPricePosition = 50; // Current tick is always at center
+
+      // If we have position and pool entity data, calculate dynamic positions
+      if (position && poolEntity) {
+        const currentPrice = poolEntity?.token0Price?.toSignificant(6);
+        const lowerPrice = position?.token0PriceLower.toSignificant(6);
+        const upperPrice = position?.token0PriceUpper.toSignificant(6);
+
+        if (currentPrice && lowerPrice && upperPrice) {
+          const current = parseFloat(currentPrice);
+          const lower = parseFloat(lowerPrice);
+          const upper = parseFloat(upperPrice);
+
+          // Current price is always at the center (50%)
+          // Calculate the visual range based on the position range
+          const range = upper - lower;
+          const visualRange = range * 3; // Show 3x the range width for context
+
+          // Calculate where the position boundaries fall relative to current price
+          const lowerOffset = ((lower - current) / visualRange) * 100;
+          const upperOffset = ((upper - current) / visualRange) * 100;
+
+          // Position relative to middle (50%)
+          rangeStart = 50 + lowerOffset;
+          rangeEnd = 50 + upperOffset;
+
+          // Clamp values to 0-100
+          rangeStart = Math.max(0, Math.min(100, rangeStart));
+          rangeEnd = Math.max(0, Math.min(100, rangeEnd));
+        }
+      }
+
+      return (
+        <div className="flex items-center gap-2 group relative">
+          <div className="h-1.5 w-32 bg-[#E8DEF880] rounded-full overflow-visible relative">
+            {/* Range section - blue when in range, red when out of range */}
+            <div
+              className={`absolute h-full rounded-full ${isInRange ? 'bg-[#4A80F9]' : 'bg-red-500'}`}
+              style={{
+                left: `${rangeStart}%`,
+                width: `${rangeEnd - rangeStart}%`
+              }}
+            ></div>
+            {/* Left boundary line */}
+            <div
+              className={`absolute top-1/2 -translate-y-1/2 w-0.5 h-3.5 ${isInRange ? 'bg-[#4A80F9]' : 'bg-red-500'}`}
+              style={{ left: `${rangeStart}%` }}
+            ></div>
+            {/* Right boundary line */}
+            <div
+              className={`absolute top-1/2 -translate-y-1/2 w-0.5 h-3.5 ${isInRange ? 'bg-[#4A80F9]' : 'bg-red-500'}`}
+              style={{ left: `${rangeEnd}%` }}
+            ></div>
+            {/* Current price indicator line - only show when in range */}
+            {isInRange && (
+              <div
+                className="absolute top-1/2 -translate-y-1/2 w-0.5 h-3.5 bg-white z-10"
+                style={{ left: `${currentPricePosition}%` }}
+              ></div>
+            )}
+          </div>
+          {/* Tooltip */}
+          <div className="absolute bottom-full left-0 mb-2 px-3 py-2 bg-[#1A1A1A] text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10 shadow-lg">
+            <div className="font-medium mb-1">{row.original.range}</div>
+            <div className={`${isInRange ? 'text-green-400' : 'text-red-400'}`}>
+              {isInRange ? 'In Range' : 'Out of Range'}
+            </div>
+          </div>
+        </div>
+      );
+    },
+  },
+  {
+    id: 'pool',
+    header: () => <HeaderItem>POOL</HeaderItem>,
+    cell: () => (
+      <span className="text-white font-normal text-sm">WETH/WBERA</span>
     ),
   },
   {
     accessorKey: 'liquidityUSD',
-    header: ({ column }) => (
-      <HeaderItem
-        sort={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        isAsc={column.getIsSorted() === 'asc'}
-      >
-        Liquidity
-      </HeaderItem>
-    ),
+    header: () => <HeaderItem>LIQUIDITY</HeaderItem>,
     cell: ({ getValue }) => (
-      <span className="font-medium">
-        $
+      <span className="text-white font-normal text-sm">
         {DynamicFormatAmount({
           amount: (getValue() as number) ?? 0,
           decimals: 2,
-          endWith: '',
+          endWith: 'K',
         })}
       </span>
-    ),
-  },
-  {
-    accessorKey: 'feesUSD',
-    header: ({ column }) => (
-      <HeaderItem
-        sort={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        isAsc={column.getIsSorted() === 'asc'}
-      >
-        Fees
-      </HeaderItem>
-    ),
-    cell: ({ getValue }) => (
-      <span className="font-medium">
-        $
-        {DynamicFormatAmount({
-          amount: (getValue() as number).toString(),
-          decimals: 10,
-          endWith: '',
-        })}
-      </span>
-    ),
-  },
-  {
-    accessorKey: 'outOfRange',
-    header: ({ column }) => (
-      <HeaderItem
-        className="min-w-[100px]"
-        sort={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        isAsc={column.getIsSorted() === 'asc'}
-      >
-        Status
-      </HeaderItem>
-    ),
-    cell: ({ getValue }) =>
-      getValue() ? (
-        <span className="px-3 py-1 rounded-md bg-yellow-50 text-yellow-600 text-sm font-medium  whitespace-nowrap">
-          Out of range
-        </span>
-      ) : (
-        <span className="px-3 py-1 rounded-md bg-green-50 text-green-500 text-sm font-medium  whitespace-nowrap">
-          In range
-        </span>
-      ),
-  },
-  {
-    accessorKey: 'range',
-    header: () => <HeaderItem className="min-w-[250px]">Range</HeaderItem>,
-    cell: ({ getValue }) => (
-      <span className="font-mono text-sm ">{getValue() as string}</span>
     ),
   },
   {
     accessorKey: 'apr',
-    header: ({ column }) => (
-      <HeaderItem
-        sort={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        isAsc={column.getIsSorted() === 'asc'}
-      >
-        APR
-      </HeaderItem>
-    ),
+    header: () => <HeaderItem>APR</HeaderItem>,
     cell: ({ getValue }) => (
-      <span className="font-medium text-[#F7931A]">
+      <span className="text-white font-normal text-sm">
         {(getValue() as number)?.toFixed(2)}%
       </span>
     ),
