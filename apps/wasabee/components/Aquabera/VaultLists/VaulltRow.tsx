@@ -28,15 +28,11 @@ export const VaultRow = observer(({ vault, index }: { vault: ICHIVaultContract, 
 
   return (
     <tr
-      className={`border-b border-[#2a2318] transition-colors cursor-pointer ${
-        (index ?? 0) % 2 === 0 
-          ? 'bg-transparent hover:bg-[#0A0704]' // Even rows - darker
-          : 'bg-[#1F1409] hover:bg-[#241809]'   // Odd rows - lighter background
-      }`}
+      className="bg-[#1C1208] hover:bg-[#241809] transition-colors cursor-pointer rounded-lg"
       onClick={() => (window.location.href = `/vault/${vault.address}`)}
     >
       {/* Token pair */}
-      <td className="py-4 px-6">
+      <td className="py-5 px-6 rounded-l-lg">
         <div>
           {vault?.vaultTag && (
             <VaultTag
@@ -68,7 +64,7 @@ export const VaultRow = observer(({ vault, index }: { vault: ICHIVaultContract, 
         </div>
       </td>
       {/* allow token */}
-      <td className="py-4 px-6">
+      <td className="py-5 px-6">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1">
             {isTokenAAllowed.data && tokenA && <TokenLogo token={tokenA} size={24} />}
@@ -83,9 +79,9 @@ export const VaultRow = observer(({ vault, index }: { vault: ICHIVaultContract, 
         </div>
       </td>
       {/* vault address */}
-      {/* <td className="py-4 px-6 text-black">{vault.id}</td> */}
+      {/* <td className="py-5 px-6 text-black">{vault.id}</td> */}
       {/* apr */}
-      <td className="py-4 px-6 text-right text-white">
+      <td className="py-5 px-6 text-right text-white">
         {DynamicFormatAmount({
           amount: vault.tvlUSD ?? 0,
           decimals: 3,
@@ -93,7 +89,7 @@ export const VaultRow = observer(({ vault, index }: { vault: ICHIVaultContract, 
         })}
       </td>
       {/* volume */}
-      <td className="py-4 px-6 text-right text-white">
+      <td className="py-5 px-6 text-right text-white">
         {DynamicFormatAmount({
           amount: volume ?? 0,
           decimals: 3,
@@ -101,14 +97,14 @@ export const VaultRow = observer(({ vault, index }: { vault: ICHIVaultContract, 
         })}
       </td>
       {/* fees */}
-      <td className="py-4 px-6 text-right text-white">
+      <td className="py-5 px-6 text-right text-white">
         {DynamicFormatAmount({
           amount: fees ?? 0,
           decimals: 3,
           beginWith: ' $',
         })}
       </td>
-      <td className="py-4 px-6 text-right text-white">
+      <td className="py-5 px-6 text-right text-white rounded-r-lg">
         <div className="h-full flex justify-end items-center gap-2">
           {vault.apr?.toFixed(2) || '0.00'}%
           <Tooltip

@@ -133,56 +133,6 @@ const MyPoolsTable = <TData, TValue>({
               />
             </div> */}
           </div>
-          {/* <div className="flex items-center gap-x-5">
-            <Button
-              className={cn(
-                "flex items-center gap-x-1 p-2.5 cursor-pointer border border-[#E18A20]/40 bg-[#E18A20]/40 rounded-[10px]"
-              )}
-              onClick={() => setIsCreatePoolOpen(true)}
-            >
-              <Plus />
-              <span>Create Pool</span>
-            </Button>
-
-            <Modal
-              isOpen={isCreatePoolOpen}
-              onOpenChange={setIsCreatePoolOpen}
-              classNames={{
-                base: "bg-[#271A0C] dark:bg-[#271A0C]", // modal background
-                header: "border-b border-[#F7931A20]",
-                body: "py-6",
-                closeButton: "hover:bg-white/5 active:bg-white/10",
-              }}
-            >
-              <ModalContent>
-                
-                <ModalBody>
-                  <CreatePoolForm />
-                </ModalBody>
-              </ModalContent>
-            </Modal>
-
-            <div className="flex gap-2 max-md:gap-4 items-center w-fit ml-auto max-sm:hidden">
-              <label
-                className="flex gap-2 items-center"
-                htmlFor="farmingAvailable"
-              >
-                <span className="max-md:hidden">Farming Available</span>
-              </label>
-              <Switch
-                className="bg-[#865215]"
-                id="farmingAvailable"
-                checked={table.getColumn("plugins")?.getFilterValue() === true}
-                onCheckedChange={() => {
-                  const column = table.getColumn("plugins");
-                  if (column?.getFilterValue() === undefined)
-                    column?.setFilterValue(true);
-                  else column?.setFilterValue(undefined);
-                }}
-              />
-              <LayoutGrid className="text-[#F7941D80]/50 cursor-pointer text-xl" />
-            </div>
-          </div> */}
         </div>
       )}
       {/* FIXME: border radius display */}

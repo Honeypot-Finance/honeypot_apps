@@ -18,12 +18,13 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
-import { Search, Plus } from 'lucide-react';
+import { Search } from 'lucide-react';
 import CreatePoolForm from '../../create-pool/CreatePoolForm';
 import { cn } from '@/lib/tailwindcss';
 import { HoneyContainer } from '@/components/CardContianer/HoneyContainer';
 import { popmodal } from '@/services/popmodal';
 import { Pool } from './poolsColumns';
+import { FiPlusCircle } from 'react-icons/fi';
 import { LoadingDisplay } from '@/components/LoadingDisplay/LoadingDisplay';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { useObserver } from 'mobx-react-lite';
@@ -197,7 +198,7 @@ const PoolsTable = <TData, TValue>({
               }
               disabled={!walletClient}
             >
-              <Plus />
+              <FiPlusCircle />
               <span>Create Pool</span>
             </Button>
 

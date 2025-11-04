@@ -92,15 +92,11 @@ export const MyVaultRow = observer(
 
     return (
       <tr
-        className={`border-b border-[#2a2318] transition-colors cursor-pointer ${
-          (index ?? 0) % 2 === 0 
-            ? 'bg-transparent hover:bg-[#0A0704]' // Even rows - darker
-            : 'bg-[#1F1409] hover:bg-[#241809]'   // Odd rows - lighter background
-        }`}
+        className="bg-[#1C1208] hover:bg-[#241809] transition-colors cursor-pointer rounded-lg"
         onClick={() => (window.location.href = `/vault/${vault.address}`)}
       >
         {/* Token pair */}
-        <td className="py-4 px-6">
+        <td className="py-5 px-6 rounded-l-lg">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
               <TokenLogo
@@ -122,7 +118,7 @@ export const MyVaultRow = observer(
           </div>
         </td>
         {/* allow token */}
-        <td className="py-4 px-6">
+        <td className="py-5 px-6">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
               {isTokenAAllowed.data && <TokenLogo token={tokenA} size={24} />}
@@ -137,9 +133,9 @@ export const MyVaultRow = observer(
           </div>
         </td>
         {/* vault address */}
-        {/* <td className="py-4 px-6 text-black">{vault.id}</td> */}
+        {/* <td className="py-5 px-6 text-black">{vault.id}</td> */}
         {/* tvl */}
-        <td className="py-4 px-6 text-right text-white">
+        <td className="py-5 px-6 text-right text-white">
           {DynamicFormatAmount({
             amount: vaultContract?.userTVLUSD ?? 0,
             decimals: 3,
@@ -147,7 +143,7 @@ export const MyVaultRow = observer(
           })}
         </td>
         {/* apr */}
-        <td className="py-4 px-6 text-right text-white flex justify-end items-center gap-2">
+        <td className="py-5 px-6 text-right text-white rounded-r-lg flex justify-end items-center gap-2">
           {vaultContract?.apr.toFixed(2)}%
           <Tooltip
             content={

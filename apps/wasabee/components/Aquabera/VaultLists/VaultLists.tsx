@@ -60,14 +60,13 @@ export function AquaberaList({ prefetchedData }: AquaberaListProps) {
           selectedKey={selectedTab}
           onSelectionChange={(key) => setSelectedTab(key.toString())}
           classNames={{
-            tab: 'px-4 py-2 text-sm font-medium',
-            base: '',
-            tabList:
-              'flex rounded-lg border border-[#2a2318] bg-[#1A0F06] p-1 gap-1',
-            cursor:
-              'bg-[#6B4423] rounded-md',
+            base: 'relative w-auto',
+            tabList: 'flex rounded-lg bg-[#1A0F06] p-1 gap-1',
+            cursor: 'bg-[#6B4423] rounded-md',
             panel: 'w-full',
-            tabContent: 'text-white group-data-[selected=true]:text-white group-data-[selected=false]:text-gray-400',
+            tab: 'px-4 py-2 text-sm font-medium min-w-[100px]',
+            tabContent:
+              'text-white group-data-[selected=true]:text-white group-data-[selected=false]:text-white group-data-[selected=false]:opacity-50',
           }}
         >
           <Tab key="all" title="Vaults" />
@@ -110,14 +109,13 @@ export function AquaberaList({ prefetchedData }: AquaberaListProps) {
           selectedKey={selectedTab}
           onSelectionChange={(key) => setSelectedTab(key.toString())}
           classNames={{
-            tab: 'px-4 py-2 text-sm font-medium min-w-[100px]',
-            base: '',
-            tabList:
-              'flex rounded-lg border border-[#2a2318] bg-[#1A0F06] p-1 gap-1',
-            cursor:
-              'bg-[#6B4423] rounded-md',
+            base: 'relative w-auto',
+            tabList: 'flex rounded-lg bg-[#1A0F06] p-1 gap-1',
+            cursor: 'bg-[#6B4423] rounded-md',
             panel: 'w-full',
-            tabContent: 'text-white group-data-[selected=true]:text-white group-data-[selected=false]:text-gray-400',
+            tab: 'px-4 py-2 text-sm font-medium min-w-[100px]',
+            tabContent:
+              'text-white group-data-[selected=true]:text-white group-data-[selected=false]:text-white group-data-[selected=false]:opacity-50',
           }}
         >
           <Tab key="all" title="Vaults" />

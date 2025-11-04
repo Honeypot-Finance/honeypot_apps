@@ -1,9 +1,11 @@
 import { Pool } from './poolsColumns';
 import { cn } from '@/lib/tailwindcss';
-import { Search, Plus } from 'lucide-react';
+import { Search } from 'lucide-react';
+
 import { useEffect, useState } from 'react';
 import { Tab, Tabs, Tooltip } from '@nextui-org/react';
 import { popmodal } from '@/services/popmodal';
+import { FiPlusCircle } from 'react-icons/fi';
 
 import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { ColumnDef } from '@tanstack/react-table';
@@ -16,9 +18,6 @@ import { formatExtremelyLargeNumber } from '@/lib/format';
 import { observer, useObserver } from 'mobx-react-lite';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { formatUSD } from '@/lib/algebra/utils/common/formatUSD';
-import { optionsPresets } from '@/components/OptionsDropdown/OptionsDropdown';
-import { OptionsDropdown } from '@/components/OptionsDropdown/OptionsDropdown';
-import { TbSwitch, TbSwitchHorizontal } from 'react-icons/tb';
 import { ChevronDown } from 'lucide-react';
 import { useBitgetEvents } from '@/lib/algebra/graphql/clients/bitget_event';
 import Image from 'next/image';
@@ -78,10 +77,6 @@ const PoolsTable = observer(
     const isMyPools = selectedFilter === 'myPools';
     const showLoading = isMyPools ? Boolean(loading) : false;
 
-    const filters = [
-      { key: 'trending', label: 'All Pools' },
-      { key: 'myPools', label: 'My Pools' },
-    ];
     const bitgetEventsData = useBitgetEvents(wallet.account.toLowerCase());
 
     const [tableData, setTableData] = useState<
@@ -210,13 +205,12 @@ const PoolsTable = observer(
                 <Tabs
                   classNames={{
                     base: 'relative w-auto',
-                    tabList:
-                      'flex rounded-lg border border-[#2a2318] bg-[#1A0F06] p-1 gap-1',
-                    cursor:
-                      'bg-[#6B4423] rounded-md',
+                    tabList: 'flex rounded-lg bg-[#1A0F06] p-1 gap-1',
+                    cursor: 'bg-[#6B4423] rounded-md',
                     panel: 'w-full',
                     tab: 'px-4 py-2 text-sm font-medium min-w-[100px]',
-                    tabContent: 'text-white group-data-[selected=true]:text-white group-data-[selected=false]:text-gray-400',
+                    tabContent:
+                      'text-white group-data-[selected=true]:text-white group-data-[selected=false]:text-white group-data-[selected=false]:opacity-50',
                   }}
                   onSelectionChange={(key) => {
                     if (key === 'myPools' && !wallet.account) {
@@ -345,7 +339,7 @@ const PoolsTable = observer(
                   }
                   disabled={!wallet?.account || wallet?.account === zeroAddress}
                 >
-                  <Plus className="text-black" />
+                  <FiPlusCircle className="text-black" />
                   <span className="text-black">Create Pool</span>
                 </Button>
               </div>
@@ -406,11 +400,15 @@ const PoolsTable = observer(
                     <>
                       <div className="flex justify-between items-center mb-3">
                         <div className="font-medium text-gray-500">TVL</div>
-                        <div className="text-white">{formatExtremelyLargeNumber(pool.tvlUSD)}</div>
+                        <div className="text-white">
+                          {formatExtremelyLargeNumber(pool.tvlUSD)}
+                        </div>
                       </div>
 
                       <div className="flex justify-between items-center mb-3">
-                        <div className="font-medium text-gray-500">Volume 24H</div>
+                        <div className="font-medium text-gray-500">
+                          Volume 24H
+                        </div>
                         <div className="flex flex-col items-end">
                           <span className="text-white">
                             {formatExtremelyLargeNumber(pool.volume24USD)}
@@ -430,7 +428,9 @@ const PoolsTable = observer(
 
                       <div className="flex justify-between items-center mb-3">
                         <div className="font-medium text-gray-500">Fee 24H</div>
-                        <div className="text-white">{formatUSD.format(pool.fees24USD)}</div>
+                        <div className="text-white">
+                          {formatUSD.format(pool.fees24USD)}
+                        </div>
                       </div>
                     </>
                   )}
@@ -446,11 +446,15 @@ const PoolsTable = observer(
                     <>
                       <div className="flex justify-between items-center mb-3">
                         <div className="font-medium text-gray-500">My TVL</div>
-                        <div className="text-white">{formatExtremelyLargeNumber(pool.userTVLUSD)}</div>
+                        <div className="text-white">
+                          {formatExtremelyLargeNumber(pool.userTVLUSD)}
+                        </div>
                       </div>
 
                       <div className="flex justify-between items-center mb-3">
-                        <div className="font-medium text-gray-500">Unclaimed Fees</div>
+                        <div className="font-medium text-gray-500">
+                          Unclaimed Fees
+                        </div>
                         <div className="text-white">
                           ${Number(pool.unclaimedFees).toLocaleString()}
                         </div>
@@ -487,70 +491,149 @@ const PoolsTable = observer(
         </div>
 
         {/* Desktop view - table layout for medium screens and up */}
-        <div className="hidden md:block custom-dashed-3xl w-full p-6 bg-[#271A0C] overflow-x-auto">
+        <div className="hidden md:block w-full p-6 bg-[#140E06] overflow-x-auto rounded-lg">
           {!showLoading ? (
-            <table className="w-full">
+            <table className="w-full border-separate border-spacing-y-2">
               <thead>
                 <tr>
-                  <th className="text-left text-sm text-gray-500 font-normal pb-4">Pool</th>
+                  <th className="text-left text-sm text-gray-500 font-normal pb-4">
+                    Pool
+                  </th>
                   {defaultFilter === 'trending' && (
                     <>
                       <th className="text-left text-sm text-gray-500 font-normal pb-4">
-                        <div className="flex items-center gap-1 justify-end cursor-pointer" onClick={() => handleSort('tvl')}>
+                        <div
+                          className="flex items-center gap-1 justify-end cursor-pointer"
+                          onClick={() => handleSort('tvl')}
+                        >
                           TVL
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          <svg
+                            className="w-3 h-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
                           </svg>
                         </div>
                       </th>
                       <th className="text-left text-sm text-gray-500 font-normal pb-4">
-                        <div className="flex items-center gap-1 justify-end cursor-pointer" onClick={() => handleSort('volume')}>
+                        <div
+                          className="flex items-center gap-1 justify-end cursor-pointer"
+                          onClick={() => handleSort('volume')}
+                        >
                           Volume 24H
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          <svg
+                            className="w-3 h-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
                           </svg>
                         </div>
                       </th>
                       <th className="text-left text-sm text-gray-500 font-normal pb-4">
-                        <div className="flex items-center gap-1 justify-end cursor-pointer" onClick={() => handleSort('feesUSD')}>
+                        <div
+                          className="flex items-center gap-1 justify-end cursor-pointer"
+                          onClick={() => handleSort('feesUSD')}
+                        >
                           Fee 24H
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          <svg
+                            className="w-3 h-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
                           </svg>
                         </div>
                       </th>
                     </>
                   )}
                   <th className="text-left text-sm text-gray-500 font-normal pb-4">
-                    <div className="flex items-center gap-1 justify-end cursor-pointer" onClick={() => handleSort('apr')}>
+                    <div
+                      className="flex items-center gap-1 justify-end cursor-pointer"
+                      onClick={() => handleSort('apr')}
+                    >
                       APR
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      <svg
+                        className="w-3 h-3"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
                       </svg>
                     </div>
                   </th>
                   {defaultFilter === 'myPools' && (
                     <>
                       <th className="text-left text-sm text-gray-500 font-normal pb-4">
-                        <div className="flex items-center gap-1 justify-end cursor-pointer" onClick={() => handleSort('user_tvl')}>
+                        <div
+                          className="flex items-center gap-1 justify-end cursor-pointer"
+                          onClick={() => handleSort('user_tvl')}
+                        >
                           My TVL
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          <svg
+                            className="w-3 h-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
                           </svg>
                         </div>
                       </th>
                       <th className="text-left text-sm text-gray-500 font-normal pb-4">
-                        <div className="flex items-center gap-1 justify-center cursor-pointer" onClick={() => handleSort('unclaimedFees')}>
+                        <div
+                          className="flex items-center gap-1 justify-center cursor-pointer"
+                          onClick={() => handleSort('unclaimedFees')}
+                        >
                           Unclaimed Fees
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          <svg
+                            className="w-3 h-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
                           </svg>
                         </div>
                       </th>
                     </>
                   )}
                   <th className="text-left text-sm text-gray-500 font-normal pb-4 text-center">
-                    Actions
                   </th>
                 </tr>
               </thead>
@@ -568,14 +651,10 @@ const PoolsTable = observer(
                   </tr>
                 ) : (
                   getSortedPools().map(
-                    (pool: Pool & { userTVLUSD: number }, index) => (
+                    (pool: Pool & { userTVLUSD: number }) => (
                       <tr
                         key={pool.id}
-                        className={`border-b border-[#2a2318] transition-colors cursor-pointer ${
-                          index % 2 === 0 
-                            ? 'bg-transparent hover:bg-[#0A0704]' // Even rows - darker
-                            : 'bg-[#1F1409] hover:bg-[#241809]'   // Odd rows - lighter background
-                        }`}
+                        className="bg-[#1C1208] hover:bg-[#241809] transition-colors cursor-pointer rounded-lg"
                         onClick={() => {
                           if (action) {
                             action(pool.id);
@@ -584,7 +663,7 @@ const PoolsTable = observer(
                           }
                         }}
                       >
-                        <td className="py-4 px-6">
+                        <td className="py-5 px-6 rounded-l-lg">
                           <div className="flex items-center gap-3">
                             <div className="flex items-center gap-1">
                               <TokenLogo
@@ -640,14 +719,14 @@ const PoolsTable = observer(
                         </td>
                         {defaultFilter === 'trending' && (
                           <>
-                            <td className="py-4 px-6 text-right">
+                            <td className="py-5 px-6 text-right">
                               <div className="flex flex-col">
                                 <span className="text-white font-mono">
                                   {formatExtremelyLargeNumber(pool.tvlUSD)}
                                 </span>
                               </div>
                             </td>
-                            <td className="py-4 px-6 text-right">
+                            <td className="py-5 px-6 text-right">
                               <div className="flex flex-col">
                                 <span className="text-white font-mono">
                                   {formatExtremelyLargeNumber(pool.volume24USD)}
@@ -666,7 +745,7 @@ const PoolsTable = observer(
                                 </span>
                               </div>
                             </td>
-                            <td className="py-4 px-6 text-right">
+                            <td className="py-5 px-6 text-right">
                               <div className="flex flex-col">
                                 <span className="text-white">
                                   {formatUSD.format(pool.fees24USD)}
@@ -675,7 +754,7 @@ const PoolsTable = observer(
                             </td>
                           </>
                         )}
-                        <td className="py-4 px-6 text-right">
+                        <td className={`py-5 px-6 text-right ${defaultFilter === 'trending' ? '' : 'rounded-r-lg'}`}>
                           <div className="flex flex-col">
                             <span className="text-white">
                               {Number(pool.apr24h).toFixed(2)}%
@@ -684,41 +763,26 @@ const PoolsTable = observer(
                         </td>
                         {defaultFilter === 'myPools' && (
                           <>
-                            <td className="py-4 px-6 text-right">
+                            <td className="py-5 px-6 text-right">
                               <div className="flex flex-col">
                                 <span className="text-white">
                                   {formatExtremelyLargeNumber(pool.userTVLUSD)}
                                 </span>
                               </div>
                             </td>
-                            <td className="py-4 px-6 text-center">
+                            <td className="py-5 px-6 text-center">
                               <span className="text-white">
                                 ${Number(pool.unclaimedFees).toLocaleString()}
                               </span>
                             </td>
                           </>
                         )}
-                        <td className="py-4 px-6 text-center">
-                          <OptionsDropdown
-                            className="min-h-0 h-[unset] bg-white text-black"
-                            options={[
-                              optionsPresets.copy({
-                                copyText: pool.id,
-                                displayText: 'Copy Pool address',
-                                copysSuccessText: 'Pool address copied',
-                              }),
-                              optionsPresets.viewOnExplorer({
-                                address: pool.id,
-                              }),
-                              {
-                                icon: <TbSwitchHorizontal />,
-                                display: 'Swap',
-                                onClick: () => {
-                                  window.location.href = `/swap?inputCurrency=${pool.pair.token0.id}&outputCurrency=${pool.pair.token1.id}`;
-                                },
-                              },
-                            ]}
-                          />
+                        <td className={`py-5 px-6 text-center ${defaultFilter === 'trending' ? 'rounded-r-lg' : ''}`}>
+                          <div className="flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-lg bg-[#2D2115] flex items-center justify-center cursor-pointer hover:bg-[#3D2F23] transition-colors">
+                              <ChevronUpIcon className="w-5 h-5 text-white rotate-90" />
+                            </div>
+                          </div>
                         </td>
                       </tr>
                     )

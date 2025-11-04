@@ -105,12 +105,8 @@ const PoolsPage: NextLayoutPage = observer(() => {
             tab: 'flex-1 h-12 text-base font-medium data-[selected=true]:text-white data-[selected=false]:text-gray-400',
             base: 'relative w-full',
             cursor: 'bg-[#6B4423] rounded-lg w-full',
-            tabList:
-              'flex gap-0 rounded-none bg-transparent border-b-2 border-[#2a2318] mb-6 w-full',
-            panel: cn(
-              'w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-0 ',
-              '!mt-0'
-            ),
+            tabList: 'flex gap-0 rounded-none bg-[#1B1308] mb-6 w-full',
+            panel: cn('w-full bg-transparent rounded-2xl p-0 ', '!mt-0'),
             tabContent: 'text-inherit',
           }}
           aria-label="Pool options"
