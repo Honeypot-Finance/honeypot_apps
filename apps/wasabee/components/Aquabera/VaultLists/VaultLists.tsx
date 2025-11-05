@@ -18,11 +18,12 @@ import { VaultDataPrefetchReturn } from '@/hooks/useVaultDataPrefetch';
 
 interface AquaberaListProps {
   prefetchedData?: VaultDataPrefetchReturn;
+  defaultTab?: 'all' | 'my';
 }
 
-export function AquaberaList({ prefetchedData }: AquaberaListProps) {
+export function AquaberaList({ prefetchedData, defaultTab = 'all' }: AquaberaListProps) {
   const [search, setSearch] = useState('');
-  const [selectedTab, setSelectedTab] = useState('all');
+  const [selectedTab, setSelectedTab] = useState(defaultTab);
   const [sortField, setSortField] = useState('apr');
   const [dataLoaded, setDataLoaded] = useState(false);
 

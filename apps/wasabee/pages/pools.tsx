@@ -9,18 +9,54 @@ import PoolsList from '@/components/algebra/pools/PoolsList';
 import AquaberaList from '@/components/Aquabera/VaultLists/VaultLists';
 import { useVaultDataPrefetch } from '@/hooks/useVaultDataPrefetch';
 import { useChainId } from 'wagmi';
+import { useRouter } from 'next/router';
 
 const PoolsPage: NextLayoutPage = observer(() => {
-  const [currentTab, setCurrentTab] = useState<'aquabera' | 'algebra'>(
-    'aquabera'
-  );
+  const router = useRouter();
   const [processedPools, setProcessedPools] = useState<ProcessedPool[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Read URL parameters for initial state
+  const initialTab = (() => {
+    if (!router.isReady) return 'aquabera';
+    const { opentab } = router.query;
+    if (opentab === 'vault' || opentab === 'vaults' || opentab === 'algebra') {
+      return 'algebra';
+    }
+    if (opentab === 'pool' || opentab === 'pools' || opentab === 'aquabera') {
+      return 'aquabera';
+    }
+    return 'aquabera';
+  })();
+
+  const [currentTab, setCurrentTab] = useState<'aquabera' | 'algebra'>(initialTab);
+
+  // Update tab when URL parameter changes
+  useEffect(() => {
+    if (!router.isReady) return;
+    const { opentab } = router.query;
+    if (opentab === 'vault' || opentab === 'vaults' || opentab === 'algebra') {
+      setCurrentTab('algebra');
+    } else if (opentab === 'pool' || opentab === 'pools' || opentab === 'aquabera') {
+      setCurrentTab('aquabera');
+    }
+  }, [router.isReady, router.query.opentab]);
+
   // Prefetch vault data immediately when page loads
   const vaultData = useVaultDataPrefetch();
   const chainId = useChainId();
+
+  // Get the "my" parameter from URL to determine default filter
+  const defaultFilter = (() => {
+    if (!router.isReady) return 'trending';
+    const { my } = router.query;
+    if (my === 'true' || my === '1') {
+      return 'myPools';
+    }
+    return 'trending';
+  })();
+
   // Fetch pools data on client side based on current chain
   useEffect(() => {
     const fetchPoolsData = async () => {
@@ -122,6 +158,7 @@ const PoolsPage: NextLayoutPage = observer(() => {
             <PoolsList
               initialProcessedPools={processedPools}
               isClientLoading={isLoading}
+              defaultFilter={defaultFilter}
             />
           </Tab>
           <Tab
@@ -130,7 +167,10 @@ const PoolsPage: NextLayoutPage = observer(() => {
               <span className="text-xs sm:text-base">Automated Vaults</span>
             }
           >
-            <AquaberaList prefetchedData={vaultData} />
+            <AquaberaList
+              prefetchedData={vaultData}
+              defaultTab={defaultFilter === 'myPools' ? 'my' : 'all'}
+            />
           </Tab>
         </Tabs>
       </div>
