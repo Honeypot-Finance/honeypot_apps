@@ -59,7 +59,7 @@ export function AquaberaList({ prefetchedData, defaultTab = 'all' }: AquaberaLis
       <div className="flex sm:hidden justify-between items-center w-full">
         <Tabs
           selectedKey={selectedTab}
-          onSelectionChange={(key) => setSelectedTab(key.toString())}
+          onSelectionChange={(key) => setSelectedTab(key.toString() as 'all' | 'my')}
           classNames={{
             base: 'relative w-auto',
             tabList: 'flex rounded-lg bg-[#1A0F06] p-1 gap-1',
@@ -108,7 +108,7 @@ export function AquaberaList({ prefetchedData, defaultTab = 'all' }: AquaberaLis
       <div className="hidden sm:flex sm:justify-between sm:items-center w-full">
         <Tabs
           selectedKey={selectedTab}
-          onSelectionChange={(key) => setSelectedTab(key.toString())}
+          onSelectionChange={(key) => setSelectedTab(key.toString() as 'all' | 'my')}
           classNames={{
             base: 'relative w-auto',
             tabList: 'flex rounded-lg bg-[#1A0F06] p-1 gap-1',
