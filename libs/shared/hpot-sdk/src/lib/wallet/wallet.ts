@@ -24,6 +24,7 @@ export class Wallet {
   balance: BigNumber = new BigNumber(0);
   walletClient!: WalletClient;
   currentChainId: number = DEFAULT_CHAIN_ID;
+  chainIdSetFromUrl: boolean = false; // Track if chain was set from URL parameter
   contracts: {
     ftofactory: FtoFactoryContract;
     ftofacade: FtoFacadeContract;
@@ -81,6 +82,8 @@ export class Wallet {
 
   changeChain(chainId: number) {
     this.currentChainId = chainId;
+    // Clear the URL flag when manually changing chain
+    this.chainIdSetFromUrl = false;
     if (this.walletClient) {
       this.walletClient.switchChain({
         id: chainId,
@@ -99,11 +102,11 @@ export class Wallet {
     console.log('[Wallet.initWallet] networks count:', networks?.length);
     this.networks = networks;
 
-    // Only update currentChainId if it hasn't been explicitly set (e.g., from URL parameter)
-    // If currentChainId is already set to something other than DEFAULT_CHAIN_ID, preserve it
-    const hasExplicitChainId = this.currentChainId && this.currentChainId !== DEFAULT_CHAIN_ID;
-    if (!hasExplicitChainId) {
+    // Only update currentChainId if it hasn't been set from URL
+    if (!this.chainIdSetFromUrl) {
       this.currentChainId = walletClient?.chain?.id || DEFAULT_CHAIN_ID;
+    } else {
+      console.log('[Wallet.initWallet] Preserving chainId from URL:', this.currentChainId);
     }
     console.log('[Wallet.initWallet] currentChainId:', this.currentChainId);
     // Use safe localStorage helper for server-side compatibility

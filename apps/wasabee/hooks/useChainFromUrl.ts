@@ -13,8 +13,8 @@ export function useChainFromUrl() {
   const router = useRouter();
   const { switchChain } = useSwitchChain();
   const { chain, isConnected } = useAccount();
-  const hasAttemptedSwitchRef = useRef(false);
   const [targetChainId, setTargetChainId] = useState<number | null>(null);
+  const lastProcessedChainRef = useRef<number | null>(null);
 
   // First: Read the chain ID from URL and set it on the wallet immediately
   useEffect(() => {
@@ -28,20 +28,40 @@ export function useChainFromUrl() {
       const parsedChainId = parseInt(chainid, 10);
 
       if (!isNaN(parsedChainId) && parsedChainId > 0) {
-        console.log(`[useChainFromUrl] Setting target chain from URL: ${parsedChainId}`);
-        setTargetChainId(parsedChainId);
+        // Only update if it's different from what we last processed
+        if (parsedChainId !== lastProcessedChainRef.current) {
+          console.log(`[useChainFromUrl] Setting target chain from URL: ${parsedChainId}`);
+          setTargetChainId(parsedChainId);
 
-        // Set it on the wallet object immediately so initWallet uses it
-        wallet.currentChainId = parsedChainId;
+          // Set it on the wallet object immediately
+          wallet.currentChainId = parsedChainId;
+          wallet.chainIdSetFromUrl = true;
+
+          // Trigger wallet reinitialization with the new chain
+          wallet.initWallet(wallet.walletClient);
+
+          // Reset the last processed chain so we can switch again
+          lastProcessedChainRef.current = null;
+        }
       } else {
         console.warn(`[useChainFromUrl] Invalid chainid parameter: ${chainid}`);
       }
+    } else {
+      // No chainid in URL, reset target and clear the flag
+      setTargetChainId(null);
+      lastProcessedChainRef.current = null;
+      wallet.chainIdSetFromUrl = false;
     }
-  }, [router.isReady, router.query]);
+  }, [router.isReady, router.query.chainid]);
 
   // Second: After wallet is connected, try to switch the chain if needed
   useEffect(() => {
-    if (!targetChainId || hasAttemptedSwitchRef.current) {
+    if (!targetChainId) {
+      return;
+    }
+
+    // Don't process the same chain twice
+    if (lastProcessedChainRef.current === targetChainId) {
       return;
     }
 
@@ -53,7 +73,7 @@ export function useChainFromUrl() {
     // If already on the target chain, we're done
     if (chain?.id === targetChainId) {
       console.log(`[useChainFromUrl] Already on target chain ${targetChainId}`);
-      hasAttemptedSwitchRef.current = true;
+      lastProcessedChainRef.current = targetChainId;
       return;
     }
 
@@ -62,10 +82,10 @@ export function useChainFromUrl() {
       console.log(`[useChainFromUrl] Attempting to switch to chain ${targetChainId}`);
       try {
         switchChain({ chainId: targetChainId });
-        hasAttemptedSwitchRef.current = true;
+        lastProcessedChainRef.current = targetChainId;
       } catch (error) {
         console.error(`[useChainFromUrl] Error switching chain:`, error);
-        hasAttemptedSwitchRef.current = true;
+        lastProcessedChainRef.current = targetChainId;
       }
     }
   }, [targetChainId, isConnected, wallet.isInit, chain?.id, switchChain]);
