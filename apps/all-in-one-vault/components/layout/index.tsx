@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { Header } from './header/v3';
 import { useRouter } from 'next/router';
-import AnnouncementBar from './AnnouncementBar';
 import Link from 'next/link';
 import { Footer } from './footer';
 import { cn } from '@/lib/algebra/lib/utils';
@@ -36,7 +35,6 @@ export const Layout = observer(
           className
         )}
       >
-        <AnnouncementBar slogans={slogans} interval={5000} />
         <Header />
         <div className="flex-1 flex">{children}</div>
         <Footer />

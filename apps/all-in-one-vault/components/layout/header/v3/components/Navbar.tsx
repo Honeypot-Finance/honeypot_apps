@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import {
   Button,
   Dropdown,
@@ -10,216 +9,165 @@ import {
 } from '@nextui-org/react';
 import { Menu } from '@/config/allAppPath';
 import Image from 'next/image';
-import { FaPlusCircle } from 'react-icons/fa';
-import { DOMAIN_MAP } from 'honeypot-sdk';
-import { cn } from '@/lib/utils';
+import { Key } from 'react';
 
 interface NavbarProps {
   menuList: Menu[];
 }
 
+interface SubMenu {
+  path: string;
+  title: string;
+  routePath: string;
+  icon?: {
+    src: string;
+  };
+  textColor?: string;
+  beforeContent?: React.ReactNode;
+  afterContent?: React.ReactNode;
+}
+
+// Check if URL is external (different domain) or internal
+const isExternalUrl = (url: string): boolean => {
+  if (!url.startsWith('http')) return false;
+
+  try {
+    const urlObj = new URL(url);
+    const currentHost = typeof window !== 'undefined' ? window.location.hostname : '';
+    return urlObj.hostname !== currentHost;
+  } catch {
+    return false;
+  }
+};
+
+// Handle navigation for internal or external links
+const handleNavigation = (url: string, router: ReturnType<typeof useRouter>) => {
+  if (isExternalUrl(url)) {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  } else {
+    router.push(url);
+  }
+};
+
 export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
   const router = useRouter();
 
-  // Force dropdown styles via JavaScript as fallback
-  const forceDropdownStyles = (element: HTMLElement | null) => {
-    if (element) {
-      // Find all dropdown content elements
-      setTimeout(() => {
-        const dropdownContent = document.querySelectorAll(
-          '[data-slot="content"]'
-        );
-        dropdownContent.forEach((el) => {
-          const htmlEl = el as HTMLElement;
-          // Check if this dropdown contains our plus button items
-          if (
-            htmlEl.textContent?.includes('Wasabee DEX') ||
-            htmlEl.textContent?.includes('Pot2Pump') ||
-            htmlEl.textContent?.includes('NFT Staking')
-          ) {
-            htmlEl.style.setProperty(
-              'background-color',
-              '#202020',
-              'important'
-            );
-            htmlEl.style.setProperty(
-              'border',
-              '1px solid #5C5C5C',
-              'important'
-            );
-            htmlEl.style.setProperty('color', 'white', 'important');
-
-            // Force styles on menu items
-            const menuItems = htmlEl.querySelectorAll('[role="menuitem"]');
-            menuItems.forEach((item) => {
-              const itemEl = item as HTMLElement;
-              itemEl.style.setProperty(
-                'background-color',
-                '#202020',
-                'important'
-              );
-              itemEl.style.setProperty('color', 'white', 'important');
-
-              // Add hover event listeners
-              itemEl.addEventListener('mouseenter', () => {
-                itemEl.style.setProperty(
-                  'background-color',
-                  '#3a3a3a',
-                  'important'
-                );
-              });
-              itemEl.addEventListener('mouseleave', () => {
-                itemEl.style.setProperty(
-                  'background-color',
-                  '#202020',
-                  'important'
-                );
-              });
-            });
-          }
-        });
-      }, 100);
-    }
-  };
-
-  useEffect(() => {
-    forceDropdownStyles(null);
-  }, []);
-
   return (
-    <div className="flex flex-col items-center font-gliker">
-      <Image
-        width={139}
-        height={66}
-        alt="hanging rope"
-        className="mb-[-20px]"
-        src="/images/header/hanging-rope.svg"
-      />
-      <div className="bg-[#FFCD4D] rounded-xl flex flex-col py-2 px-1.5 lg:py-4 lg:px-3 border-[1.5px] border-[#010101] shadow-[2px_4px_0px_0px_#FFF]">
-        <div className="flex gap-1 lg:gap-2 lg:py-1 flex-wrap max-w-[280px] lg:max-w-none lg:flex-nowrap">
-          {menuList.map((menu) => {
-            const targetPath = menu.routePath || menu.path;
-            const isActive = targetPath === router.pathname;
-
-            if (typeof targetPath !== 'string') return null;
-
-            return (
-              <Link
-                key={menu.title}
-                href={targetPath}
-                className={cn(
-                  'h-8 px-3 flex items-center justify-center font-bold text-sm lg:text-base text-black hover:bg-[#202020]/80 hover:text-white cursor-pointer rounded-lg transition-colors',
-                  menu.title === 'Dex' && 'hidden',
-                  isActive ? 'bg-[#202020] text-white' : 'bg-transparent'
-                )}
-              >
-                {menu.title}
-              </Link>
-            );
-          })}
-          <Dropdown className="plus-dropdown">
-            <DropdownTrigger
-              className={cn(
-                'min-h-[32px] h-8 py-0 font-bold bg-transparent text-black hover:bg-[#202020]/70 hover:text-white rounded-full'
-              )}
-            >
-              <Button
-                isIconOnly
-                variant="light"
-                className="p-0 w-8 h-8"
-                ref={forceDropdownStyles}
-                onPress={() => {
-                  // Force styles when dropdown opens
-                  setTimeout(() => forceDropdownStyles(null), 100);
-                }}
-              >
-                <FaPlusCircle className="w-6 h-6" />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              style={{
-                backgroundColor: '#202020',
-                color: 'white',
-              }}
+    <nav className="flex items-center bg-[#1B1308]/50 backdrop-blur-sm p-1 rounded-xl border border-[#2a2318]/30">
+      <div className="flex items-center gap-1">
+        {menuList.map((menu) =>
+          Array.isArray(menu.path) ? (
+            <Dropdown
+              key={menu.title}
+              placement="bottom-start"
               classNames={{
-                base: 'bg-[#202020] text-white',
-                list: 'bg-[#202020]',
+                content: 'bg-transparent p-0',
               }}
             >
-              <DropdownItem
-                href={DOMAIN_MAP.WASABEE_DEX}
-                style={{
-                  backgroundColor: '#202020',
-                  color: 'white',
-                }}
-                className="text-white hover:bg-[#3a3a3a] data-[hover=true]:bg-[#3a3a3a] data-[hover=true]:text-white"
-                startContent={
-                  <Image
-                    src="/images/wasabee_pot.webp"
-                    alt="wasabee"
-                    width={16}
-                    height={16}
-                    className="w-4 h-4"
-                  />
-                }
-                key="wasabee"
-                onPress={() => {
-                  router.push(DOMAIN_MAP.WASABEE_DEX);
+              <DropdownTrigger>
+                <Button
+                  style={{
+                    backgroundColor: (menu.path as SubMenu[]).some(
+                      (item) => item.routePath === router.pathname
+                    )
+                      ? '#F7931A1A'
+                      : 'transparent',
+                  }}
+                  className={`h-10 px-4 py-2 font-medium text-base text-white rounded-lg transition-all hover:opacity-100 ${
+                    (menu.path as SubMenu[]).some(
+                      (item) => item.routePath === router.pathname
+                    )
+                      ? 'opacity-100'
+                      : 'opacity-50'
+                  }`}
+                >
+                  <span
+                    className="flex items-center"
+                    style={{ color: menu.textColor || 'inherit' }}
+                  >
+                    {menu.beforeContent}
+                    {menu.title}
+                    {menu.afterContent}
+                  </span>
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                aria-label={menu.title}
+                className="bg-[#1A0F06] rounded-lg p-1 border border-[#2a2318] mt-2"
+                onAction={(key: Key) => {
+                  const subMenu = (menu.path as SubMenu[]).find(
+                    (item: SubMenu) => item.routePath === key
+                  );
+                  if (subMenu) {
+                    handleNavigation(subMenu.path, router);
+                  }
                 }}
               >
-                Wasabee DEX
-              </DropdownItem>
-              <DropdownItem
-                href={DOMAIN_MAP.POT2PUMP}
-                style={{
-                  backgroundColor: '#202020',
-                  color: 'white',
-                }}
-                className="text-white hover:bg-[#3a3a3a] data-[hover=true]:bg-[#3a3a3a] data-[hover=true]:text-white"
-                onPress={() => window.open(DOMAIN_MAP.POT2PUMP, '_self')}
-                startContent={
-                  <Image
-                    src="/images/blueAstro.8533943d.svg"
-                    alt="pot2pump"
-                    width={16}
-                    height={16}
-                    className="w-4 h-4"
-                  />
+                {(menu.path as SubMenu[]).map((subMenu: SubMenu) => (
+                  <DropdownItem
+                    key={subMenu.routePath}
+                    style={{
+                      backgroundColor: router.pathname === subMenu.routePath
+                        ? '#6B4423'
+                        : 'transparent',
+                      color: subMenu.textColor || 'inherit',
+                    }}
+                    className={`font-medium text-white data-[hover=true]:bg-[#6B4423] data-[hover=true]:opacity-100 p-2 rounded-md transition-all ${
+                      router.pathname === subMenu.routePath ? 'opacity-100' : 'opacity-50'
+                    }`}
+                    startContent={
+                      subMenu.icon && (
+                        <Image
+                          src={subMenu.icon.src}
+                          alt={subMenu.title}
+                          width={16}
+                          height={16}
+                          className="w-4 h-4"
+                        />
+                      )
+                    }
+                    onPress={() => {
+                      handleNavigation(subMenu.path, router);
+                    }}
+                  >
+                    <span className="flex items-center">
+                      {subMenu.beforeContent}
+                      {subMenu.title}
+                      {subMenu.afterContent}
+                    </span>
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          ) : (
+            <Button
+              key={menu.title}
+              style={{
+                backgroundColor: menu.routePath === router.pathname
+                  ? '#F7931A1A'
+                  : 'transparent',
+              }}
+              className={`h-10 px-4 py-2 font-medium text-base text-white rounded-lg transition-all hover:opacity-100 ${
+                menu.routePath === router.pathname ? 'opacity-100' : 'opacity-50'
+              }`}
+              onPress={() => {
+                if (typeof menu.path === 'string') {
+                  handleNavigation(menu.path, router);
                 }
-                key="pot2pump"
+              }}
+            >
+              <span
+                className="flex items-center"
+                style={{ color: menu.textColor || 'inherit' }}
               >
-                Pot2Pump
-              </DropdownItem>
-              <DropdownItem
-                href="https://nft.honeypotfinance.xyz/staking"
-                style={{
-                  backgroundColor: '#202020',
-                  color: 'white',
-                }}
-                className="text-white hover:bg-[#3a3a3a] data-[hover=true]:bg-[#3a3a3a] data-[hover=true]:text-white"
-                onPress={() =>
-                  window.open(
-                    'https://nft.honeypotfinance.xyz/staking',
-                    '_self'
-                  )
-                }
-                startContent={
-                  <Image
-                    src="/images/bera/beekeeperBear.png"
-                    alt="nft staking"
-                    width={16}
-                    height={16}
-                    className="w-4 h-4 rounded-full"
-                  />
-                }
-                key="nft-staking"
-              >
-                NFT Staking
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </div>
+                {menu.beforeContent}
+                {menu.title}
+                {menu.afterContent}
+              </span>
+            </Button>
+          )
+        )}
       </div>
-    </div>
+    </nav>
   );
 };

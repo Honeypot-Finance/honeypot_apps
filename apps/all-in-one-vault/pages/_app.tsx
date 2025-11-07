@@ -15,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { config } from '@/config/wagmi';
 import { useEffect, useState } from 'react';
 import { wallet } from '@honeypot/shared/lib/wallet';
-import { DM_Sans, Inter } from 'next/font/google';
+import { DM_Sans, Inter, Bebas_Neue } from 'next/font/google';
 import { Inspector, InspectParams } from 'react-dev-inspector';
 import { Analytics } from '@vercel/analytics/react';
 import { ApolloProvider } from '@apollo/client';
@@ -43,6 +43,20 @@ const dmSans = DM_Sans({
   weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin', 'latin-ext'],
   variable: '--dm_sans',
+});
+
+const bebasNeue = Bebas_Neue({
+  weight: ['400'],
+  subsets: ['latin'],
+  variable: '--bebas-neue',
+  display: 'swap',
+});
+
+const inter = Inter({
+  weight: ['300', '400', '500', '600', '700'],
+  subsets: ['latin'],
+  variable: '--inter',
+  display: 'swap',
 });
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
@@ -122,7 +136,7 @@ export default function App({
                         );
                       }}
                     ></Inspector>
-                    <ComponentLayout className={`${dmSans.className}`}>
+                    <ComponentLayout className={`${dmSans.className} ${bebasNeue.variable} ${inter.variable}`}>
                       <Component {...pageProps} />
                     </ComponentLayout>
                   </Provider>
