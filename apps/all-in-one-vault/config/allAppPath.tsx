@@ -24,11 +24,17 @@ export type Menu = {
         icon?: StaticImageData;
         footer?: ReactNode;
         chatConfig?: PathChatConfig;
+        textColor?: string;
+        beforeContent?: ReactNode;
+        afterContent?: ReactNode;
       }[];
   title: string;
   routePath?: string;
   icon?: StaticImageData;
   chatConfig?: PathChatConfig;
+  textColor?: string;
+  beforeContent?: ReactNode;
+  afterContent?: ReactNode;
 };
 
 export type flatMenu = {
