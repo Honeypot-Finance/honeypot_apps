@@ -64,30 +64,6 @@ export const appPathsList: Menu[] = [
   //   title: "Navigation",
   // },
   {
-    path: `https://honeypotfinance.xyz/missions`,
-    title: 'Pre-TGE',
-    routePath: 'https://honeypotfinance.xyz/missions',
-    textColor: '#F7931A',
-    beforeContent: (
-      <Image
-        src="/images/airdrop-icon.png"
-        width={16}
-        height={16}
-        alt="Pre-TGE Campaign"
-        className="mr-2"
-      />
-    ),
-    afterContent: (
-      <Image
-        src="/images/airdrop-icon.png"
-        width={16}
-        height={16}
-        alt="Pre-TGE Campaign"
-        className="ml-2"
-      />
-    ),
-  },
-  {
     path: [
       {
         path: `/swap`,

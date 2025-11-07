@@ -22,7 +22,31 @@ interface SubMenu {
     src: string;
   };
   textColor?: string;
+  beforeContent?: React.ReactNode;
+  afterContent?: React.ReactNode;
 }
+
+// Check if URL is external (different domain) or internal
+const isExternalUrl = (url: string): boolean => {
+  if (!url.startsWith('http')) return false;
+
+  try {
+    const urlObj = new URL(url);
+    const currentHost = typeof window !== 'undefined' ? window.location.hostname : '';
+    return urlObj.hostname !== currentHost;
+  } catch {
+    return false;
+  }
+};
+
+// Handle navigation for internal or external links
+const handleNavigation = (url: string, router: ReturnType<typeof useRouter>) => {
+  if (isExternalUrl(url)) {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  } else {
+    router.push(url);
+  }
+};
 
 export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
   const router = useRouter();
@@ -56,8 +80,13 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                       : 'opacity-50'
                   }`}
                 >
-                  <span style={{ color: menu.textColor || 'inherit' }}>
+                  <span
+                    className="flex items-center"
+                    style={{ color: menu.textColor || 'inherit' }}
+                  >
+                    {menu.beforeContent}
                     {menu.title}
+                    {menu.afterContent}
                   </span>
                 </Button>
               </DropdownTrigger>
@@ -69,7 +98,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                     (item: SubMenu) => item.routePath === key
                   );
                   if (subMenu) {
-                    router.push(subMenu.path);
+                    handleNavigation(subMenu.path, router);
                   }
                 }}
               >
@@ -97,10 +126,14 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                       )
                     }
                     onPress={() => {
-                      router.push(subMenu.path);
+                      handleNavigation(subMenu.path, router);
                     }}
                   >
-                    {subMenu.title}
+                    <span className="flex items-center">
+                      {subMenu.beforeContent}
+                      {subMenu.title}
+                      {subMenu.afterContent}
+                    </span>
                   </DropdownItem>
                 ))}
               </DropdownMenu>
@@ -118,7 +151,7 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
               }`}
               onPress={() => {
                 if (typeof menu.path === 'string') {
-                  router.push(menu.path);
+                  handleNavigation(menu.path, router);
                 }
               }}
             >

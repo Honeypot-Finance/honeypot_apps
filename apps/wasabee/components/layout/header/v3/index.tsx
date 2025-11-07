@@ -13,11 +13,27 @@ import {
 } from '@nextui-org/react';
 import React, { HtmlHTMLAttributes, useState } from 'react';
 import { WalletConnect } from '@/components/walletconnect/v3';
-import { Menu, appPathsList as menuList } from '@/config/allAppPath';
+import { Menu, appPathsList } from '@/config/allAppPath';
+import { useNavbar } from '@/lib/hooks/useNavbar';
+
+// Check if URL is external (different domain) or internal
+const isExternalUrl = (url: string): boolean => {
+  if (!url.startsWith('http')) return false;
+
+  try {
+    const urlObj = new URL(url);
+    const currentHost =
+      typeof window !== 'undefined' ? window.location.hostname : '';
+    return urlObj.hostname !== currentHost;
+  } catch {
+    return false;
+  }
+};
 
 export const Header = (props: HtmlHTMLAttributes<HTMLDivElement>) => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { menuList, loading } = useNavbar();
 
   const listToNavbarItem = (list: Menu[], isSub?: boolean): React.ReactNode => {
     return list.map((m) =>
@@ -37,6 +53,24 @@ export const Header = (props: HtmlHTMLAttributes<HTMLDivElement>) => {
           </div>
           {listToNavbarItem(m.path as Menu[], true)}
         </div>
+      ) : isExternalUrl(m.path as string) ? (
+        <a
+          key={m.title}
+          href={m.path as string}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(
+            'block p-3 text-gray-300 text-base font-medium w-full rounded-lg transition-colors',
+            'hover:bg-[#6B4423] hover:text-white',
+            isSub ? 'pl-8' : ''
+          )}
+          onClick={() => setIsMenuOpen(false)}
+        >
+          <span className="flex items-center">
+            {m.title}
+            {m.afterContent}
+          </span>
+        </a>
       ) : (
         <Link
           key={m.title}
@@ -65,12 +99,15 @@ export const Header = (props: HtmlHTMLAttributes<HTMLDivElement>) => {
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
         classNames={{
-          base: 'bg-transaparent backdrop-blur-md border-b border-transparent mb-5 sm:mb-10 backdrop-blur-none',
+          base: 'bg-transaparent backdrop-blur-md border-b border-transparent mb-0 backdrop-blur-none',
           wrapper:
             'max-w-full px-2 sm:px-4 md:px-8 xl:px-0 xl:max-w-[1200px] 2xl:max-w-[1500px] !h-auto py-4 ',
         }}
       >
-        <NavbarContent className="md:hidden !basis-auto !grow-0 !flex-grow-0 w-auto" justify="start">
+        <NavbarContent
+          className="md:hidden !basis-auto !grow-0 !flex-grow-0 w-auto"
+          justify="start"
+        >
           <NavbarMenuToggle
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
             className="text-white h-8 w-8"
@@ -98,7 +135,7 @@ export const Header = (props: HtmlHTMLAttributes<HTMLDivElement>) => {
           className="hidden md:flex font-bold flex-1"
           justify="center"
         >
-          <CustomNavbar menuList={menuList} />
+          {!loading && menuList && <CustomNavbar menuList={menuList} />}
         </NavbarContent>
 
         <NavbarContent className="flex-shrink-0" justify="end">
@@ -123,10 +160,36 @@ export const Header = (props: HtmlHTMLAttributes<HTMLDivElement>) => {
                 : 'opacity-0 -translate-x-2'
             )}
           >
-            {listToNavbarItem(menuList)}
+            {/* App-specific Navigation (Wasabee) */}
+            <div className="mb-2">
+              <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">
+                DEX
+              </div>
+              {listToNavbarItem(appPathsList)}
+            </div>
+
+            {/* Separator */}
+            <div className="border-t border-[#2a2318] my-2" />
+
+            {/* Honeypot Ecosystem Navigation */}
+            <div>
+              <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">
+                Honeypot Ecosystem
+              </div>
+              {menuList && listToNavbarItem(menuList)}
+            </div>
           </div>
         </NavbarMenu>
       </Navbar>
+
+      {/* Secondary Navigation - Original App-specific Nav */}
+      <div className="hidden md:flex justify-center mb-8 mt-0">
+        <nav className="flex items-center bg-[#1B1308]/50 backdrop-blur-sm p-1 rounded-xl border border-[#2a2318]/30">
+          <div className="flex items-center gap-1">
+            <CustomNavbar menuList={appPathsList} />
+          </div>
+        </nav>
+      </div>
     </div>
   );
 };
