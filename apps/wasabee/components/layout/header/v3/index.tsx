@@ -181,15 +181,6 @@ export const Header = (props: HtmlHTMLAttributes<HTMLDivElement>) => {
           </div>
         </NavbarMenu>
       </Navbar>
-
-      {/* Secondary Navigation - Original App-specific Nav */}
-      <div className="hidden md:flex justify-center mb-8 mt-0">
-        <nav className="flex items-center bg-[#1B1308]/50 backdrop-blur-sm p-1 rounded-xl border border-[#2a2318]/30">
-          <div className="flex items-center gap-1">
-            <CustomNavbar menuList={appPathsList} />
-          </div>
-        </nav>
-      </div>
     </div>
   );
 };
