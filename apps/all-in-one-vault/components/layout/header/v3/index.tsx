@@ -323,11 +323,6 @@ export const Header = (props: HtmlHTMLAttributes<any>) => {
           </div>
         </NavbarMenu>
       </Navbar>
-
-      {/* Secondary Navigation - App-specific Nav */}
-      <div className="hidden md:flex justify-center mb-8 mt-0">
-        <CustomNavbar menuList={menuList} />
-      </div>
     </div>
   );
 };

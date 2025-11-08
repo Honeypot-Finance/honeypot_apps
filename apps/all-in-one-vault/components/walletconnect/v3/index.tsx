@@ -75,15 +75,17 @@ export const WalletConnect = () => {
               })}
             >
               <div className="flex items-center gap-x-2 lg:gap-x-3">
-                <Link
-                  href="/profile"
+                <a
+                  href="https://honeypotfinance.xyz/dashboard"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center justify-center bg-[#271A0C] rounded-xl p-1.5 lg:p-2 shrink-0 hover:bg-[#1a1410] transition-all"
                 >
                   <BsPerson
                     size={24}
                     className="size-4 lg:size-6 text-[#F59E0B]"
                   />
-                </Link>
+                </a>
                 {(() => {
                   if (!connected) {
                     return (
