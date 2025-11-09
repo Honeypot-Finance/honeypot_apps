@@ -5,11 +5,15 @@ import {
   ADDRESS_ZERO,
   NonfungiblePositionManager,
   computePoolAddress,
+  Pool,
+  Price,
+  priceToClosestTick,
+  TickMath,
 } from '@cryptoalgebra/sdk';
 import { algebraPositionManagerABI } from '@/lib/abis/algebra-contracts/ABIs/algebraPositionManager';
 import { useTransactionAwait } from '@/lib/algebra/hooks/common/useTransactionAwait';
-import { useContractWrite, useWriteContract } from 'wagmi';
-import { Address, getContract, maxInt256 } from 'viem';
+import { useWriteContract } from 'wagmi';
+import { Address } from 'viem';
 import Loader from '@/components/algebra/common/Loader';
 import { PoolState, usePool } from '@/lib/algebra/hooks/pools/usePool';
 import SelectPair from '../SelectPair';
@@ -25,17 +29,19 @@ import {
 import { SwapField } from '@/types/algebra/types/swap-field';
 import { useSimulateAlgebraPositionManagerMulticall } from '@honeypot/shared/wagmi-generated';
 import { useToastify } from '@/lib/hooks/useContractToastify';
+import { WrappedToastify } from '@/lib/wrappedToastify';
 import { Input } from '@/components/algebra/ui/input';
 import HoneyContainer from '@/components/CardContianer/HoneyContainer';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { useObserver } from 'mobx-react-lite';
 
-const FEE_TIERS = [
-  { value: 100, label: '0.01%', description: 'Best for stable pairs' },
-  { value: 500, label: '0.05%', description: 'Best for stable pairs' },
-  { value: 3000, label: '0.3%', description: 'Best for most pairs' },
-  { value: 10000, label: '1%', description: 'Best for exotic pairs' },
-];
+// Fee tiers are currently not used in the UI but kept for future reference
+// const FEE_TIERS = [
+//   { value: 100, label: '0.01%', description: 'Best for stable pairs' },
+//   { value: 500, label: '0.05%', description: 'Best for stable pairs' },
+//   { value: 3000, label: '0.3%', description: 'Best for most pairs' },
+//   { value: 10000, label: '1%', description: 'Best for exotic pairs' },
+// ];
 
 const CreatePoolForm = () => {
   const router = useRouter();
@@ -88,7 +94,7 @@ const CreatePoolForm = () => {
 
   const isPoolExists = poolState === PoolState.EXISTS;
 
-  const [selectedFee, setSelectedFee] = useState(3000);
+  const [selectedFee] = useState(3000);
 
   const mintInfo = useDerivedMintInfo(
     currencyA ?? undefined,
@@ -100,18 +106,139 @@ const CreatePoolForm = () => {
     !isPoolExists ? [PoolState.NOT_EXISTS, null] : undefined
   );
 
+  // Create pool manually if no pool exists but we have valid inputs
+  const manualPool = useMemo(() => {
+    if (
+      !mintInfo?.pool &&
+      currencyA &&
+      currencyB &&
+      startPriceTypedValue &&
+      !isPoolExists
+    ) {
+      try {
+        const tokenA = currencyA.wrapped;
+        const tokenB = currencyB.wrapped;
+
+        // Determine token order
+        const [token0, token1] = tokenA.sortsBefore(tokenB)
+          ? [tokenA, tokenB]
+          : [tokenB, tokenA];
+
+        // Parse the price with high precision
+        const priceValue = parseFloat(startPriceTypedValue);
+        if (isNaN(priceValue) || priceValue <= 0) {
+          console.log('Invalid price value:', startPriceTypedValue);
+          return undefined;
+        }
+
+        // Create Price object - price of token1 in terms of token0
+        // If user entered price as "tokenB per tokenA", we need to handle the ordering
+        const baseToken = currencyA.wrapped;
+
+        // Determine if we need to invert based on token ordering
+        const invertPrice = !baseToken.equals(token0);
+
+        // Use scientific notation to handle very small prices precisely
+        // For very small numbers, we need to avoid floating point precision loss
+        const priceStr = startPriceTypedValue;
+
+        // Count decimal places to determine precision needed
+        const decimalPlaces = priceStr.includes('.')
+          ? priceStr.split('.')[1]?.replace(/0+$/, '').length || 0
+          : 0;
+
+        const precision = Math.max(decimalPlaces + 6, 18); // At least 18 decimals, more if needed
+
+        // Calculate amounts as BigInt to avoid precision loss
+        const baseAmountStr = (BigInt(10) ** BigInt(precision)).toString();
+        const quoteAmountStr = (BigInt(Math.floor(priceValue * (10 ** precision)))).toString();
+
+        console.log('Price calculation:', {
+          startPriceTypedValue,
+          priceValue,
+          precision,
+          baseAmountStr,
+          quoteAmountStr,
+        });
+
+        // Create the price (always in terms of token0/token1)
+        const price = invertPrice
+          ? new Price(
+              token1,
+              token0,
+              baseAmountStr,
+              quoteAmountStr
+            )
+          : new Price(
+              token0,
+              token1,
+              baseAmountStr,
+              quoteAmountStr
+            );
+
+        const currentTick = priceToClosestTick(price);
+        const currentSqrt = TickMath.getSqrtRatioAtTick(currentTick);
+
+        console.log('Creating manual pool:', {
+          token0: token0.symbol,
+          token1: token1.symbol,
+          priceValue,
+          invertPrice,
+          currentTick,
+          currentSqrt: currentSqrt.toString(),
+          price: price.toSignificant(18),
+        });
+
+        // Validate tick is within acceptable range
+        if (currentTick < TickMath.MIN_TICK || currentTick > TickMath.MAX_TICK) {
+          console.error('Tick out of range:', { currentTick, MIN_TICK: TickMath.MIN_TICK, MAX_TICK: TickMath.MAX_TICK });
+          WrappedToastify.error({
+            title: 'Invalid Price',
+            message: 'Price is out of acceptable range. Please enter a different price.',
+          });
+          return undefined;
+        }
+
+        return new Pool(
+          token0,
+          token1,
+          selectedFee,
+          currentSqrt,
+          ADDRESS_ZERO,
+          0,
+          currentTick,
+          60,
+          []
+        );
+      } catch (error) {
+        console.error('Error creating manual pool:', error);
+        return undefined;
+      }
+    }
+    return undefined;
+  }, [
+    mintInfo?.pool,
+    currencyA,
+    currencyB,
+    startPriceTypedValue,
+    isPoolExists,
+    selectedFee,
+  ]);
+
+  const poolForCalldata = mintInfo?.pool || manualPool;
+
   const { calldata, value } = useMemo(() => {
-    if (!mintInfo?.pool)
+    if (!poolForCalldata)
       return {
         calldata: undefined,
         value: undefined,
       };
 
     return NonfungiblePositionManager.createCallParameters(
-      mintInfo.pool,
+      poolForCalldata,
       ADDRESS_ZERO
     );
-  }, [mintInfo?.pool]);
+  }, [poolForCalldata]);
 
   const { data: createPoolData, writeContract: createPool } = useWriteContract(
     {}
@@ -140,6 +267,10 @@ const CreatePoolForm = () => {
     errorMessage: mintInfo?.errorMessage,
     errorCode: mintInfo?.errorCode,
     invalidPool: mintInfo?.invalidPool,
+    hasPool: !!mintInfo?.pool,
+    noLiquidity: mintInfo?.noLiquidity,
+    price: mintInfo?.price?.toSignificant(6),
+    invalidRange: mintInfo?.invalidRange,
   });
 
   const { isLoading, isError, isSuccess } = useTransactionAwait(
@@ -215,9 +346,14 @@ const CreatePoolForm = () => {
         hasValue: value !== undefined,
         hasConfig: !!createPoolConfig,
         startPriceTypedValue,
-        mintInfo
+        mintInfo,
+        manualPool,
+        poolForCalldata,
       });
-      alert('Please enter an initial price for the pool before creating it.');
+      WrappedToastify.error({
+        title: 'Missing Price',
+        message: 'Please enter an initial price for the pool before creating it.',
+      });
     }
   };
 

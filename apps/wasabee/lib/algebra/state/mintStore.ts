@@ -301,14 +301,28 @@ export function useDerivedMintInfo(
   const price: Price<Token, Token> | undefined = useMemo(() => {
     // if no liquidity use typed value
     if (noLiquidity) {
-      console.log("noliq config", { startPriceTypedValue, token0, token1 });
+      console.log("noliq config", {
+        startPriceTypedValue,
+        token0: token0?.symbol,
+        token1: token1?.symbol,
+        invertPrice,
+        hasToken0: !!token0,
+        hasToken1: !!token1,
+      });
       const parsedQuoteAmount = tryParseAmount(
         startPriceTypedValue,
         invertPrice ? token0 : token1
       );
-      console.log("parsedQuoteAmount", parsedQuoteAmount);
+      console.log("parsedQuoteAmount", {
+        parsedQuoteAmount: parsedQuoteAmount?.toSignificant(6),
+        currency: parsedQuoteAmount?.currency.symbol,
+      });
       if (parsedQuoteAmount && token0 && token1) {
         const baseAmount = tryParseAmount("1", invertPrice ? token1 : token0);
+        console.log("baseAmount", {
+          baseAmount: baseAmount?.toSignificant(6),
+          currency: baseAmount?.currency.symbol,
+        });
         const price =
           baseAmount && parsedQuoteAmount
             ? new Price(
@@ -318,8 +332,13 @@ export function useDerivedMintInfo(
                 parsedQuoteAmount.quotient
               )
             : undefined;
+        console.log("calculated price", {
+          price: price?.toSignificant(6),
+          inverted: invertPrice ? price?.invert()?.toSignificant(6) : price?.toSignificant(6),
+        });
         return (invertPrice ? price?.invert() : price) ?? undefined;
       }
+      console.log("Cannot create price - missing parsedQuoteAmount, token0, or token1");
       return undefined;
     } else {
       // get the amount of quote currency
@@ -346,9 +365,26 @@ export function useDerivedMintInfo(
 
   // used for ratio calculation when pool not initialized
   const mockPool = useMemo(() => {
+    console.log("mockPool creation check:", {
+      hasTokenA: !!tokenA,
+      hasTokenB: !!tokenB,
+      feeAmount,
+      hasPrice: !!price,
+      invalidPrice,
+      noLiquidity,
+      price: price?.toSignificant(6),
+    });
+
     if (tokenA && tokenB && feeAmount && price && !invalidPrice) {
       const currentTick = priceToClosestTick(price);
       const currentSqrt = TickMath.getSqrtRatioAtTick(currentTick);
+      console.log("Creating mockPool with:", {
+        tokenA: tokenA.symbol,
+        tokenB: tokenB.symbol,
+        feeAmount,
+        currentTick,
+        currentSqrt: currentSqrt.toString(),
+      });
       return new Pool(
         tokenA,
         tokenB,
@@ -361,9 +397,10 @@ export function useDerivedMintInfo(
         []
       );
     } else {
+      console.log("Cannot create mockPool - missing requirements");
       return undefined;
     }
-  }, [feeAmount, invalidPrice, price, tokenA, tokenB]);
+  }, [feeAmount, invalidPrice, price, tokenA, tokenB, noLiquidity]);
 
   // if pool exists use it, if not use the mock pool
   const poolForPosition: Pool | undefined = pool ?? mockPool;
