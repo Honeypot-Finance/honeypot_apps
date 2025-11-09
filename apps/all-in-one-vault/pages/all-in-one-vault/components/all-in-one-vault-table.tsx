@@ -90,6 +90,7 @@ export default function AllInOneVaultTable({
     client: allInOneVaultClient,
     variables: { user: address || '' },
     skip: !address,
+    fetchPolicy: 'network-only',
     errorPolicy: 'all',
     notifyOnNetworkStatusChange: true,
   });

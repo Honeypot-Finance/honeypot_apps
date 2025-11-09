@@ -116,6 +116,12 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
       try {
         console.log('🔄 Calling refetch receipts...');
         onRefetchReceipts();
+
+        // Additional refetch after delay to handle subgraph indexing lag
+        setTimeout(() => {
+          console.log('🔄 Delayed refetch (5s) for subgraph indexing...');
+          onRefetchReceipts();
+        }, 5000);
       } catch (error) {
         console.error('❌ Error calling refetch receipts:', error);
       }
