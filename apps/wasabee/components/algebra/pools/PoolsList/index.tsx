@@ -82,13 +82,13 @@ const PoolsList = ({
   // ||isFarmingsAPRLoading;
 
   const formattedPools = useMemo(() => {
-    // If we have processed pools from cache, use them directly
-    if (initialProcessedPools && initialProcessedPools.length > 0) {
+    // If we have processed pools from cache and NO active search, use them directly
+    if (initialProcessedPools && initialProcessedPools.length > 0 && !search) {
       console.log('Using pre-processed pools from cache');
       return initialProcessedPools;
     }
 
-    // Fallback to client-side processing (for real-time data)
+    // Use GraphQL results when searching or as fallback
     const sourcePools = (pools?.pools ?? initialPools) as any[];
     const activeFarmingsList = (activeFarmings?.eternalFarmings ?? initialActiveFarmings) as any[];
 
@@ -294,7 +294,7 @@ const PoolsList = ({
         };
       }
     );
-  }, [isLoading, pools, activeFarmings?.eternalFarmings, initialPools, initialActiveFarmings, initialProcessedPools]);
+  }, [isLoading, pools, activeFarmings?.eternalFarmings, initialPools, initialActiveFarmings, initialProcessedPools, search]);
 
   const formattedUserPools = useMemo(() => {
     if (isLoading || !userPools || !wallet.isInit) return [];
