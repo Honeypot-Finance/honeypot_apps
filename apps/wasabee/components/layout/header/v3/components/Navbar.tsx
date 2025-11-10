@@ -125,9 +125,6 @@ export const CustomNavbar: React.FC<NavbarProps> = ({ menuList }) => {
                         />
                       )
                     }
-                    onPress={() => {
-                      handleNavigation(subMenu.path, router);
-                    }}
                   >
                     <span className="flex items-center">
                       {subMenu.beforeContent}
