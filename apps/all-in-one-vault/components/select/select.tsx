@@ -8,7 +8,7 @@ import { TOKEN_SUPPORT_QUERY } from '@/lib/algebra/graphql/queries/token-support
 import useGetSupportTokenInfo from '@/hooks/useGetSupportTokenInfo';
 import { calculateSummaryData, MINIMUM_DEPOSIT_AMOUNT, isAmountBelowMinimum } from '../../utils/helper-function';
 import { useAccount, useReadContract } from 'wagmi';
-import { erc20Abi } from 'viem';
+import { erc20Abi, formatUnits } from 'viem';
 import { Token, TokenLogo } from '@honeypot/shared';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { observer } from 'mobx-react-lite';
@@ -381,30 +381,49 @@ export function InputSectionComponent({
     if (isDisabled || !selectedToken || !newTokenBalance) return;
 
     const sliderVal = Array.isArray(value) ? value[0] : value;
-    const balanceNum = Number(newTokenBalance) / 1e18;
-    const newAmount = (balanceNum * sliderVal) / 100;
+
+    // Fix: For 100%, use formatUnits to avoid precision loss
+    let newAmount: string;
+    if (sliderVal === 100) {
+      // Use formatUnits to safely convert bigint to string without precision loss
+      newAmount = formatUnits(newTokenBalance, 18);
+    } else {
+      // For partial amounts, calculate from formatted balance
+      const balanceFormatted = formatUnits(newTokenBalance, 18);
+      const balanceNum = parseFloat(balanceFormatted);
+      newAmount = ((balanceNum * sliderVal) / 100).toString();
+    }
 
     setSliderValue(sliderVal);
-    onAmountChange?.(newAmount.toString());
-    
+    onAmountChange?.(newAmount);
+
     // Check if amount is below minimum
     if (setBelowMinimum) {
-      setBelowMinimum(isAmountBelowMinimum(newAmount.toString()));
+      setBelowMinimum(isAmountBelowMinimum(newAmount));
     }
   };
 
   const handlePercentageButtonClick = (percentage: number) => {
     if (isDisabled || !selectedToken || !newTokenBalance) return;
 
-    const balanceNum = Number(newTokenBalance) / 1e18;
-    const newAmount = (balanceNum * percentage) / 100;
+    // Fix: For 100%, use formatUnits to avoid precision loss
+    let newAmount: string;
+    if (percentage === 100) {
+      // Use formatUnits to safely convert bigint to string without precision loss
+      newAmount = formatUnits(newTokenBalance, 18);
+    } else {
+      // For partial amounts, calculate from formatted balance
+      const balanceFormatted = formatUnits(newTokenBalance, 18);
+      const balanceNum = parseFloat(balanceFormatted);
+      newAmount = ((balanceNum * percentage) / 100).toString();
+    }
 
     setSliderValue(percentage);
-    onAmountChange?.(newAmount.toString());
-    
+    onAmountChange?.(newAmount);
+
     // Check if amount is below minimum
     if (setBelowMinimum) {
-      setBelowMinimum(isAmountBelowMinimum(newAmount.toString()));
+      setBelowMinimum(isAmountBelowMinimum(newAmount));
     }
   };
 
