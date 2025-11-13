@@ -12,11 +12,5 @@
       "NEXT_TELEMETRY_DISABLED": "1",
       "GENERATE_SOURCEMAP": "false"
     }
-  },
-  "functions": {
-    "api/**/*.ts": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
   }
 }
