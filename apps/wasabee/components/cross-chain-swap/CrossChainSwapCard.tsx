@@ -685,6 +685,8 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
     }, [fromToken]); // Only depend on fromToken changes
 
     const isSwapDisabled = useMemo(() => {
+      // If wallet is not connected, allow button to be clickable
+      if (!wallet.isUserConnected) return false;
       if (isWrongChain) return false; // Allow button to be clicked to switch chain
       return (
         !fromAmount ||
@@ -713,7 +715,8 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
 
     // Load balances when tokens change or wallet/chain changes
     useEffect(() => {
-      if (!fromToken || !wallet.account) {
+      // Check if wallet is actually connected (not zero address)
+      if (!fromToken || !wallet.isUserConnected) {
         setFromTokenBalance('0');
         return;
       }
@@ -740,10 +743,11 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
           console.error('Failed to load from token balance:', err);
           setFromTokenBalance('0');
         });
-    }, [fromToken?.address, fromToken?.chainId, fromChain?.chainId]); // Re-fetch when token address, chainId or chain changes
+    }, [fromToken?.address, fromToken?.chainId, fromChain?.chainId, wallet.isUserConnected]); // Re-fetch when token address, chainId or chain changes
 
     useEffect(() => {
-      if (!toToken || !wallet.account) {
+      // Check if wallet is actually connected (not zero address)
+      if (!toToken || !wallet.isUserConnected) {
         setToTokenBalance('0');
         return;
       }
@@ -770,7 +774,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
           console.error('Failed to load to token balance:', err);
           setToTokenBalance('0');
         });
-    }, [toToken?.address, toToken?.chainId, toChain?.chainId]); // Re-fetch when token address, chainId or chain changes
+    }, [toToken?.address, toToken?.chainId, toChain?.chainId, wallet.isUserConnected]); // Re-fetch when token address, chainId or chain changes
 
     // Ensure we have chains before rendering
     if (!fromChain || !toChain) {
@@ -834,40 +838,49 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                   </div>
                 </div>
                 <div className="flex items-center justify-end gap-2">
-                  <div className="flex items-center text-xs text-[#E7CDB1]">
-                    <Wallet2 className="w-3 h-3 mr-1" />
-                    {fromTokenBalance} {fromToken?.symbol || 'ETH'}
-                  </div>
-                  <button
-                    className="text-xs bg-[#FFFFFF1A]/10 rounded-full border border-[#86715B] px-2 py-0.5 hover:bg-[#FFFFFF1A]/20 transition-colors"
-                    onClick={() => {
-                      console.log(
-                        'Max button clicked, balance:',
-                        fromTokenBalance
-                      );
-                      if (
-                        fromTokenBalance &&
-                        fromTokenBalance !== '0' &&
-                        fromTokenBalance !== 'Loading...'
-                      ) {
-                        try {
-                          // Parse the balance and handle it properly
-                          const balance = parseFloat(fromTokenBalance);
-                          if (!isNaN(balance) && balance > 0) {
-                            // Format to avoid scientific notation and trailing zeros
-                            const cleanBalance = balance
-                              .toFixed(10)
-                              .replace(/\.?0+$/, '');
-                            setFromAmount(cleanBalance);
+                  {wallet.isUserConnected ? (
+                    <>
+                      <div className="flex items-center text-xs text-[#E7CDB1]">
+                        <Wallet2 className="w-3 h-3 mr-1" />
+                        {fromTokenBalance} {fromToken?.symbol || 'ETH'}
+                      </div>
+                      <button
+                        className="text-xs bg-[#FFFFFF1A]/10 rounded-full border border-[#86715B] px-2 py-0.5 hover:bg-[#FFFFFF1A]/20 transition-colors"
+                        onClick={() => {
+                          console.log(
+                            'Max button clicked, balance:',
+                            fromTokenBalance
+                          );
+                          if (
+                            fromTokenBalance &&
+                            fromTokenBalance !== '0' &&
+                            fromTokenBalance !== 'Loading...'
+                          ) {
+                            try {
+                              // Parse the balance and handle it properly
+                              const balance = parseFloat(fromTokenBalance);
+                              if (!isNaN(balance) && balance > 0) {
+                                // Format to avoid scientific notation and trailing zeros
+                                const cleanBalance = balance
+                                  .toFixed(10)
+                                  .replace(/\.?0+$/, '');
+                                setFromAmount(cleanBalance);
+                              }
+                            } catch (err) {
+                              console.error('Error parsing balance:', err);
+                            }
                           }
-                        } catch (err) {
-                          console.error('Error parsing balance:', err);
-                        }
-                      }
-                    }}
-                  >
-                    Max
-                  </button>
+                        }}
+                      >
+                        Max
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex items-center text-xs text-[#665544]">
+                      <Wallet2 className="w-3 h-3 mr-1" />
+                      Connect wallet
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -935,10 +948,17 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                   </div>
                 </div>
                 <div className="flex items-center justify-end">
-                  <div className="flex items-center text-xs text-[#E7CDB1]">
-                    <Wallet2 className="w-3 h-3 mr-1" />
-                    {toTokenBalance} {toToken?.symbol || 'USDT'}
-                  </div>
+                  {wallet.isUserConnected ? (
+                    <div className="flex items-center text-xs text-[#E7CDB1]">
+                      <Wallet2 className="w-3 h-3 mr-1" />
+                      {toTokenBalance} {toToken?.symbol || 'USDT'}
+                    </div>
+                  ) : (
+                    <div className="flex items-center text-xs text-[#665544]">
+                      <Wallet2 className="w-3 h-3 mr-1" />
+                      Connect wallet
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -951,7 +971,9 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
                 disabled={isSwapDisabled || isProcessingSwap}
                 onClick={isWrongChain ? handleSwitchChain : handleSwap}
               >
-                {isProcessingSwap
+                {!wallet.isUserConnected
+                  ? 'Connect Wallet'
+                  : isProcessingSwap
                   ? swapStatus || 'Processing...'
                   : isLoadingQuote
                   ? 'Getting Quote...'

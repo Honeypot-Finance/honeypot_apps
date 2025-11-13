@@ -9,6 +9,7 @@ type Token = any; // Use any to avoid type issues with lazy-loaded library
 import { UniversalTokenLogo } from './UniversalTokenLogo';
 // Use RocketX service instead of Particle Network
 import { rocketxSwapService as crossChainSwapService } from '@/services/rocketxSwapService';
+import { wallet } from '@honeypot/shared/lib/wallet';
 
 interface TokenSelectorProps {
   chainId: number;
@@ -24,7 +25,9 @@ const useTokenBalances = (tokens: Token[], chainId: number, enabled: boolean) =>
   const loadingRef = React.useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    if (!enabled || !tokens.length || !crossChainSwapService.isWalletConnected()) {
+    if (!enabled || !tokens.length || !wallet.isUserConnected) {
+      // Clear balances when wallet is not connected
+      setBalances({});
       return;
     }
 
@@ -82,7 +85,7 @@ const useTokenBalances = (tokens: Token[], chainId: number, enabled: boolean) =>
     return () => {
       cancelled = true;
     };
-  }, [tokens.length, chainId, enabled]); // Only depend on length, not array reference
+  }, [tokens.length, chainId, enabled, wallet.isUserConnected]); // Only depend on length, not array reference
 
   return balances;
 };
@@ -259,13 +262,15 @@ const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, 
                         </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                        {tokenBalances[`${token.chainId}-${token.address}`]
-                          ? formatBalance(tokenBalances[`${token.chainId}-${token.address}`])
-                          : '...'}
+                    {wallet.isUserConnected && (
+                      <div className="text-right">
+                        <div className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {tokenBalances[`${token.chainId}-${token.address}`]
+                            ? formatBalance(tokenBalances[`${token.chainId}-${token.address}`])
+                            : '...'}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </Button>
                 ))
               ) : (
