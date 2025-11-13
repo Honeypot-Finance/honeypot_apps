@@ -8,7 +8,8 @@ import {
 import { ChevronDown } from 'lucide-react';
 import Image from 'next/image';
 import { observer } from 'mobx-react-lite';
-import { crossChainSwapService } from '@/services/crossChainSwap';
+// Use RocketX service instead of Particle Network
+import { rocketxSwapService as crossChainSwapService } from '@/services/rocketxSwapService';
 
 // Define a minimal interface for what we need from Network
 // to avoid importing from the lazy-loaded library

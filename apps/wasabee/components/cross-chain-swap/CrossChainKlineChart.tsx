@@ -3,7 +3,8 @@ import { observer } from 'mobx-react-lite';
 import dynamic from 'next/dynamic';
 import { chart } from '@honeypot/shared/services';
 import { Token } from '@honeypot/shared/lib/contract/token/token';
-import { crossChainSwapService } from '@/services/crossChainSwap';
+// Use RocketX service instead of Particle Network
+import { rocketxSwapService as crossChainSwapService } from '@/services/rocketxSwapService';
 import { wallet } from '@honeypot/shared/lib/wallet';
 
 // Import CrossChainKlineChartDisplay dynamically to avoid SSR issues

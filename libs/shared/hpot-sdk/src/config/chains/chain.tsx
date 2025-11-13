@@ -237,6 +237,29 @@ export class Network {
       : explorer.url;
     return `${baseUrl}/tx/${txHash}`;
   }
+
+  /**
+   * Get the wrapped native token address for price lookups
+   * Used when querying prices for native tokens (ETH, BNB, BERA, etc.)
+   * @returns The wrapped token address or undefined if not available
+   */
+  getWrappedNativeTokenAddress(): string | undefined {
+    return this.wrappedNativeToken?.address;
+  }
+
+  /**
+   * Check if an address is a native token placeholder
+   * @param address - The token address to check
+   * @returns True if the address represents a native token
+   */
+  static isNativeTokenAddress(address: string | undefined): boolean {
+    if (!address) return true;
+    const lowerAddr = address.toLowerCase();
+    return (
+      lowerAddr === '0x0000000000000000000000000000000000000000' ||
+      lowerAddr === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+    );
+  }
 }
 
 export const bscMainnetNetwork = new Network({
@@ -1609,6 +1632,18 @@ export const networksMap = networks.reduce((acc, network) => {
   acc[network.chainId] = network;
   return acc;
 }, {} as Record<number | string, Network>);
+
+/**
+ * Get the wrapped native token address for a specific chain
+ * @param chainId - The chain ID as a string or number
+ * @returns The wrapped token address or undefined if not found
+ */
+export function getWrappedNativeTokenAddressByChainId(
+  chainId: string | number
+): string | undefined {
+  const network = networksMap[chainId];
+  return network?.getWrappedNativeTokenAddress();
+}
 
 // Only initialize networks on client side
 if (typeof window !== 'undefined') {

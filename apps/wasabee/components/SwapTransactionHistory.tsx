@@ -30,28 +30,31 @@ const SwapTransactionHistory = observer(() => {
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastFetchParamsRef = useRef<string>('');
 
-  const loadTransactions = useCallback(async (currentPage: number, baseAddr: string, quoteAddr: string) => {
-    setLoading(true);
-    try {
-      const response = await fetchTransactions(
-        currentPage,
-        pageSize,
-        baseAddr,
-        quoteAddr
-      );
+  const loadTransactions = useCallback(
+    async (currentPage: number, baseAddr: string, quoteAddr: string) => {
+      setLoading(true);
+      try {
+        const response = await fetchTransactions(
+          currentPage,
+          pageSize,
+          baseAddr,
+          quoteAddr
+        );
 
-      setTransactions(response.data);
-      setHasNextPage(response.pageInfo.hasNextPage);
-    } catch (error) {
-      console.error(
-        '[SwapTransactionHistory] Error loading transactions:',
-        error
-      );
-      setTransactions([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchTransactions, pageSize]);
+        setTransactions(response.data);
+        setHasNextPage(response.pageInfo.hasNextPage);
+      } catch (error) {
+        console.error(
+          '[SwapTransactionHistory] Error loading transactions:',
+          error
+        );
+        setTransactions([]);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchTransactions, pageSize]
+  );
 
   useEffect(() => {
     // Create a unique key for the current fetch parameters
@@ -125,9 +128,7 @@ const SwapTransactionHistory = observer(() => {
 
   return (
     <div className="w-full bg-[#140D06] rounded-2xl border border-[#2a2318] p-6">
-      <h2 className="text-xl font-semibold text-white mb-6">
-        Latest Transactions
-      </h2>
+      <h2 className="text-xl font-semibold text-white mb-6">Transactions</h2>
 
       {/* Table */}
       <div className="overflow-x-auto">

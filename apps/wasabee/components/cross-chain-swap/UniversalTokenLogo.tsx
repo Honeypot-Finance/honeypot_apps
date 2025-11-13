@@ -9,6 +9,13 @@ interface UniversalTokenLogoProps {
   size?: number;
 }
 
+// Helper to validate if logoURI is a valid URL
+const isValidImageUrl = (url: string | undefined): boolean => {
+  if (!url) return false;
+  // Must start with http://, https://, or / (absolute path)
+  return url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/');
+};
+
 // A simpler token logo component that doesn't initialize the token
 // Used for Universal Account tokens to avoid contract calls
 export const UniversalTokenLogo = observer(({ token, size = 24 }: UniversalTokenLogoProps) => {
@@ -16,7 +23,10 @@ export const UniversalTokenLogo = observer(({ token, size = 24 }: UniversalToken
   const logoURI = token.logoURI;
   const symbol = token.symbol || 'Unknown';
   const name = token.name || 'Unknown Token';
-  
+
+  // Validate logoURI - must be absolute URL or path
+  const validLogoURI = isValidImageUrl(logoURI) ? logoURI : undefined;
+
   return (
     <Tooltip
       content={
@@ -27,9 +37,9 @@ export const UniversalTokenLogo = observer(({ token, size = 24 }: UniversalToken
       closeDelay={0}
     >
       <div className="relative shrink-0" style={{ width: size, height: size }}>
-        {logoURI ? (
+        {validLogoURI ? (
           <Image
-            src={logoURI}
+            src={validLogoURI}
             alt={symbol}
             width={size}
             height={size}
@@ -40,7 +50,7 @@ export const UniversalTokenLogo = observer(({ token, size = 24 }: UniversalToken
             }}
           />
         ) : (
-          <div 
+          <div
             className="rounded-full bg-gray-700 flex items-center justify-center text-xs font-medium text-white"
             style={{ width: size, height: size }}
           >

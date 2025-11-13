@@ -36,7 +36,7 @@ export class DefinedPriceFeed implements PriceFeedProvider {
 
     const data = await res.json();
 
-    console.log(data);
+    console.log('Defined API Response:', JSON.stringify(data, null, 2));
 
     return {
       status: 'success',
@@ -71,12 +71,21 @@ export class DefinedPriceFeed implements PriceFeedProvider {
         message: 'Failed to fetch data.',
       };
     } else {
+      // Check if the first price is null (API returns null for unsupported tokens)
+      const priceData = data.data.getTokenPrices[0];
+      if (!priceData || priceData.priceUsd === null) {
+        return {
+          status: 'error',
+          message: 'Price data not available for this token.',
+        };
+      }
+
       return {
         status: 'success',
         data: {
           address: address,
-          price: data.data.getTokenPrices[0].priceUsd,
-          lastUpdated: data.data.getTokenPrices[0].timestamp,
+          price: priceData.priceUsd,
+          lastUpdated: priceData.timestamp,
         },
         message: 'Success',
       };
@@ -114,6 +123,14 @@ export class DefinedPriceFeed implements PriceFeedProvider {
       return {
         status: 'success',
         data: data.data.getTokenPrices.map((price, index) => {
+          // Handle null prices (API returns null for unsupported tokens)
+          if (!price || price.priceUsd === null) {
+            return {
+              address: addresses[index],
+              price: 0,
+              lastUpdated: undefined,
+            };
+          }
           return {
             address: addresses[index],
             price: price.priceUsd,
@@ -168,6 +185,14 @@ export class DefinedPriceFeed implements PriceFeedProvider {
       return {
         status: 'success',
         data: data.data.getTokenPrices.map((price) => {
+          // Handle null prices (API returns null for unsupported tokens)
+          if (!price || price.priceUsd === null) {
+            return {
+              address: address,
+              price: 0,
+              lastUpdated: undefined,
+            };
+          }
           return {
             address: address,
             price: price.priceUsd,

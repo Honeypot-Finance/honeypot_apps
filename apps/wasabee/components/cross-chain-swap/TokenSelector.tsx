@@ -7,7 +7,8 @@ import { observer } from 'mobx-react-lite';
 // Import the actual Token type dynamically
 type Token = any; // Use any to avoid type issues with lazy-loaded library
 import { UniversalTokenLogo } from './UniversalTokenLogo';
-import { crossChainSwapService } from '@/services/crossChainSwap';
+// Use RocketX service instead of Particle Network
+import { rocketxSwapService as crossChainSwapService } from '@/services/rocketxSwapService';
 
 interface TokenSelectorProps {
   chainId: number;
@@ -17,63 +18,145 @@ interface TokenSelectorProps {
   compact?: boolean;
 }
 
-// Component to display token balance
-const TokenBalance: React.FC<{ token: Token }> = observer(({ token }) => {
-  const [balance, setBalance] = useState('0');
-  const [isLoading, setIsLoading] = useState(true);
-  
+// Helper to batch load balances with rate limiting
+const useTokenBalances = (tokens: Token[], chainId: number, enabled: boolean) => {
+  const [balances, setBalances] = useState<Record<string, string>>({});
+  const loadingRef = React.useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (!enabled || !tokens.length || !crossChainSwapService.isWalletConnected()) {
+      return;
+    }
+
+    let cancelled = false;
+
+    // Load balances in batches of 10 with delay between batches
+    const loadBalancesInBatches = async () => {
+      const BATCH_SIZE = 10;
+      const BATCH_DELAY = 1000; // 1 second delay between batches
+
+      for (let i = 0; i < tokens.length; i += BATCH_SIZE) {
+        if (cancelled) break;
+
+        const batch = tokens.slice(i, i + BATCH_SIZE);
+
+        // Load batch concurrently
+        const batchPromises = batch.map(async (token) => {
+          if (cancelled) return;
+
+          const key = `${token.chainId}-${token.address}`;
+
+          // Skip if already loading or loaded
+          if (loadingRef.current.has(key)) {
+            return;
+          }
+
+          loadingRef.current.add(key);
+
+          try {
+            const balance = await crossChainSwapService.getCrossChainTokenBalance(token);
+            if (!cancelled) {
+              setBalances(prev => ({ ...prev, [key]: balance }));
+            }
+          } catch (err) {
+            // Silent fail
+            if (!cancelled) {
+              setBalances(prev => ({ ...prev, [key]: '0' }));
+            }
+          } finally {
+            loadingRef.current.delete(key);
+          }
+        });
+
+        await Promise.all(batchPromises);
+
+        // Wait before next batch (except for last batch)
+        if (i + BATCH_SIZE < tokens.length && !cancelled) {
+          await new Promise(resolve => setTimeout(resolve, BATCH_DELAY));
+        }
+      }
+    };
+
+    loadBalancesInBatches();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [tokens.length, chainId, enabled]); // Only depend on length, not array reference
+
+  return balances;
+};
+
+const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, onChange, variant = 'light', compact = false }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [allTokens, setAllTokens] = useState<Token[]>([]);
+  const [isLoadingTokens, setIsLoadingTokens] = useState(false);
+
+  const isDark = variant === 'dark';
+
+  // Load tokens asynchronously when chainId changes
   useEffect(() => {
     let mounted = true;
-    
-    const loadBalance = async () => {
-      // Check if wallet is connected through the service
-      const isConnected = crossChainSwapService.isWalletConnected();
-      if (!token || !isConnected) {
-        if (mounted) {
-          setBalance('0');
-          setIsLoading(false);
-        }
-        return;
-      }
-      
-      console.log(`Loading balance for token ${token.symbol} (${token.address}) on chain ${token.chainId}`);
-      setIsLoading(true);
-      
+
+    const loadTokens = async () => {
+      console.log(`🔄 TokenSelector: Loading tokens for chain ${chainId}`);
+      setIsLoadingTokens(true);
+
       try {
-        const bal = await crossChainSwapService.getCrossChainTokenBalance(token);
-        console.log(`Got balance for ${token.symbol}: ${bal}`);
+        const tokens = await crossChainSwapService.getAvailableTokensForChain(chainId);
+        console.log(`✅ TokenSelector: Loaded ${tokens.length} tokens for chain ${chainId}`);
+
         if (mounted) {
-          setBalance(bal || '0');
+          setAllTokens(tokens);
         }
-      } catch (err) {
-        console.warn('Failed to load balance:', err);
+      } catch (error) {
+        console.error(`❌ TokenSelector: Failed to load tokens for chain ${chainId}:`, error);
         if (mounted) {
-          setBalance('0');
+          setAllTokens([]);
         }
       } finally {
         if (mounted) {
-          setIsLoading(false);
+          setIsLoadingTokens(false);
         }
       }
     };
-    
-    loadBalance();
-    
-    // Also reload on a timer to catch updates
-    const interval = setInterval(loadBalance, 10000); // Refresh every 10 seconds
-    
+
+    loadTokens();
+
     return () => {
       mounted = false;
-      clearInterval(interval);
     };
-  }, [token?.address, token?.chainId]); // Re-load when token changes
-  
-  // Format the balance for display
-  const formatBalance = (bal: string) => {
-    const numBal = parseFloat(bal);
+  }, [chainId]);
+
+  // Filter tokens by search query
+  const availableTokens = useMemo(() => {
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      return allTokens.filter(token =>
+        token.symbol.toLowerCase().includes(query) ||
+        token.name.toLowerCase().includes(query) ||
+        token.address.toLowerCase().includes(query)
+      );
+    }
+
+    return allTokens;
+  }, [allTokens, searchQuery]);
+
+  // Load balances for tokens in batches when modal is open
+  const tokenBalances = useTokenBalances(availableTokens, chainId, isOpen);
+
+  const handleSelectToken = (token: Token) => {
+    onChange(token);
+    setIsOpen(false);
+    setSearchQuery('');
+  };
+
+  // Format balance for display
+  const formatBalance = (balance: string) => {
+    const numBal = parseFloat(balance);
     if (isNaN(numBal) || numBal === 0) return '0';
-    
-    // Format based on size
+
     if (numBal >= 1000000) {
       return `${(numBal / 1000000).toFixed(2)}M`;
     } else if (numBal >= 1000) {
@@ -86,39 +169,6 @@ const TokenBalance: React.FC<{ token: Token }> = observer(({ token }) => {
       return '<0.0001';
     }
     return '0';
-  };
-  
-  return <span>{isLoading ? '...' : formatBalance(balance)}</span>;
-});
-
-const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, onChange, variant = 'light', compact = false }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const isDark = variant === 'dark';
-
-  // Get tokens for the selected chain from Universal Account
-  const availableTokens = useMemo(() => {
-    // Get tokens from Universal Account service
-    const tokens = crossChainSwapService.getAvailableTokensForChain(chainId);
-
-    // Filter by search query
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      return tokens.filter(token => 
-        token.symbol.toLowerCase().includes(query) ||
-        token.name.toLowerCase().includes(query) ||
-        token.address.toLowerCase().includes(query)
-      );
-    }
-
-    return tokens;
-  }, [chainId, searchQuery]);
-
-  const handleSelectToken = (token: Token) => {
-    onChange(token);
-    setIsOpen(false);
-    setSearchQuery('');
   };
 
   return (
@@ -210,10 +260,11 @@ const TokenSelector: React.FC<TokenSelectorProps> = observer(({ chainId, value, 
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-medium">
-                        <TokenBalance token={token} />
+                      <div className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                        {tokenBalances[`${token.chainId}-${token.address}`]
+                          ? formatBalance(tokenBalances[`${token.chainId}-${token.address}`])
+                          : '...'}
                       </div>
-                      {/* Price display placeholder */}
                     </div>
                   </Button>
                 ))
