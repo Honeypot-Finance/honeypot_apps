@@ -7,7 +7,16 @@
   },
   "build": {
     "env": {
-      "NPM_CONFIG_REGISTRY": "https://registry.npmjs.org/"
+      "NPM_CONFIG_REGISTRY": "https://registry.npmjs.org/",
+      "NODE_OPTIONS": "--max-old-space-size=7168",
+      "NEXT_TELEMETRY_DISABLED": "1",
+      "GENERATE_SOURCEMAP": "false"
+    }
+  },
+  "functions": {
+    "api/**/*.ts": {
+      "memory": 1024,
+      "maxDuration": 10
     }
   }
 }

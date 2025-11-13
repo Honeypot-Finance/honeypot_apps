@@ -17,6 +17,14 @@ module.exports = withBaseConfig({
     // Reduce memory usage during build
     proxyTimeout: 60 * 1000,
   },
+  // Exclude large assets from build to save memory
+  eslint: {
+    ignoreDuringBuilds: true, // Skip ESLint during builds to save memory
+  },
+  typescript: {
+    // TypeScript checking done separately, skip during build
+    ignoreBuildErrors: false,
+  },
     // Custom webpack config for wasabee - adds to base config
   webpack: (config, options) => {
     // Wasabee-specific optimizations (will be merged with base config)
@@ -28,13 +36,22 @@ module.exports = withBaseConfig({
         components: path.resolve(__dirname, './components'),
       };
 
+      // Exclude large static assets from being processed by webpack
+      config.module.rules.push({
+        test: /charting_library.*\.js$/,
+        type: 'asset/resource',
+        generator: {
+          emit: false, // Don't process these files, serve them statically
+        },
+      });
+
       // Enable parallel processing for TerserPlugin (enhances base config)
       if (config.optimization?.minimizer) {
         config.optimization.minimizer = config.optimization.minimizer.map(plugin => {
           if (plugin.constructor.name === 'TerserPlugin') {
             return new TerserPlugin({
               ...plugin.options,
-              parallel: true, // Add parallel processing for wasabee
+              parallel: false, // Disable parallel to save memory (trade speed for memory)
             });
           }
           return plugin;

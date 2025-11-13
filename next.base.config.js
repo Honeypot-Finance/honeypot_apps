@@ -193,6 +193,11 @@ const baseConfig = {
 
       // Limit stats output to save memory
       config.stats = 'errors-warnings';
+
+      // Set infrastructure logging to minimal to save memory
+      config.infrastructureLogging = {
+        level: 'error',
+      };
     }
 
     // Development optimizations - minimal caching
