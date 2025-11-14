@@ -6,7 +6,7 @@ export const DOMAIN_MAP = {
   MAIN: 'https://honeypotfinance.xyz',
   POT2PUMP: 'https://pot2pump.honeypotfinance.xyz',
   DREAMPAD: 'https://dreampad.honeypotfinance.xyz',
-  WASABEE: 'https://wasabee.honeypotfinance.xyz',
+  WASABEE: 'https://dex.honeypotfinance.xyz',
   ALL_IN_ONE: 'https://leaderboard.honeypotfinance.xyz/',
 } as const;
 

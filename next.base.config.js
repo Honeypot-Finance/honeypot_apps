@@ -146,7 +146,9 @@ const baseConfig = {
                */
               name: (module) => {
                 if (!module.context) return 'vendor';
-                const match = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/);
+                const match = module.context.match(
+                  /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+                );
                 const packageName = match?.[1] || 'vendor';
                 return `vendor.${packageName.replace('@', '')}`;
               },
@@ -165,7 +167,12 @@ const baseConfig = {
               compress: {
                 drop_console: true,
                 drop_debugger: true,
-                pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
+                pure_funcs: [
+                  'console.log',
+                  'console.info',
+                  'console.debug',
+                  'console.warn',
+                ],
                 passes: 2,
               },
               mangle: true,
@@ -224,7 +231,6 @@ const baseConfig = {
   },
   async headers() {
     return [
-
       {
         // matching all API routes
         source: '/api/:path*',
@@ -232,7 +238,7 @@ const baseConfig = {
           { key: 'Access-Control-Allow-Credentials', value: 'true' },
           {
             key: 'Access-Control-Allow-Origin',
-            value: 'https://wasabee.honeypotfinance.xyz',
+            value: 'https://dex.honeypotfinance.xyz',
           },
           {
             key: 'Access-Control-Allow-Methods',
@@ -256,7 +262,8 @@ const baseConfig = {
       },
       {
         // Cache static assets (images, fonts) for 30 days
-        source: '/(.*\\.(?:png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|eot|otf))',
+        source:
+          '/(.*\\.(?:png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|eot|otf))',
         headers: [
           {
             key: 'Cache-Control',

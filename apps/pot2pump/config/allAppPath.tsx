@@ -63,8 +63,8 @@ export const appPathsList: Menu[] = [
   },
   {
     title: 'Dex',
-    path: 'https://wasabee.honeypotfinance.xyz/swap',
-    routePath: 'https://wasabee.honeypotfinance.xyz/swap',
+    path: 'https://dex.honeypotfinance.xyz/swap',
+    routePath: 'https://dex.honeypotfinance.xyz/swap',
   },
 ];
 

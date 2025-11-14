@@ -50,7 +50,7 @@ const convertToRelativePath = (url: string): string => {
   try {
     const urlObj = new URL(url);
     // If it's a wasabee URL, convert to relative path
-    if (urlObj.hostname === 'wasabee.honeypotfinance.xyz') {
+    if (urlObj.hostname === 'dex.honeypotfinance.xyz') {
       return urlObj.pathname + urlObj.search + urlObj.hash;
     }
     // Otherwise keep the absolute URL
@@ -61,7 +61,10 @@ const convertToRelativePath = (url: string): string => {
 };
 
 // Recreate React element from serialized format
-const recreateReactElement = (serialized: any, index?: number): ReactNode | undefined => {
+const recreateReactElement = (
+  serialized: any,
+  index?: number
+): ReactNode | undefined => {
   if (!serialized || typeof serialized !== 'object') return undefined;
   if (!serialized.type || !serialized.props) return undefined;
 
@@ -83,17 +86,16 @@ const recreateReactElement = (serialized: any, index?: number): ReactNode | unde
   if (props.children) {
     if (Array.isArray(props.children)) {
       props.children = props.children.map((child: any, idx: number) =>
-        typeof child === 'object' && child.type ? recreateReactElement(child, idx) : child
+        typeof child === 'object' && child.type
+          ? recreateReactElement(child, idx)
+          : child
       );
     } else if (typeof props.children === 'object' && props.children.type) {
       props.children = recreateReactElement(props.children, 0);
     }
   }
 
-  return createElement(
-    serialized.type,
-    props
-  );
+  return createElement(serialized.type, props);
 };
 
 // Map API response to internal Menu format
@@ -101,7 +103,9 @@ const mapApiMenuToMenu = (apiMenu: ApiMenu[]): Menu[] => {
   return apiMenu.map((item, itemIndex) => {
     const baseItem = {
       title: item.title,
-      routePath: item.routePath ? convertToRelativePath(item.routePath) : undefined,
+      routePath: item.routePath
+        ? convertToRelativePath(item.routePath)
+        : undefined,
       icon: item.icon,
       beforeContent: recreateReactElement(item.beforeElement, itemIndex),
       afterContent: recreateReactElement(item.afterElement, itemIndex + 1000),
@@ -115,8 +119,14 @@ const mapApiMenuToMenu = (apiMenu: ApiMenu[]): Menu[] => {
           title: subItem.title,
           routePath: convertToRelativePath(subItem.routePath),
           icon: subItem.icon,
-          beforeContent: recreateReactElement(subItem.beforeElement, itemIndex * 100 + subIndex),
-          afterContent: recreateReactElement(subItem.afterElement, itemIndex * 100 + subIndex + 50),
+          beforeContent: recreateReactElement(
+            subItem.beforeElement,
+            itemIndex * 100 + subIndex
+          ),
+          afterContent: recreateReactElement(
+            subItem.afterElement,
+            itemIndex * 100 + subIndex + 50
+          ),
         })),
       };
     }
@@ -148,17 +158,31 @@ export function useNavbar() {
 
         const response: NavbarApiResponse = await res.json();
         console.log('[useNavbar] API response:', response);
-        console.log('[useNavbar] First menu item beforeElement:', response.menu[0]?.beforeElement);
-        console.log('[useNavbar] First menu item afterElement:', response.menu[0]?.afterElement);
+        console.log(
+          '[useNavbar] First menu item beforeElement:',
+          response.menu[0]?.beforeElement
+        );
+        console.log(
+          '[useNavbar] First menu item afterElement:',
+          response.menu[0]?.afterElement
+        );
         const mappedMenu = mapApiMenuToMenu(response.menu);
         console.log('[useNavbar] Mapped menu:', mappedMenu);
-        console.log('[useNavbar] First mapped item beforeContent:', mappedMenu[0]?.beforeContent);
-        console.log('[useNavbar] First mapped item afterContent:', mappedMenu[0]?.afterContent);
+        console.log(
+          '[useNavbar] First mapped item beforeContent:',
+          mappedMenu[0]?.beforeContent
+        );
+        console.log(
+          '[useNavbar] First mapped item afterContent:',
+          mappedMenu[0]?.afterContent
+        );
         setData(mappedMenu);
         setError(null);
       } catch (err) {
         console.error('[useNavbar] Error fetching navbar:', err);
-        setError(err instanceof Error ? err : new Error('Failed to fetch navbar data'));
+        setError(
+          err instanceof Error ? err : new Error('Failed to fetch navbar data')
+        );
         // Fallback to local config on error
         const { appPathsList } = await import('@/config/allAppPath');
         console.log('[useNavbar] Using fallback config:', appPathsList);
