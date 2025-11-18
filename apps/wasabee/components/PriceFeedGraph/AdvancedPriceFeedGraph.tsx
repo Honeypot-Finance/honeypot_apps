@@ -45,7 +45,7 @@ export const AdvancedPriceFeedGraph = observer(() => {
             chainId as number
           ),
     interval: '1D' as ResolutionString,
-    library_path: '/static/charting_library/charting_library/',
+    library_path: '/charting_library/',
     locale: 'en',
     charts_storage_url: 'https://saveload.tradingview.com',
     charts_storage_api_version: '1.1',
@@ -81,7 +81,7 @@ export const AdvancedPriceFeedGraph = observer(() => {
   return (
     <>
       <Script
-        src="/static/charting_library/datafeeds/udf/dist/bundle.js"
+        src="/charting_library/datafeeds/udf/dist/bundle.js"
         strategy="lazyOnload"
         onReady={() => {
           setIsScriptReady(true);
