@@ -61,11 +61,21 @@ module.exports = withBaseConfig({
 
     return config;
   },
-  redirects: async () => [
-    {
-      source: '/',
-      destination: '/swap',
-      permanent: false,
-    },
-  ],
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/swap',
+        permanent: false,
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/datafeeds/:path*',
+        destination: '/static/charting_library/datafeeds/:path*',
+      },
+    ];
+  },
 });
