@@ -6,8 +6,9 @@ node_modules/
 # Build artifacts
 .next/
 dist/
-!apps/wasabee/public/static/charting_library/datafeeds/udf/dist/**
-!apps/wasabee/public/datafeeds/udf/dist/**
+!apps/wasabee/public/charting_library/datafeeds/**
+!apps/wasabee/public/static/charting_library/datafeeds/**
+!apps/wasabee/public/datafeeds/**
 out/
 build/
 

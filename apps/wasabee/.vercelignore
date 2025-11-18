@@ -45,8 +45,9 @@
 
 # Build artifacts
 **/dist/**
-!public/static/charting_library/datafeeds/udf/dist/**
-!public/datafeeds/udf/dist/**
+!public/charting_library/datafeeds/**
+!public/static/charting_library/datafeeds/**
+!public/datafeeds/**
 **/build/**
 **/out/**
 
