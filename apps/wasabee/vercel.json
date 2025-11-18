@@ -8,5 +8,31 @@
       "path": "/api/cron/update-vaults-cache",
       "schedule": "*/5 * * * *"
     }
+  ],
+  "headers": [
+    {
+      "source": "/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*).js",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript; charset=utf-8"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/datafeeds/:path*",
+      "destination": "/static/charting_library/datafeeds/:path*"
+    }
   ]
 }
