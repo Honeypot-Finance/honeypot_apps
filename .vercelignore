@@ -5,10 +5,7 @@ node_modules/
 
 # Build artifacts
 .next/
-dist/
-!apps/wasabee/public/charting_library/datafeeds/**
-!apps/wasabee/public/static/charting_library/datafeeds/**
-!apps/wasabee/public/datafeeds/**
+# dist/ - Commented out because we need charting library dist files
 out/
 build/
 
