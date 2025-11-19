@@ -172,12 +172,7 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
 
         // If we have USD value, try to get more accurate fee preview
         if (quote.toAmount && wallet.universalAccount) {
-          const fromTokenPrice = 1; // This should come from price feed
-          const usdValue = (parseFloat(fromAmount) * fromTokenPrice).toFixed(2);
-
-          const preview = await crossChainSwapService.getTransactionPreview(
-            usdValue
-          );
+          const preview = await crossChainSwapService.getTransactionPreview();
 
           // Check again if this request is still current
           if (currentRequestId !== quoteRequestIdRef.current) {
@@ -200,13 +195,13 @@ const CrossChainSwapCard: React.FC<CrossChainSwapCardProps> = observer(
         if (currentRequestId !== quoteRequestIdRef.current) {
           return;
         }
+        const errorMessage = error instanceof Error
+          ? error.message
+          : 'Failed to get quote. Please try again.';
+        console.error('🚨 SETTING ERROR MESSAGE FOR USER:', errorMessage);
         setToAmount('');
         setQuoteData(null);
-        setQuoteError(
-          error instanceof Error
-            ? error.message
-            : 'Failed to get quote. Please try again.'
-        );
+        setQuoteError(errorMessage);
       } finally {
         // Only update loading state if this is still the current request
         if (currentRequestId === quoteRequestIdRef.current) {

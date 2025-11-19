@@ -631,14 +631,11 @@ class RocketXSwapService {
       const response = await client.getQuote(quoteRequest, fromNetworkId, toNetworkId);
 
       if (!response.success || !response.data) {
+        const errorMsg = response.error?.message || 'Quote unavailable';
         console.warn('⚠️ Failed to get quote from RocketX:', response.error);
-        return {
-          toAmount: '',
-          priceImpact: 0,
-          estimatedTime: 0,
-          route: [response.error?.message || 'Quote unavailable'],
-          feeInUSD: undefined,
-        };
+        console.error('🚨 THROWING ERROR TO USER:', errorMsg);
+        // Throw error so it's properly caught and displayed to user
+        throw new Error(errorMsg);
       }
 
       const { data } = response;
@@ -649,14 +646,9 @@ class RocketXSwapService {
       const bestQuote = dataAny.quotes && dataAny.quotes.length > 0 ? dataAny.quotes[0] : null;
 
       if (!bestQuote) {
-        console.warn('No quotes available from RocketX');
-        return {
-          toAmount: '',
-          priceImpact: 0,
-          estimatedTime: 0,
-          route: ['No route found'],
-          feeInUSD: undefined,
-        };
+        console.warn('⚠️ RocketX returned empty quotes');
+        // Throw error so it's properly caught and displayed to user
+        throw new Error('No quotes available for this pair');
       }
 
       console.log('📊 Best quote from RocketX:', bestQuote);
@@ -669,13 +661,8 @@ class RocketXSwapService {
       if (bestQuote.err || bestQuote.error) {
         const errorMessage = bestQuote.err || bestQuote.error || 'Quote not available';
         console.warn('⚠️ Quote has error:', errorMessage);
-        return {
-          toAmount: '',
-          priceImpact: 0,
-          estimatedTime: 0,
-          route: [errorMessage],
-          feeInUSD: undefined,
-        };
+        // Throw error so it's properly caught and displayed to user
+        throw new Error(errorMessage);
       }
 
       // Parse the quote data
@@ -725,13 +712,9 @@ class RocketXSwapService {
       return quote;
     } catch (error) {
       console.error('Failed to get quote:', error);
-      return {
-        toAmount: '',
-        priceImpact: 0,
-        estimatedTime: 0,
-        route: ['Error fetching quote'],
-        feeInUSD: undefined,
-      };
+      // Re-throw the error so it can be caught by the UI component
+      // This allows specific error messages to be displayed to the user
+      throw error;
     } finally {
       runInAction(() => {
         this.isLoadingQuote = false;
@@ -743,7 +726,7 @@ class RocketXSwapService {
    * Get transaction preview with fee estimates
    * This uses the last quote data to provide fee information
    */
-  getTransactionPreview = async (usdValue: string) => {
+  getTransactionPreview = async () => {
     // For RocketX, the fee information is already in the quote
     // We just return the last quote's fee data
     if (this.lastQuote && this.lastQuote.feeInUSD) {
