@@ -40,7 +40,7 @@ export default function Bridge() {
 
         <Tab key="enso" title="Enso" className="">
           <SwapWidget
-            apiKey="ce445d5b-f9ee-453b-87ba-e672b927f44b"
+            apiKey="2fdbd4dc-68e6-440a-a51a-b486e8270930"
             enableShare={true}
             adaptive={true}
             themeConfig={{
