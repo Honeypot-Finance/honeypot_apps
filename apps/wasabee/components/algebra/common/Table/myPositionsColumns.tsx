@@ -109,9 +109,16 @@ export const myPositionsColumns: ColumnDef<MyPosition>[] = [
   {
     id: 'pool',
     header: () => <HeaderItem>POOL</HeaderItem>,
-    cell: () => (
-      <span className="text-white font-normal text-sm">WETH/WBERA</span>
-    ),
+    cell: ({ row }) => {
+      const poolEntity = row.original.poolEntity;
+      const token0Symbol = poolEntity?.token0?.symbol || '???';
+      const token1Symbol = poolEntity?.token1?.symbol || '???';
+      return (
+        <span className="text-white font-normal text-sm">
+          {token0Symbol}/{token1Symbol}
+        </span>
+      );
+    },
   },
   {
     accessorKey: 'liquidityUSD',
