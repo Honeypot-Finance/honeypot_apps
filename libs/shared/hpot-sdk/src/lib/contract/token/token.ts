@@ -226,18 +226,12 @@ export class Token implements BaseContract {
       return;
     }
 
-    console.log('this. wallet.currentChainId,', wallet.currentChainId);
-    console.log('this. pot2pumpAddress', this.pot2pumpAddress);
     const launch = await trpcClient.projects.getProjectInfo.query({
       chain_id: wallet.currentChainId,
       pair: this.pot2pumpAddress.toLowerCase(),
     });
 
-    console.log('launch', launch);
-
     launch?.logo_url && this.setLogoURI(launch.logo_url);
-
-    console.log('this.logoURI', this.logoURI);
 
     return this.logoURI;
   }

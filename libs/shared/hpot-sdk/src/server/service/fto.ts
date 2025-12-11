@@ -276,8 +276,6 @@ export const ftoService = {
     launch_token: string;
     chain_id: number;
   }): Promise<projectColumn[]> => {
-    console.log('launch_token', data.launch_token);
-    console.log('chain_id', data.chain_id);
     const launch =
       await pg`SELECT * FROM fto_project WHERE launch_token = ${data.launch_token.toLowerCase()} and chain_id = ${data.chain_id.toString()}`;
     return launch.map((item) => {
