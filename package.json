@@ -95,7 +95,7 @@
     "lucide-react": "^0.460.0",
     "mobx": "^6.13.7",
     "mobx-react-lite": "^4.1.0",
-    "next": "^14.2.24",
+    "next": "14.2.35",
     "p-queue": "5.0.0",
     "postgres": "^3.4.5",
     "react": "^18.3.1",
