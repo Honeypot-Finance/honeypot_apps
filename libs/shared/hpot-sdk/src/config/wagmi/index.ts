@@ -181,10 +181,10 @@ export const createWagmiConfig = (overrideConfig?: Partial<Config>) => {
       ...(berachainMainnet
         ? {
             [berachainMainnet.id]: fallback([
+              http('https://rpc.berachain.com'),
               http(
                 'https://api.henlo-winnie.dev/v1/mainnet/08c3ed43-6326-4be6-9dc2-78a5f77b7382'
               ),
-              http('https://rpc.berachain.com'),
             ]),
           }
         : {}),
