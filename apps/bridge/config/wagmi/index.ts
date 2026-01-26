@@ -11,7 +11,7 @@ import {
   trustWallet,
   phantomWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { cookieStorage, createStorage, http, fallback } from 'wagmi';
+import { cookieStorage, createStorage, http, fallback, type Config } from 'wagmi';
 import {
   mainnet,
   base,
@@ -21,9 +21,13 @@ import {
   bsc,
   avalanche,
 } from 'wagmi/chains';
+import { WALLETCONNECT_PROJECT_ID } from '@/config/constants';
 
-// Fallback RPC URLs for chains that have rate limiting issues
-// Using CORS-enabled public RPCs
+/**
+ * Fallback RPC URLs for chains that have rate limiting issues.
+ * Using CORS-enabled public RPCs. Order matters - first URL is tried first.
+ * Consider moving to environment variables for production deployments.
+ */
 const RPC_FALLBACKS: Record<number, string[]> = {
   [base.id]: [
     'https://base.drpc.org',
@@ -61,8 +65,6 @@ const RPC_FALLBACKS: Record<number, string[]> = {
     'https://avax.meowrpc.com',
   ],
 };
-
-const PROJECT_ID = '23b1ff4e22147bdf7cab13c0ee4bed90';
 
 // Supported chains for the bridge
 const SUPPORTED_CHAINS = [
@@ -102,8 +104,17 @@ const createCustomStorage = () => {
   };
 };
 
-export const createWagmiConfig = () => {
+/**
+ * Creates the wagmi config for the bridge app.
+ * Returns a mock config on server-side to prevent hydration mismatches.
+ *
+ * Note: The SSR mock config is typed as Config for simplicity, though it's
+ * a minimal placeholder that won't be used for actual wallet operations.
+ * The real config is created client-side after mount.
+ */
+export const createWagmiConfig = (): Config => {
   // Return a mock config for server-side rendering
+  // This is never actually used - the app waits for client-side mount
   if (typeof window === 'undefined') {
     return {
       _internal: {
@@ -123,13 +134,12 @@ export const createWagmiConfig = () => {
       },
       storage: null,
       ssr: true,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any;
+    } as unknown as Config;
   }
 
   return getDefaultConfig({
     appName: 'honeypot-bridge',
-    projectId: PROJECT_ID,
+    projectId: WALLETCONNECT_PROJECT_ID,
     wallets: [
       {
         groupName: 'Recommended',

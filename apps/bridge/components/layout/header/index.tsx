@@ -16,6 +16,7 @@ import React, { HtmlHTMLAttributes, useState, useCallback } from 'react';
 import { WalletConnect } from '@/components/walletconnect';
 import { appPathsList } from '@/config/allAppPath';
 import { useNavbar } from '@/lib/hooks/useNavbar';
+import { THEME_COLORS } from '@/config/constants';
 
 export const Header = (props: HtmlHTMLAttributes<HTMLDivElement>) => {
   const router = useRouter();
@@ -26,15 +27,24 @@ export const Header = (props: HtmlHTMLAttributes<HTMLDivElement>) => {
     setIsMenuOpen(false);
   }, []);
 
+  // Header colors from THEME_COLORS for consistency
+  const headerBgColor = `${THEME_COLORS.backgroundHeader}cc`; // 80% opacity
+  const headerBorderColor = `${THEME_COLORS.borderCard}80`; // 50% opacity
+  const menuBgColor = `${THEME_COLORS.backgroundCard}f2`; // 95% opacity
+
   return (
     <div className={clsx('relative', props.className)}>
       <Navbar
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
         classNames={{
-          base: 'bg-[#0D0703]/80 backdrop-blur-xl border-b border-[#2a2318]/50',
+          base: 'backdrop-blur-xl border-b',
           wrapper:
             'max-w-full px-4 sm:px-6 md:px-8 xl:px-0 xl:max-w-[1200px] 2xl:max-w-[1400px] !h-auto py-3',
+        }}
+        style={{
+          backgroundColor: headerBgColor,
+          borderColor: headerBorderColor,
         }}
       >
         <NavbarContent
@@ -78,12 +88,16 @@ export const Header = (props: HtmlHTMLAttributes<HTMLDivElement>) => {
 
         <NavbarMenu
           className={cn(
-            'lg:hidden pt-20 bg-[#1A0F06]/95 backdrop-blur-md border-t border-[#2a2318]',
+            'lg:hidden pt-20 backdrop-blur-md border-t',
             'will-change-transform transform-gpu transition-all duration-200 ease-out',
             isMenuOpen
               ? 'opacity-100 translate-y-0'
               : 'opacity-0 -translate-y-2'
           )}
+          style={{
+            backgroundColor: menuBgColor,
+            borderColor: THEME_COLORS.borderCard,
+          }}
         >
           <div
             className={cn(
@@ -110,7 +124,10 @@ export const Header = (props: HtmlHTMLAttributes<HTMLDivElement>) => {
             </div>
 
             {/* Separator */}
-            <div className="border-t border-[#2a2318] my-2" />
+            <div
+              className="border-t my-2"
+              style={{ borderColor: THEME_COLORS.borderCard }}
+            />
 
             {/* Honeypot Ecosystem Navigation */}
             <div>

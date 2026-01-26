@@ -1,10 +1,16 @@
 import { BridgeWidget, createChainConfig, mainnet, base, arbitrum, optimism, polygon, avalanche } from '@hongming-wang/usdc-bridge-widget';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
-import { CHAIN_IDS, BRIDGE_WIDGET_THEME } from '@/config/constants';
+import { CHAIN_IDS, BRIDGE_WIDGET_THEME, THEME_COLORS } from '@/config/constants';
 
-// Define chains that match your wagmi config
-// This ensures balance queries work correctly
+/**
+ * Chain configurations for the bridge widget.
+ * IMPORTANT: These chains must match the chains configured in wagmi config (config/wagmi/index.ts)
+ * to ensure balance queries work correctly. If a chain is in this list but not in wagmi,
+ * the RPC calls will fail and balances won't display.
+ *
+ * Note: BSC is configured in wagmi but excluded here because Circle CCTP doesn't support BSC.
+ */
 const BRIDGE_CHAINS = [
   createChainConfig(mainnet),
   createChainConfig(base),
@@ -12,7 +18,6 @@ const BRIDGE_CHAINS = [
   createChainConfig(optimism),
   createChainConfig(polygon),
   createChainConfig(avalanche),
-  // BSC doesn't have CCTP support, so we exclude it from bridge
 ];
 
 export default function BridgePage() {
@@ -47,13 +52,24 @@ export default function BridgePage() {
   return (
     <div className="max-w-[500px] mx-auto">
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-white mb-2">USDC Bridge</h1>
-        <p className="text-gray-400 text-sm">
-          <span className="text-[#22c55e]">0% bridge fees</span> — only pay gas
+        <h1
+          className="text-2xl font-bold mb-2"
+          style={{ color: THEME_COLORS.text }}
+        >
+          USDC Bridge
+        </h1>
+        <p className="text-sm" style={{ color: THEME_COLORS.textMuted }}>
+          <span style={{ color: THEME_COLORS.success }}>0% bridge fees</span> — only pay gas
         </p>
       </div>
 
-      <div className="bg-[#1A0F06] rounded-2xl border border-[#2a2318] p-6">
+      <div
+        className="rounded-2xl border p-6"
+        style={{
+          backgroundColor: THEME_COLORS.backgroundCard,
+          borderColor: THEME_COLORS.borderCard,
+        }}
+      >
         <div className="flex justify-center">
           <BridgeWidget
             chains={BRIDGE_CHAINS}

@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { Header } from './header';
+import { THEME_COLORS } from '@/config/constants';
 
 interface LayoutProps {
   children: ReactNode;
@@ -8,7 +9,10 @@ interface LayoutProps {
 
 export function Layout({ children, className }: LayoutProps) {
   return (
-    <div className={`min-h-screen flex flex-col bg-[#0a0a0a] ${className || ''}`}>
+    <div
+      className={`min-h-screen flex flex-col ${className || ''}`}
+      style={{ backgroundColor: THEME_COLORS.backgroundDark }}
+    >
       <Header />
 
       {/* Main Content */}
@@ -17,7 +21,10 @@ export function Layout({ children, className }: LayoutProps) {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#2a2318] py-6">
+      <footer
+        className="border-t py-6"
+        style={{ borderColor: THEME_COLORS.borderCard }}
+      >
         <div className="container mx-auto px-4 max-w-7xl text-center text-sm text-gray-500">
           <p>Powered by Circle CCTP - Cross-Chain Transfer Protocol</p>
         </div>

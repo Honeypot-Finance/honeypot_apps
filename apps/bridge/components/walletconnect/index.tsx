@@ -3,6 +3,7 @@ import { ButtonHTMLAttributes } from 'react';
 import Image from 'next/image';
 import { BiWallet } from 'react-icons/bi';
 import { cn } from '@/lib/tailwindcss';
+import { THEME_COLORS } from '@/config/constants';
 
 interface ConnectButtonCustomProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   chainIcon?: string;
@@ -20,9 +21,18 @@ const ConnectButtonCustom = ({
     <button
       type="button"
       className={cn(
-        'inline-flex h-9 px-4 justify-center items-center gap-2 bg-[#F59E0B] hover:bg-[#D97706] rounded-xl text-black font-semibold text-sm transition-all whitespace-nowrap shadow-sm',
+        'inline-flex h-9 px-4 justify-center items-center gap-2 rounded-xl text-black font-semibold text-sm transition-all whitespace-nowrap shadow-sm',
         className
       )}
+      style={{
+        backgroundColor: THEME_COLORS.primary,
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = THEME_COLORS.primaryEmphasis;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = THEME_COLORS.primary;
+      }}
       {...buttonProps}
     >
       {children}
@@ -89,7 +99,11 @@ export const WalletConnect = () => {
                       <button
                         onClick={openChainModal}
                         type="button"
-                        className="h-9 px-4 bg-red-500/20 text-red-400 rounded-xl font-medium text-sm hover:bg-red-500/30 transition-all"
+                        className="h-9 px-4 rounded-xl font-medium text-sm transition-all"
+                        style={{
+                          backgroundColor: `${THEME_COLORS.error}33`, // 20% opacity
+                          color: THEME_COLORS.error,
+                        }}
                       >
                         Wrong network
                       </button>
@@ -101,7 +115,12 @@ export const WalletConnect = () => {
                       <button
                         onClick={openChainModal}
                         type="button"
-                        className="flex h-9 cursor-pointer bg-white/5 hover:bg-white/10 text-white px-3 rounded-xl gap-2 items-center text-sm font-medium transition-all border border-white/10"
+                        className="flex h-9 cursor-pointer text-white px-3 rounded-xl gap-2 items-center text-sm font-medium transition-all"
+                        style={{
+                          backgroundColor: THEME_COLORS.hover,
+                          borderWidth: 1,
+                          borderColor: THEME_COLORS.hoverLight,
+                        }}
                       >
                         {chain.hasIcon && chain.iconUrl && (
                           <Image
@@ -117,7 +136,14 @@ export const WalletConnect = () => {
                       <button
                         onClick={openAccountModal}
                         type="button"
-                        className="flex h-9 cursor-pointer bg-[#F59E0B] hover:bg-[#D97706] text-black px-3 rounded-xl gap-2 items-center text-sm font-semibold transition-all"
+                        className="flex h-9 cursor-pointer text-black px-3 rounded-xl gap-2 items-center text-sm font-semibold transition-all"
+                        style={{ backgroundColor: THEME_COLORS.primary }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = THEME_COLORS.primaryEmphasis;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = THEME_COLORS.primary;
+                        }}
                       >
                         <BiWallet size={16} />
                         <span>{account.displayName}</span>
