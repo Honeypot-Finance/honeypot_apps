@@ -1,24 +1,7 @@
-import { BridgeWidget, createChainConfig, mainnet, base, arbitrum, optimism, polygon, avalanche } from '@hongming-wang/usdc-bridge-widget';
+import { BridgeWidget, DEFAULT_CHAIN_CONFIGS } from '@hongming-wang/usdc-bridge-widget';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
 import { CHAIN_IDS, BRIDGE_WIDGET_THEME, THEME_COLORS } from '@/config/constants';
-
-/**
- * Chain configurations for the bridge widget.
- * IMPORTANT: These chains must match the chains configured in wagmi config (config/wagmi/index.ts)
- * to ensure balance queries work correctly. If a chain is in this list but not in wagmi,
- * the RPC calls will fail and balances won't display.
- *
- * Note: BSC is configured in wagmi but excluded here because Circle CCTP doesn't support BSC.
- */
-const BRIDGE_CHAINS = [
-  createChainConfig(mainnet),
-  createChainConfig(base),
-  createChainConfig(arbitrum),
-  createChainConfig(optimism),
-  createChainConfig(polygon),
-  createChainConfig(avalanche),
-];
 
 export default function BridgePage() {
   const { openConnectModal } = useConnectModal();
@@ -72,7 +55,7 @@ export default function BridgePage() {
       >
         <div className="flex justify-center">
           <BridgeWidget
-            chains={BRIDGE_CHAINS}
+            chains={DEFAULT_CHAIN_CONFIGS}
             defaultSourceChainId={CHAIN_IDS.ETHEREUM}
             defaultDestinationChainId={CHAIN_IDS.BASE}
             onBridgeSuccess={handleBridgeSuccess}

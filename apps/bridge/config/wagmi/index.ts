@@ -18,22 +18,28 @@ import {
   arbitrum,
   optimism,
   polygon,
-  bsc,
   avalanche,
+  linea,
+  sei,
+  worldchain,
+  ink,
+  sonic,
+  xdc,
 } from 'wagmi/chains';
+// Custom chains from bridge widget (not yet in viem/chains)
+import {
+  unichain,
+  hyperEvm,
+  plume,
+  codex,
+} from '@hongming-wang/usdc-bridge-widget';
 import { WALLETCONNECT_PROJECT_ID } from '@/config/constants';
 
 /**
  * Fallback RPC URLs for chains that have rate limiting issues.
  * Using CORS-enabled public RPCs. Order matters - first URL is tried first.
- * Consider moving to environment variables for production deployments.
  */
 const RPC_FALLBACKS: Record<number, string[]> = {
-  [base.id]: [
-    'https://base.drpc.org',
-    'https://base-rpc.publicnode.com',
-    'https://mainnet.base.org',
-  ],
   [mainnet.id]: [
     'https://eth.drpc.org',
     'https://ethereum-rpc.publicnode.com',
@@ -43,6 +49,11 @@ const RPC_FALLBACKS: Record<number, string[]> = {
     'https://arbitrum.drpc.org',
     'https://arbitrum-one-rpc.publicnode.com',
     'https://arb1.arbitrum.io/rpc',
+  ],
+  [base.id]: [
+    'https://base.drpc.org',
+    'https://base-rpc.publicnode.com',
+    'https://mainnet.base.org',
   ],
   [optimism.id]: [
     'https://optimism.drpc.org',
@@ -54,27 +65,59 @@ const RPC_FALLBACKS: Record<number, string[]> = {
     'https://polygon-bor-rpc.publicnode.com',
     'https://polygon-rpc.com',
   ],
-  [bsc.id]: [
-    'https://bsc.drpc.org',
-    'https://bsc-rpc.publicnode.com',
-    'https://bsc-dataseed1.binance.org',
-  ],
   [avalanche.id]: [
     'https://api.avax.network/ext/bc/C/rpc',
     'https://avalanche-c-chain-rpc.publicnode.com',
     'https://avax.meowrpc.com',
   ],
+  [linea.id]: [
+    'https://linea.drpc.org',
+    'https://rpc.linea.build',
+    'https://linea-rpc.publicnode.com',
+  ],
+  [sonic.id]: [
+    'https://rpc.soniclabs.com',
+    'https://sonic.drpc.org',
+  ],
+  [worldchain.id]: [
+    'https://worldchain-mainnet.g.alchemy.com/public',
+    'https://worldchain.drpc.org',
+  ],
+  [sei.id]: [
+    'https://evm-rpc.sei-apis.com',
+    'https://sei-evm.drpc.org',
+  ],
+  [xdc.id]: [
+    'https://erpc.xinfin.network',
+    'https://rpc.xdcrpc.com',
+  ],
+  [ink.id]: [
+    'https://rpc-gel.inkonchain.com',
+    'https://rpc-qn.inkonchain.com',
+  ],
 };
 
-// Supported chains for the bridge
+/**
+ * All CCTP-supported chains for the bridge.
+ * Includes chains from viem/chains and custom chains from the widget.
+ */
 const SUPPORTED_CHAINS = [
   mainnet,
-  base,
   arbitrum,
+  base,
   optimism,
   polygon,
-  bsc,
   avalanche,
+  linea,
+  sonic,
+  worldchain,
+  sei,
+  xdc,
+  ink,
+  unichain,
+  hyperEvm,
+  plume,
+  codex,
 ] as const;
 
 const customWallets = [
