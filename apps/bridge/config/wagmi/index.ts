@@ -3,7 +3,6 @@ import {
   rainbowWallet,
   bitgetWallet,
   okxWallet,
-  walletConnectWallet,
   metaMaskWallet,
   binanceWallet,
   safeWallet,
@@ -120,10 +119,11 @@ const SUPPORTED_CHAINS = [
   codex,
 ] as const;
 
+// Note: WalletConnect is available through other wallets (Rainbow, Trust, etc.)
+// Removing standalone walletConnectWallet to prevent auto-modal popup issues
 const customWallets = [
   metaMaskWallet,
   rainbowWallet,
-  walletConnectWallet,
   bitgetWallet,
   okxWallet,
   binanceWallet,

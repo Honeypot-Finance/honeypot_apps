@@ -30,9 +30,16 @@ function clearStaleWalletConnectSessions(): void {
       if (key.startsWith('wc@2:')) {
         keysToRemove.push(key);
       }
-      // Also clear any WalletConnect-related wagmi state
+      // Clear any WalletConnect-related wagmi state
       if (key.includes('walletConnect') || key.includes('WalletConnect')) {
         keysToRemove.push(key);
+      }
+      // Clear wagmi state that references WalletConnect connector
+      if (key === 'wagmi.store' || key === 'wagmi.connected' || key === 'wagmi.wallet') {
+        const value = localStorage.getItem(key);
+        if (value && value.toLowerCase().includes('walletconnect')) {
+          keysToRemove.push(key);
+        }
       }
     }
     // Remove stale WalletConnect data
@@ -42,6 +49,30 @@ function clearStaleWalletConnectSessions(): void {
     const recentConnector = localStorage.getItem('wagmi.recentConnectorId');
     if (recentConnector && recentConnector.toLowerCase().includes('walletconnect')) {
       localStorage.removeItem('wagmi.recentConnectorId');
+    }
+
+    // Also check the wagmi store for WalletConnect references
+    const wagmiStore = localStorage.getItem('wagmi.store');
+    if (wagmiStore) {
+      try {
+        const parsed = JSON.parse(wagmiStore);
+        if (parsed?.state?.connections) {
+          // Check if any connection uses WalletConnect
+          const hasWC = Object.values(parsed.state.connections || {}).some(
+            (conn: unknown) => {
+              const connection = conn as { connector?: { id?: string; name?: string } };
+              return connection?.connector?.id?.toLowerCase().includes('walletconnect') ||
+                     connection?.connector?.name?.toLowerCase().includes('walletconnect');
+            }
+          );
+          if (hasWC) {
+            localStorage.removeItem('wagmi.store');
+          }
+        }
+      } catch {
+        // If we can't parse, just remove it to be safe
+        localStorage.removeItem('wagmi.store');
+      }
     }
   } catch (error) {
     // Log in development only - helps debug WalletConnect issues
