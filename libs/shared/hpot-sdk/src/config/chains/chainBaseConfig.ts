@@ -62,6 +62,26 @@ export const arbitrumMainnet: Chain = {
 
 export const baseMainnet: Chain = {
   ...base,
+  rpcUrls: {
+    default: {
+      http: [
+        'https://base.llamarpc.com',
+        'https://base.meowrpc.com',
+        'https://1rpc.io/base',
+        'https://base.drpc.org',
+        'https://base.publicnode.com',
+        'https://mainnet.base.org',
+      ],
+    },
+    public: {
+      http: [
+        'https://base.llamarpc.com',
+        'https://base.meowrpc.com',
+        'https://1rpc.io/base',
+        'https://base.publicnode.com',
+      ],
+    },
+  },
 };
 
 export const ethMainnet: Chain = {
