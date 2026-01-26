@@ -3,3 +3,8 @@
 
 # Package manager store
 .pnpm-store
+
+# TradingView charting library (contains package.json files that aren't Nx projects)
+**/public/charting_library
+**/public/datafeeds
+**/public/static/charting_library
