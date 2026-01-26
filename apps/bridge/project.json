@@ -1,0 +1,38 @@
+{
+  "name": "bridge",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/bridge",
+  "projectType": "application",
+  "tags": ["type:app", "scope:bridge"],
+  "implicitDependencies": ["hpot-sdk"],
+  "// targets": "to see all targets run: nx show project bridge --web",
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "options": {
+        "outputPath": "apps/bridge/",
+        "postcssConfig": "apps/bridge/postcss.config.js"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/bridge/pages/**/*.{ts,tsx}",
+          "apps/bridge/components/**/*.{ts,tsx}",
+          "apps/bridge/lib/**/*.{ts,tsx}",
+          "apps/bridge/config/**/*.{ts,tsx}",
+          "apps/bridge/hooks/**/*.{ts,tsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/bridge"],
+      "options": {
+        "jestConfig": "apps/bridge/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

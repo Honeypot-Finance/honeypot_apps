@@ -1,0 +1,53 @@
+import { darkTheme, Theme } from '@rainbow-me/rainbowkit';
+import { merge } from 'lodash';
+import { THEME_COLORS } from './constants';
+
+export const rainbowkitTheme: Theme = merge(darkTheme(), {
+  colors: {
+    modalBackground: THEME_COLORS.backgroundSubtle,
+    modalText: THEME_COLORS.text,
+    modalTextSecondary: '#999999',
+    profileForeground: THEME_COLORS.background,
+    accentColor: THEME_COLORS.primary,
+    accentColorForeground: THEME_COLORS.text,
+    actionButtonBorder: THEME_COLORS.border,
+    actionButtonBorderMobile: THEME_COLORS.border,
+    actionButtonSecondaryBackground: '#1a1410',
+    closeButton: '#666666',
+    closeButtonBackground: THEME_COLORS.backgroundSubtle,
+    connectButtonBackground: THEME_COLORS.backgroundSubtle,
+    connectButtonBackgroundError: '#FF494A',
+    connectButtonInnerBackground: '#1a1410',
+    connectButtonText: THEME_COLORS.text,
+    connectButtonTextError: THEME_COLORS.text,
+    connectionIndicator: '#4BB543',
+    downloadBottomCardBackground: THEME_COLORS.background,
+    downloadTopCardBackground: THEME_COLORS.backgroundSubtle,
+    error: '#FF494A',
+    generalBorder: THEME_COLORS.border,
+    generalBorderDim: '#2a2522',
+    menuItemBackground: '#1a1410',
+    modalBackdrop: 'rgba(0, 0, 0, 0.7)',
+    modalBorder: THEME_COLORS.border,
+    modalTextDim: '#999999',
+    profileAction: THEME_COLORS.backgroundSubtle,
+    profileActionHover: '#1a1410',
+    selectedOptionBorder: THEME_COLORS.primary,
+    standby: '#FFD641',
+  },
+  radii: {
+    actionButton: '12px',
+    connectButton: '12px',
+    menuButton: '12px',
+    modal: '20px',
+    modalMobile: '20px',
+  },
+  shadows: {
+    connectButton: '0 4px 12px rgba(0, 0, 0, 0.4)',
+    dialog: '0 8px 32px rgba(0, 0, 0, 0.5)',
+    profileDetailsAction: '0 2px 6px rgba(0, 0, 0, 0.3)',
+    selectedOption: '0 2px 6px rgba(0, 0, 0, 0.3)',
+    selectedWallet: '0 2px 6px rgba(0, 0, 0, 0.3)',
+    walletLogo: '0 2px 16px rgba(0, 0, 0, 0.3)',
+  },
+});
