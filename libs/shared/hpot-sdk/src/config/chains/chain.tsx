@@ -304,6 +304,15 @@ export const bscMainnetNetwork = new Network({
   subgraphAddresses: subgraphAddresses['56'],
   validatedTokensInfo: {
     //when adding a new token, make sure to add the address as lowercase
+    '0xab9c6394059896704917d1167271bd42f0981843': {
+      name: 'HoneyPot Finance',
+      symbol: 'HPOT',
+      decimals: 18,
+      logoURI:
+        '/images/icons/tokens/hpot.svg',
+      isRouterToken: true,
+      isPopular: true,
+    },
     '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c': {
       name: 'Wrapped BNB',
       symbol: 'WBNB',
