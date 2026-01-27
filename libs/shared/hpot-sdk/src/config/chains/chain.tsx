@@ -588,6 +588,15 @@ export const berachainNetwork = new Network({
     //   isRouterToken: true,
     //   isPopular: true,
     // },
+    '0x3a1d9069b791556c68c41860e70c2779b8d4509c': {
+      name: 'HoneyPot Finance',
+      symbol: 'HPOT',
+      decimals: 18,
+      logoURI:
+        '/images/icons/tokens/hpot.svg',
+      isRouterToken: true,
+      isPopular: true,
+    },
     '0x6969696969696969696969696969696969696969': {
       name: 'Wrapped Bera',
       symbol: 'WBERA',
