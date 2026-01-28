@@ -15949,22 +15949,12 @@ export const TokenFieldsFragmentDoc = gql`
   derivedUSD
   initialUSD
   txCount
-  holderCount
   totalSupply
   volumeUSD
   totalValueLockedUSD
   marketCap
   poolCount
   priceChange24hPercentage
-  pot2Pump {
-    id
-  }
-  tokenHourData(orderBy: periodStartUnix, orderDirection: desc) {
-    periodStartUnix
-    priceUSD
-    feesUSD
-    untrackedVolumeUSD
-  }
 }
     `;
 export const PoolHourDataFieldsFragmentDoc = gql`
@@ -16378,17 +16368,8 @@ export const PoolFieldFragmentDoc = gql`
     name
     decimals
   }
-  poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
-    ...PoolHourDataFields
-  }
-  poolDayData(first: 30, orderBy: date, orderDirection: desc) {
-    date
-    volumeUSD
-    feesUSD
-    tvlUSD
-  }
 }
-    ${PoolHourDataFieldsFragmentDoc}`;
+    `;
 export const VaultFieldFragmentDoc = gql`
     fragment VaultField on IchiVault {
   id

@@ -18,10 +18,7 @@ type SortField =
   | 'pair'
   | 'allow_token'
   | 'address'
-  | 'tvl'
-  | 'volume'
-  | 'fees'
-  | 'apr';
+  | 'tvl';
 type SortDirection = 'asc' | 'desc';
 
 interface AllAquaberaVaultsProps {
@@ -540,20 +537,6 @@ export function AllAquaberaVaults({
           return multiplier * a.address.localeCompare(b.address);
         case 'tvl':
           return multiplier * (Number(a.tvlUSD || 0) - Number(b.tvlUSD || 0));
-        case 'volume':
-          return (
-            multiplier *
-            (Number(a.pool?.volume_24h_USD || 0) -
-              Number(b.pool?.volume_24h_USD || 0))
-          );
-        case 'fees':
-          return (
-            multiplier *
-            (Number(a.pool?.fees_24h_USD || 0) -
-              Number(b.pool?.fees_24h_USD || 0))
-          );
-        case 'apr':
-          return multiplier * (Number(a.apr || 0) - Number(b.apr || 0));
         default:
           return 0;
       }
@@ -678,39 +661,6 @@ export function AllAquaberaVaults({
                   onClick={() => handleSort('tvl')}
                 >
                   <span>Vault TVL</span>
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </th>
-              <th className="text-left text-sm text-gray-500 font-normal pb-4 cursor-pointer">
-                <div
-                  className="flex items-center gap-1 justify-end"
-                  onClick={() => handleSort('volume')}
-                >
-                  <span>Pool 24h Volume</span>
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </th>
-              <th className="text-left text-sm text-gray-500 font-normal pb-4 cursor-pointer">
-                <div
-                  className="flex items-center gap-1 justify-end"
-                  onClick={() => handleSort('fees')}
-                >
-                  <span>Pool 24h Fees</span>
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </th>
-              <th className="text-left text-sm text-gray-500 font-normal pb-4 cursor-pointer">
-                <div
-                  className="flex items-center gap-1 justify-end"
-                  onClick={() => handleSort('apr')}
-                >
-                  <span>APR</span>
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>

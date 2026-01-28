@@ -21,7 +21,7 @@ export const subgraphAddresses: Record<string, SubgraphAddresses> = {
   // berachain mainnet
   '80094': {
     algebra_info:
-      'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-core/2.4.0/gn',
+      'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-berachain-mainnet/2.5.0/gn',
     algebra_farming:
       'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-farming/2.0.0/gn',
     bgt_market:
@@ -32,42 +32,12 @@ export const subgraphAddresses: Record<string, SubgraphAddresses> = {
     limit_order:
       'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/limit-orders/v1.0.0/gn',
   },
-  // bepolia
-  '80069': {
-    algebra_info:
-      'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-core-bepolia/1.0.0/gn',
-    algebra_farming:
-      'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-farming-bepolia/1.0.0/gn',
-    bgt_market: '',
-    lbp: 'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-lbp-berachain-bepolia/1.0.0/gn',
-    wasabee_ido: '',
-    limit_order: '',
-  },
-  //ethereum sepolia
-  '11155111': {
-    algebra_info: '',
-    algebra_farming: '',
-    bgt_market: '',
-    lbp: 'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-lbp-sepolia/1.0.1/gn',
-    wasabee_ido: '',
-    limit_order: '',
-  },
   //bsc mainnet
   '56': {
     algebra_info:
       'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-bsc/1.0.5/gn',
     algebra_farming:
       'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-farming-bsc/1.0.0/gn',
-    bgt_market: '',
-    lbp: '',
-    wasabee_ido: '',
-    limit_order: '',
-  },
-  '10143': {
-    algebra_info:
-      'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-monad-testnet/1.0.1/gn',
-    algebra_farming:
-      'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-farming-monad-testnet/1.0.0/gn',
     bgt_market: '',
     lbp: '',
     wasabee_ido: '',

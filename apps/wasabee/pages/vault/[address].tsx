@@ -20,9 +20,7 @@ import { HiExternalLink } from 'react-icons/hi';
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 import { cn, Tooltip } from '@nextui-org/react';
 import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
-import { InfoIcon } from 'lucide-react';
 import { VaultTag } from '@/components/Aquabera/VaultTag';
-import { BGTVault } from '@honeypot/shared/lib/contract/rewardVault/bgt-vault';
 
 export const VaultDetail = observer(() => {
   const router = useRouter();
@@ -31,8 +29,6 @@ export const VaultDetail = observer(() => {
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [poolTvl, setPoolTvl] = useState<string>('0');
-  const [poolVolume24h, setPoolVolume24h] = useState<string>('0');
-  const [poolFees24h, setPoolFees24h] = useState<string>('0');
   const [volatility, setVolatility] = useState<string>('0');
   const infoClient = useSubgraphClient('algebra_info');
   const [miniVaultStaker, setMiniVaultStaker] = useState<string[]>([]);
@@ -93,15 +89,6 @@ export const VaultDetail = observer(() => {
         ]);
 
         setPoolTvl(Number(vaultContract?.pool?.TVL_USD || 0).toString());
-        if (vaultContract.pool) {
-          setPoolVolume24h(
-            Number(vaultContract.pool.volume_24h_USD || 0).toString()
-          );
-
-          setPoolFees24h(
-            Number(vaultContract.pool.fees_24h_USD || 0).toString()
-          );
-        }
       }
 
       setVault(vaultContract);
@@ -330,51 +317,6 @@ export const VaultDetail = observer(() => {
                   decimals: 3,
                   endWith: '$',
                 })}
-              </p>
-            </div>
-            <div className="rounded-[24px] border border-black bg-[#271A0C] px-4 md:px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
-              <h3 className="text-base text-white mb-2">24h Volume(pool)</h3>
-              <p className="text-xs md:text-xl font-bold text-white">
-                {DynamicFormatAmount({
-                  amount: poolVolume24h,
-                  decimals: 3,
-                  endWith: '$',
-                })}
-              </p>
-            </div>
-            <div className="rounded-[24px] border border-black bg-[#271A0C] px-4 md:px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D]">
-              <h3 className="text-base text-white mb-2">24h Fees(pool)</h3>
-              <p className="text-xs md:text-xl font-bold text-white">
-                {DynamicFormatAmount({
-                  amount: poolFees24h,
-                  decimals: 5,
-                  endWith: '$',
-                })}
-              </p>
-            </div>
-
-            <div className="rounded-[24px] border border-black bg-[#271A0C] px-4 md:px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D] relative">
-              <h3 className="text-base text-white mb-2">APR </h3>
-              <p
-                className={cn(
-                  'text-xs md:text-xl font-bold text-[] flex items-center gap-2'
-                )}
-              >
-                {vault?.apr.toFixed(2)}%
-                <Tooltip
-                  content={
-                    <div>
-                      <p>1d: {vault?.detailedApr.feeApr_1d.toFixed(5)}%</p>
-                      <p>3d: {vault?.detailedApr.feeApr_3d.toFixed(5)}%</p>
-                      <p>7d: {vault?.detailedApr.feeApr_7d.toFixed(5)}%</p>
-                      <p>30d: {vault?.detailedApr.feeApr_30d.toFixed(5)}%</p>
-                    </div>
-                  }
-                >
-                  <span className="text-gray-500">
-                    <InfoIcon className="w-4 h-4" />
-                  </span>
-                </Tooltip>
               </p>
             </div>
             <div className="rounded-[24px] border border-black bg-[#271A0C] px-10 py-6 shadow-[4px_4px_0px_0px_#D29A0D] relative">

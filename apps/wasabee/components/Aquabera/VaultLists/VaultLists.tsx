@@ -24,7 +24,7 @@ interface AquaberaListProps {
 export function AquaberaList({ prefetchedData, defaultTab = 'all' }: AquaberaListProps) {
   const [search, setSearch] = useState('');
   const [selectedTab, setSelectedTab] = useState(defaultTab);
-  const [sortField, setSortField] = useState('apr');
+  const [sortField, setSortField] = useState('tvl');
   const [dataLoaded, setDataLoaded] = useState(false);
 
   // Debug log
@@ -38,10 +38,7 @@ export function AquaberaList({ prefetchedData, defaultTab = 'all' }: AquaberaLis
   });
 
   const sortOptions = [
-    { key: 'apr', label: 'APR' },
     { key: 'tvl', label: 'TVL' },
-    { key: 'volume', label: 'Volume' },
-    { key: 'fees', label: 'Fees' },
     { key: 'pair', label: 'Token Pair' },
   ];
 

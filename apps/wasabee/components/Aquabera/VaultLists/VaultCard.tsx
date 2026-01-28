@@ -76,36 +76,6 @@ const VaultCard = observer(({ vault }: VaultCardProps) => {
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-3">
-        <div className="font-medium">24h Volume</div>
-        <div>
-          $
-          {Number(vault.pool?.volume_24h_USD || 0).toLocaleString('en-US', {
-            maximumFractionDigits: 2,
-          })}
-        </div>
-      </div>
-
-      <div className="flex justify-between items-center mb-3">
-        <div className="font-medium">24h Fees</div>
-        <div>
-          $
-          {Number(vault.pool?.fees_24h_USD || 0).toLocaleString('en-US', {
-            maximumFractionDigits: 2,
-          })}
-        </div>
-      </div>
-
-      <div className="flex justify-between items-center mb-3">
-        <div className="font-medium">APR</div>
-        <div className="font-bold text-green-600">
-          {Number(vault.apr || 0).toLocaleString('en-US', {
-            maximumFractionDigits: 2,
-          })}
-          %
-        </div>
-      </div>
-
       <div className="mt-4 flex justify-center">
         <Link
           href={`/vault/${vault.address}`}

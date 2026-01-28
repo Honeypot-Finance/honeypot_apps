@@ -295,6 +295,7 @@ export const chains = [
   baseMainnet,
   ethMainnet,
   monadTestnet,
+  bscMainnet,
 ];
 
 export const chainsMap = chains.reduce((acc, chain) => {

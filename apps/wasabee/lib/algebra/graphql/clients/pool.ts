@@ -30,8 +30,6 @@ import { useSubgraphClient } from '@honeypot/shared/hooks/useSubgraphClients';
 import { ApolloClient } from '@apollo/client';
 import { createClientHook } from '../clientUtils';
 import { useObserver } from 'mobx-react-lite';
-import { calculatePercentageChange } from '@/lib/utils';
-
 export const poolQueryToContract = (pool: Pool): PairContract => {
   const pairContract = new PairContract({
     address: pool.id as Address,
@@ -54,55 +52,10 @@ export const poolQueryToContract = (pool: Pool): PairContract => {
     chainId: wallet.currentChainId.toString(),
   });
 
-  const currentDate = new Date().getTime();
-  const msIn24Hours = 24 * 60 * 60 * 1000;
-  const msIn48Hours = 48 * 60 * 60 * 1000;
-  let total24hFees = 0;
-  let total24hDataCount = 0;
-  let total24hVolume = 0;
-  let total24to48hVolume = 0;
-  let total24to48hDataCount = 0;
-
-  pool.poolHourData
-    .filter((hour) => {
-      return hour.periodStartUnix > currentDate / 1000 - msIn24Hours / 1000;
-    })
-    .map((hour) => {
-      total24hFees += Number(hour.feesUSD);
-      total24hDataCount++;
-      total24hVolume += Number(hour.volumeUSD);
-    });
-
-  pool.poolHourData
-    .filter((hour) => {
-      return (
-        hour.periodStartUnix > currentDate / 1000 - msIn48Hours / 1000 &&
-        hour.periodStartUnix < currentDate / 1000 - msIn24Hours / 1000
-      );
-    })
-    .map((hour) => {
-      total24to48hVolume += Number(hour.volumeUSD);
-      total24to48hDataCount++;
-    });
-
-  const avgFees24h =
-    (total24hDataCount > 0 ? total24hFees / total24hDataCount : 0) * 24;
-  const avgVolume24h =
-    (total24hDataCount > 0 ? total24hVolume / total24hDataCount : 0) * 24;
-  const avgVolume24to48h =
-    total24to48hDataCount > 0 ? total24to48hVolume / total24to48hDataCount : 0;
-
-  const avgAPR24h = (avgFees24h / Number(pool.totalValueLockedUSD)) * 365 * 100;
-  const avgApr = avgAPR24h * 24;
-  const volumeChange24to48h = calculatePercentageChange(
-    avgVolume24h,
-    avgVolume24to48h
-  );
-
-  pairContract.volume_24h_USD = avgVolume24h;
-  pairContract.fees_24h_USD = avgFees24h;
-  pairContract.apr_24h = avgApr;
-  pairContract.volumeChange24h = volumeChange24to48h;
+  pairContract.volume_24h_USD = 0;
+  pairContract.fees_24h_USD = 0;
+  pairContract.apr_24h = 0;
+  pairContract.volumeChange24h = 0;
 
   return pairContract;
 };

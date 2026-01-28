@@ -10,22 +10,12 @@ export const TOKEN_FRAGMENT = gql`
     derivedUSD
     initialUSD
     txCount
-    holderCount
     totalSupply
     volumeUSD
     totalValueLockedUSD
     marketCap
     poolCount
     priceChange24hPercentage
-    pot2Pump {
-      id
-    }
-    tokenHourData(orderBy: periodStartUnix, orderDirection: desc) {
-      periodStartUnix
-      priceUSD
-      feesUSD
-      untrackedVolumeUSD
-    }
   }
 `;
 

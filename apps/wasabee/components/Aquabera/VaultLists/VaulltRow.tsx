@@ -23,9 +23,6 @@ export const VaultRow = observer(({ vault, index }: { vault: ICHIVaultContract, 
     address: vault.address,
   });
 
-  const volume = Number(vault.pool?.volume_24h_USD || 0);
-  const fees = Number(vault.pool?.fees_24h_USD || 0);
-
   return (
     <tr
       className="bg-[#1C1208] hover:bg-[#241809] transition-colors cursor-pointer rounded-lg"
@@ -78,9 +75,6 @@ export const VaultRow = observer(({ vault, index }: { vault: ICHIVaultContract, 
           </div>
         </div>
       </td>
-      {/* vault address */}
-      {/* <td className="py-5 px-6 text-black">{vault.id}</td> */}
-      {/* apr */}
       <td className="py-5 px-6 text-right text-white">
         {DynamicFormatAmount({
           amount: vault.tvlUSD ?? 0,
@@ -88,40 +82,7 @@ export const VaultRow = observer(({ vault, index }: { vault: ICHIVaultContract, 
           beginWith: ' $',
         })}
       </td>
-      {/* volume */}
-      <td className="py-5 px-6 text-right text-white">
-        {DynamicFormatAmount({
-          amount: volume ?? 0,
-          decimals: 3,
-          beginWith: ' $',
-        })}
-      </td>
-      {/* fees */}
-      <td className="py-5 px-6 text-right text-white">
-        {DynamicFormatAmount({
-          amount: fees ?? 0,
-          decimals: 3,
-          beginWith: ' $',
-        })}
-      </td>
       <td className="py-5 px-6 text-right text-white rounded-r-lg">
-        <div className="h-full flex justify-end items-center gap-2">
-          {vault.apr?.toFixed(2) || '0.00'}%
-          <Tooltip
-            content={
-              <div>
-                <p>1d: {vault.detailedApr?.feeApr_1d?.toFixed(5) || '0.00000'}%</p>
-                <p>3d: {vault.detailedApr?.feeApr_3d?.toFixed(5) || '0.00000'}%</p>
-                <p>7d: {vault.detailedApr?.feeApr_7d?.toFixed(5) || '0.00000'}%</p>
-                <p>30d: {vault.detailedApr?.feeApr_30d?.toFixed(5) || '0.00000'}%</p>
-              </div>
-            }
-          >
-            <span className="text-gray-400">
-              <InfoIcon className="w-4 h-4" />
-            </span>
-          </Tooltip>
-        </div>
       </td>
     </tr>
   );
