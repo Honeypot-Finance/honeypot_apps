@@ -176,9 +176,6 @@ export default function TopPoolPositions({
                     </svg>
                   </div>
                 </th>
-                <th className="py-4 px-6 text-xs text-gray-400 font-medium uppercase text-left">
-                  APR
-                </th>
                 <th className="py-4 px-6 text-xs text-gray-400 font-medium uppercase text-right">
                 </th>
               </tr>
@@ -449,15 +446,6 @@ export const PositionRow = ({
           </p>
         </div>
 
-        <div>
-          <p className="text-sm font-medium text-[#4D4D4D] mb-1 uppercase">
-            APR
-          </p>
-          <p className="text-black font-medium text-[#F7931A]">
-            {apr ? `${apr.toFixed(2)}%` : 'Loading...'}
-          </p>
-        </div>
-
         <div className="mt-4 flex justify-center">
           <Button
             className="w-full border border-[#2D2D2D] bg-[#FFCD4D] hover:bg-[#FFD56A] text-black rounded-2xl shadow-[2px_2px_0px_0px_#000] px-3 py-2 text-sm font-medium"
@@ -575,9 +563,6 @@ export const PositionRow = ({
         ) : (
           'Loading...'
         )}
-      </td>
-      <td className="py-5 px-6 text-white text-sm font-normal">
-        {apr ? `${apr.toFixed(2)}%` : 'Loading...'}
       </td>
       <td className="py-5 px-6 text-right">
         <Button

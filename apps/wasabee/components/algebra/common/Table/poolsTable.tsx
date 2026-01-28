@@ -44,10 +44,7 @@ interface PoolsTableProps<TData, TValue> {
 type SortField =
   | 'pool'
   | 'tvl'
-  | 'volume'
-  | 'apr'
   | 'unclaimedFees'
-  | 'feesUSD'
   | 'user_tvl';
 type SortDirection = 'asc' | 'desc';
 
@@ -128,16 +125,10 @@ const PoolsTable = observer(
             return multiplier * (Number(a.tvlUSD) - Number(b.tvlUSD));
           case 'user_tvl':
             return multiplier * (Number(a.userTVLUSD) - Number(b.userTVLUSD));
-          case 'volume':
-            return multiplier * (Number(a.volume24USD) - Number(b.volume24USD));
-          case 'apr':
-            return multiplier * (Number(a.apr24h) - Number(b.apr24h));
           case 'unclaimedFees':
             return (
               multiplier * (Number(a.unclaimedFees) - Number(b.unclaimedFees))
             );
-          case 'feesUSD':
-            return multiplier * (Number(a.fees24USD) - Number(b.fees24USD));
           default:
             return 0;
         }
@@ -191,9 +182,6 @@ const PoolsTable = observer(
 
     const sortOptions = [
       { key: 'tvl', label: 'TVL' },
-      { key: 'volume', label: 'Volume' },
-      { key: 'fees', label: 'Fees' },
-      { key: 'apr', label: 'APR' },
     ];
 
     return (
@@ -405,42 +393,9 @@ const PoolsTable = observer(
                         </div>
                       </div>
 
-                      <div className="flex justify-between items-center mb-3">
-                        <div className="font-medium text-gray-500">
-                          Volume 24H
-                        </div>
-                        <div className="flex flex-col items-end">
-                          <span className="text-white">
-                            {formatExtremelyLargeNumber(pool.volume24USD)}
-                          </span>
-                          <span
-                            className={`text-xs ${
-                              Number(pool.change24h) > 0 && 'text-[#4ADE80]'
-                            } ${
-                              Number(pool.change24h) < 0 && 'text-[#FF5555]'
-                            }`}
-                          >
-                            {Number(pool.change24h) > 0 ? '+' : ''}
-                            {Number(pool.change24h).toFixed(2)}%
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex justify-between items-center mb-3">
-                        <div className="font-medium text-gray-500">Fee 24H</div>
-                        <div className="text-white">
-                          {formatUSD.format(pool.fees24USD)}
-                        </div>
-                      </div>
                     </>
                   )}
 
-                  <div className="flex justify-between items-center mb-3">
-                    <div className="font-medium text-gray-500">APR</div>
-                    <div className="font-bold text-green-500">
-                      {Number(pool.apr24h).toFixed(2)}%
-                    </div>
-                  </div>
 
                   {defaultFilter === 'myPools' && (
                     <>
@@ -522,71 +477,8 @@ const PoolsTable = observer(
                           </svg>
                         </div>
                       </th>
-                      <th className="text-left text-sm text-gray-500 font-normal pb-4">
-                        <div
-                          className="flex items-center gap-1 justify-end cursor-pointer"
-                          onClick={() => handleSort('volume')}
-                        >
-                          Volume 24H
-                          <svg
-                            className="w-3 h-3"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 9l-7 7-7-7"
-                            />
-                          </svg>
-                        </div>
-                      </th>
-                      <th className="text-left text-sm text-gray-500 font-normal pb-4">
-                        <div
-                          className="flex items-center gap-1 justify-end cursor-pointer"
-                          onClick={() => handleSort('feesUSD')}
-                        >
-                          Fee 24H
-                          <svg
-                            className="w-3 h-3"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 9l-7 7-7-7"
-                            />
-                          </svg>
-                        </div>
-                      </th>
                     </>
                   )}
-                  <th className="text-left text-sm text-gray-500 font-normal pb-4">
-                    <div
-                      className="flex items-center gap-1 justify-end cursor-pointer"
-                      onClick={() => handleSort('apr')}
-                    >
-                      APR
-                      <svg
-                        className="w-3 h-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </div>
-                  </th>
                   {defaultFilter === 'myPools' && (
                     <>
                       <th className="text-left text-sm text-gray-500 font-normal pb-4">
@@ -726,41 +618,8 @@ const PoolsTable = observer(
                                 </span>
                               </div>
                             </td>
-                            <td className="py-5 px-6 text-right">
-                              <div className="flex flex-col">
-                                <span className="text-white font-mono">
-                                  {formatExtremelyLargeNumber(pool.volume24USD)}
-                                </span>
-                                <span
-                                  className={`text-xs ${
-                                    Number(pool.change24h) > 0 &&
-                                    'text-[#4ADE80]'
-                                  } ${
-                                    Number(pool.change24h) < 0 &&
-                                    'text-[#FF5555]'
-                                  }`}
-                                >
-                                  {Number(pool.change24h) > 0 ? '+' : ''}
-                                  {Number(pool.change24h).toFixed(2)}%
-                                </span>
-                              </div>
-                            </td>
-                            <td className="py-5 px-6 text-right">
-                              <div className="flex flex-col">
-                                <span className="text-white">
-                                  {formatUSD.format(pool.fees24USD)}
-                                </span>
-                              </div>
-                            </td>
                           </>
                         )}
-                        <td className={`py-5 px-6 text-right ${defaultFilter === 'trending' ? '' : 'rounded-r-lg'}`}>
-                          <div className="flex flex-col">
-                            <span className="text-white">
-                              {Number(pool.apr24h).toFixed(2)}%
-                            </span>
-                          </div>
-                        </td>
                         {defaultFilter === 'myPools' && (
                           <>
                             <td className="py-5 px-6 text-right">

@@ -133,13 +133,4 @@ export const myPositionsColumns: ColumnDef<MyPosition>[] = [
       </span>
     ),
   },
-  {
-    accessorKey: 'apr',
-    header: () => <HeaderItem>APR</HeaderItem>,
-    cell: ({ getValue }) => (
-      <span className="text-white font-normal text-sm">
-        {(getValue() as number)?.toFixed(2)}%
-      </span>
-    ),
-  },
 ];

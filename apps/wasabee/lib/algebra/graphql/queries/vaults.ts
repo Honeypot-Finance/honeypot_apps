@@ -76,15 +76,6 @@ export const POOL_FRAGMENT = gql`
       name
       decimals
     }
-    poolHourData(first: 100, orderBy: periodStartUnix, orderDirection: desc) {
-      ...PoolHourDataFields
-    }
-    poolDayData(first: 30, orderBy: date, orderDirection: desc) {
-      date
-      volumeUSD
-      feesUSD
-      tvlUSD
-    }
   }
 `;
 

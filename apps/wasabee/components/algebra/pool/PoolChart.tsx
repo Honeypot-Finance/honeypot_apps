@@ -1,7 +1,5 @@
 import {
   Pool,
-  PoolHourData,
-  PoolDayData,
 } from '@/lib/algebra/graphql/generated/graphql';
 import {
   Area,
@@ -38,56 +36,9 @@ const PoolChart = observer(({ pool }: PoolChartProps) => {
   const [selectedTimeRange, setSelectedTimeRange] = useState<timeRange>('ALL');
 
   useEffect(() => {
-    if (!pool.poolDayData) return;
-
-    let filteredData: PoolDayData[] | PoolHourData[] = [];
-    const now = Math.floor(Date.now() / 1000);
-
-    // Filter data based on time range
-    switch (selectedTimeRange) {
-      case '1D':
-        filteredData = [...pool.poolHourData]
-          .filter((day) => now - day.periodStartUnix <= 86400)
-          .sort((a, b) => a.periodStartUnix - b.periodStartUnix);
-        break;
-      case '1W':
-        filteredData = [...pool.poolDayData]
-          .filter((day) => now - day.date <= 604800)
-          .sort((a, b) => a.date - b.date);
-        break;
-      case '1M':
-        filteredData = [...pool.poolDayData]
-          .filter((day) => now - day.date <= 2592000)
-          .sort((a, b) => a.date - b.date);
-        break;
-      case '6M':
-        filteredData = [...pool.poolDayData]
-          .filter((day) => now - day.date <= 15552000)
-          .sort((a, b) => a.date - b.date);
-        break;
-      case 'ALL':
-        filteredData = [...pool.poolDayData].sort((a, b) => a.date - b.date);
-        break;
-    }
-
-    // Map data based on selected chart type
-    const mappedData = filteredData.map((timeData) => ({
-      date:
-        timeData.__typename === 'PoolDayData'
-          ? timeData.date
-          : timeData.__typename === 'PoolHourData'
-          ? timeData.periodStartUnix
-          : 0,
-      value: parseFloat(
-        selectedChartType === 'tvl'
-          ? timeData.tvlUSD
-          : selectedChartType === 'volume'
-          ? timeData.volumeUSD
-          : timeData.feesUSD
-      ),
-    }));
-
-    setCurrentChartData(mappedData);
+    // Time-series data (poolDayData/poolHourData) is not available on BSC subgraph
+    // Chart will show empty state
+    setCurrentChartData([]);
   }, [pool, selectedChartType, selectedTimeRange]);
 
   return (

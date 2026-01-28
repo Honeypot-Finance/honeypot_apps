@@ -31,7 +31,7 @@ interface PoolsTableProps<TData, TValue> {
   handleSearch: (data: string) => void;
 }
 
-type SortField = 'pool' | 'tvl' | 'volume' | 'apr' | 'unclaimedFees';
+type SortField = 'pool' | 'tvl' | 'unclaimedFees';
 type SortDirection = 'asc' | 'desc';
 
 const PoolsTable = <TData, TValue>({
@@ -100,10 +100,6 @@ const PoolsTable = <TData, TValue>({
           );
         case 'tvl':
           return multiplier * (Number(a.tvlUSD) - Number(b.tvlUSD));
-        case 'volume':
-          return multiplier * (Number(a.volume24USD) - Number(b.volume24USD));
-        case 'apr':
-          return multiplier * (Number(a.apr24h) - Number(b.apr24h));
         case 'unclaimedFees':
           return (
             multiplier * (Number(a.unclaimedFees) - Number(b.unclaimedFees))
@@ -225,8 +221,6 @@ const PoolsTable = <TData, TValue>({
               <tr>
                 <SortHeader field="pool" label="Pool" align="left" />
                 <SortHeader field="tvl" label="TVL" />
-                <SortHeader field="volume" label="Volume 24H" />
-                <SortHeader field="apr" label="APR" />
                 {defaultFilter === 'myPools' && (
                   <SortHeader
                     field="unclaimedFees"
@@ -293,30 +287,6 @@ const PoolsTable = <TData, TValue>({
                       <div className="flex flex-col">
                         <span className="text-black">
                           ${Number(pool.tvlUSD).toLocaleString()}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6 text-right">
-                      <div className="flex flex-col">
-                        <span className="text-black">
-                          ${Number(pool.volume24USD).toLocaleString()}
-                        </span>
-                        <span
-                          className={`text-xs ${
-                            Number(pool.change24h) >= 0
-                              ? 'text-[#4ADE80]'
-                              : 'text-[#FF5555]'
-                          }`}
-                        >
-                          {Number(pool.change24h) >= 0 ? '+' : ''}
-                          {Number(pool.change24h).toFixed(2)}%
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6 text-right">
-                      <div className="flex flex-col">
-                        <span className="text-black">
-                          {Number(pool.apr24h).toFixed(2)}%
                         </span>
                       </div>
                     </td>

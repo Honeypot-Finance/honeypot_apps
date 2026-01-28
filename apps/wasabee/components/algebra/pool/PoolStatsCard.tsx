@@ -4,7 +4,6 @@ import {
 } from '@/lib/algebra/graphql/generated/graphql';
 import { DynamicFormatAmount } from '@honeypot/shared/lib/utils/formatAmount';
 import { useMemo } from 'react';
-import { calculatePercentageChange } from '@/lib/utils';
 import { Address } from 'viem';
 
 import { Token } from '@honeypot/shared/lib/contract/token/token';
@@ -32,11 +31,7 @@ export default function PoolStatsCard({ pool }: PoolStatsCardProps) {
       token1,
       fee,
       totalValueLockedUSD,
-      poolHourData,
-      poolDayData,
-      poolWeekData,
       feesUSD,
-      poolMonthData,
       txCount,
       volumeUSD,
       token0Price,
@@ -44,156 +39,11 @@ export default function PoolStatsCard({ pool }: PoolStatsCardProps) {
       liquidity,
       aprPercentage,
     } = pool;
-    const currentPool = poolDayData[0];
-    const lastDate = currentPool ? currentPool.date * 1000 : 0;
-    const currentDate = new Date().getTime();
 
-    function handleGap(
-      data: any[],
-      gap: number,
-      field: string,
-      endTime: number
-    ) {
-      data?.sort((a, b) => a[field] - b[field]);
+    const apr = Number(aprPercentage || 0);
 
-      const startTime = data[0]?.[field];
-
-      let currentTimestamp = startTime;
-      const filledData = [];
-
-      while (currentTimestamp <= endTime) {
-        const existingData = data.find(
-          (d) =>
-            d[field] >= currentTimestamp && d[field] < currentTimestamp + gap
-        );
-
-        filledData.push(
-          existingData || {
-            [field]: currentTimestamp,
-            volumeUSD: 0,
-          }
-        );
-
-        currentTimestamp += gap;
-      }
-
-      return filledData?.sort((a, b) => b[field] - a[field]);
-    }
-
-    //periodStartUnix
-    const handleGapHour = (data: any[], end: number) => {
-      return handleGap(data, 3600, 'periodStartUnix', end);
-    };
-
-    const handleDayGap = (data: any[], end: number) => {
-      return handleGap(data, 3600 * 24, 'date', end);
-    };
-
-    const handleGapWeek = (data: any[], end: number) => {
-      return handleGap(data, 3600 * 24 * 7, 'week', end);
-    };
-
-    const filledGapHours = handleGapHour(
-      poolHourData?.slice(0, 24) || [],
-      Math.floor(Date.now() / 1000)
-    );
-
-    const filledGapDays = handleDayGap(
-      poolDayData?.slice(0, 14) || [],
-      Math.floor(Date.now() / 1000)
-    );
-
-    const filledGapWeeks = handleGapWeek(
-      poolWeekData?.slice(0, 8),
-      Math.floor(Date.now() / 1000)
-    );
-    const changeHour = calculatePercentageChange(
-      Number(filledGapHours[0]?.volumeUSD || 0),
-      Number(filledGapHours[1]?.volumeUSD || 0)
-    );
-
-    const change24h = calculatePercentageChange(
-      filledGapHours
-        .slice(0, 24)
-        .reduce((sum, hour) => sum + Number(hour?.volumeUSD || 0), 0),
-      filledGapHours
-        .slice(24, 48)
-        .reduce((sum, hour) => sum + Number(hour?.volumeUSD || 0), 0)
-    );
-
-    const changeWeek = calculatePercentageChange(
-      filledGapDays
-        .slice(0, 7)
-        .reduce((sum, day) => sum + Number(day?.volumeUSD || 0), 0),
-      filledGapDays
-        .slice(7, 14)
-        .reduce((sum, day) => sum + Number(day?.volumeUSD || 0), 0)
-    );
-
-    const changeMonth = calculatePercentageChange(
-      filledGapWeeks
-        .slice(0, 4)
-        .reduce((sum, week) => sum + Number(week?.volumeUSD || 0), 0),
-      filledGapWeeks
-        .slice(4, 8)
-        .reduce((sum, week) => sum + Number(week?.volumeUSD || 0), 0)
-    );
-
-    /* time difference calculations here to ensure that the graph provides information for the last 24 hours */
-    const timeDifference = currentDate - lastDate;
-    const msIn24Hours = 24 * 60 * 60 * 1000;
-    const msIn48Hours = 48 * 60 * 60 * 1000;
     const activeFarming = activeFarmings?.eternalFarmings.find(
       (farming) => farming.pool === id
-    );
-
-    let total24hFees = 0;
-    let total24hDataCount = 0;
-    let total24hVolume = 0;
-    let total24to48hVolume = 0;
-    let total24to48hDataCount = 0;
-
-    poolHourData
-      .filter((hour) => {
-        return hour.periodStartUnix > currentDate / 1000 - msIn24Hours / 1000;
-      })
-      .map((hour) => {
-        total24hFees += Number(hour.feesUSD);
-        total24hDataCount++;
-        total24hVolume += Number(hour.volumeUSD);
-      });
-
-    poolHourData
-      .filter((hour) => {
-        return (
-          hour.periodStartUnix > currentDate / 1000 - msIn48Hours / 1000 &&
-          hour.periodStartUnix < currentDate / 1000 - msIn24Hours / 1000
-        );
-      })
-      .map((hour) => {
-        total24to48hVolume += Number(hour.volumeUSD);
-        total24to48hDataCount++;
-      });
-
-    const avgFees24h =
-      total24hDataCount > 0 ? total24hFees / total24hDataCount : 0;
-    const avgVolume24h =
-      total24hDataCount > 0 ? total24hVolume / total24hDataCount : 0;
-    const avgVolume24to48h =
-      total24to48hDataCount > 0
-        ? total24to48hVolume / total24to48hDataCount
-        : 0;
-
-    const avgAPR24h = (avgFees24h / Number(totalValueLockedUSD)) * 365 * 100;
-
-    const poolMaxApr = avgAPR24h;
-    const poolAvgApr = avgAPR24h;
-    const farmApr = 0;
-    const avgApr = avgAPR24h;
-
-    const volumeChange24to48h = calculatePercentageChange(
-      avgVolume24h,
-      avgVolume24to48h
     );
 
     return {
@@ -210,25 +60,25 @@ export default function PoolStatsCard({ pool }: PoolStatsCardProps) {
       },
       fee: Number(fee) / 10_000,
       tvlUSD: Number(totalValueLockedUSD),
-      volume24USD: avgVolume24h * 24,
-      fees24USD: avgFees24h * 24,
-      poolMaxApr,
-      poolAvgApr,
-      farmApr,
-      avgApr,
+      volume24USD: 0,
+      fees24USD: 0,
+      poolMaxApr: apr,
+      poolAvgApr: apr,
+      farmApr: 0,
+      avgApr: apr,
       feesUSD,
       hasActiveFarming: Boolean(activeFarming),
       createdAtTimestamp,
       liquidity,
       token0Price,
-      changeHour,
-      change24h: volumeChange24to48h,
-      changeWeek,
-      changeMonth,
+      changeHour: 0,
+      change24h: 0,
+      changeWeek: 0,
+      changeMonth: 0,
       txCount,
       volumeUSD,
       marketCap: token0.marketCap,
-      apr24h: (avgApr * 24).toString(),
+      apr24h: apr.toString(),
       tick: pool?.tick,
     };
   }, [pool, activeFarmings]);
@@ -236,7 +86,7 @@ export default function PoolStatsCard({ pool }: PoolStatsCardProps) {
   if (!pool || !derivedPoolInfo) return null;
 
   return (
-    <div className="h-[400px] p-6 flex flex-col bg-[#140E06] border border-[#3B2712] rounded-lg text-white animate-fade-in">
+    <div className="p-6 flex flex-col bg-[#140E06] border border-[#3B2712] rounded-lg text-white animate-fade-in">
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-lg font-bold text-white">Pool Stats</h2>
         <div className="px-3 py-1.5 bg-[#FFCD4D] text-xs font-medium rounded-full text-black">
@@ -283,8 +133,7 @@ export default function PoolStatsCard({ pool }: PoolStatsCardProps) {
           <h3 className="text-xs font-medium mb-2 text-gray-400">
             Performance
           </h3>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1 p-3 rounded-lg bg-[#271A0C] border border-[#3B2712]">
+          <div className="flex flex-col gap-1 p-3 rounded-lg bg-[#271A0C] border border-[#3B2712]">
               <h4 className="text-xs text-gray-400">TVL</h4>
               <span className="text-lg font-bold text-white">
                 $
@@ -294,42 +143,6 @@ export default function PoolStatsCard({ pool }: PoolStatsCardProps) {
                 })}
               </span>
             </div>
-
-            <div className="flex flex-col gap-1 p-3 rounded-lg bg-[#271A0C] border border-[#3B2712]">
-              <h4 className="text-xs text-gray-400">APR</h4>
-              <div className="flex items-center">
-                <span className="text-lg font-bold text-white">
-                  {DynamicFormatAmount({
-                    amount: derivedPoolInfo.apr24h,
-                    decimals: 2,
-                  })}
-                  %
-                </span>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-1 p-3 rounded-lg bg-[#271A0C] border border-[#3B2712]">
-              <h4 className="text-xs text-gray-400">Volume</h4>
-              <span className="text-lg font-bold text-white">
-                $
-                {DynamicFormatAmount({
-                  amount: derivedPoolInfo.volume24USD,
-                  decimals: 2,
-                })}
-              </span>
-            </div>
-
-            <div className="flex flex-col gap-1 p-3 rounded-lg bg-[#271A0C] border border-[#3B2712]">
-              <h4 className="text-xs text-gray-400">Fees</h4>
-              <span className="text-lg font-bold text-white">
-                $
-                {DynamicFormatAmount({
-                  amount: derivedPoolInfo.fees24USD,
-                  decimals: 2,
-                })}
-              </span>
-            </div>
-          </div>
         </div>
       </div>
     </div>

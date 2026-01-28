@@ -18,20 +18,15 @@ export type Scalars = {
   BigDecimal: { input: any; output: any; }
   BigInt: { input: any; output: any; }
   Bytes: { input: any; output: any; }
-  /**
-   * 8 bytes signed integer
-   *
-   */
+  /** 8 bytes signed integer */
   Int8: { input: any; output: any; }
-  /**
-   * A string representation of microseconds UNIX timestamp (16 digits)
-   *
-   */
+  /** A string representation of microseconds UNIX timestamp (16 digits) */
   Timestamp: { input: any; output: any; }
 };
 
 export type Account = {
   __typename?: 'Account';
+  bitgetCampaignParticipants: Array<BitgetCampaignParticipant>;
   holder: Array<HoldingToken>;
   holdingPoolCount: Scalars['BigInt']['output'];
   id: Scalars['ID']['output'];
@@ -45,6 +40,15 @@ export type Account = {
   totalSpendUSD: Scalars['BigDecimal']['output'];
   transaction: Array<Transaction>;
   vaultShares?: Maybe<Array<VaultShare>>;
+};
+
+
+export type AccountBitgetCampaignParticipantsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<BitgetCampaignParticipant_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<BitgetCampaignParticipant_Filter>;
 };
 
 
@@ -87,6 +91,7 @@ export type Account_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<Account_Filter>>>;
+  bitgetCampaignParticipants_?: InputMaybe<BitgetCampaignParticipant_Filter>;
   holder_?: InputMaybe<HoldingToken_Filter>;
   holdingPoolCount?: InputMaybe<Scalars['BigInt']['input']>;
   holdingPoolCount_gt?: InputMaybe<Scalars['BigInt']['input']>;
@@ -167,6 +172,7 @@ export type Account_Filter = {
 };
 
 export enum Account_OrderBy {
+  BitgetCampaignParticipants = 'bitgetCampaignParticipants',
   Holder = 'holder',
   HoldingPoolCount = 'holdingPoolCount',
   Id = 'id',
@@ -281,76 +287,78 @@ export enum AlgebraDayData_OrderBy {
   VolumeUsdUntracked = 'volumeUSDUntracked'
 }
 
-export type Block = {
-  __typename?: 'Block';
-  author?: Maybe<Scalars['String']['output']>;
-  difficulty?: Maybe<Scalars['BigInt']['output']>;
-  gasLimit?: Maybe<Scalars['BigInt']['output']>;
-  gasUsed?: Maybe<Scalars['BigInt']['output']>;
+export type BitgetCampaign = {
+  __typename?: 'BitgetCampaign';
+  eventPools: Array<BitgetCampaignEventPool>;
   id: Scalars['ID']['output'];
-  number: Scalars['BigInt']['output'];
-  parentHash?: Maybe<Scalars['String']['output']>;
-  receiptsRoot?: Maybe<Scalars['String']['output']>;
-  size?: Maybe<Scalars['BigInt']['output']>;
-  stateRoot?: Maybe<Scalars['String']['output']>;
-  timestamp: Scalars['BigInt']['output'];
-  totalDifficulty?: Maybe<Scalars['BigInt']['output']>;
-  transactionsRoot?: Maybe<Scalars['String']['output']>;
-  unclesHash?: Maybe<Scalars['String']['output']>;
+  participants: Array<BitgetCampaignParticipant>;
+  totalFinishedUserCount: Scalars['BigInt']['output'];
+  totalVolumeUSD: Scalars['BigDecimal']['output'];
 };
 
-export type BlockChangedFilter = {
-  number_gte: Scalars['Int']['input'];
+
+export type BitgetCampaignEventPoolsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<BitgetCampaignEventPool_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<BitgetCampaignEventPool_Filter>;
 };
 
-export type Block_Filter = {
+
+export type BitgetCampaignParticipantsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<BitgetCampaignParticipant_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<BitgetCampaignParticipant_Filter>;
+};
+
+export type BitgetCampaignEventPool = {
+  __typename?: 'BitgetCampaignEventPool';
+  campaign: BitgetCampaign;
+  finishedUsers: Array<BitgetCampaignParticipant>;
+  id: Scalars['ID']['output'];
+  pool: Pool;
+  totalFinishedUserCount: Scalars['BigInt']['output'];
+  totalVolumeUSD: Scalars['BigDecimal']['output'];
+};
+
+
+export type BitgetCampaignEventPoolFinishedUsersArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<BitgetCampaignParticipant_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<BitgetCampaignParticipant_Filter>;
+};
+
+export type BitgetCampaignEventPool_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
-  and?: InputMaybe<Array<InputMaybe<Block_Filter>>>;
-  author?: InputMaybe<Scalars['String']['input']>;
-  author_contains?: InputMaybe<Scalars['String']['input']>;
-  author_contains_nocase?: InputMaybe<Scalars['String']['input']>;
-  author_ends_with?: InputMaybe<Scalars['String']['input']>;
-  author_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  author_gt?: InputMaybe<Scalars['String']['input']>;
-  author_gte?: InputMaybe<Scalars['String']['input']>;
-  author_in?: InputMaybe<Array<Scalars['String']['input']>>;
-  author_lt?: InputMaybe<Scalars['String']['input']>;
-  author_lte?: InputMaybe<Scalars['String']['input']>;
-  author_not?: InputMaybe<Scalars['String']['input']>;
-  author_not_contains?: InputMaybe<Scalars['String']['input']>;
-  author_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
-  author_not_ends_with?: InputMaybe<Scalars['String']['input']>;
-  author_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  author_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
-  author_not_starts_with?: InputMaybe<Scalars['String']['input']>;
-  author_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  author_starts_with?: InputMaybe<Scalars['String']['input']>;
-  author_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  difficulty?: InputMaybe<Scalars['BigInt']['input']>;
-  difficulty_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  difficulty_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  difficulty_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  difficulty_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  difficulty_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  difficulty_not?: InputMaybe<Scalars['BigInt']['input']>;
-  difficulty_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  gasLimit?: InputMaybe<Scalars['BigInt']['input']>;
-  gasLimit_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  gasLimit_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  gasLimit_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  gasLimit_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  gasLimit_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  gasLimit_not?: InputMaybe<Scalars['BigInt']['input']>;
-  gasLimit_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  gasUsed?: InputMaybe<Scalars['BigInt']['input']>;
-  gasUsed_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  gasUsed_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  gasUsed_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  gasUsed_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  gasUsed_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  gasUsed_not?: InputMaybe<Scalars['BigInt']['input']>;
-  gasUsed_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<BitgetCampaignEventPool_Filter>>>;
+  campaign?: InputMaybe<Scalars['String']['input']>;
+  campaign_?: InputMaybe<BitgetCampaign_Filter>;
+  campaign_contains?: InputMaybe<Scalars['String']['input']>;
+  campaign_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  campaign_ends_with?: InputMaybe<Scalars['String']['input']>;
+  campaign_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  campaign_gt?: InputMaybe<Scalars['String']['input']>;
+  campaign_gte?: InputMaybe<Scalars['String']['input']>;
+  campaign_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  campaign_lt?: InputMaybe<Scalars['String']['input']>;
+  campaign_lte?: InputMaybe<Scalars['String']['input']>;
+  campaign_not?: InputMaybe<Scalars['String']['input']>;
+  campaign_not_contains?: InputMaybe<Scalars['String']['input']>;
+  campaign_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  campaign_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  campaign_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  campaign_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  campaign_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  campaign_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  campaign_starts_with?: InputMaybe<Scalars['String']['input']>;
+  campaign_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  finishedUsers_?: InputMaybe<BitgetCampaignParticipant_Filter>;
   id?: InputMaybe<Scalars['ID']['input']>;
   id_gt?: InputMaybe<Scalars['ID']['input']>;
   id_gte?: InputMaybe<Scalars['ID']['input']>;
@@ -359,139 +367,262 @@ export type Block_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>;
   id_not?: InputMaybe<Scalars['ID']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
-  number?: InputMaybe<Scalars['BigInt']['input']>;
-  number_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  number_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  number_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  number_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  number_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  number_not?: InputMaybe<Scalars['BigInt']['input']>;
-  number_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  or?: InputMaybe<Array<InputMaybe<Block_Filter>>>;
-  parentHash?: InputMaybe<Scalars['String']['input']>;
-  parentHash_contains?: InputMaybe<Scalars['String']['input']>;
-  parentHash_contains_nocase?: InputMaybe<Scalars['String']['input']>;
-  parentHash_ends_with?: InputMaybe<Scalars['String']['input']>;
-  parentHash_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  parentHash_gt?: InputMaybe<Scalars['String']['input']>;
-  parentHash_gte?: InputMaybe<Scalars['String']['input']>;
-  parentHash_in?: InputMaybe<Array<Scalars['String']['input']>>;
-  parentHash_lt?: InputMaybe<Scalars['String']['input']>;
-  parentHash_lte?: InputMaybe<Scalars['String']['input']>;
-  parentHash_not?: InputMaybe<Scalars['String']['input']>;
-  parentHash_not_contains?: InputMaybe<Scalars['String']['input']>;
-  parentHash_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
-  parentHash_not_ends_with?: InputMaybe<Scalars['String']['input']>;
-  parentHash_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  parentHash_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
-  parentHash_not_starts_with?: InputMaybe<Scalars['String']['input']>;
-  parentHash_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  parentHash_starts_with?: InputMaybe<Scalars['String']['input']>;
-  parentHash_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_contains?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_contains_nocase?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_ends_with?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_gt?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_gte?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_in?: InputMaybe<Array<Scalars['String']['input']>>;
-  receiptsRoot_lt?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_lte?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_not?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_not_contains?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_not_ends_with?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
-  receiptsRoot_not_starts_with?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_starts_with?: InputMaybe<Scalars['String']['input']>;
-  receiptsRoot_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  size?: InputMaybe<Scalars['BigInt']['input']>;
-  size_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  size_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  size_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  size_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  size_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  size_not?: InputMaybe<Scalars['BigInt']['input']>;
-  size_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  stateRoot?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_contains?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_contains_nocase?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_ends_with?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_gt?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_gte?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_in?: InputMaybe<Array<Scalars['String']['input']>>;
-  stateRoot_lt?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_lte?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_not?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_not_contains?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_not_ends_with?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
-  stateRoot_not_starts_with?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_starts_with?: InputMaybe<Scalars['String']['input']>;
-  stateRoot_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  timestamp?: InputMaybe<Scalars['BigInt']['input']>;
-  timestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  timestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  timestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  timestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  timestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  timestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
-  timestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  totalDifficulty?: InputMaybe<Scalars['BigInt']['input']>;
-  totalDifficulty_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  totalDifficulty_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  totalDifficulty_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  totalDifficulty_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  totalDifficulty_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  totalDifficulty_not?: InputMaybe<Scalars['BigInt']['input']>;
-  totalDifficulty_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  transactionsRoot?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_contains?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_contains_nocase?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_ends_with?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_gt?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_gte?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_in?: InputMaybe<Array<Scalars['String']['input']>>;
-  transactionsRoot_lt?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_lte?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_not?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_not_contains?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_not_ends_with?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
-  transactionsRoot_not_starts_with?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_starts_with?: InputMaybe<Scalars['String']['input']>;
-  transactionsRoot_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  unclesHash?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_contains?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_contains_nocase?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_ends_with?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_gt?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_gte?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_in?: InputMaybe<Array<Scalars['String']['input']>>;
-  unclesHash_lt?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_lte?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_not?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_not_contains?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_not_ends_with?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
-  unclesHash_not_starts_with?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_starts_with?: InputMaybe<Scalars['String']['input']>;
-  unclesHash_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  or?: InputMaybe<Array<InputMaybe<BitgetCampaignEventPool_Filter>>>;
+  pool?: InputMaybe<Scalars['String']['input']>;
+  pool_?: InputMaybe<Pool_Filter>;
+  pool_contains?: InputMaybe<Scalars['String']['input']>;
+  pool_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  pool_ends_with?: InputMaybe<Scalars['String']['input']>;
+  pool_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pool_gt?: InputMaybe<Scalars['String']['input']>;
+  pool_gte?: InputMaybe<Scalars['String']['input']>;
+  pool_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  pool_lt?: InputMaybe<Scalars['String']['input']>;
+  pool_lte?: InputMaybe<Scalars['String']['input']>;
+  pool_not?: InputMaybe<Scalars['String']['input']>;
+  pool_not_contains?: InputMaybe<Scalars['String']['input']>;
+  pool_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  pool_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  pool_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pool_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  pool_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  pool_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pool_starts_with?: InputMaybe<Scalars['String']['input']>;
+  pool_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  totalFinishedUserCount?: InputMaybe<Scalars['BigInt']['input']>;
+  totalFinishedUserCount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  totalFinishedUserCount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  totalFinishedUserCount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalFinishedUserCount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  totalFinishedUserCount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  totalFinishedUserCount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  totalFinishedUserCount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalVolumeUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalVolumeUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalVolumeUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalVolumeUSD_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalVolumeUSD_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalVolumeUSD_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalVolumeUSD_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalVolumeUSD_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+};
+
+export enum BitgetCampaignEventPool_OrderBy {
+  Campaign = 'campaign',
+  CampaignId = 'campaign__id',
+  CampaignTotalFinishedUserCount = 'campaign__totalFinishedUserCount',
+  CampaignTotalVolumeUsd = 'campaign__totalVolumeUSD',
+  FinishedUsers = 'finishedUsers',
+  Id = 'id',
+  Pool = 'pool',
+  PoolAprPercentage = 'pool__aprPercentage',
+  PoolCollectedFeesToken0 = 'pool__collectedFeesToken0',
+  PoolCollectedFeesToken1 = 'pool__collectedFeesToken1',
+  PoolCollectedFeesUsd = 'pool__collectedFeesUSD',
+  PoolCommunityFee = 'pool__communityFee',
+  PoolCreatedAtBlockNumber = 'pool__createdAtBlockNumber',
+  PoolCreatedAtTimestamp = 'pool__createdAtTimestamp',
+  PoolDeployer = 'pool__deployer',
+  PoolFee = 'pool__fee',
+  PoolFeeGrowthGlobal0X128 = 'pool__feeGrowthGlobal0X128',
+  PoolFeeGrowthGlobal1X128 = 'pool__feeGrowthGlobal1X128',
+  PoolFeesToken0 = 'pool__feesToken0',
+  PoolFeesToken1 = 'pool__feesToken1',
+  PoolFeesUsd = 'pool__feesUSD',
+  PoolId = 'pool__id',
+  PoolLiquidity = 'pool__liquidity',
+  PoolLiquidityProviderCount = 'pool__liquidityProviderCount',
+  PoolObservationIndex = 'pool__observationIndex',
+  PoolPlugin = 'pool__plugin',
+  PoolPluginConfig = 'pool__pluginConfig',
+  PoolSearchString = 'pool__searchString',
+  PoolSqrtPrice = 'pool__sqrtPrice',
+  PoolTick = 'pool__tick',
+  PoolTickSpacing = 'pool__tickSpacing',
+  PoolToken0Price = 'pool__token0Price',
+  PoolToken1Price = 'pool__token1Price',
+  PoolTotalValueLockedMatic = 'pool__totalValueLockedMatic',
+  PoolTotalValueLockedToken0 = 'pool__totalValueLockedToken0',
+  PoolTotalValueLockedToken1 = 'pool__totalValueLockedToken1',
+  PoolTotalValueLockedUsd = 'pool__totalValueLockedUSD',
+  PoolTotalValueLockedUsdUntracked = 'pool__totalValueLockedUSDUntracked',
+  PoolTxCount = 'pool__txCount',
+  PoolUntrackedFeesUsd = 'pool__untrackedFeesUSD',
+  PoolUntrackedVolumeUsd = 'pool__untrackedVolumeUSD',
+  PoolVolumeToken0 = 'pool__volumeToken0',
+  PoolVolumeToken1 = 'pool__volumeToken1',
+  PoolVolumeUsd = 'pool__volumeUSD',
+  TotalFinishedUserCount = 'totalFinishedUserCount',
+  TotalVolumeUsd = 'totalVolumeUSD'
+}
+
+export type BitgetCampaignParticipant = {
+  __typename?: 'BitgetCampaignParticipant';
+  amountUSD: Scalars['BigDecimal']['output'];
+  campaign: BitgetCampaign;
+  finished: Scalars['Boolean']['output'];
+  id: Scalars['ID']['output'];
+  pool: BitgetCampaignEventPool;
+  user: Account;
+};
+
+export type BitgetCampaignParticipant_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  amountUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amountUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amountUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amountUSD_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  amountUSD_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amountUSD_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amountUSD_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  amountUSD_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<BitgetCampaignParticipant_Filter>>>;
+  campaign?: InputMaybe<Scalars['String']['input']>;
+  campaign_?: InputMaybe<BitgetCampaign_Filter>;
+  campaign_contains?: InputMaybe<Scalars['String']['input']>;
+  campaign_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  campaign_ends_with?: InputMaybe<Scalars['String']['input']>;
+  campaign_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  campaign_gt?: InputMaybe<Scalars['String']['input']>;
+  campaign_gte?: InputMaybe<Scalars['String']['input']>;
+  campaign_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  campaign_lt?: InputMaybe<Scalars['String']['input']>;
+  campaign_lte?: InputMaybe<Scalars['String']['input']>;
+  campaign_not?: InputMaybe<Scalars['String']['input']>;
+  campaign_not_contains?: InputMaybe<Scalars['String']['input']>;
+  campaign_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  campaign_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  campaign_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  campaign_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  campaign_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  campaign_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  campaign_starts_with?: InputMaybe<Scalars['String']['input']>;
+  campaign_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  finished?: InputMaybe<Scalars['Boolean']['input']>;
+  finished_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  finished_not?: InputMaybe<Scalars['Boolean']['input']>;
+  finished_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<BitgetCampaignParticipant_Filter>>>;
+  pool?: InputMaybe<Scalars['String']['input']>;
+  pool_?: InputMaybe<BitgetCampaignEventPool_Filter>;
+  pool_contains?: InputMaybe<Scalars['String']['input']>;
+  pool_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  pool_ends_with?: InputMaybe<Scalars['String']['input']>;
+  pool_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pool_gt?: InputMaybe<Scalars['String']['input']>;
+  pool_gte?: InputMaybe<Scalars['String']['input']>;
+  pool_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  pool_lt?: InputMaybe<Scalars['String']['input']>;
+  pool_lte?: InputMaybe<Scalars['String']['input']>;
+  pool_not?: InputMaybe<Scalars['String']['input']>;
+  pool_not_contains?: InputMaybe<Scalars['String']['input']>;
+  pool_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  pool_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  pool_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pool_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  pool_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  pool_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pool_starts_with?: InputMaybe<Scalars['String']['input']>;
+  pool_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  user?: InputMaybe<Scalars['String']['input']>;
+  user_?: InputMaybe<Account_Filter>;
+  user_contains?: InputMaybe<Scalars['String']['input']>;
+  user_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  user_ends_with?: InputMaybe<Scalars['String']['input']>;
+  user_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  user_gt?: InputMaybe<Scalars['String']['input']>;
+  user_gte?: InputMaybe<Scalars['String']['input']>;
+  user_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  user_lt?: InputMaybe<Scalars['String']['input']>;
+  user_lte?: InputMaybe<Scalars['String']['input']>;
+  user_not?: InputMaybe<Scalars['String']['input']>;
+  user_not_contains?: InputMaybe<Scalars['String']['input']>;
+  user_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  user_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  user_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  user_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  user_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  user_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  user_starts_with?: InputMaybe<Scalars['String']['input']>;
+  user_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum BitgetCampaignParticipant_OrderBy {
+  AmountUsd = 'amountUSD',
+  Campaign = 'campaign',
+  CampaignId = 'campaign__id',
+  CampaignTotalFinishedUserCount = 'campaign__totalFinishedUserCount',
+  CampaignTotalVolumeUsd = 'campaign__totalVolumeUSD',
+  Finished = 'finished',
+  Id = 'id',
+  Pool = 'pool',
+  PoolId = 'pool__id',
+  PoolTotalFinishedUserCount = 'pool__totalFinishedUserCount',
+  PoolTotalVolumeUsd = 'pool__totalVolumeUSD',
+  User = 'user',
+  UserHoldingPoolCount = 'user__holdingPoolCount',
+  UserId = 'user__id',
+  UserMemeTokenHoldingCount = 'user__memeTokenHoldingCount',
+  UserParticipateCount = 'user__participateCount',
+  UserPlatformTxCount = 'user__platformTxCount',
+  UserPot2PumpLaunchCount = 'user__pot2PumpLaunchCount',
+  UserSwapCount = 'user__swapCount',
+  UserTotalDepositPot2pumpUsd = 'user__totalDepositPot2pumpUSD',
+  UserTotalSpendUsd = 'user__totalSpendUSD'
+}
+
+export type BitgetCampaign_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<BitgetCampaign_Filter>>>;
+  eventPools_?: InputMaybe<BitgetCampaignEventPool_Filter>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<BitgetCampaign_Filter>>>;
+  participants_?: InputMaybe<BitgetCampaignParticipant_Filter>;
+  totalFinishedUserCount?: InputMaybe<Scalars['BigInt']['input']>;
+  totalFinishedUserCount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  totalFinishedUserCount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  totalFinishedUserCount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalFinishedUserCount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  totalFinishedUserCount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  totalFinishedUserCount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  totalFinishedUserCount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalVolumeUSD?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalVolumeUSD_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalVolumeUSD_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalVolumeUSD_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalVolumeUSD_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalVolumeUSD_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalVolumeUSD_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  totalVolumeUSD_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+};
+
+export enum BitgetCampaign_OrderBy {
+  EventPools = 'eventPools',
+  Id = 'id',
+  Participants = 'participants',
+  TotalFinishedUserCount = 'totalFinishedUserCount',
+  TotalVolumeUsd = 'totalVolumeUSD'
+}
+
+export type BlockChangedFilter = {
+  number_gte: Scalars['Int']['input'];
 };
 
 export type Block_Height = {
@@ -499,23 +630,6 @@ export type Block_Height = {
   number?: InputMaybe<Scalars['Int']['input']>;
   number_gte?: InputMaybe<Scalars['Int']['input']>;
 };
-
-export enum Block_OrderBy {
-  Author = 'author',
-  Difficulty = 'difficulty',
-  GasLimit = 'gasLimit',
-  GasUsed = 'gasUsed',
-  Id = 'id',
-  Number = 'number',
-  ParentHash = 'parentHash',
-  ReceiptsRoot = 'receiptsRoot',
-  Size = 'size',
-  StateRoot = 'stateRoot',
-  Timestamp = 'timestamp',
-  TotalDifficulty = 'totalDifficulty',
-  TransactionsRoot = 'transactionsRoot',
-  UnclesHash = 'unclesHash'
-}
 
 export type Bundle = {
   __typename?: 'Bundle';
@@ -1315,13 +1429,31 @@ export enum DeployIchiVault_OrderBy {
   VaultAllowTokenB = 'vault__allowTokenB',
   VaultCount = 'vault__count',
   VaultCreatedAtTimestamp = 'vault__createdAtTimestamp',
+  VaultFeeApr_1d = 'vault__feeApr_1d',
+  VaultFeeApr_3d = 'vault__feeApr_3d',
+  VaultFeeApr_7d = 'vault__feeApr_7d',
+  VaultFeeApr_30d = 'vault__feeApr_30d',
+  VaultFeePerSecond0_1d = 'vault__feePerSecond0_1d',
+  VaultFeePerSecond0_3d = 'vault__feePerSecond0_3d',
+  VaultFeePerSecond0_7d = 'vault__feePerSecond0_7d',
+  VaultFeePerSecond0_30d = 'vault__feePerSecond0_30d',
+  VaultFeePerSecond1_1d = 'vault__feePerSecond1_1d',
+  VaultFeePerSecond1_3d = 'vault__feePerSecond1_3d',
+  VaultFeePerSecond1_7d = 'vault__feePerSecond1_7d',
+  VaultFeePerSecond1_30d = 'vault__feePerSecond1_30d',
   VaultHoldersCount = 'vault__holdersCount',
   VaultId = 'vault__id',
+  VaultLastFeeUpdate = 'vault__lastFeeUpdate',
+  VaultLastPrice = 'vault__lastPrice',
+  VaultLastPriceTimestamp = 'vault__lastPriceTimestamp',
   VaultSearchString = 'vault__searchString',
   VaultSender = 'vault__sender',
   VaultTokenA = 'vault__tokenA',
   VaultTokenB = 'vault__tokenB',
-  VaultTotalShares = 'vault__totalShares'
+  VaultTotalAmount0 = 'vault__totalAmount0',
+  VaultTotalAmount1 = 'vault__totalAmount1',
+  VaultTotalShares = 'vault__totalShares',
+  VaultTotalSupply = 'vault__totalSupply'
 }
 
 export type Deposit = {
@@ -2283,15 +2415,33 @@ export type IchiVault = {
   allowTokenB: Scalars['Boolean']['output'];
   count: Scalars['BigInt']['output'];
   createdAtTimestamp: Scalars['BigInt']['output'];
+  feeApr_1d: Scalars['BigDecimal']['output'];
+  feeApr_3d: Scalars['BigDecimal']['output'];
+  feeApr_7d: Scalars['BigDecimal']['output'];
+  feeApr_30d: Scalars['BigDecimal']['output'];
+  feePerSecond0_1d: Scalars['BigInt']['output'];
+  feePerSecond0_3d: Scalars['BigInt']['output'];
+  feePerSecond0_7d: Scalars['BigInt']['output'];
+  feePerSecond0_30d: Scalars['BigInt']['output'];
+  feePerSecond1_1d: Scalars['BigInt']['output'];
+  feePerSecond1_3d: Scalars['BigInt']['output'];
+  feePerSecond1_7d: Scalars['BigInt']['output'];
+  feePerSecond1_30d: Scalars['BigInt']['output'];
   holdersCount: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
+  lastFeeUpdate: Scalars['BigInt']['output'];
+  lastPrice: Scalars['BigDecimal']['output'];
+  lastPriceTimestamp: Scalars['BigInt']['output'];
   maxTotalSupply: Array<MaxTotalSupply>;
   pool: Pool;
   searchString: Scalars['String']['output'];
   sender: Scalars['Bytes']['output'];
   tokenA: Scalars['Bytes']['output'];
   tokenB: Scalars['Bytes']['output'];
+  totalAmount0: Scalars['BigInt']['output'];
+  totalAmount1: Scalars['BigInt']['output'];
   totalShares: Scalars['BigDecimal']['output'];
+  totalSupply: Scalars['BigInt']['output'];
   vaultAffiliates: Array<VaultAffiliate>;
   vaultApprovals: Array<VaultApproval>;
   vaultCollectFees: Array<VaultCollectFee>;
@@ -2441,6 +2591,102 @@ export type IchiVault_Filter = {
   createdAtTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
   createdAtTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
   createdAtTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feeApr_1d?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_1d_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_1d_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_1d_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  feeApr_1d_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_1d_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_1d_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_1d_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  feeApr_3d?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_3d_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_3d_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_3d_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  feeApr_3d_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_3d_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_3d_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_3d_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  feeApr_7d?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_7d_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_7d_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_7d_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  feeApr_7d_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_7d_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_7d_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_7d_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  feeApr_30d?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_30d_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_30d_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_30d_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  feeApr_30d_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_30d_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_30d_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  feeApr_30d_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  feePerSecond0_1d?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_1d_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_1d_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_1d_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feePerSecond0_1d_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_1d_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_1d_not?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_1d_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feePerSecond0_3d?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_3d_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_3d_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_3d_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feePerSecond0_3d_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_3d_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_3d_not?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_3d_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feePerSecond0_7d?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_7d_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_7d_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_7d_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feePerSecond0_7d_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_7d_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_7d_not?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_7d_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feePerSecond0_30d?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_30d_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_30d_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_30d_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feePerSecond0_30d_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_30d_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_30d_not?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond0_30d_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feePerSecond1_1d?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_1d_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_1d_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_1d_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feePerSecond1_1d_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_1d_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_1d_not?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_1d_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feePerSecond1_3d?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_3d_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_3d_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_3d_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feePerSecond1_3d_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_3d_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_3d_not?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_3d_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feePerSecond1_7d?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_7d_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_7d_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_7d_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feePerSecond1_7d_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_7d_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_7d_not?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_7d_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feePerSecond1_30d?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_30d_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_30d_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_30d_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feePerSecond1_30d_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_30d_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_30d_not?: InputMaybe<Scalars['BigInt']['input']>;
+  feePerSecond1_30d_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   holdersCount?: InputMaybe<Scalars['Int']['input']>;
   holdersCount_gt?: InputMaybe<Scalars['Int']['input']>;
   holdersCount_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -2457,6 +2703,30 @@ export type IchiVault_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>;
   id_not?: InputMaybe<Scalars['ID']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lastFeeUpdate?: InputMaybe<Scalars['BigInt']['input']>;
+  lastFeeUpdate_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  lastFeeUpdate_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  lastFeeUpdate_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  lastFeeUpdate_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  lastFeeUpdate_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  lastFeeUpdate_not?: InputMaybe<Scalars['BigInt']['input']>;
+  lastFeeUpdate_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  lastPrice?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPriceTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  lastPriceTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  lastPriceTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  lastPriceTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  lastPriceTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  lastPriceTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  lastPriceTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  lastPriceTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  lastPrice_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  lastPrice_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   maxTotalSupply_?: InputMaybe<MaxTotalSupply_Filter>;
   or?: InputMaybe<Array<InputMaybe<IchiVault_Filter>>>;
   pool?: InputMaybe<Scalars['String']['input']>;
@@ -2530,6 +2800,22 @@ export type IchiVault_Filter = {
   tokenB_not?: InputMaybe<Scalars['Bytes']['input']>;
   tokenB_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   tokenB_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  totalAmount0?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAmount0_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAmount0_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAmount0_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalAmount0_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAmount0_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAmount0_not?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAmount0_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalAmount1?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAmount1_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAmount1_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAmount1_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalAmount1_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAmount1_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAmount1_not?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAmount1_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   totalShares?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalShares_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalShares_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
@@ -2538,6 +2824,14 @@ export type IchiVault_Filter = {
   totalShares_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalShares_not?: InputMaybe<Scalars['BigDecimal']['input']>;
   totalShares_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  totalSupply?: InputMaybe<Scalars['BigInt']['input']>;
+  totalSupply_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  totalSupply_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  totalSupply_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalSupply_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  totalSupply_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  totalSupply_not?: InputMaybe<Scalars['BigInt']['input']>;
+  totalSupply_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   vaultAffiliates_?: InputMaybe<VaultAffiliate_Filter>;
   vaultApprovals_?: InputMaybe<VaultApproval_Filter>;
   vaultCollectFees_?: InputMaybe<VaultCollectFee_Filter>;
@@ -2556,8 +2850,23 @@ export enum IchiVault_OrderBy {
   AllowTokenB = 'allowTokenB',
   Count = 'count',
   CreatedAtTimestamp = 'createdAtTimestamp',
+  FeeApr_1d = 'feeApr_1d',
+  FeeApr_3d = 'feeApr_3d',
+  FeeApr_7d = 'feeApr_7d',
+  FeeApr_30d = 'feeApr_30d',
+  FeePerSecond0_1d = 'feePerSecond0_1d',
+  FeePerSecond0_3d = 'feePerSecond0_3d',
+  FeePerSecond0_7d = 'feePerSecond0_7d',
+  FeePerSecond0_30d = 'feePerSecond0_30d',
+  FeePerSecond1_1d = 'feePerSecond1_1d',
+  FeePerSecond1_3d = 'feePerSecond1_3d',
+  FeePerSecond1_7d = 'feePerSecond1_7d',
+  FeePerSecond1_30d = 'feePerSecond1_30d',
   HoldersCount = 'holdersCount',
   Id = 'id',
+  LastFeeUpdate = 'lastFeeUpdate',
+  LastPrice = 'lastPrice',
+  LastPriceTimestamp = 'lastPriceTimestamp',
   MaxTotalSupply = 'maxTotalSupply',
   Pool = 'pool',
   PoolAprPercentage = 'pool__aprPercentage',
@@ -2601,7 +2910,10 @@ export enum IchiVault_OrderBy {
   Sender = 'sender',
   TokenA = 'tokenA',
   TokenB = 'tokenB',
+  TotalAmount0 = 'totalAmount0',
+  TotalAmount1 = 'totalAmount1',
   TotalShares = 'totalShares',
+  TotalSupply = 'totalSupply',
   VaultAffiliates = 'vaultAffiliates',
   VaultApprovals = 'vaultApprovals',
   VaultCollectFees = 'vaultCollectFees',
@@ -2922,13 +3234,31 @@ export enum MaxTotalSupply_OrderBy {
   VaultAllowTokenB = 'vault__allowTokenB',
   VaultCount = 'vault__count',
   VaultCreatedAtTimestamp = 'vault__createdAtTimestamp',
+  VaultFeeApr_1d = 'vault__feeApr_1d',
+  VaultFeeApr_3d = 'vault__feeApr_3d',
+  VaultFeeApr_7d = 'vault__feeApr_7d',
+  VaultFeeApr_30d = 'vault__feeApr_30d',
+  VaultFeePerSecond0_1d = 'vault__feePerSecond0_1d',
+  VaultFeePerSecond0_3d = 'vault__feePerSecond0_3d',
+  VaultFeePerSecond0_7d = 'vault__feePerSecond0_7d',
+  VaultFeePerSecond0_30d = 'vault__feePerSecond0_30d',
+  VaultFeePerSecond1_1d = 'vault__feePerSecond1_1d',
+  VaultFeePerSecond1_3d = 'vault__feePerSecond1_3d',
+  VaultFeePerSecond1_7d = 'vault__feePerSecond1_7d',
+  VaultFeePerSecond1_30d = 'vault__feePerSecond1_30d',
   VaultHoldersCount = 'vault__holdersCount',
   VaultId = 'vault__id',
+  VaultLastFeeUpdate = 'vault__lastFeeUpdate',
+  VaultLastPrice = 'vault__lastPrice',
+  VaultLastPriceTimestamp = 'vault__lastPriceTimestamp',
   VaultSearchString = 'vault__searchString',
   VaultSender = 'vault__sender',
   VaultTokenA = 'vault__tokenA',
   VaultTokenB = 'vault__tokenB',
-  VaultTotalShares = 'vault__totalShares'
+  VaultTotalAmount0 = 'vault__totalAmount0',
+  VaultTotalAmount1 = 'vault__totalAmount1',
+  VaultTotalShares = 'vault__totalShares',
+  VaultTotalSupply = 'vault__totalSupply'
 }
 
 export type MemeRacer = {
@@ -5967,13 +6297,31 @@ export enum Pool_OrderBy {
   VaultsAllowTokenB = 'vaults__allowTokenB',
   VaultsCount = 'vaults__count',
   VaultsCreatedAtTimestamp = 'vaults__createdAtTimestamp',
+  VaultsFeeApr_1d = 'vaults__feeApr_1d',
+  VaultsFeeApr_3d = 'vaults__feeApr_3d',
+  VaultsFeeApr_7d = 'vaults__feeApr_7d',
+  VaultsFeeApr_30d = 'vaults__feeApr_30d',
+  VaultsFeePerSecond0_1d = 'vaults__feePerSecond0_1d',
+  VaultsFeePerSecond0_3d = 'vaults__feePerSecond0_3d',
+  VaultsFeePerSecond0_7d = 'vaults__feePerSecond0_7d',
+  VaultsFeePerSecond0_30d = 'vaults__feePerSecond0_30d',
+  VaultsFeePerSecond1_1d = 'vaults__feePerSecond1_1d',
+  VaultsFeePerSecond1_3d = 'vaults__feePerSecond1_3d',
+  VaultsFeePerSecond1_7d = 'vaults__feePerSecond1_7d',
+  VaultsFeePerSecond1_30d = 'vaults__feePerSecond1_30d',
   VaultsHoldersCount = 'vaults__holdersCount',
   VaultsId = 'vaults__id',
+  VaultsLastFeeUpdate = 'vaults__lastFeeUpdate',
+  VaultsLastPrice = 'vaults__lastPrice',
+  VaultsLastPriceTimestamp = 'vaults__lastPriceTimestamp',
   VaultsSearchString = 'vaults__searchString',
   VaultsSender = 'vaults__sender',
   VaultsTokenA = 'vaults__tokenA',
   VaultsTokenB = 'vaults__tokenB',
+  VaultsTotalAmount0 = 'vaults__totalAmount0',
+  VaultsTotalAmount1 = 'vaults__totalAmount1',
   VaultsTotalShares = 'vaults__totalShares',
+  VaultsTotalSupply = 'vaults__totalSupply',
   VolumeToken0 = 'volumeToken0',
   VolumeToken1 = 'volumeToken1',
   VolumeUsd = 'volumeUSD'
@@ -7009,8 +7357,12 @@ export type Query = {
   accounts: Array<Account>;
   algebraDayData?: Maybe<AlgebraDayData>;
   algebraDayDatas: Array<AlgebraDayData>;
-  block?: Maybe<Block>;
-  blocks: Array<Block>;
+  bitgetCampaign?: Maybe<BitgetCampaign>;
+  bitgetCampaignEventPool?: Maybe<BitgetCampaignEventPool>;
+  bitgetCampaignEventPools: Array<BitgetCampaignEventPool>;
+  bitgetCampaignParticipant?: Maybe<BitgetCampaignParticipant>;
+  bitgetCampaignParticipants: Array<BitgetCampaignParticipant>;
+  bitgetCampaigns: Array<BitgetCampaign>;
   bundle?: Maybe<Bundle>;
   bundles: Array<Bundle>;
   burn?: Maybe<Burn>;
@@ -7161,21 +7513,57 @@ export type QueryAlgebraDayDatasArgs = {
 };
 
 
-export type QueryBlockArgs = {
+export type QueryBitgetCampaignArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
 
-export type QueryBlocksArgs = {
+export type QueryBitgetCampaignEventPoolArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryBitgetCampaignEventPoolsArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Block_OrderBy>;
+  orderBy?: InputMaybe<BitgetCampaignEventPool_OrderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Block_Filter>;
+  where?: InputMaybe<BitgetCampaignEventPool_Filter>;
+};
+
+
+export type QueryBitgetCampaignParticipantArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryBitgetCampaignParticipantsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<BitgetCampaignParticipant_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<BitgetCampaignParticipant_Filter>;
+};
+
+
+export type QueryBitgetCampaignsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<BitgetCampaign_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<BitgetCampaign_Filter>;
 };
 
 
@@ -8296,1137 +8684,6 @@ export enum Reward_OrderBy {
   Owner = 'owner',
   RewardAddress = 'rewardAddress'
 }
-
-export type Subscription = {
-  __typename?: 'Subscription';
-  /** Access to subgraph metadata */
-  _meta?: Maybe<_Meta_>;
-  account?: Maybe<Account>;
-  accounts: Array<Account>;
-  algebraDayData?: Maybe<AlgebraDayData>;
-  algebraDayDatas: Array<AlgebraDayData>;
-  block?: Maybe<Block>;
-  blocks: Array<Block>;
-  bundle?: Maybe<Bundle>;
-  bundles: Array<Bundle>;
-  burn?: Maybe<Burn>;
-  burns: Array<Burn>;
-  claimLp?: Maybe<ClaimLp>;
-  claimLps: Array<ClaimLp>;
-  collect?: Maybe<Collect>;
-  collects: Array<Collect>;
-  deployICHIVault?: Maybe<DeployIchiVault>;
-  deployICHIVaults: Array<DeployIchiVault>;
-  deposit?: Maybe<Deposit>;
-  depositRaisedToken?: Maybe<DepositRaisedToken>;
-  depositRaisedTokens: Array<DepositRaisedToken>;
-  deposits: Array<Deposit>;
-  eternalFarming?: Maybe<EternalFarming>;
-  eternalFarmings: Array<EternalFarming>;
-  factories: Array<Factory>;
-  factory?: Maybe<Factory>;
-  feeHourData?: Maybe<FeeHourData>;
-  feeHourDatas: Array<FeeHourData>;
-  flash?: Maybe<Flash>;
-  flashes: Array<Flash>;
-  holdingToken?: Maybe<HoldingToken>;
-  holdingTokens: Array<HoldingToken>;
-  ichiVault?: Maybe<IchiVault>;
-  ichiVaults: Array<IchiVault>;
-  liquidatorData?: Maybe<LiquidatorData>;
-  liquidatorDatas: Array<LiquidatorData>;
-  maxTotalSupplies: Array<MaxTotalSupply>;
-  maxTotalSupply?: Maybe<MaxTotalSupply>;
-  memeRacer?: Maybe<MemeRacer>;
-  memeRacerHourData?: Maybe<MemeRacerHourData>;
-  memeRacerHourDatas: Array<MemeRacerHourData>;
-  memeRacers: Array<MemeRacer>;
-  mint?: Maybe<Mint>;
-  mints: Array<Mint>;
-  participant?: Maybe<Participant>;
-  participantTransactionHistories: Array<ParticipantTransactionHistory>;
-  participantTransactionHistory?: Maybe<ParticipantTransactionHistory>;
-  participants: Array<Participant>;
-  plugin?: Maybe<Plugin>;
-  plugins: Array<Plugin>;
-  pool?: Maybe<Pool>;
-  poolDayData?: Maybe<PoolDayData>;
-  poolDayDatas: Array<PoolDayData>;
-  poolFeeData?: Maybe<PoolFeeData>;
-  poolFeeDatas: Array<PoolFeeData>;
-  poolHourData?: Maybe<PoolHourData>;
-  poolHourDatas: Array<PoolHourData>;
-  poolMonthData?: Maybe<PoolMonthData>;
-  poolMonthDatas: Array<PoolMonthData>;
-  poolPosition?: Maybe<PoolPosition>;
-  poolPositions: Array<PoolPosition>;
-  poolWeekData?: Maybe<PoolWeekData>;
-  poolWeekDatas: Array<PoolWeekData>;
-  pools: Array<Pool>;
-  position?: Maybe<Position>;
-  positionSnapshot?: Maybe<PositionSnapshot>;
-  positionSnapshots: Array<PositionSnapshot>;
-  positions: Array<Position>;
-  pot2Pump?: Maybe<Pot2Pump>;
-  pot2Pumps: Array<Pot2Pump>;
-  refund?: Maybe<Refund>;
-  refunds: Array<Refund>;
-  reward?: Maybe<Reward>;
-  rewards: Array<Reward>;
-  swap?: Maybe<Swap>;
-  swaps: Array<Swap>;
-  tick?: Maybe<Tick>;
-  tickDayData?: Maybe<TickDayData>;
-  tickDayDatas: Array<TickDayData>;
-  tickHourData?: Maybe<TickHourData>;
-  tickHourDatas: Array<TickHourData>;
-  ticks: Array<Tick>;
-  token?: Maybe<Token>;
-  tokenDayData?: Maybe<TokenDayData>;
-  tokenDayDatas: Array<TokenDayData>;
-  tokenHourData?: Maybe<TokenHourData>;
-  tokenHourDatas: Array<TokenHourData>;
-  tokens: Array<Token>;
-  transaction?: Maybe<Transaction>;
-  transactions: Array<Transaction>;
-  vaultAffiliate?: Maybe<VaultAffiliate>;
-  vaultAffiliates: Array<VaultAffiliate>;
-  vaultApproval?: Maybe<VaultApproval>;
-  vaultApprovals: Array<VaultApproval>;
-  vaultCollectFee?: Maybe<VaultCollectFee>;
-  vaultCollectFees: Array<VaultCollectFee>;
-  vaultDeposit?: Maybe<VaultDeposit>;
-  vaultDepositMax?: Maybe<VaultDepositMax>;
-  vaultDepositMaxes: Array<VaultDepositMax>;
-  vaultDeposits: Array<VaultDeposit>;
-  vaultHystereses: Array<VaultHysteresis>;
-  vaultHysteresis?: Maybe<VaultHysteresis>;
-  vaultOwnershipTransferred?: Maybe<VaultOwnershipTransferred>;
-  vaultOwnershipTransferreds: Array<VaultOwnershipTransferred>;
-  vaultRebalance?: Maybe<VaultRebalance>;
-  vaultRebalances: Array<VaultRebalance>;
-  vaultSetTwapPeriod?: Maybe<VaultSetTwapPeriod>;
-  vaultSetTwapPeriods: Array<VaultSetTwapPeriod>;
-  vaultShare?: Maybe<VaultShare>;
-  vaultShares: Array<VaultShare>;
-  vaultTransfer?: Maybe<VaultTransfer>;
-  vaultTransfers: Array<VaultTransfer>;
-  vaultWithdraw?: Maybe<VaultWithdraw>;
-  vaultWithdraws: Array<VaultWithdraw>;
-};
-
-
-export type Subscription_MetaArgs = {
-  block?: InputMaybe<Block_Height>;
-};
-
-
-export type SubscriptionAccountArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionAccountsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Account_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Account_Filter>;
-};
-
-
-export type SubscriptionAlgebraDayDataArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionAlgebraDayDatasArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<AlgebraDayData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<AlgebraDayData_Filter>;
-};
-
-
-export type SubscriptionBlockArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionBlocksArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Block_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Block_Filter>;
-};
-
-
-export type SubscriptionBundleArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionBundlesArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Bundle_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Bundle_Filter>;
-};
-
-
-export type SubscriptionBurnArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionBurnsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Burn_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Burn_Filter>;
-};
-
-
-export type SubscriptionClaimLpArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionClaimLpsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<ClaimLp_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<ClaimLp_Filter>;
-};
-
-
-export type SubscriptionCollectArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionCollectsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Collect_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Collect_Filter>;
-};
-
-
-export type SubscriptionDeployIchiVaultArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionDeployIchiVaultsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<DeployIchiVault_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<DeployIchiVault_Filter>;
-};
-
-
-export type SubscriptionDepositArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionDepositRaisedTokenArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionDepositRaisedTokensArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<DepositRaisedToken_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<DepositRaisedToken_Filter>;
-};
-
-
-export type SubscriptionDepositsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Deposit_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Deposit_Filter>;
-};
-
-
-export type SubscriptionEternalFarmingArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionEternalFarmingsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<EternalFarming_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<EternalFarming_Filter>;
-};
-
-
-export type SubscriptionFactoriesArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Factory_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Factory_Filter>;
-};
-
-
-export type SubscriptionFactoryArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionFeeHourDataArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionFeeHourDatasArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<FeeHourData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<FeeHourData_Filter>;
-};
-
-
-export type SubscriptionFlashArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionFlashesArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Flash_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Flash_Filter>;
-};
-
-
-export type SubscriptionHoldingTokenArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionHoldingTokensArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<HoldingToken_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<HoldingToken_Filter>;
-};
-
-
-export type SubscriptionIchiVaultArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionIchiVaultsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<IchiVault_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<IchiVault_Filter>;
-};
-
-
-export type SubscriptionLiquidatorDataArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionLiquidatorDatasArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<LiquidatorData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<LiquidatorData_Filter>;
-};
-
-
-export type SubscriptionMaxTotalSuppliesArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<MaxTotalSupply_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<MaxTotalSupply_Filter>;
-};
-
-
-export type SubscriptionMaxTotalSupplyArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionMemeRacerArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionMemeRacerHourDataArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionMemeRacerHourDatasArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<MemeRacerHourData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<MemeRacerHourData_Filter>;
-};
-
-
-export type SubscriptionMemeRacersArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<MemeRacer_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<MemeRacer_Filter>;
-};
-
-
-export type SubscriptionMintArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionMintsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Mint_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Mint_Filter>;
-};
-
-
-export type SubscriptionParticipantArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionParticipantTransactionHistoriesArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<ParticipantTransactionHistory_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<ParticipantTransactionHistory_Filter>;
-};
-
-
-export type SubscriptionParticipantTransactionHistoryArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionParticipantsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Participant_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Participant_Filter>;
-};
-
-
-export type SubscriptionPluginArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPluginsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Plugin_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Plugin_Filter>;
-};
-
-
-export type SubscriptionPoolArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPoolDayDataArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPoolDayDatasArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<PoolDayData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolDayData_Filter>;
-};
-
-
-export type SubscriptionPoolFeeDataArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPoolFeeDatasArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<PoolFeeData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolFeeData_Filter>;
-};
-
-
-export type SubscriptionPoolHourDataArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPoolHourDatasArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<PoolHourData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolHourData_Filter>;
-};
-
-
-export type SubscriptionPoolMonthDataArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPoolMonthDatasArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<PoolMonthData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolMonthData_Filter>;
-};
-
-
-export type SubscriptionPoolPositionArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPoolPositionsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<PoolPosition_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolPosition_Filter>;
-};
-
-
-export type SubscriptionPoolWeekDataArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPoolWeekDatasArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<PoolWeekData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolWeekData_Filter>;
-};
-
-
-export type SubscriptionPoolsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Pool_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Pool_Filter>;
-};
-
-
-export type SubscriptionPositionArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPositionSnapshotArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPositionSnapshotsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<PositionSnapshot_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PositionSnapshot_Filter>;
-};
-
-
-export type SubscriptionPositionsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Position_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Position_Filter>;
-};
-
-
-export type SubscriptionPot2PumpArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionPot2PumpsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Pot2Pump_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Pot2Pump_Filter>;
-};
-
-
-export type SubscriptionRefundArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionRefundsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Refund_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Refund_Filter>;
-};
-
-
-export type SubscriptionRewardArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionRewardsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Reward_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Reward_Filter>;
-};
-
-
-export type SubscriptionSwapArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionSwapsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Swap_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Swap_Filter>;
-};
-
-
-export type SubscriptionTickArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionTickDayDataArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionTickDayDatasArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<TickDayData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<TickDayData_Filter>;
-};
-
-
-export type SubscriptionTickHourDataArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionTickHourDatasArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<TickHourData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<TickHourData_Filter>;
-};
-
-
-export type SubscriptionTicksArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Tick_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Tick_Filter>;
-};
-
-
-export type SubscriptionTokenArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionTokenDayDataArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionTokenDayDatasArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<TokenDayData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<TokenDayData_Filter>;
-};
-
-
-export type SubscriptionTokenHourDataArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionTokenHourDatasArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<TokenHourData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<TokenHourData_Filter>;
-};
-
-
-export type SubscriptionTokensArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Token_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Token_Filter>;
-};
-
-
-export type SubscriptionTransactionArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionTransactionsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Transaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Transaction_Filter>;
-};
-
-
-export type SubscriptionVaultAffiliateArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionVaultAffiliatesArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<VaultAffiliate_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultAffiliate_Filter>;
-};
-
-
-export type SubscriptionVaultApprovalArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionVaultApprovalsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<VaultApproval_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultApproval_Filter>;
-};
-
-
-export type SubscriptionVaultCollectFeeArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionVaultCollectFeesArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<VaultCollectFee_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultCollectFee_Filter>;
-};
-
-
-export type SubscriptionVaultDepositArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionVaultDepositMaxArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionVaultDepositMaxesArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<VaultDepositMax_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultDepositMax_Filter>;
-};
-
-
-export type SubscriptionVaultDepositsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<VaultDeposit_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultDeposit_Filter>;
-};
-
-
-export type SubscriptionVaultHysteresesArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<VaultHysteresis_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultHysteresis_Filter>;
-};
-
-
-export type SubscriptionVaultHysteresisArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionVaultOwnershipTransferredArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionVaultOwnershipTransferredsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<VaultOwnershipTransferred_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultOwnershipTransferred_Filter>;
-};
-
-
-export type SubscriptionVaultRebalanceArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionVaultRebalancesArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<VaultRebalance_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultRebalance_Filter>;
-};
-
-
-export type SubscriptionVaultSetTwapPeriodArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionVaultSetTwapPeriodsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<VaultSetTwapPeriod_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultSetTwapPeriod_Filter>;
-};
-
-
-export type SubscriptionVaultShareArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionVaultSharesArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<VaultShare_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultShare_Filter>;
-};
-
-
-export type SubscriptionVaultTransferArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionVaultTransfersArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<VaultTransfer_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultTransfer_Filter>;
-};
-
-
-export type SubscriptionVaultWithdrawArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionVaultWithdrawsArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<VaultWithdraw_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultWithdraw_Filter>;
-};
 
 export type Swap = {
   __typename?: 'Swap';
@@ -11450,13 +10707,31 @@ export enum VaultAffiliate_OrderBy {
   VaultAllowTokenB = 'vault__allowTokenB',
   VaultCount = 'vault__count',
   VaultCreatedAtTimestamp = 'vault__createdAtTimestamp',
+  VaultFeeApr_1d = 'vault__feeApr_1d',
+  VaultFeeApr_3d = 'vault__feeApr_3d',
+  VaultFeeApr_7d = 'vault__feeApr_7d',
+  VaultFeeApr_30d = 'vault__feeApr_30d',
+  VaultFeePerSecond0_1d = 'vault__feePerSecond0_1d',
+  VaultFeePerSecond0_3d = 'vault__feePerSecond0_3d',
+  VaultFeePerSecond0_7d = 'vault__feePerSecond0_7d',
+  VaultFeePerSecond0_30d = 'vault__feePerSecond0_30d',
+  VaultFeePerSecond1_1d = 'vault__feePerSecond1_1d',
+  VaultFeePerSecond1_3d = 'vault__feePerSecond1_3d',
+  VaultFeePerSecond1_7d = 'vault__feePerSecond1_7d',
+  VaultFeePerSecond1_30d = 'vault__feePerSecond1_30d',
   VaultHoldersCount = 'vault__holdersCount',
   VaultId = 'vault__id',
+  VaultLastFeeUpdate = 'vault__lastFeeUpdate',
+  VaultLastPrice = 'vault__lastPrice',
+  VaultLastPriceTimestamp = 'vault__lastPriceTimestamp',
   VaultSearchString = 'vault__searchString',
   VaultSender = 'vault__sender',
   VaultTokenA = 'vault__tokenA',
   VaultTokenB = 'vault__tokenB',
-  VaultTotalShares = 'vault__totalShares'
+  VaultTotalAmount0 = 'vault__totalAmount0',
+  VaultTotalAmount1 = 'vault__totalAmount1',
+  VaultTotalShares = 'vault__totalShares',
+  VaultTotalSupply = 'vault__totalSupply'
 }
 
 export type VaultApproval = {
@@ -11542,13 +10817,31 @@ export enum VaultApproval_OrderBy {
   VaultAllowTokenB = 'vault__allowTokenB',
   VaultCount = 'vault__count',
   VaultCreatedAtTimestamp = 'vault__createdAtTimestamp',
+  VaultFeeApr_1d = 'vault__feeApr_1d',
+  VaultFeeApr_3d = 'vault__feeApr_3d',
+  VaultFeeApr_7d = 'vault__feeApr_7d',
+  VaultFeeApr_30d = 'vault__feeApr_30d',
+  VaultFeePerSecond0_1d = 'vault__feePerSecond0_1d',
+  VaultFeePerSecond0_3d = 'vault__feePerSecond0_3d',
+  VaultFeePerSecond0_7d = 'vault__feePerSecond0_7d',
+  VaultFeePerSecond0_30d = 'vault__feePerSecond0_30d',
+  VaultFeePerSecond1_1d = 'vault__feePerSecond1_1d',
+  VaultFeePerSecond1_3d = 'vault__feePerSecond1_3d',
+  VaultFeePerSecond1_7d = 'vault__feePerSecond1_7d',
+  VaultFeePerSecond1_30d = 'vault__feePerSecond1_30d',
   VaultHoldersCount = 'vault__holdersCount',
   VaultId = 'vault__id',
+  VaultLastFeeUpdate = 'vault__lastFeeUpdate',
+  VaultLastPrice = 'vault__lastPrice',
+  VaultLastPriceTimestamp = 'vault__lastPriceTimestamp',
   VaultSearchString = 'vault__searchString',
   VaultSender = 'vault__sender',
   VaultTokenA = 'vault__tokenA',
   VaultTokenB = 'vault__tokenB',
-  VaultTotalShares = 'vault__totalShares'
+  VaultTotalAmount0 = 'vault__totalAmount0',
+  VaultTotalAmount1 = 'vault__totalAmount1',
+  VaultTotalShares = 'vault__totalShares',
+  VaultTotalSupply = 'vault__totalSupply'
 }
 
 export type VaultCollectFee = {
@@ -11557,6 +10850,7 @@ export type VaultCollectFee = {
   feeAmount0: Scalars['BigInt']['output'];
   feeAmount1: Scalars['BigInt']['output'];
   id: Scalars['ID']['output'];
+  lastPrice: Scalars['BigDecimal']['output'];
   sender: Scalars['Bytes']['output'];
   sqrtPrice: Scalars['BigInt']['output'];
   tick: Scalars['Int']['output'];
@@ -11602,6 +10896,14 @@ export type VaultCollectFee_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>;
   id_not?: InputMaybe<Scalars['ID']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lastPrice?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  lastPrice_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   or?: InputMaybe<Array<InputMaybe<VaultCollectFee_Filter>>>;
   sender?: InputMaybe<Scalars['Bytes']['input']>;
   sender_contains?: InputMaybe<Scalars['Bytes']['input']>;
@@ -11681,6 +10983,7 @@ export enum VaultCollectFee_OrderBy {
   FeeAmount0 = 'feeAmount0',
   FeeAmount1 = 'feeAmount1',
   Id = 'id',
+  LastPrice = 'lastPrice',
   Sender = 'sender',
   SqrtPrice = 'sqrtPrice',
   Tick = 'tick',
@@ -11692,13 +10995,31 @@ export enum VaultCollectFee_OrderBy {
   VaultAllowTokenB = 'vault__allowTokenB',
   VaultCount = 'vault__count',
   VaultCreatedAtTimestamp = 'vault__createdAtTimestamp',
+  VaultFeeApr_1d = 'vault__feeApr_1d',
+  VaultFeeApr_3d = 'vault__feeApr_3d',
+  VaultFeeApr_7d = 'vault__feeApr_7d',
+  VaultFeeApr_30d = 'vault__feeApr_30d',
+  VaultFeePerSecond0_1d = 'vault__feePerSecond0_1d',
+  VaultFeePerSecond0_3d = 'vault__feePerSecond0_3d',
+  VaultFeePerSecond0_7d = 'vault__feePerSecond0_7d',
+  VaultFeePerSecond0_30d = 'vault__feePerSecond0_30d',
+  VaultFeePerSecond1_1d = 'vault__feePerSecond1_1d',
+  VaultFeePerSecond1_3d = 'vault__feePerSecond1_3d',
+  VaultFeePerSecond1_7d = 'vault__feePerSecond1_7d',
+  VaultFeePerSecond1_30d = 'vault__feePerSecond1_30d',
   VaultHoldersCount = 'vault__holdersCount',
   VaultId = 'vault__id',
+  VaultLastFeeUpdate = 'vault__lastFeeUpdate',
+  VaultLastPrice = 'vault__lastPrice',
+  VaultLastPriceTimestamp = 'vault__lastPriceTimestamp',
   VaultSearchString = 'vault__searchString',
   VaultSender = 'vault__sender',
   VaultTokenA = 'vault__tokenA',
   VaultTokenB = 'vault__tokenB',
-  VaultTotalShares = 'vault__totalShares'
+  VaultTotalAmount0 = 'vault__totalAmount0',
+  VaultTotalAmount1 = 'vault__totalAmount1',
+  VaultTotalShares = 'vault__totalShares',
+  VaultTotalSupply = 'vault__totalSupply'
 }
 
 export type VaultDeposit = {
@@ -11707,6 +11028,7 @@ export type VaultDeposit = {
   amount1: Scalars['BigInt']['output'];
   createdAtTimestamp: Scalars['BigInt']['output'];
   id: Scalars['ID']['output'];
+  lastPrice: Scalars['BigDecimal']['output'];
   sender: Scalars['Bytes']['output'];
   shares: Scalars['BigInt']['output'];
   sqrtPrice: Scalars['BigInt']['output'];
@@ -11801,13 +11123,31 @@ export enum VaultDepositMax_OrderBy {
   VaultAllowTokenB = 'vault__allowTokenB',
   VaultCount = 'vault__count',
   VaultCreatedAtTimestamp = 'vault__createdAtTimestamp',
+  VaultFeeApr_1d = 'vault__feeApr_1d',
+  VaultFeeApr_3d = 'vault__feeApr_3d',
+  VaultFeeApr_7d = 'vault__feeApr_7d',
+  VaultFeeApr_30d = 'vault__feeApr_30d',
+  VaultFeePerSecond0_1d = 'vault__feePerSecond0_1d',
+  VaultFeePerSecond0_3d = 'vault__feePerSecond0_3d',
+  VaultFeePerSecond0_7d = 'vault__feePerSecond0_7d',
+  VaultFeePerSecond0_30d = 'vault__feePerSecond0_30d',
+  VaultFeePerSecond1_1d = 'vault__feePerSecond1_1d',
+  VaultFeePerSecond1_3d = 'vault__feePerSecond1_3d',
+  VaultFeePerSecond1_7d = 'vault__feePerSecond1_7d',
+  VaultFeePerSecond1_30d = 'vault__feePerSecond1_30d',
   VaultHoldersCount = 'vault__holdersCount',
   VaultId = 'vault__id',
+  VaultLastFeeUpdate = 'vault__lastFeeUpdate',
+  VaultLastPrice = 'vault__lastPrice',
+  VaultLastPriceTimestamp = 'vault__lastPriceTimestamp',
   VaultSearchString = 'vault__searchString',
   VaultSender = 'vault__sender',
   VaultTokenA = 'vault__tokenA',
   VaultTokenB = 'vault__tokenB',
-  VaultTotalShares = 'vault__totalShares'
+  VaultTotalAmount0 = 'vault__totalAmount0',
+  VaultTotalAmount1 = 'vault__totalAmount1',
+  VaultTotalShares = 'vault__totalShares',
+  VaultTotalSupply = 'vault__totalSupply'
 }
 
 export type VaultDeposit_Filter = {
@@ -11846,6 +11186,14 @@ export type VaultDeposit_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>;
   id_not?: InputMaybe<Scalars['ID']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lastPrice?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  lastPrice_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   or?: InputMaybe<Array<InputMaybe<VaultDeposit_Filter>>>;
   sender?: InputMaybe<Scalars['Bytes']['input']>;
   sender_contains?: InputMaybe<Scalars['Bytes']['input']>;
@@ -11959,6 +11307,7 @@ export enum VaultDeposit_OrderBy {
   Amount1 = 'amount1',
   CreatedAtTimestamp = 'createdAtTimestamp',
   Id = 'id',
+  LastPrice = 'lastPrice',
   Sender = 'sender',
   Shares = 'shares',
   SqrtPrice = 'sqrtPrice',
@@ -11974,13 +11323,31 @@ export enum VaultDeposit_OrderBy {
   VaultAllowTokenB = 'vault__allowTokenB',
   VaultCount = 'vault__count',
   VaultCreatedAtTimestamp = 'vault__createdAtTimestamp',
+  VaultFeeApr_1d = 'vault__feeApr_1d',
+  VaultFeeApr_3d = 'vault__feeApr_3d',
+  VaultFeeApr_7d = 'vault__feeApr_7d',
+  VaultFeeApr_30d = 'vault__feeApr_30d',
+  VaultFeePerSecond0_1d = 'vault__feePerSecond0_1d',
+  VaultFeePerSecond0_3d = 'vault__feePerSecond0_3d',
+  VaultFeePerSecond0_7d = 'vault__feePerSecond0_7d',
+  VaultFeePerSecond0_30d = 'vault__feePerSecond0_30d',
+  VaultFeePerSecond1_1d = 'vault__feePerSecond1_1d',
+  VaultFeePerSecond1_3d = 'vault__feePerSecond1_3d',
+  VaultFeePerSecond1_7d = 'vault__feePerSecond1_7d',
+  VaultFeePerSecond1_30d = 'vault__feePerSecond1_30d',
   VaultHoldersCount = 'vault__holdersCount',
   VaultId = 'vault__id',
+  VaultLastFeeUpdate = 'vault__lastFeeUpdate',
+  VaultLastPrice = 'vault__lastPrice',
+  VaultLastPriceTimestamp = 'vault__lastPriceTimestamp',
   VaultSearchString = 'vault__searchString',
   VaultSender = 'vault__sender',
   VaultTokenA = 'vault__tokenA',
   VaultTokenB = 'vault__tokenB',
-  VaultTotalShares = 'vault__totalShares'
+  VaultTotalAmount0 = 'vault__totalAmount0',
+  VaultTotalAmount1 = 'vault__totalAmount1',
+  VaultTotalShares = 'vault__totalShares',
+  VaultTotalSupply = 'vault__totalSupply'
 }
 
 export type VaultHysteresis = {
@@ -12054,13 +11421,31 @@ export enum VaultHysteresis_OrderBy {
   VaultAllowTokenB = 'vault__allowTokenB',
   VaultCount = 'vault__count',
   VaultCreatedAtTimestamp = 'vault__createdAtTimestamp',
+  VaultFeeApr_1d = 'vault__feeApr_1d',
+  VaultFeeApr_3d = 'vault__feeApr_3d',
+  VaultFeeApr_7d = 'vault__feeApr_7d',
+  VaultFeeApr_30d = 'vault__feeApr_30d',
+  VaultFeePerSecond0_1d = 'vault__feePerSecond0_1d',
+  VaultFeePerSecond0_3d = 'vault__feePerSecond0_3d',
+  VaultFeePerSecond0_7d = 'vault__feePerSecond0_7d',
+  VaultFeePerSecond0_30d = 'vault__feePerSecond0_30d',
+  VaultFeePerSecond1_1d = 'vault__feePerSecond1_1d',
+  VaultFeePerSecond1_3d = 'vault__feePerSecond1_3d',
+  VaultFeePerSecond1_7d = 'vault__feePerSecond1_7d',
+  VaultFeePerSecond1_30d = 'vault__feePerSecond1_30d',
   VaultHoldersCount = 'vault__holdersCount',
   VaultId = 'vault__id',
+  VaultLastFeeUpdate = 'vault__lastFeeUpdate',
+  VaultLastPrice = 'vault__lastPrice',
+  VaultLastPriceTimestamp = 'vault__lastPriceTimestamp',
   VaultSearchString = 'vault__searchString',
   VaultSender = 'vault__sender',
   VaultTokenA = 'vault__tokenA',
   VaultTokenB = 'vault__tokenB',
-  VaultTotalShares = 'vault__totalShares'
+  VaultTotalAmount0 = 'vault__totalAmount0',
+  VaultTotalAmount1 = 'vault__totalAmount1',
+  VaultTotalShares = 'vault__totalShares',
+  VaultTotalSupply = 'vault__totalSupply'
 }
 
 export type VaultOwnershipTransferred = {
@@ -12136,13 +11521,31 @@ export enum VaultOwnershipTransferred_OrderBy {
   VaultAllowTokenB = 'vault__allowTokenB',
   VaultCount = 'vault__count',
   VaultCreatedAtTimestamp = 'vault__createdAtTimestamp',
+  VaultFeeApr_1d = 'vault__feeApr_1d',
+  VaultFeeApr_3d = 'vault__feeApr_3d',
+  VaultFeeApr_7d = 'vault__feeApr_7d',
+  VaultFeeApr_30d = 'vault__feeApr_30d',
+  VaultFeePerSecond0_1d = 'vault__feePerSecond0_1d',
+  VaultFeePerSecond0_3d = 'vault__feePerSecond0_3d',
+  VaultFeePerSecond0_7d = 'vault__feePerSecond0_7d',
+  VaultFeePerSecond0_30d = 'vault__feePerSecond0_30d',
+  VaultFeePerSecond1_1d = 'vault__feePerSecond1_1d',
+  VaultFeePerSecond1_3d = 'vault__feePerSecond1_3d',
+  VaultFeePerSecond1_7d = 'vault__feePerSecond1_7d',
+  VaultFeePerSecond1_30d = 'vault__feePerSecond1_30d',
   VaultHoldersCount = 'vault__holdersCount',
   VaultId = 'vault__id',
+  VaultLastFeeUpdate = 'vault__lastFeeUpdate',
+  VaultLastPrice = 'vault__lastPrice',
+  VaultLastPriceTimestamp = 'vault__lastPriceTimestamp',
   VaultSearchString = 'vault__searchString',
   VaultSender = 'vault__sender',
   VaultTokenA = 'vault__tokenA',
   VaultTokenB = 'vault__tokenB',
-  VaultTotalShares = 'vault__totalShares'
+  VaultTotalAmount0 = 'vault__totalAmount0',
+  VaultTotalAmount1 = 'vault__totalAmount1',
+  VaultTotalShares = 'vault__totalShares',
+  VaultTotalSupply = 'vault__totalSupply'
 }
 
 export type VaultRebalance = {
@@ -12151,6 +11554,7 @@ export type VaultRebalance = {
   feeAmount0: Scalars['BigInt']['output'];
   feeAmount1: Scalars['BigInt']['output'];
   id: Scalars['ID']['output'];
+  lastPrice: Scalars['BigDecimal']['output'];
   sqrtPrice: Scalars['BigInt']['output'];
   tick: Scalars['Int']['output'];
   totalAmount0: Scalars['BigInt']['output'];
@@ -12195,6 +11599,14 @@ export type VaultRebalance_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>;
   id_not?: InputMaybe<Scalars['ID']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lastPrice?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  lastPrice_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   or?: InputMaybe<Array<InputMaybe<VaultRebalance_Filter>>>;
   sqrtPrice?: InputMaybe<Scalars['BigInt']['input']>;
   sqrtPrice_gt?: InputMaybe<Scalars['BigInt']['input']>;
@@ -12264,6 +11676,7 @@ export enum VaultRebalance_OrderBy {
   FeeAmount0 = 'feeAmount0',
   FeeAmount1 = 'feeAmount1',
   Id = 'id',
+  LastPrice = 'lastPrice',
   SqrtPrice = 'sqrtPrice',
   Tick = 'tick',
   TotalAmount0 = 'totalAmount0',
@@ -12274,13 +11687,31 @@ export enum VaultRebalance_OrderBy {
   VaultAllowTokenB = 'vault__allowTokenB',
   VaultCount = 'vault__count',
   VaultCreatedAtTimestamp = 'vault__createdAtTimestamp',
+  VaultFeeApr_1d = 'vault__feeApr_1d',
+  VaultFeeApr_3d = 'vault__feeApr_3d',
+  VaultFeeApr_7d = 'vault__feeApr_7d',
+  VaultFeeApr_30d = 'vault__feeApr_30d',
+  VaultFeePerSecond0_1d = 'vault__feePerSecond0_1d',
+  VaultFeePerSecond0_3d = 'vault__feePerSecond0_3d',
+  VaultFeePerSecond0_7d = 'vault__feePerSecond0_7d',
+  VaultFeePerSecond0_30d = 'vault__feePerSecond0_30d',
+  VaultFeePerSecond1_1d = 'vault__feePerSecond1_1d',
+  VaultFeePerSecond1_3d = 'vault__feePerSecond1_3d',
+  VaultFeePerSecond1_7d = 'vault__feePerSecond1_7d',
+  VaultFeePerSecond1_30d = 'vault__feePerSecond1_30d',
   VaultHoldersCount = 'vault__holdersCount',
   VaultId = 'vault__id',
+  VaultLastFeeUpdate = 'vault__lastFeeUpdate',
+  VaultLastPrice = 'vault__lastPrice',
+  VaultLastPriceTimestamp = 'vault__lastPriceTimestamp',
   VaultSearchString = 'vault__searchString',
   VaultSender = 'vault__sender',
   VaultTokenA = 'vault__tokenA',
   VaultTokenB = 'vault__tokenB',
-  VaultTotalShares = 'vault__totalShares'
+  VaultTotalAmount0 = 'vault__totalAmount0',
+  VaultTotalAmount1 = 'vault__totalAmount1',
+  VaultTotalShares = 'vault__totalShares',
+  VaultTotalSupply = 'vault__totalSupply'
 }
 
 export type VaultSetTwapPeriod = {
@@ -12354,13 +11785,31 @@ export enum VaultSetTwapPeriod_OrderBy {
   VaultAllowTokenB = 'vault__allowTokenB',
   VaultCount = 'vault__count',
   VaultCreatedAtTimestamp = 'vault__createdAtTimestamp',
+  VaultFeeApr_1d = 'vault__feeApr_1d',
+  VaultFeeApr_3d = 'vault__feeApr_3d',
+  VaultFeeApr_7d = 'vault__feeApr_7d',
+  VaultFeeApr_30d = 'vault__feeApr_30d',
+  VaultFeePerSecond0_1d = 'vault__feePerSecond0_1d',
+  VaultFeePerSecond0_3d = 'vault__feePerSecond0_3d',
+  VaultFeePerSecond0_7d = 'vault__feePerSecond0_7d',
+  VaultFeePerSecond0_30d = 'vault__feePerSecond0_30d',
+  VaultFeePerSecond1_1d = 'vault__feePerSecond1_1d',
+  VaultFeePerSecond1_3d = 'vault__feePerSecond1_3d',
+  VaultFeePerSecond1_7d = 'vault__feePerSecond1_7d',
+  VaultFeePerSecond1_30d = 'vault__feePerSecond1_30d',
   VaultHoldersCount = 'vault__holdersCount',
   VaultId = 'vault__id',
+  VaultLastFeeUpdate = 'vault__lastFeeUpdate',
+  VaultLastPrice = 'vault__lastPrice',
+  VaultLastPriceTimestamp = 'vault__lastPriceTimestamp',
   VaultSearchString = 'vault__searchString',
   VaultSender = 'vault__sender',
   VaultTokenA = 'vault__tokenA',
   VaultTokenB = 'vault__tokenB',
-  VaultTotalShares = 'vault__totalShares'
+  VaultTotalAmount0 = 'vault__totalAmount0',
+  VaultTotalAmount1 = 'vault__totalAmount1',
+  VaultTotalShares = 'vault__totalShares',
+  VaultTotalSupply = 'vault__totalSupply'
 }
 
 export type VaultShare = {
@@ -12454,13 +11903,31 @@ export enum VaultShare_OrderBy {
   VaultAllowTokenB = 'vault__allowTokenB',
   VaultCount = 'vault__count',
   VaultCreatedAtTimestamp = 'vault__createdAtTimestamp',
+  VaultFeeApr_1d = 'vault__feeApr_1d',
+  VaultFeeApr_3d = 'vault__feeApr_3d',
+  VaultFeeApr_7d = 'vault__feeApr_7d',
+  VaultFeeApr_30d = 'vault__feeApr_30d',
+  VaultFeePerSecond0_1d = 'vault__feePerSecond0_1d',
+  VaultFeePerSecond0_3d = 'vault__feePerSecond0_3d',
+  VaultFeePerSecond0_7d = 'vault__feePerSecond0_7d',
+  VaultFeePerSecond0_30d = 'vault__feePerSecond0_30d',
+  VaultFeePerSecond1_1d = 'vault__feePerSecond1_1d',
+  VaultFeePerSecond1_3d = 'vault__feePerSecond1_3d',
+  VaultFeePerSecond1_7d = 'vault__feePerSecond1_7d',
+  VaultFeePerSecond1_30d = 'vault__feePerSecond1_30d',
   VaultHoldersCount = 'vault__holdersCount',
   VaultId = 'vault__id',
+  VaultLastFeeUpdate = 'vault__lastFeeUpdate',
+  VaultLastPrice = 'vault__lastPrice',
+  VaultLastPriceTimestamp = 'vault__lastPriceTimestamp',
   VaultSearchString = 'vault__searchString',
   VaultSender = 'vault__sender',
   VaultTokenA = 'vault__tokenA',
   VaultTokenB = 'vault__tokenB',
-  VaultTotalShares = 'vault__totalShares'
+  VaultTotalAmount0 = 'vault__totalAmount0',
+  VaultTotalAmount1 = 'vault__totalAmount1',
+  VaultTotalShares = 'vault__totalShares',
+  VaultTotalSupply = 'vault__totalSupply'
 }
 
 export type VaultTransfer = {
@@ -12468,6 +11935,7 @@ export type VaultTransfer = {
   createdAtTimestamp: Scalars['BigInt']['output'];
   from: Scalars['Bytes']['output'];
   id: Scalars['ID']['output'];
+  lastPrice: Scalars['BigDecimal']['output'];
   sqrtPrice: Scalars['BigInt']['output'];
   tick: Scalars['Int']['output'];
   to: Scalars['Bytes']['output'];
@@ -12508,6 +11976,14 @@ export type VaultTransfer_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>;
   id_not?: InputMaybe<Scalars['ID']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lastPrice?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  lastPrice_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   or?: InputMaybe<Array<InputMaybe<VaultTransfer_Filter>>>;
   sqrtPrice?: InputMaybe<Scalars['BigInt']['input']>;
   sqrtPrice_gt?: InputMaybe<Scalars['BigInt']['input']>;
@@ -12594,6 +12070,7 @@ export enum VaultTransfer_OrderBy {
   CreatedAtTimestamp = 'createdAtTimestamp',
   From = 'from',
   Id = 'id',
+  LastPrice = 'lastPrice',
   SqrtPrice = 'sqrtPrice',
   Tick = 'tick',
   To = 'to',
@@ -12606,13 +12083,31 @@ export enum VaultTransfer_OrderBy {
   VaultAllowTokenB = 'vault__allowTokenB',
   VaultCount = 'vault__count',
   VaultCreatedAtTimestamp = 'vault__createdAtTimestamp',
+  VaultFeeApr_1d = 'vault__feeApr_1d',
+  VaultFeeApr_3d = 'vault__feeApr_3d',
+  VaultFeeApr_7d = 'vault__feeApr_7d',
+  VaultFeeApr_30d = 'vault__feeApr_30d',
+  VaultFeePerSecond0_1d = 'vault__feePerSecond0_1d',
+  VaultFeePerSecond0_3d = 'vault__feePerSecond0_3d',
+  VaultFeePerSecond0_7d = 'vault__feePerSecond0_7d',
+  VaultFeePerSecond0_30d = 'vault__feePerSecond0_30d',
+  VaultFeePerSecond1_1d = 'vault__feePerSecond1_1d',
+  VaultFeePerSecond1_3d = 'vault__feePerSecond1_3d',
+  VaultFeePerSecond1_7d = 'vault__feePerSecond1_7d',
+  VaultFeePerSecond1_30d = 'vault__feePerSecond1_30d',
   VaultHoldersCount = 'vault__holdersCount',
   VaultId = 'vault__id',
+  VaultLastFeeUpdate = 'vault__lastFeeUpdate',
+  VaultLastPrice = 'vault__lastPrice',
+  VaultLastPriceTimestamp = 'vault__lastPriceTimestamp',
   VaultSearchString = 'vault__searchString',
   VaultSender = 'vault__sender',
   VaultTokenA = 'vault__tokenA',
   VaultTokenB = 'vault__tokenB',
-  VaultTotalShares = 'vault__totalShares'
+  VaultTotalAmount0 = 'vault__totalAmount0',
+  VaultTotalAmount1 = 'vault__totalAmount1',
+  VaultTotalShares = 'vault__totalShares',
+  VaultTotalSupply = 'vault__totalSupply'
 }
 
 export type VaultWithdraw = {
@@ -12621,6 +12116,7 @@ export type VaultWithdraw = {
   amount1: Scalars['BigInt']['output'];
   createdAtTimestamp: Scalars['BigInt']['output'];
   id: Scalars['ID']['output'];
+  lastPrice: Scalars['BigDecimal']['output'];
   sender: Scalars['Bytes']['output'];
   shares: Scalars['BigInt']['output'];
   sqrtPrice: Scalars['BigInt']['output'];
@@ -12670,6 +12166,14 @@ export type VaultWithdraw_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>;
   id_not?: InputMaybe<Scalars['ID']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lastPrice?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_gt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_gte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
+  lastPrice_lt?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_lte?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_not?: InputMaybe<Scalars['BigDecimal']['input']>;
+  lastPrice_not_in?: InputMaybe<Array<Scalars['BigDecimal']['input']>>;
   or?: InputMaybe<Array<InputMaybe<VaultWithdraw_Filter>>>;
   sender?: InputMaybe<Scalars['Bytes']['input']>;
   sender_contains?: InputMaybe<Scalars['Bytes']['input']>;
@@ -12783,6 +12287,7 @@ export enum VaultWithdraw_OrderBy {
   Amount1 = 'amount1',
   CreatedAtTimestamp = 'createdAtTimestamp',
   Id = 'id',
+  LastPrice = 'lastPrice',
   Sender = 'sender',
   Shares = 'shares',
   SqrtPrice = 'sqrtPrice',
@@ -12798,13 +12303,31 @@ export enum VaultWithdraw_OrderBy {
   VaultAllowTokenB = 'vault__allowTokenB',
   VaultCount = 'vault__count',
   VaultCreatedAtTimestamp = 'vault__createdAtTimestamp',
+  VaultFeeApr_1d = 'vault__feeApr_1d',
+  VaultFeeApr_3d = 'vault__feeApr_3d',
+  VaultFeeApr_7d = 'vault__feeApr_7d',
+  VaultFeeApr_30d = 'vault__feeApr_30d',
+  VaultFeePerSecond0_1d = 'vault__feePerSecond0_1d',
+  VaultFeePerSecond0_3d = 'vault__feePerSecond0_3d',
+  VaultFeePerSecond0_7d = 'vault__feePerSecond0_7d',
+  VaultFeePerSecond0_30d = 'vault__feePerSecond0_30d',
+  VaultFeePerSecond1_1d = 'vault__feePerSecond1_1d',
+  VaultFeePerSecond1_3d = 'vault__feePerSecond1_3d',
+  VaultFeePerSecond1_7d = 'vault__feePerSecond1_7d',
+  VaultFeePerSecond1_30d = 'vault__feePerSecond1_30d',
   VaultHoldersCount = 'vault__holdersCount',
   VaultId = 'vault__id',
+  VaultLastFeeUpdate = 'vault__lastFeeUpdate',
+  VaultLastPrice = 'vault__lastPrice',
+  VaultLastPriceTimestamp = 'vault__lastPriceTimestamp',
   VaultSearchString = 'vault__searchString',
   VaultSender = 'vault__sender',
   VaultTokenA = 'vault__tokenA',
   VaultTokenB = 'vault__tokenB',
-  VaultTotalShares = 'vault__totalShares'
+  VaultTotalAmount0 = 'vault__totalAmount0',
+  VaultTotalAmount1 = 'vault__totalAmount1',
+  VaultTotalShares = 'vault__totalShares',
+  VaultTotalSupply = 'vault__totalSupply'
 }
 
 export type _Block_ = {
@@ -12827,7 +12350,6 @@ export type _Meta_ = {
    * will be null if the _meta field has a block constraint that asks for
    * a block number. It will be filled if the _meta field has no block constraint
    * and therefore asks for the latest  block
-   *
    */
   block: _Block_;
   /** The deployment ID */
@@ -12914,95 +12436,12 @@ export type AllRacersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type AllRacersQuery = { __typename?: 'Query', memeRacers: Array<{ __typename?: 'MemeRacer', id: string, currentScore: any, token: { __typename?: 'Token', symbol: string, initialUSD: any, derivedUSD: any, totalSupply: any }, hourData: Array<{ __typename?: 'MemeRacerHourData', timestamp: any, score: any, usdAtThisHour: any }> }> };
 
-export type PoolFieldsFragment = { __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, txCount: any, createdAtTimestamp: any, aprPercentage: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, volumeUSD: any, periodStartUnix: number }>, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, volumeUSD: any, tvlUSD: any, date: number }>, poolWeekData: Array<{ __typename?: 'PoolWeekData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, week: number }>, poolMonthData: Array<{ __typename?: 'PoolMonthData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, month: number }> };
-
-export type PoolHourDataFieldsFragment = { __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, volumeUSD: any, periodStartUnix: number };
-
-export type PoolDayDataFieldsFragment = { __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, volumeUSD: any, tvlUSD: any, date: number };
-
-export type TickFieldsFragment = { __typename?: 'Tick', tickIdx: any, liquidityNet: any, liquidityGross: any, price0: any, price1: any };
-
-export type PoolFeeDataFieldsFragment = { __typename?: 'PoolDayData', feesUSD: any };
-
-export type PoolWeekDataFieldsFragment = { __typename?: 'PoolWeekData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, week: number };
-
-export type PoolMonthDataFieldsFragment = { __typename?: 'PoolMonthData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, month: number };
-
-export type PoolsListQueryVariables = Exact<{
-  search?: InputMaybe<Scalars['String']['input']>;
-}>;
-
-
-export type PoolsListQuery = { __typename?: 'Query', pools: Array<{ __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, txCount: any, createdAtTimestamp: any, aprPercentage: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, volumeUSD: any, periodStartUnix: number }>, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, volumeUSD: any, tvlUSD: any, date: number }>, poolWeekData: Array<{ __typename?: 'PoolWeekData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, week: number }>, poolMonthData: Array<{ __typename?: 'PoolMonthData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, month: number }> }> };
-
-export type AllTicksQueryVariables = Exact<{
-  poolAddress: Scalars['String']['input'];
-  skip: Scalars['Int']['input'];
-}>;
-
-
-export type AllTicksQuery = { __typename?: 'Query', ticks: Array<{ __typename?: 'Tick', tickIdx: any, liquidityNet: any, liquidityGross: any, price0: any, price1: any }> };
-
-export type SinglePoolQueryVariables = Exact<{
-  poolId: Scalars['ID']['input'];
-}>;
-
-
-export type SinglePoolQuery = { __typename?: 'Query', pool?: { __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, txCount: any, createdAtTimestamp: any, aprPercentage: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, volumeUSD: any, periodStartUnix: number }>, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, volumeUSD: any, tvlUSD: any, date: number }>, poolWeekData: Array<{ __typename?: 'PoolWeekData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, week: number }>, poolMonthData: Array<{ __typename?: 'PoolMonthData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, month: number }> } | null };
-
-export type MultiplePoolsQueryVariables = Exact<{
-  poolIds?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
-}>;
-
-
-export type MultiplePoolsQuery = { __typename?: 'Query', pools: Array<{ __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, txCount: any, createdAtTimestamp: any, aprPercentage: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, volumeUSD: any, periodStartUnix: number }>, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, volumeUSD: any, tvlUSD: any, date: number }>, poolWeekData: Array<{ __typename?: 'PoolWeekData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, week: number }>, poolMonthData: Array<{ __typename?: 'PoolMonthData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, month: number }> }> };
-
-export type PoolFeeDataQueryVariables = Exact<{
-  poolId?: InputMaybe<Scalars['String']['input']>;
-}>;
-
-
-export type PoolFeeDataQuery = { __typename?: 'Query', poolDayDatas: Array<{ __typename?: 'PoolDayData', feesUSD: any }> };
-
-export type PoolsByTokenPairQueryVariables = Exact<{
-  token0: Scalars['ID']['input'];
-  token1: Scalars['ID']['input'];
-}>;
-
-
-export type PoolsByTokenPairQuery = { __typename?: 'Query', pools: Array<{ __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, txCount: any, createdAtTimestamp: any, aprPercentage: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, volumeUSD: any, periodStartUnix: number }>, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, volumeUSD: any, tvlUSD: any, date: number }>, poolWeekData: Array<{ __typename?: 'PoolWeekData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, week: number }>, poolMonthData: Array<{ __typename?: 'PoolMonthData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, month: number }> }> };
-
-export type LiquidatorDataQueryVariables = Exact<{
-  account: Scalars['String']['input'];
-}>;
-
-
-export type LiquidatorDataQuery = { __typename?: 'Query', liquidatorDatas: Array<{ __typename?: 'LiquidatorData', id: string, totalLiquidityUsd: any, pool: { __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, txCount: any, createdAtTimestamp: any, aprPercentage: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, volumeUSD: any, periodStartUnix: number }>, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, volumeUSD: any, tvlUSD: any, date: number }>, poolWeekData: Array<{ __typename?: 'PoolWeekData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, week: number }>, poolMonthData: Array<{ __typename?: 'PoolMonthData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, month: number }> } }> };
-
-export type LiquidatorDataFieldsFragment = { __typename?: 'LiquidatorData', id: string, totalLiquidityUsd: any, pool: { __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, txCount: any, createdAtTimestamp: any, aprPercentage: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, volumeUSD: any, periodStartUnix: number }>, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, volumeUSD: any, tvlUSD: any, date: number }>, poolWeekData: Array<{ __typename?: 'PoolWeekData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, week: number }>, poolMonthData: Array<{ __typename?: 'PoolMonthData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, month: number }> } };
-
-export type UserPositionsQueryVariables = Exact<{
-  account: Scalars['Bytes']['input'];
-}>;
-
-
-export type UserPositionsQuery = { __typename?: 'Query', positions: Array<{ __typename?: 'Position', id: string, owner: any, liquidity: any, depositedToken0: any, depositedToken1: any, withdrawnToken0: any, withdrawnToken1: any, pool: { __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, txCount: any, createdAtTimestamp: any, aprPercentage: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, volumeUSD: any, periodStartUnix: number }>, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, volumeUSD: any, tvlUSD: any, date: number }>, poolWeekData: Array<{ __typename?: 'PoolWeekData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, week: number }>, poolMonthData: Array<{ __typename?: 'PoolMonthData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, month: number }> }, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> } }> };
-
-export type UserActivePositionsQueryVariables = Exact<{
-  account: Scalars['Bytes']['input'];
-}>;
-
-
-export type UserActivePositionsQuery = { __typename?: 'Query', positions: Array<{ __typename?: 'Position', id: string, owner: any, liquidity: any, depositedToken0: any, depositedToken1: any, withdrawnToken0: any, withdrawnToken1: any, pool: { __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, txCount: any, createdAtTimestamp: any, aprPercentage: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, volumeUSD: any, periodStartUnix: number }>, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, volumeUSD: any, tvlUSD: any, date: number }>, poolWeekData: Array<{ __typename?: 'PoolWeekData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, week: number }>, poolMonthData: Array<{ __typename?: 'PoolMonthData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, month: number }> }, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> } }> };
-
-export type PositionFieldsFragment = { __typename?: 'Position', id: string, owner: any, liquidity: any, depositedToken0: any, depositedToken1: any, withdrawnToken0: any, withdrawnToken1: any, pool: { __typename?: 'Pool', id: string, fee: any, sqrtPrice: any, liquidity: any, tick: any, tickSpacing: any, totalValueLockedUSD: any, volumeUSD: any, feesUSD: any, untrackedFeesUSD: any, token0Price: any, token1Price: any, txCount: any, createdAtTimestamp: any, aprPercentage: any, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, poolHourData: Array<{ __typename?: 'PoolHourData', feesUSD: any, id: string, tvlUSD: any, txCount: any, volumeUSD: any, periodStartUnix: number }>, poolDayData: Array<{ __typename?: 'PoolDayData', feesUSD: any, id: string, txCount: any, volumeUSD: any, tvlUSD: any, date: number }>, poolWeekData: Array<{ __typename?: 'PoolWeekData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, week: number }>, poolMonthData: Array<{ __typename?: 'PoolMonthData', feesUSD: any, tvlUSD: any, volumeUSD: any, id: string, month: number }> }, token0: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, token1: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> } };
-
 export type GetPot2PumpByLaunchTokenQueryVariables = Exact<{
   launchToken: Scalars['String']['input'];
 }>;
 
 
-export type GetPot2PumpByLaunchTokenQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
+export type GetPot2PumpByLaunchTokenQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
 
 export type GetPot2PumpDetailQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -13010,7 +12449,7 @@ export type GetPot2PumpDetailQueryVariables = Exact<{
 }>;
 
 
-export type GetPot2PumpDetailQuery = { __typename?: 'Query', pot2Pump?: { __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> } | null };
+export type GetPot2PumpDetailQuery = { __typename?: 'Query', pot2Pump?: { __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> } | null };
 
 export type GetParticipantDetailQueryVariables = Exact<{
   accountId: Scalars['ID']['input'];
@@ -13018,7 +12457,7 @@ export type GetParticipantDetailQueryVariables = Exact<{
 }>;
 
 
-export type GetParticipantDetailQuery = { __typename?: 'Query', participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, totalDepositPot2pumpUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, pot2Pump: { __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string } }>, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> } }> };
+export type GetParticipantDetailQuery = { __typename?: 'Query', participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, totalDepositPot2pumpUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, pot2Pump: { __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string } }>, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> } }> };
 
 export type Pot2PumpDynamicFilterQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -13030,66 +12469,66 @@ export type Pot2PumpDynamicFilterQueryVariables = Exact<{
 }>;
 
 
-export type Pot2PumpDynamicFilterQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string } }>, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
+export type Pot2PumpDynamicFilterQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string } }>, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
 
 export type Pot2PumpPumpingPopularQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type Pot2PumpPumpingPopularQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
+export type Pot2PumpPumpingPopularQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
 
 export type Pot2PumpPottingNewTokensQueryVariables = Exact<{
   endTime?: InputMaybe<Scalars['BigInt']['input']>;
 }>;
 
 
-export type Pot2PumpPottingNewTokensQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
+export type Pot2PumpPottingNewTokensQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
 
 export type Pot2PumpPottingNearSuccessQueryVariables = Exact<{
   endTime?: InputMaybe<Scalars['BigInt']['input']>;
 }>;
 
 
-export type Pot2PumpPottingNearSuccessQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
+export type Pot2PumpPottingNearSuccessQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
 
 export type Pot2PumpPottingHighPriceQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type Pot2PumpPottingHighPriceQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
+export type Pot2PumpPottingHighPriceQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
 
 export type Pot2PumpPottingTrendingQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type Pot2PumpPottingTrendingQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
+export type Pot2PumpPottingTrendingQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
 
 export type Pot2PumpPottingMarketCapQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type Pot2PumpPottingMarketCapQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
+export type Pot2PumpPottingMarketCapQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
 
 export type Pot2PumpPottingNewTokensByEndtimeQueryVariables = Exact<{
   endTime?: InputMaybe<Scalars['BigInt']['input']>;
 }>;
 
 
-export type Pot2PumpPottingNewTokensByEndtimeQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
+export type Pot2PumpPottingNewTokensByEndtimeQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> }> };
 
 export type GetLatestPumpingTokenQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetLatestPumpingTokenQuery = { __typename?: 'Query', pot2Pumps: Array<{ __typename?: 'Pot2Pump', id: string, launchToken: { __typename?: 'Token', symbol: string, name: string } }> };
 
-export type Pot2PumpFieldFragment = { __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> };
+export type Pot2PumpFieldFragment = { __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> };
 
 export type ParticipantTransactionHistoryFieldsFragment = { __typename?: 'ParticipantTransactionHistory', id: string };
 
-export type ParticipantFieldsFragment = { __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, totalDepositPot2pumpUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, pot2Pump: { __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string } }>, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> } };
+export type ParticipantFieldsFragment = { __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, totalDepositPot2pumpUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, pot2Pump: { __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string } }>, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> } };
 
 export type CanClaimPot2PumpParticipantQueryVariables = Exact<{
   accountId: Scalars['ID']['input'];
 }>;
 
 
-export type CanClaimPot2PumpParticipantQuery = { __typename?: 'Query', participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, totalDepositPot2pumpUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, pot2Pump: { __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string } }>, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> } }> };
+export type CanClaimPot2PumpParticipantQuery = { __typename?: 'Query', participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, totalDepositPot2pumpUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, pot2Pump: { __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string } }>, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> } }> };
 
 export type CanRefundPot2PumpParticipantQueryVariables = Exact<{
   accountId: Scalars['ID']['input'];
@@ -13097,23 +12536,23 @@ export type CanRefundPot2PumpParticipantQueryVariables = Exact<{
 }>;
 
 
-export type CanRefundPot2PumpParticipantQuery = { __typename?: 'Query', participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, totalDepositPot2pumpUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, pot2Pump: { __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string } }>, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> } }> };
+export type CanRefundPot2PumpParticipantQuery = { __typename?: 'Query', participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, totalDepositPot2pumpUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, pot2Pump: { __typename?: 'Pot2Pump', id: string, launchTokenInitialPrice: any, DepositLaunchToken: any, raisedTokenMinCap: any, depositRaisedTokenPercentageToMinCap: any, raisedTokenReachingMinCap: boolean, DepositRaisedToken: any, creator: string, participantsCount: any, totalRefundAmount: any, totalClaimLpAmount: any, buyCount: any, sellCount: any, createdAt: any, endTime: any, state: any, searchString: string, participants: Array<{ __typename?: 'Participant', id: string, amount: any, totalRefundAmount: any, totalclaimLqAmount: any, claimed: boolean, refunded: boolean, account: { __typename?: 'Account', id: string } }>, launchToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, raisedToken: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }, participantTransactionHistorys: Array<{ __typename?: 'ParticipantTransactionHistory', id: string }> } }> };
 
-export type TokenFieldsFragment = { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> };
+export type TokenFieldsFragment = { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any };
 
 export type MultipleTokensQueryVariables = Exact<{
   tokenIds: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
 }>;
 
 
-export type MultipleTokensQuery = { __typename?: 'Query', tokens: Array<{ __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }> };
+export type MultipleTokensQuery = { __typename?: 'Query', tokens: Array<{ __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }> };
 
 export type SingleTokenQueryVariables = Exact<{
   tokenId: Scalars['ID']['input'];
 }>;
 
 
-export type SingleTokenQuery = { __typename?: 'Query', token?: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> } | null };
+export type SingleTokenQuery = { __typename?: 'Query', token?: { __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any } | null };
 
 export type TokenTop10HoldersQueryVariables = Exact<{
   tokenId: Scalars['ID']['input'];
@@ -13125,7 +12564,7 @@ export type TokenTop10HoldersQuery = { __typename?: 'Query', token?: { __typenam
 export type AllTokensQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllTokensQuery = { __typename?: 'Query', tokens: Array<{ __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, holderCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any, pot2Pump?: { __typename?: 'Pot2Pump', id: string } | null, tokenHourData: Array<{ __typename?: 'TokenHourData', periodStartUnix: number, priceUSD: any, feesUSD: any, untrackedVolumeUSD: any }> }> };
+export type AllTokensQuery = { __typename?: 'Query', tokens: Array<{ __typename?: 'Token', id: string, symbol: string, name: string, decimals: any, derivedMatic: any, derivedUSD: any, initialUSD: any, txCount: any, totalSupply: any, volumeUSD: any, totalValueLockedUSD: any, marketCap: any, poolCount: any, priceChange24hPercentage: any }> };
 
 export type TransactionFieldsFragment = { __typename?: 'Transaction', id: string, timestamp: any, type: TransactionType, gasLimit: any, gasPrice: any, blockNumber: any, account: { __typename?: 'Account', id: string, swapCount: any, memeTokenHoldingCount: any, pot2PumpLaunchCount: any, participateCount: any, platformTxCount: any, holdingPoolCount: any, totalSpendUSD: any, totalDepositPot2pumpUSD: any, vaultShares?: Array<{ __typename?: 'VaultShare', id: string, vaultShareBalance: any, vault: { __typename?: 'IchiVault', id: string } }> | null, transaction: Array<{ __typename?: 'Transaction', id: string, timestamp: any }>, holder: Array<{ __typename?: 'HoldingToken', id: string, holdingValue: any, token: { __typename?: 'Token', id: string, symbol: string, derivedUSD: any } }>, participant: Array<{ __typename?: 'Participant', id: string, pot2Pump: { __typename?: 'Pot2Pump', id: string } }> }, mints: Array<{ __typename?: 'Mint', id: string }>, burns: Array<{ __typename?: 'Burn', id: string }>, swaps: Array<{ __typename?: 'Swap', id: string, timestamp: any, sender: any, recipient: any, liquidity: any, origin: any, amount0: any, amount1: any, amountUSD: any, price: any, tick: any, logIndex?: any | null, transaction: { __typename?: 'Transaction', id: string }, pool: { __typename?: 'Pool', id: string }, token0: { __typename?: 'Token', id: string, symbol: string }, token1: { __typename?: 'Token', id: string, symbol: string } }>, flashed: Array<{ __typename?: 'Flash', id: string }>, collects: Array<{ __typename?: 'Collect', id: string }>, depositRaisedTokens: Array<{ __typename?: 'DepositRaisedToken', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress?: any | null, transaction: { __typename?: 'Transaction', id: string } }>, refunds: Array<{ __typename?: 'Refund', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }>, claimLps: Array<{ __typename?: 'ClaimLp', id: string, timestamp: any, amount: any, origin: any, logIndex?: any | null, poolAddress: any, transaction: { __typename?: 'Transaction', id: string } }> };
 
@@ -13261,157 +12700,6 @@ export const BundleFieldsFragmentDoc = gql`
   maticPriceUSD
 }
     `;
-export const TickFieldsFragmentDoc = gql`
-    fragment TickFields on Tick {
-  tickIdx
-  liquidityNet
-  liquidityGross
-  price0
-  price1
-}
-    `;
-export const PoolFeeDataFieldsFragmentDoc = gql`
-    fragment PoolFeeDataFields on PoolDayData {
-  feesUSD
-}
-    `;
-export const TokenFieldsFragmentDoc = gql`
-    fragment TokenFields on Token {
-  id
-  symbol
-  name
-  decimals
-  derivedMatic
-  derivedUSD
-  initialUSD
-  txCount
-  holderCount
-  totalSupply
-  volumeUSD
-  totalValueLockedUSD
-  marketCap
-  poolCount
-  priceChange24hPercentage
-  pot2Pump {
-    id
-  }
-  tokenHourData(orderBy: periodStartUnix, orderDirection: desc) {
-    periodStartUnix
-    priceUSD
-    feesUSD
-    untrackedVolumeUSD
-  }
-}
-    `;
-export const PoolHourDataFieldsFragmentDoc = gql`
-    fragment PoolHourDataFields on PoolHourData {
-  feesUSD
-  id
-  tvlUSD
-  txCount
-  volumeUSD
-  periodStartUnix
-}
-    `;
-export const PoolDayDataFieldsFragmentDoc = gql`
-    fragment PoolDayDataFields on PoolDayData {
-  feesUSD
-  id
-  txCount
-  volumeUSD
-  tvlUSD
-  date
-}
-    `;
-export const PoolWeekDataFieldsFragmentDoc = gql`
-    fragment PoolWeekDataFields on PoolWeekData {
-  feesUSD
-  tvlUSD
-  volumeUSD
-  id
-  week
-}
-    `;
-export const PoolMonthDataFieldsFragmentDoc = gql`
-    fragment PoolMonthDataFields on PoolMonthData {
-  feesUSD
-  tvlUSD
-  volumeUSD
-  id
-  month
-}
-    `;
-export const PoolFieldsFragmentDoc = gql`
-    fragment PoolFields on Pool {
-  id
-  fee
-  token0 {
-    ...TokenFields
-  }
-  token1 {
-    ...TokenFields
-  }
-  poolHourData(first: 48, orderBy: periodStartUnix, orderDirection: desc) {
-    ...PoolHourDataFields
-  }
-  poolDayData(first: 30, orderBy: date, orderDirection: desc) {
-    ...PoolDayDataFields
-  }
-  poolWeekData(first: 10, orderBy: week, orderDirection: desc) {
-    ...PoolWeekDataFields
-  }
-  poolMonthData(first: 24, orderBy: month, orderDirection: desc) {
-    ...PoolMonthDataFields
-  }
-  sqrtPrice
-  liquidity
-  tick
-  tickSpacing
-  totalValueLockedUSD
-  volumeUSD
-  feesUSD
-  untrackedFeesUSD
-  token0Price
-  token1Price
-  txCount
-  createdAtTimestamp
-  aprPercentage
-}
-    ${TokenFieldsFragmentDoc}
-${PoolHourDataFieldsFragmentDoc}
-${PoolDayDataFieldsFragmentDoc}
-${PoolWeekDataFieldsFragmentDoc}
-${PoolMonthDataFieldsFragmentDoc}`;
-export const LiquidatorDataFieldsFragmentDoc = gql`
-    fragment LiquidatorDataFields on LiquidatorData {
-  id
-  totalLiquidityUsd
-  pool {
-    ...PoolFields
-  }
-}
-    ${PoolFieldsFragmentDoc}`;
-export const PositionFieldsFragmentDoc = gql`
-    fragment PositionFields on Position {
-  id
-  owner
-  pool {
-    ...PoolFields
-  }
-  token0 {
-    ...TokenFields
-  }
-  token1 {
-    ...TokenFields
-  }
-  liquidity
-  depositedToken0
-  depositedToken1
-  withdrawnToken0
-  withdrawnToken1
-}
-    ${PoolFieldsFragmentDoc}
-${TokenFieldsFragmentDoc}`;
 export const AlgebraVaultFieldFragmentDoc = gql`
     fragment AlgebraVaultField on IchiVault {
   id
@@ -13489,6 +12777,24 @@ export const AccountFieldFragmentDoc = gql`
 ${TransactionFieldFragmentDoc}
 ${HoldingTokenFieldFragmentDoc}
 ${ParticipantFieldFragmentDoc}`;
+export const TokenFieldsFragmentDoc = gql`
+    fragment TokenFields on Token {
+  id
+  symbol
+  name
+  decimals
+  derivedMatic
+  derivedUSD
+  initialUSD
+  txCount
+  totalSupply
+  volumeUSD
+  totalValueLockedUSD
+  marketCap
+  poolCount
+  priceChange24hPercentage
+}
+    `;
 export const ParticipantTransactionHistoryFieldsFragmentDoc = gql`
     fragment ParticipantTransactionHistoryFields on ParticipantTransactionHistory {
   id
@@ -13783,6 +13089,9 @@ export function useAllAccountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<AllAccountsQuery, AllAccountsQueryVariables>(AllAccountsDocument, options);
         }
+// @ts-ignore
+export function useAllAccountsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<AllAccountsQuery, AllAccountsQueryVariables>): Apollo.UseSuspenseQueryResult<AllAccountsQuery, AllAccountsQueryVariables>;
+export function useAllAccountsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AllAccountsQuery, AllAccountsQueryVariables>): Apollo.UseSuspenseQueryResult<AllAccountsQuery | undefined, AllAccountsQueryVariables>;
 export function useAllAccountsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AllAccountsQuery, AllAccountsQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<AllAccountsQuery, AllAccountsQueryVariables>(AllAccountsDocument, options);
@@ -13823,6 +13132,9 @@ export function useSingleAccountDetailsLazyQuery(baseOptions?: Apollo.LazyQueryH
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<SingleAccountDetailsQuery, SingleAccountDetailsQueryVariables>(SingleAccountDetailsDocument, options);
         }
+// @ts-ignore
+export function useSingleAccountDetailsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<SingleAccountDetailsQuery, SingleAccountDetailsQueryVariables>): Apollo.UseSuspenseQueryResult<SingleAccountDetailsQuery, SingleAccountDetailsQueryVariables>;
+export function useSingleAccountDetailsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<SingleAccountDetailsQuery, SingleAccountDetailsQueryVariables>): Apollo.UseSuspenseQueryResult<SingleAccountDetailsQuery | undefined, SingleAccountDetailsQueryVariables>;
 export function useSingleAccountDetailsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<SingleAccountDetailsQuery, SingleAccountDetailsQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<SingleAccountDetailsQuery, SingleAccountDetailsQueryVariables>(SingleAccountDetailsDocument, options);
@@ -13874,6 +13186,9 @@ export function useEternalFarmingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<EternalFarmingsQuery, EternalFarmingsQueryVariables>(EternalFarmingsDocument, options);
         }
+// @ts-ignore
+export function useEternalFarmingsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<EternalFarmingsQuery, EternalFarmingsQueryVariables>): Apollo.UseSuspenseQueryResult<EternalFarmingsQuery, EternalFarmingsQueryVariables>;
+export function useEternalFarmingsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<EternalFarmingsQuery, EternalFarmingsQueryVariables>): Apollo.UseSuspenseQueryResult<EternalFarmingsQuery | undefined, EternalFarmingsQueryVariables>;
 export function useEternalFarmingsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<EternalFarmingsQuery, EternalFarmingsQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<EternalFarmingsQuery, EternalFarmingsQueryVariables>(EternalFarmingsDocument, options);
@@ -13920,6 +13235,9 @@ export function useDepositsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<D
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<DepositsQuery, DepositsQueryVariables>(DepositsDocument, options);
         }
+// @ts-ignore
+export function useDepositsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<DepositsQuery, DepositsQueryVariables>): Apollo.UseSuspenseQueryResult<DepositsQuery, DepositsQueryVariables>;
+export function useDepositsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<DepositsQuery, DepositsQueryVariables>): Apollo.UseSuspenseQueryResult<DepositsQuery | undefined, DepositsQueryVariables>;
 export function useDepositsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<DepositsQuery, DepositsQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<DepositsQuery, DepositsQueryVariables>(DepositsDocument, options);
@@ -13960,6 +13278,9 @@ export function useActiveFarmingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ActiveFarmingsQuery, ActiveFarmingsQueryVariables>(ActiveFarmingsDocument, options);
         }
+// @ts-ignore
+export function useActiveFarmingsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ActiveFarmingsQuery, ActiveFarmingsQueryVariables>): Apollo.UseSuspenseQueryResult<ActiveFarmingsQuery, ActiveFarmingsQueryVariables>;
+export function useActiveFarmingsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ActiveFarmingsQuery, ActiveFarmingsQueryVariables>): Apollo.UseSuspenseQueryResult<ActiveFarmingsQuery | undefined, ActiveFarmingsQueryVariables>;
 export function useActiveFarmingsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ActiveFarmingsQuery, ActiveFarmingsQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<ActiveFarmingsQuery, ActiveFarmingsQueryVariables>(ActiveFarmingsDocument, options);
@@ -13999,6 +13320,9 @@ export function useNativePriceLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<NativePriceQuery, NativePriceQueryVariables>(NativePriceDocument, options);
         }
+// @ts-ignore
+export function useNativePriceSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<NativePriceQuery, NativePriceQueryVariables>): Apollo.UseSuspenseQueryResult<NativePriceQuery, NativePriceQueryVariables>;
+export function useNativePriceSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<NativePriceQuery, NativePriceQueryVariables>): Apollo.UseSuspenseQueryResult<NativePriceQuery | undefined, NativePriceQueryVariables>;
 export function useNativePriceSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<NativePriceQuery, NativePriceQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<NativePriceQuery, NativePriceQueryVariables>(NativePriceDocument, options);
@@ -14039,6 +13363,9 @@ export function useDexAccountCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<DexAccountCountQuery, DexAccountCountQueryVariables>(DexAccountCountDocument, options);
         }
+// @ts-ignore
+export function useDexAccountCountSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<DexAccountCountQuery, DexAccountCountQueryVariables>): Apollo.UseSuspenseQueryResult<DexAccountCountQuery, DexAccountCountQueryVariables>;
+export function useDexAccountCountSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<DexAccountCountQuery, DexAccountCountQueryVariables>): Apollo.UseSuspenseQueryResult<DexAccountCountQuery | undefined, DexAccountCountQueryVariables>;
 export function useDexAccountCountSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<DexAccountCountQuery, DexAccountCountQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<DexAccountCountQuery, DexAccountCountQueryVariables>(DexAccountCountDocument, options);
@@ -14090,6 +13417,9 @@ export function useAllRacersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<AllRacersQuery, AllRacersQueryVariables>(AllRacersDocument, options);
         }
+// @ts-ignore
+export function useAllRacersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<AllRacersQuery, AllRacersQueryVariables>): Apollo.UseSuspenseQueryResult<AllRacersQuery, AllRacersQueryVariables>;
+export function useAllRacersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AllRacersQuery, AllRacersQueryVariables>): Apollo.UseSuspenseQueryResult<AllRacersQuery | undefined, AllRacersQueryVariables>;
 export function useAllRacersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AllRacersQuery, AllRacersQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<AllRacersQuery, AllRacersQueryVariables>(AllRacersDocument, options);
@@ -14098,380 +13428,6 @@ export type AllRacersQueryHookResult = ReturnType<typeof useAllRacersQuery>;
 export type AllRacersLazyQueryHookResult = ReturnType<typeof useAllRacersLazyQuery>;
 export type AllRacersSuspenseQueryHookResult = ReturnType<typeof useAllRacersSuspenseQuery>;
 export type AllRacersQueryResult = Apollo.QueryResult<AllRacersQuery, AllRacersQueryVariables>;
-export const PoolsListDocument = gql`
-    query PoolsList($search: String) {
-  pools(
-    where: {searchString_contains: $search}
-    orderBy: totalValueLockedUSD
-    orderDirection: desc
-    first: 100
-  ) {
-    ...PoolFields
-  }
-}
-    ${PoolFieldsFragmentDoc}`;
-
-/**
- * __usePoolsListQuery__
- *
- * To run a query within a React component, call `usePoolsListQuery` and pass it any options that fit your needs.
- * When your component renders, `usePoolsListQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = usePoolsListQuery({
- *   variables: {
- *      search: // value for 'search'
- *   },
- * });
- */
-export function usePoolsListQuery(baseOptions?: Apollo.QueryHookOptions<PoolsListQuery, PoolsListQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<PoolsListQuery, PoolsListQueryVariables>(PoolsListDocument, options);
-      }
-export function usePoolsListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PoolsListQuery, PoolsListQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<PoolsListQuery, PoolsListQueryVariables>(PoolsListDocument, options);
-        }
-export function usePoolsListSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<PoolsListQuery, PoolsListQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<PoolsListQuery, PoolsListQueryVariables>(PoolsListDocument, options);
-        }
-export type PoolsListQueryHookResult = ReturnType<typeof usePoolsListQuery>;
-export type PoolsListLazyQueryHookResult = ReturnType<typeof usePoolsListLazyQuery>;
-export type PoolsListSuspenseQueryHookResult = ReturnType<typeof usePoolsListSuspenseQuery>;
-export type PoolsListQueryResult = Apollo.QueryResult<PoolsListQuery, PoolsListQueryVariables>;
-export const AllTicksDocument = gql`
-    query allTicks($poolAddress: String!, $skip: Int!) {
-  ticks(
-    first: 1000
-    skip: $skip
-    where: {poolAddress: $poolAddress}
-    orderBy: tickIdx
-  ) {
-    ...TickFields
-  }
-}
-    ${TickFieldsFragmentDoc}`;
-
-/**
- * __useAllTicksQuery__
- *
- * To run a query within a React component, call `useAllTicksQuery` and pass it any options that fit your needs.
- * When your component renders, `useAllTicksQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAllTicksQuery({
- *   variables: {
- *      poolAddress: // value for 'poolAddress'
- *      skip: // value for 'skip'
- *   },
- * });
- */
-export function useAllTicksQuery(baseOptions: Apollo.QueryHookOptions<AllTicksQuery, AllTicksQueryVariables> & ({ variables: AllTicksQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<AllTicksQuery, AllTicksQueryVariables>(AllTicksDocument, options);
-      }
-export function useAllTicksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AllTicksQuery, AllTicksQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<AllTicksQuery, AllTicksQueryVariables>(AllTicksDocument, options);
-        }
-export function useAllTicksSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AllTicksQuery, AllTicksQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<AllTicksQuery, AllTicksQueryVariables>(AllTicksDocument, options);
-        }
-export type AllTicksQueryHookResult = ReturnType<typeof useAllTicksQuery>;
-export type AllTicksLazyQueryHookResult = ReturnType<typeof useAllTicksLazyQuery>;
-export type AllTicksSuspenseQueryHookResult = ReturnType<typeof useAllTicksSuspenseQuery>;
-export type AllTicksQueryResult = Apollo.QueryResult<AllTicksQuery, AllTicksQueryVariables>;
-export const SinglePoolDocument = gql`
-    query SinglePool($poolId: ID!) {
-  pool(id: $poolId) {
-    ...PoolFields
-  }
-}
-    ${PoolFieldsFragmentDoc}`;
-
-/**
- * __useSinglePoolQuery__
- *
- * To run a query within a React component, call `useSinglePoolQuery` and pass it any options that fit your needs.
- * When your component renders, `useSinglePoolQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSinglePoolQuery({
- *   variables: {
- *      poolId: // value for 'poolId'
- *   },
- * });
- */
-export function useSinglePoolQuery(baseOptions: Apollo.QueryHookOptions<SinglePoolQuery, SinglePoolQueryVariables> & ({ variables: SinglePoolQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SinglePoolQuery, SinglePoolQueryVariables>(SinglePoolDocument, options);
-      }
-export function useSinglePoolLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SinglePoolQuery, SinglePoolQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SinglePoolQuery, SinglePoolQueryVariables>(SinglePoolDocument, options);
-        }
-export function useSinglePoolSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<SinglePoolQuery, SinglePoolQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<SinglePoolQuery, SinglePoolQueryVariables>(SinglePoolDocument, options);
-        }
-export type SinglePoolQueryHookResult = ReturnType<typeof useSinglePoolQuery>;
-export type SinglePoolLazyQueryHookResult = ReturnType<typeof useSinglePoolLazyQuery>;
-export type SinglePoolSuspenseQueryHookResult = ReturnType<typeof useSinglePoolSuspenseQuery>;
-export type SinglePoolQueryResult = Apollo.QueryResult<SinglePoolQuery, SinglePoolQueryVariables>;
-export const MultiplePoolsDocument = gql`
-    query MultiplePools($poolIds: [ID!]) {
-  pools(where: {id_in: $poolIds}) {
-    ...PoolFields
-  }
-}
-    ${PoolFieldsFragmentDoc}`;
-
-/**
- * __useMultiplePoolsQuery__
- *
- * To run a query within a React component, call `useMultiplePoolsQuery` and pass it any options that fit your needs.
- * When your component renders, `useMultiplePoolsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMultiplePoolsQuery({
- *   variables: {
- *      poolIds: // value for 'poolIds'
- *   },
- * });
- */
-export function useMultiplePoolsQuery(baseOptions?: Apollo.QueryHookOptions<MultiplePoolsQuery, MultiplePoolsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<MultiplePoolsQuery, MultiplePoolsQueryVariables>(MultiplePoolsDocument, options);
-      }
-export function useMultiplePoolsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MultiplePoolsQuery, MultiplePoolsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<MultiplePoolsQuery, MultiplePoolsQueryVariables>(MultiplePoolsDocument, options);
-        }
-export function useMultiplePoolsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MultiplePoolsQuery, MultiplePoolsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<MultiplePoolsQuery, MultiplePoolsQueryVariables>(MultiplePoolsDocument, options);
-        }
-export type MultiplePoolsQueryHookResult = ReturnType<typeof useMultiplePoolsQuery>;
-export type MultiplePoolsLazyQueryHookResult = ReturnType<typeof useMultiplePoolsLazyQuery>;
-export type MultiplePoolsSuspenseQueryHookResult = ReturnType<typeof useMultiplePoolsSuspenseQuery>;
-export type MultiplePoolsQueryResult = Apollo.QueryResult<MultiplePoolsQuery, MultiplePoolsQueryVariables>;
-export const PoolFeeDataDocument = gql`
-    query PoolFeeData($poolId: String) {
-  poolDayDatas(where: {pool: $poolId}, orderBy: date, orderDirection: desc) {
-    ...PoolFeeDataFields
-  }
-}
-    ${PoolFeeDataFieldsFragmentDoc}`;
-
-/**
- * __usePoolFeeDataQuery__
- *
- * To run a query within a React component, call `usePoolFeeDataQuery` and pass it any options that fit your needs.
- * When your component renders, `usePoolFeeDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = usePoolFeeDataQuery({
- *   variables: {
- *      poolId: // value for 'poolId'
- *   },
- * });
- */
-export function usePoolFeeDataQuery(baseOptions?: Apollo.QueryHookOptions<PoolFeeDataQuery, PoolFeeDataQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<PoolFeeDataQuery, PoolFeeDataQueryVariables>(PoolFeeDataDocument, options);
-      }
-export function usePoolFeeDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PoolFeeDataQuery, PoolFeeDataQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<PoolFeeDataQuery, PoolFeeDataQueryVariables>(PoolFeeDataDocument, options);
-        }
-export function usePoolFeeDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<PoolFeeDataQuery, PoolFeeDataQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<PoolFeeDataQuery, PoolFeeDataQueryVariables>(PoolFeeDataDocument, options);
-        }
-export type PoolFeeDataQueryHookResult = ReturnType<typeof usePoolFeeDataQuery>;
-export type PoolFeeDataLazyQueryHookResult = ReturnType<typeof usePoolFeeDataLazyQuery>;
-export type PoolFeeDataSuspenseQueryHookResult = ReturnType<typeof usePoolFeeDataSuspenseQuery>;
-export type PoolFeeDataQueryResult = Apollo.QueryResult<PoolFeeDataQuery, PoolFeeDataQueryVariables>;
-export const PoolsByTokenPairDocument = gql`
-    query PoolsByTokenPair($token0: ID!, $token1: ID!) {
-  pools(
-    where: {or: [{token0_: {id: $token0}, token1_: {id: $token1}}, {token0_: {id: $token1}, token1_: {id: $token0}}]}
-  ) {
-    ...PoolFields
-  }
-}
-    ${PoolFieldsFragmentDoc}`;
-
-/**
- * __usePoolsByTokenPairQuery__
- *
- * To run a query within a React component, call `usePoolsByTokenPairQuery` and pass it any options that fit your needs.
- * When your component renders, `usePoolsByTokenPairQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = usePoolsByTokenPairQuery({
- *   variables: {
- *      token0: // value for 'token0'
- *      token1: // value for 'token1'
- *   },
- * });
- */
-export function usePoolsByTokenPairQuery(baseOptions: Apollo.QueryHookOptions<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables> & ({ variables: PoolsByTokenPairQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables>(PoolsByTokenPairDocument, options);
-      }
-export function usePoolsByTokenPairLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables>(PoolsByTokenPairDocument, options);
-        }
-export function usePoolsByTokenPairSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables>(PoolsByTokenPairDocument, options);
-        }
-export type PoolsByTokenPairQueryHookResult = ReturnType<typeof usePoolsByTokenPairQuery>;
-export type PoolsByTokenPairLazyQueryHookResult = ReturnType<typeof usePoolsByTokenPairLazyQuery>;
-export type PoolsByTokenPairSuspenseQueryHookResult = ReturnType<typeof usePoolsByTokenPairSuspenseQuery>;
-export type PoolsByTokenPairQueryResult = Apollo.QueryResult<PoolsByTokenPairQuery, PoolsByTokenPairQueryVariables>;
-export const LiquidatorDataDocument = gql`
-    query LiquidatorData($account: String!) {
-  liquidatorDatas(where: {account: $account}) {
-    ...LiquidatorDataFields
-  }
-}
-    ${LiquidatorDataFieldsFragmentDoc}`;
-
-/**
- * __useLiquidatorDataQuery__
- *
- * To run a query within a React component, call `useLiquidatorDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useLiquidatorDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useLiquidatorDataQuery({
- *   variables: {
- *      account: // value for 'account'
- *   },
- * });
- */
-export function useLiquidatorDataQuery(baseOptions: Apollo.QueryHookOptions<LiquidatorDataQuery, LiquidatorDataQueryVariables> & ({ variables: LiquidatorDataQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<LiquidatorDataQuery, LiquidatorDataQueryVariables>(LiquidatorDataDocument, options);
-      }
-export function useLiquidatorDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LiquidatorDataQuery, LiquidatorDataQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<LiquidatorDataQuery, LiquidatorDataQueryVariables>(LiquidatorDataDocument, options);
-        }
-export function useLiquidatorDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<LiquidatorDataQuery, LiquidatorDataQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<LiquidatorDataQuery, LiquidatorDataQueryVariables>(LiquidatorDataDocument, options);
-        }
-export type LiquidatorDataQueryHookResult = ReturnType<typeof useLiquidatorDataQuery>;
-export type LiquidatorDataLazyQueryHookResult = ReturnType<typeof useLiquidatorDataLazyQuery>;
-export type LiquidatorDataSuspenseQueryHookResult = ReturnType<typeof useLiquidatorDataSuspenseQuery>;
-export type LiquidatorDataQueryResult = Apollo.QueryResult<LiquidatorDataQuery, LiquidatorDataQueryVariables>;
-export const UserPositionsDocument = gql`
-    query UserPositions($account: Bytes!) {
-  positions(where: {owner: $account}) {
-    ...PositionFields
-  }
-}
-    ${PositionFieldsFragmentDoc}`;
-
-/**
- * __useUserPositionsQuery__
- *
- * To run a query within a React component, call `useUserPositionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserPositionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserPositionsQuery({
- *   variables: {
- *      account: // value for 'account'
- *   },
- * });
- */
-export function useUserPositionsQuery(baseOptions: Apollo.QueryHookOptions<UserPositionsQuery, UserPositionsQueryVariables> & ({ variables: UserPositionsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UserPositionsQuery, UserPositionsQueryVariables>(UserPositionsDocument, options);
-      }
-export function useUserPositionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserPositionsQuery, UserPositionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UserPositionsQuery, UserPositionsQueryVariables>(UserPositionsDocument, options);
-        }
-export function useUserPositionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<UserPositionsQuery, UserPositionsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<UserPositionsQuery, UserPositionsQueryVariables>(UserPositionsDocument, options);
-        }
-export type UserPositionsQueryHookResult = ReturnType<typeof useUserPositionsQuery>;
-export type UserPositionsLazyQueryHookResult = ReturnType<typeof useUserPositionsLazyQuery>;
-export type UserPositionsSuspenseQueryHookResult = ReturnType<typeof useUserPositionsSuspenseQuery>;
-export type UserPositionsQueryResult = Apollo.QueryResult<UserPositionsQuery, UserPositionsQueryVariables>;
-export const UserActivePositionsDocument = gql`
-    query UserActivePositions($account: Bytes!) {
-  positions(where: {owner: $account, liquidity_gt: 0}) {
-    ...PositionFields
-  }
-}
-    ${PositionFieldsFragmentDoc}`;
-
-/**
- * __useUserActivePositionsQuery__
- *
- * To run a query within a React component, call `useUserActivePositionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserActivePositionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserActivePositionsQuery({
- *   variables: {
- *      account: // value for 'account'
- *   },
- * });
- */
-export function useUserActivePositionsQuery(baseOptions: Apollo.QueryHookOptions<UserActivePositionsQuery, UserActivePositionsQueryVariables> & ({ variables: UserActivePositionsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UserActivePositionsQuery, UserActivePositionsQueryVariables>(UserActivePositionsDocument, options);
-      }
-export function useUserActivePositionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserActivePositionsQuery, UserActivePositionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UserActivePositionsQuery, UserActivePositionsQueryVariables>(UserActivePositionsDocument, options);
-        }
-export function useUserActivePositionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<UserActivePositionsQuery, UserActivePositionsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<UserActivePositionsQuery, UserActivePositionsQueryVariables>(UserActivePositionsDocument, options);
-        }
-export type UserActivePositionsQueryHookResult = ReturnType<typeof useUserActivePositionsQuery>;
-export type UserActivePositionsLazyQueryHookResult = ReturnType<typeof useUserActivePositionsLazyQuery>;
-export type UserActivePositionsSuspenseQueryHookResult = ReturnType<typeof useUserActivePositionsSuspenseQuery>;
-export type UserActivePositionsQueryResult = Apollo.QueryResult<UserActivePositionsQuery, UserActivePositionsQueryVariables>;
 export const GetPot2PumpByLaunchTokenDocument = gql`
     query GetPot2PumpByLaunchToken($launchToken: String!) {
   pot2Pumps(where: {launchToken: $launchToken}) {
@@ -14504,6 +13460,9 @@ export function useGetPot2PumpByLaunchTokenLazyQuery(baseOptions?: Apollo.LazyQu
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetPot2PumpByLaunchTokenQuery, GetPot2PumpByLaunchTokenQueryVariables>(GetPot2PumpByLaunchTokenDocument, options);
         }
+// @ts-ignore
+export function useGetPot2PumpByLaunchTokenSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetPot2PumpByLaunchTokenQuery, GetPot2PumpByLaunchTokenQueryVariables>): Apollo.UseSuspenseQueryResult<GetPot2PumpByLaunchTokenQuery, GetPot2PumpByLaunchTokenQueryVariables>;
+export function useGetPot2PumpByLaunchTokenSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetPot2PumpByLaunchTokenQuery, GetPot2PumpByLaunchTokenQueryVariables>): Apollo.UseSuspenseQueryResult<GetPot2PumpByLaunchTokenQuery | undefined, GetPot2PumpByLaunchTokenQueryVariables>;
 export function useGetPot2PumpByLaunchTokenSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetPot2PumpByLaunchTokenQuery, GetPot2PumpByLaunchTokenQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<GetPot2PumpByLaunchTokenQuery, GetPot2PumpByLaunchTokenQueryVariables>(GetPot2PumpByLaunchTokenDocument, options);
@@ -14545,6 +13504,9 @@ export function useGetPot2PumpDetailLazyQuery(baseOptions?: Apollo.LazyQueryHook
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetPot2PumpDetailQuery, GetPot2PumpDetailQueryVariables>(GetPot2PumpDetailDocument, options);
         }
+// @ts-ignore
+export function useGetPot2PumpDetailSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetPot2PumpDetailQuery, GetPot2PumpDetailQueryVariables>): Apollo.UseSuspenseQueryResult<GetPot2PumpDetailQuery, GetPot2PumpDetailQueryVariables>;
+export function useGetPot2PumpDetailSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetPot2PumpDetailQuery, GetPot2PumpDetailQueryVariables>): Apollo.UseSuspenseQueryResult<GetPot2PumpDetailQuery | undefined, GetPot2PumpDetailQueryVariables>;
 export function useGetPot2PumpDetailSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetPot2PumpDetailQuery, GetPot2PumpDetailQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<GetPot2PumpDetailQuery, GetPot2PumpDetailQueryVariables>(GetPot2PumpDetailDocument, options);
@@ -14586,6 +13548,9 @@ export function useGetParticipantDetailLazyQuery(baseOptions?: Apollo.LazyQueryH
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetParticipantDetailQuery, GetParticipantDetailQueryVariables>(GetParticipantDetailDocument, options);
         }
+// @ts-ignore
+export function useGetParticipantDetailSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetParticipantDetailQuery, GetParticipantDetailQueryVariables>): Apollo.UseSuspenseQueryResult<GetParticipantDetailQuery, GetParticipantDetailQueryVariables>;
+export function useGetParticipantDetailSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetParticipantDetailQuery, GetParticipantDetailQueryVariables>): Apollo.UseSuspenseQueryResult<GetParticipantDetailQuery | undefined, GetParticipantDetailQueryVariables>;
 export function useGetParticipantDetailSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetParticipantDetailQuery, GetParticipantDetailQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<GetParticipantDetailQuery, GetParticipantDetailQueryVariables>(GetParticipantDetailDocument, options);
@@ -14648,6 +13613,9 @@ export function usePot2PumpDynamicFilterLazyQuery(baseOptions?: Apollo.LazyQuery
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<Pot2PumpDynamicFilterQuery, Pot2PumpDynamicFilterQueryVariables>(Pot2PumpDynamicFilterDocument, options);
         }
+// @ts-ignore
+export function usePot2PumpDynamicFilterSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Pot2PumpDynamicFilterQuery, Pot2PumpDynamicFilterQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpDynamicFilterQuery, Pot2PumpDynamicFilterQueryVariables>;
+export function usePot2PumpDynamicFilterSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpDynamicFilterQuery, Pot2PumpDynamicFilterQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpDynamicFilterQuery | undefined, Pot2PumpDynamicFilterQueryVariables>;
 export function usePot2PumpDynamicFilterSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpDynamicFilterQuery, Pot2PumpDynamicFilterQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<Pot2PumpDynamicFilterQuery, Pot2PumpDynamicFilterQueryVariables>(Pot2PumpDynamicFilterDocument, options);
@@ -14692,6 +13660,9 @@ export function usePot2PumpPumpingPopularLazyQuery(baseOptions?: Apollo.LazyQuer
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<Pot2PumpPumpingPopularQuery, Pot2PumpPumpingPopularQueryVariables>(Pot2PumpPumpingPopularDocument, options);
         }
+// @ts-ignore
+export function usePot2PumpPumpingPopularSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Pot2PumpPumpingPopularQuery, Pot2PumpPumpingPopularQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpPumpingPopularQuery, Pot2PumpPumpingPopularQueryVariables>;
+export function usePot2PumpPumpingPopularSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPumpingPopularQuery, Pot2PumpPumpingPopularQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpPumpingPopularQuery | undefined, Pot2PumpPumpingPopularQueryVariables>;
 export function usePot2PumpPumpingPopularSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPumpingPopularQuery, Pot2PumpPumpingPopularQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<Pot2PumpPumpingPopularQuery, Pot2PumpPumpingPopularQueryVariables>(Pot2PumpPumpingPopularDocument, options);
@@ -14737,6 +13708,9 @@ export function usePot2PumpPottingNewTokensLazyQuery(baseOptions?: Apollo.LazyQu
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<Pot2PumpPottingNewTokensQuery, Pot2PumpPottingNewTokensQueryVariables>(Pot2PumpPottingNewTokensDocument, options);
         }
+// @ts-ignore
+export function usePot2PumpPottingNewTokensSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Pot2PumpPottingNewTokensQuery, Pot2PumpPottingNewTokensQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpPottingNewTokensQuery, Pot2PumpPottingNewTokensQueryVariables>;
+export function usePot2PumpPottingNewTokensSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPottingNewTokensQuery, Pot2PumpPottingNewTokensQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpPottingNewTokensQuery | undefined, Pot2PumpPottingNewTokensQueryVariables>;
 export function usePot2PumpPottingNewTokensSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPottingNewTokensQuery, Pot2PumpPottingNewTokensQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<Pot2PumpPottingNewTokensQuery, Pot2PumpPottingNewTokensQueryVariables>(Pot2PumpPottingNewTokensDocument, options);
@@ -14782,6 +13756,9 @@ export function usePot2PumpPottingNearSuccessLazyQuery(baseOptions?: Apollo.Lazy
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<Pot2PumpPottingNearSuccessQuery, Pot2PumpPottingNearSuccessQueryVariables>(Pot2PumpPottingNearSuccessDocument, options);
         }
+// @ts-ignore
+export function usePot2PumpPottingNearSuccessSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Pot2PumpPottingNearSuccessQuery, Pot2PumpPottingNearSuccessQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpPottingNearSuccessQuery, Pot2PumpPottingNearSuccessQueryVariables>;
+export function usePot2PumpPottingNearSuccessSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPottingNearSuccessQuery, Pot2PumpPottingNearSuccessQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpPottingNearSuccessQuery | undefined, Pot2PumpPottingNearSuccessQueryVariables>;
 export function usePot2PumpPottingNearSuccessSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPottingNearSuccessQuery, Pot2PumpPottingNearSuccessQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<Pot2PumpPottingNearSuccessQuery, Pot2PumpPottingNearSuccessQueryVariables>(Pot2PumpPottingNearSuccessDocument, options);
@@ -14826,6 +13803,9 @@ export function usePot2PumpPottingHighPriceLazyQuery(baseOptions?: Apollo.LazyQu
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<Pot2PumpPottingHighPriceQuery, Pot2PumpPottingHighPriceQueryVariables>(Pot2PumpPottingHighPriceDocument, options);
         }
+// @ts-ignore
+export function usePot2PumpPottingHighPriceSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Pot2PumpPottingHighPriceQuery, Pot2PumpPottingHighPriceQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpPottingHighPriceQuery, Pot2PumpPottingHighPriceQueryVariables>;
+export function usePot2PumpPottingHighPriceSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPottingHighPriceQuery, Pot2PumpPottingHighPriceQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpPottingHighPriceQuery | undefined, Pot2PumpPottingHighPriceQueryVariables>;
 export function usePot2PumpPottingHighPriceSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPottingHighPriceQuery, Pot2PumpPottingHighPriceQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<Pot2PumpPottingHighPriceQuery, Pot2PumpPottingHighPriceQueryVariables>(Pot2PumpPottingHighPriceDocument, options);
@@ -14870,6 +13850,9 @@ export function usePot2PumpPottingTrendingLazyQuery(baseOptions?: Apollo.LazyQue
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<Pot2PumpPottingTrendingQuery, Pot2PumpPottingTrendingQueryVariables>(Pot2PumpPottingTrendingDocument, options);
         }
+// @ts-ignore
+export function usePot2PumpPottingTrendingSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Pot2PumpPottingTrendingQuery, Pot2PumpPottingTrendingQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpPottingTrendingQuery, Pot2PumpPottingTrendingQueryVariables>;
+export function usePot2PumpPottingTrendingSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPottingTrendingQuery, Pot2PumpPottingTrendingQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpPottingTrendingQuery | undefined, Pot2PumpPottingTrendingQueryVariables>;
 export function usePot2PumpPottingTrendingSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPottingTrendingQuery, Pot2PumpPottingTrendingQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<Pot2PumpPottingTrendingQuery, Pot2PumpPottingTrendingQueryVariables>(Pot2PumpPottingTrendingDocument, options);
@@ -14914,6 +13897,9 @@ export function usePot2PumpPottingMarketCapLazyQuery(baseOptions?: Apollo.LazyQu
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<Pot2PumpPottingMarketCapQuery, Pot2PumpPottingMarketCapQueryVariables>(Pot2PumpPottingMarketCapDocument, options);
         }
+// @ts-ignore
+export function usePot2PumpPottingMarketCapSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Pot2PumpPottingMarketCapQuery, Pot2PumpPottingMarketCapQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpPottingMarketCapQuery, Pot2PumpPottingMarketCapQueryVariables>;
+export function usePot2PumpPottingMarketCapSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPottingMarketCapQuery, Pot2PumpPottingMarketCapQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpPottingMarketCapQuery | undefined, Pot2PumpPottingMarketCapQueryVariables>;
 export function usePot2PumpPottingMarketCapSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPottingMarketCapQuery, Pot2PumpPottingMarketCapQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<Pot2PumpPottingMarketCapQuery, Pot2PumpPottingMarketCapQueryVariables>(Pot2PumpPottingMarketCapDocument, options);
@@ -14959,6 +13945,9 @@ export function usePot2PumpPottingNewTokensByEndtimeLazyQuery(baseOptions?: Apol
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<Pot2PumpPottingNewTokensByEndtimeQuery, Pot2PumpPottingNewTokensByEndtimeQueryVariables>(Pot2PumpPottingNewTokensByEndtimeDocument, options);
         }
+// @ts-ignore
+export function usePot2PumpPottingNewTokensByEndtimeSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Pot2PumpPottingNewTokensByEndtimeQuery, Pot2PumpPottingNewTokensByEndtimeQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpPottingNewTokensByEndtimeQuery, Pot2PumpPottingNewTokensByEndtimeQueryVariables>;
+export function usePot2PumpPottingNewTokensByEndtimeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPottingNewTokensByEndtimeQuery, Pot2PumpPottingNewTokensByEndtimeQueryVariables>): Apollo.UseSuspenseQueryResult<Pot2PumpPottingNewTokensByEndtimeQuery | undefined, Pot2PumpPottingNewTokensByEndtimeQueryVariables>;
 export function usePot2PumpPottingNewTokensByEndtimeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Pot2PumpPottingNewTokensByEndtimeQuery, Pot2PumpPottingNewTokensByEndtimeQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<Pot2PumpPottingNewTokensByEndtimeQuery, Pot2PumpPottingNewTokensByEndtimeQueryVariables>(Pot2PumpPottingNewTokensByEndtimeDocument, options);
@@ -15007,6 +13996,9 @@ export function useGetLatestPumpingTokenLazyQuery(baseOptions?: Apollo.LazyQuery
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetLatestPumpingTokenQuery, GetLatestPumpingTokenQueryVariables>(GetLatestPumpingTokenDocument, options);
         }
+// @ts-ignore
+export function useGetLatestPumpingTokenSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetLatestPumpingTokenQuery, GetLatestPumpingTokenQueryVariables>): Apollo.UseSuspenseQueryResult<GetLatestPumpingTokenQuery, GetLatestPumpingTokenQueryVariables>;
+export function useGetLatestPumpingTokenSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetLatestPumpingTokenQuery, GetLatestPumpingTokenQueryVariables>): Apollo.UseSuspenseQueryResult<GetLatestPumpingTokenQuery | undefined, GetLatestPumpingTokenQueryVariables>;
 export function useGetLatestPumpingTokenSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetLatestPumpingTokenQuery, GetLatestPumpingTokenQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<GetLatestPumpingTokenQuery, GetLatestPumpingTokenQueryVariables>(GetLatestPumpingTokenDocument, options);
@@ -15051,6 +14043,9 @@ export function useCanClaimPot2PumpParticipantLazyQuery(baseOptions?: Apollo.Laz
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<CanClaimPot2PumpParticipantQuery, CanClaimPot2PumpParticipantQueryVariables>(CanClaimPot2PumpParticipantDocument, options);
         }
+// @ts-ignore
+export function useCanClaimPot2PumpParticipantSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<CanClaimPot2PumpParticipantQuery, CanClaimPot2PumpParticipantQueryVariables>): Apollo.UseSuspenseQueryResult<CanClaimPot2PumpParticipantQuery, CanClaimPot2PumpParticipantQueryVariables>;
+export function useCanClaimPot2PumpParticipantSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CanClaimPot2PumpParticipantQuery, CanClaimPot2PumpParticipantQueryVariables>): Apollo.UseSuspenseQueryResult<CanClaimPot2PumpParticipantQuery | undefined, CanClaimPot2PumpParticipantQueryVariables>;
 export function useCanClaimPot2PumpParticipantSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CanClaimPot2PumpParticipantQuery, CanClaimPot2PumpParticipantQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<CanClaimPot2PumpParticipantQuery, CanClaimPot2PumpParticipantQueryVariables>(CanClaimPot2PumpParticipantDocument, options);
@@ -15096,6 +14091,9 @@ export function useCanRefundPot2PumpParticipantLazyQuery(baseOptions?: Apollo.La
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<CanRefundPot2PumpParticipantQuery, CanRefundPot2PumpParticipantQueryVariables>(CanRefundPot2PumpParticipantDocument, options);
         }
+// @ts-ignore
+export function useCanRefundPot2PumpParticipantSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<CanRefundPot2PumpParticipantQuery, CanRefundPot2PumpParticipantQueryVariables>): Apollo.UseSuspenseQueryResult<CanRefundPot2PumpParticipantQuery, CanRefundPot2PumpParticipantQueryVariables>;
+export function useCanRefundPot2PumpParticipantSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CanRefundPot2PumpParticipantQuery, CanRefundPot2PumpParticipantQueryVariables>): Apollo.UseSuspenseQueryResult<CanRefundPot2PumpParticipantQuery | undefined, CanRefundPot2PumpParticipantQueryVariables>;
 export function useCanRefundPot2PumpParticipantSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CanRefundPot2PumpParticipantQuery, CanRefundPot2PumpParticipantQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<CanRefundPot2PumpParticipantQuery, CanRefundPot2PumpParticipantQueryVariables>(CanRefundPot2PumpParticipantDocument, options);
@@ -15136,6 +14134,9 @@ export function useMultipleTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<MultipleTokensQuery, MultipleTokensQueryVariables>(MultipleTokensDocument, options);
         }
+// @ts-ignore
+export function useMultipleTokensSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<MultipleTokensQuery, MultipleTokensQueryVariables>): Apollo.UseSuspenseQueryResult<MultipleTokensQuery, MultipleTokensQueryVariables>;
+export function useMultipleTokensSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MultipleTokensQuery, MultipleTokensQueryVariables>): Apollo.UseSuspenseQueryResult<MultipleTokensQuery | undefined, MultipleTokensQueryVariables>;
 export function useMultipleTokensSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MultipleTokensQuery, MultipleTokensQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<MultipleTokensQuery, MultipleTokensQueryVariables>(MultipleTokensDocument, options);
@@ -15176,6 +14177,9 @@ export function useSingleTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<SingleTokenQuery, SingleTokenQueryVariables>(SingleTokenDocument, options);
         }
+// @ts-ignore
+export function useSingleTokenSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<SingleTokenQuery, SingleTokenQueryVariables>): Apollo.UseSuspenseQueryResult<SingleTokenQuery, SingleTokenQueryVariables>;
+export function useSingleTokenSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<SingleTokenQuery, SingleTokenQueryVariables>): Apollo.UseSuspenseQueryResult<SingleTokenQuery | undefined, SingleTokenQueryVariables>;
 export function useSingleTokenSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<SingleTokenQuery, SingleTokenQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<SingleTokenQuery, SingleTokenQueryVariables>(SingleTokenDocument, options);
@@ -15224,6 +14228,9 @@ export function useTokenTop10HoldersLazyQuery(baseOptions?: Apollo.LazyQueryHook
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<TokenTop10HoldersQuery, TokenTop10HoldersQueryVariables>(TokenTop10HoldersDocument, options);
         }
+// @ts-ignore
+export function useTokenTop10HoldersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<TokenTop10HoldersQuery, TokenTop10HoldersQueryVariables>): Apollo.UseSuspenseQueryResult<TokenTop10HoldersQuery, TokenTop10HoldersQueryVariables>;
+export function useTokenTop10HoldersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TokenTop10HoldersQuery, TokenTop10HoldersQueryVariables>): Apollo.UseSuspenseQueryResult<TokenTop10HoldersQuery | undefined, TokenTop10HoldersQueryVariables>;
 export function useTokenTop10HoldersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TokenTop10HoldersQuery, TokenTop10HoldersQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<TokenTop10HoldersQuery, TokenTop10HoldersQueryVariables>(TokenTop10HoldersDocument, options);
@@ -15263,6 +14270,9 @@ export function useAllTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<AllTokensQuery, AllTokensQueryVariables>(AllTokensDocument, options);
         }
+// @ts-ignore
+export function useAllTokensSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<AllTokensQuery, AllTokensQueryVariables>): Apollo.UseSuspenseQueryResult<AllTokensQuery, AllTokensQueryVariables>;
+export function useAllTokensSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AllTokensQuery, AllTokensQueryVariables>): Apollo.UseSuspenseQueryResult<AllTokensQuery | undefined, AllTokensQueryVariables>;
 export function useAllTokensSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AllTokensQuery, AllTokensQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<AllTokensQuery, AllTokensQueryVariables>(AllTokensDocument, options);
@@ -15311,6 +14321,9 @@ export function useTransactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<TransactionsQuery, TransactionsQueryVariables>(TransactionsDocument, options);
         }
+// @ts-ignore
+export function useTransactionsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<TransactionsQuery, TransactionsQueryVariables>): Apollo.UseSuspenseQueryResult<TransactionsQuery, TransactionsQueryVariables>;
+export function useTransactionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TransactionsQuery, TransactionsQueryVariables>): Apollo.UseSuspenseQueryResult<TransactionsQuery | undefined, TransactionsQueryVariables>;
 export function useTransactionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TransactionsQuery, TransactionsQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<TransactionsQuery, TransactionsQueryVariables>(TransactionsDocument, options);
@@ -15353,6 +14366,9 @@ export function useSwapsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Swap
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<SwapsQuery, SwapsQueryVariables>(SwapsDocument, options);
         }
+// @ts-ignore
+export function useSwapsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<SwapsQuery, SwapsQueryVariables>): Apollo.UseSuspenseQueryResult<SwapsQuery, SwapsQueryVariables>;
+export function useSwapsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<SwapsQuery, SwapsQueryVariables>): Apollo.UseSuspenseQueryResult<SwapsQuery | undefined, SwapsQueryVariables>;
 export function useSwapsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<SwapsQuery, SwapsQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<SwapsQuery, SwapsQueryVariables>(SwapsDocument, options);
@@ -15395,6 +14411,9 @@ export function useDepositRaisedTokenLazyQuery(baseOptions?: Apollo.LazyQueryHoo
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<DepositRaisedTokenQuery, DepositRaisedTokenQueryVariables>(DepositRaisedTokenDocument, options);
         }
+// @ts-ignore
+export function useDepositRaisedTokenSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<DepositRaisedTokenQuery, DepositRaisedTokenQueryVariables>): Apollo.UseSuspenseQueryResult<DepositRaisedTokenQuery, DepositRaisedTokenQueryVariables>;
+export function useDepositRaisedTokenSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<DepositRaisedTokenQuery, DepositRaisedTokenQueryVariables>): Apollo.UseSuspenseQueryResult<DepositRaisedTokenQuery | undefined, DepositRaisedTokenQueryVariables>;
 export function useDepositRaisedTokenSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<DepositRaisedTokenQuery, DepositRaisedTokenQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<DepositRaisedTokenQuery, DepositRaisedTokenQueryVariables>(DepositRaisedTokenDocument, options);
@@ -15437,6 +14456,9 @@ export function useRefundLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ref
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<RefundQuery, RefundQueryVariables>(RefundDocument, options);
         }
+// @ts-ignore
+export function useRefundSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<RefundQuery, RefundQueryVariables>): Apollo.UseSuspenseQueryResult<RefundQuery, RefundQueryVariables>;
+export function useRefundSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<RefundQuery, RefundQueryVariables>): Apollo.UseSuspenseQueryResult<RefundQuery | undefined, RefundQueryVariables>;
 export function useRefundSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<RefundQuery, RefundQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<RefundQuery, RefundQueryVariables>(RefundDocument, options);
@@ -15479,6 +14501,9 @@ export function useClaimLpLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Cl
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ClaimLpQuery, ClaimLpQueryVariables>(ClaimLpDocument, options);
         }
+// @ts-ignore
+export function useClaimLpSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ClaimLpQuery, ClaimLpQueryVariables>): Apollo.UseSuspenseQueryResult<ClaimLpQuery, ClaimLpQueryVariables>;
+export function useClaimLpSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ClaimLpQuery, ClaimLpQueryVariables>): Apollo.UseSuspenseQueryResult<ClaimLpQuery | undefined, ClaimLpQueryVariables>;
 export function useClaimLpSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ClaimLpQuery, ClaimLpQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<ClaimLpQuery, ClaimLpQueryVariables>(ClaimLpDocument, options);
@@ -15521,6 +14546,9 @@ export function useFlashesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Fl
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<FlashesQuery, FlashesQueryVariables>(FlashesDocument, options);
         }
+// @ts-ignore
+export function useFlashesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<FlashesQuery, FlashesQueryVariables>): Apollo.UseSuspenseQueryResult<FlashesQuery, FlashesQueryVariables>;
+export function useFlashesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<FlashesQuery, FlashesQueryVariables>): Apollo.UseSuspenseQueryResult<FlashesQuery | undefined, FlashesQueryVariables>;
 export function useFlashesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<FlashesQuery, FlashesQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<FlashesQuery, FlashesQueryVariables>(FlashesDocument, options);
@@ -15563,6 +14591,9 @@ export function useCollectLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Co
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<CollectQuery, CollectQueryVariables>(CollectDocument, options);
         }
+// @ts-ignore
+export function useCollectSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<CollectQuery, CollectQueryVariables>): Apollo.UseSuspenseQueryResult<CollectQuery, CollectQueryVariables>;
+export function useCollectSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CollectQuery, CollectQueryVariables>): Apollo.UseSuspenseQueryResult<CollectQuery | undefined, CollectQueryVariables>;
 export function useCollectSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CollectQuery, CollectQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<CollectQuery, CollectQueryVariables>(CollectDocument, options);
@@ -15605,6 +14636,9 @@ export function useBurnLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BurnQ
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<BurnQuery, BurnQueryVariables>(BurnDocument, options);
         }
+// @ts-ignore
+export function useBurnSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<BurnQuery, BurnQueryVariables>): Apollo.UseSuspenseQueryResult<BurnQuery, BurnQueryVariables>;
+export function useBurnSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<BurnQuery, BurnQueryVariables>): Apollo.UseSuspenseQueryResult<BurnQuery | undefined, BurnQueryVariables>;
 export function useBurnSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<BurnQuery, BurnQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<BurnQuery, BurnQueryVariables>(BurnDocument, options);
@@ -15647,6 +14681,9 @@ export function useMintLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MintQ
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<MintQuery, MintQueryVariables>(MintDocument, options);
         }
+// @ts-ignore
+export function useMintSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<MintQuery, MintQueryVariables>): Apollo.UseSuspenseQueryResult<MintQuery, MintQueryVariables>;
+export function useMintSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MintQuery, MintQueryVariables>): Apollo.UseSuspenseQueryResult<MintQuery | undefined, MintQueryVariables>;
 export function useMintSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MintQuery, MintQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<MintQuery, MintQueryVariables>(MintDocument, options);
@@ -15692,6 +14729,9 @@ export function useVaultsSortedByHoldersLazyQuery(baseOptions?: Apollo.LazyQuery
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<VaultsSortedByHoldersQuery, VaultsSortedByHoldersQueryVariables>(VaultsSortedByHoldersDocument, options);
         }
+// @ts-ignore
+export function useVaultsSortedByHoldersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<VaultsSortedByHoldersQuery, VaultsSortedByHoldersQueryVariables>): Apollo.UseSuspenseQueryResult<VaultsSortedByHoldersQuery, VaultsSortedByHoldersQueryVariables>;
+export function useVaultsSortedByHoldersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<VaultsSortedByHoldersQuery, VaultsSortedByHoldersQueryVariables>): Apollo.UseSuspenseQueryResult<VaultsSortedByHoldersQuery | undefined, VaultsSortedByHoldersQueryVariables>;
 export function useVaultsSortedByHoldersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<VaultsSortedByHoldersQuery, VaultsSortedByHoldersQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<VaultsSortedByHoldersQuery, VaultsSortedByHoldersQueryVariables>(VaultsSortedByHoldersDocument, options);
@@ -15733,6 +14773,9 @@ export function useAccountVaultSharesLazyQuery(baseOptions?: Apollo.LazyQueryHoo
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<AccountVaultSharesQuery, AccountVaultSharesQueryVariables>(AccountVaultSharesDocument, options);
         }
+// @ts-ignore
+export function useAccountVaultSharesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<AccountVaultSharesQuery, AccountVaultSharesQueryVariables>): Apollo.UseSuspenseQueryResult<AccountVaultSharesQuery, AccountVaultSharesQueryVariables>;
+export function useAccountVaultSharesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AccountVaultSharesQuery, AccountVaultSharesQueryVariables>): Apollo.UseSuspenseQueryResult<AccountVaultSharesQuery | undefined, AccountVaultSharesQueryVariables>;
 export function useAccountVaultSharesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AccountVaultSharesQuery, AccountVaultSharesQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<AccountVaultSharesQuery, AccountVaultSharesQueryVariables>(AccountVaultSharesDocument, options);
@@ -15800,6 +14843,9 @@ export function useSingleVaultDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHoo
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<SingleVaultDetailsQuery, SingleVaultDetailsQueryVariables>(SingleVaultDetailsDocument, options);
         }
+// @ts-ignore
+export function useSingleVaultDetailsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<SingleVaultDetailsQuery, SingleVaultDetailsQueryVariables>): Apollo.UseSuspenseQueryResult<SingleVaultDetailsQuery, SingleVaultDetailsQueryVariables>;
+export function useSingleVaultDetailsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<SingleVaultDetailsQuery, SingleVaultDetailsQueryVariables>): Apollo.UseSuspenseQueryResult<SingleVaultDetailsQuery | undefined, SingleVaultDetailsQueryVariables>;
 export function useSingleVaultDetailsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<SingleVaultDetailsQuery, SingleVaultDetailsQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<SingleVaultDetailsQuery, SingleVaultDetailsQueryVariables>(SingleVaultDetailsDocument, options);

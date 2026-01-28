@@ -1,8 +1,7 @@
-import { PriceChart } from "@/components/PriceChart/PriceChart";
 import { UserPoolProfit } from "@/lib/algebra/graphql/clients/userProfit";
-import { UTCTimestamp } from "lightweight-charts";
+import { createChart, ColorType, UTCTimestamp } from "lightweight-charts";
 import { observer } from "mobx-react-lite";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 export const ProtfolioBalanceChart = observer(
   ({
@@ -14,6 +13,8 @@ export const ProtfolioBalanceChart = observer(
     userPoolsProfits: UserPoolProfit[];
     onTimeRangeChange: (range: "1D" | "1W" | "1M") => void;
   }) => {
+    const chartContainerRef = useRef<HTMLDivElement>(null);
+
     const chartData = useMemo(() => {
       const now = new Date();
       const ranges = {
@@ -59,14 +60,64 @@ export const ProtfolioBalanceChart = observer(
         .sort((a, b) => a.time - b.time);
     }, [userPoolsProfits, timeRange]);
 
+    useEffect(() => {
+      if (!chartContainerRef.current) return;
+
+      const chart = createChart(chartContainerRef.current, {
+        width: 511,
+        height: 280,
+        layout: {
+          background: { type: ColorType.Solid, color: "transparent" },
+          textColor: "#9ca3af",
+        },
+        grid: {
+          vertLines: { visible: false },
+          horzLines: { color: "rgba(255,255,255,0.05)" },
+        },
+        rightPriceScale: {
+          borderVisible: false,
+        },
+        timeScale: {
+          borderVisible: false,
+        },
+      });
+
+      const areaSeries = chart.addAreaSeries({
+        lineColor: "#22c55e",
+        topColor: "rgba(34, 197, 94, 0.3)",
+        bottomColor: "rgba(34, 197, 94, 0.0)",
+        lineWidth: 2,
+      });
+
+      areaSeries.setData(chartData);
+      chart.timeScale().fitContent();
+
+      return () => {
+        chart.remove();
+      };
+    }, [chartData]);
+
+    const timeRanges: Array<"1D" | "1W" | "1M"> = ["1D", "1W", "1M"];
+
     return (
-      <PriceChart
-        width={511}
-        height={280}
-        data={chartData}
-        timeRange={timeRange}
-        onTimeRangeChange={onTimeRangeChange}
-      />
+      <div>
+        <div className="flex gap-2 mb-2">
+          {timeRanges.map((range) => (
+            <button
+              key={range}
+              onClick={() => onTimeRangeChange(range)}
+              className={`px-3 py-1 text-xs rounded ${
+                timeRange === range
+                  ? "bg-green-500 text-white"
+                  : "bg-gray-800 text-gray-400"
+              }`}
+            >
+              {range}
+            </button>
+          ))}
+        </div>
+        <div ref={chartContainerRef} />
+      </div>
     );
   }
 );

@@ -47,13 +47,6 @@ import { Tab, Tabs } from '@nextui-org/react';
 import PoolStatsCard from '@/components/algebra/pool/PoolStatsCard';
 import dynamic from 'next/dynamic';
 
-// Lazy load heavy components to reduce initial bundle size
-const PoolChart = dynamic(() => import('@/components/algebra/pool/PoolChart'), {
-  loading: () => (
-    <div className="w-full h-[400px] bg-gray-100 rounded-xl animate-pulse" />
-  ),
-  ssr: false,
-});
 
 const TopPoolPositions = dynamic(
   () => import('@/components/algebra/pool/TopPoolPositions'),
@@ -356,8 +349,7 @@ const PoolPage = observer(() => {
               poolId={poolId ? poolId : zeroAddress}
             />
 
-            <div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4">
-              {poolInfo?.pool && <PoolChart pool={poolInfo.pool as Pool} />}
+            <div className="w-full">
               <PoolStatsCard pool={poolInfo?.pool as Pool} />
             </div>
 

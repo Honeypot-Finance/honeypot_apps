@@ -2,7 +2,6 @@ import { makeAutoObservable, reaction, runInAction } from 'mobx';
 import { Token } from '../../lib/contract';
 import BigNumber from 'bignumber.js';
 import { wallet } from '../../lib/wallet';
-import { chart } from '../chart';
 
 class BuyWithUniversalAccountService {
   buyToken: Token | undefined = undefined;
@@ -36,11 +35,6 @@ class BuyWithUniversalAccountService {
       this.buyToken = token;
     });
 
-    if (token) {
-      chart.setChartLabel(`${token.symbol}`);
-      chart.setCurrencyCode('USD');
-      chart.setChartTarget(token);
-    }
   }
 
   setAccountSpendAmountUSD(amount: string) {

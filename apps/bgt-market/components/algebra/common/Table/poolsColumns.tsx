@@ -6,18 +6,11 @@ import { usePoolPlugins } from '@/lib/algebra/hooks/pools/usePoolPlugins';
 import { Skeleton } from '@/components/ui/skeleton';
 import { FarmingPluginIcon } from '../PluginIcons';
 import { useCurrency } from '@/lib/algebra/hooks/common/useCurrency';
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@/components/algebra/ui/hover-card';
 import { TokenFieldsFragment } from '@/lib/algebra/graphql/generated/graphql';
-import { ReactNode } from 'react';
 import { TokenLogo } from '@honeypot/shared';
 
 import { Token } from '@honeypot/shared';
 import {
-  DynamicFormatAmount,
   formatAmountWithAlphabetSymbol,
 } from '@/lib/algebra/utils/common/formatAmount';
 import { observer } from 'mobx-react-lite';
@@ -34,7 +27,6 @@ export interface Pool {
   pair: Pair;
   fee: number;
   tvlUSD: number;
-  volume24USD: number;
   poolMaxApr: number;
   poolAvgApr: number;
   avgApr: number;
@@ -43,13 +35,8 @@ export interface Pool {
   createdAtTimestamp: number;
   liquidity: any;
   token0Price: any;
-  changeHour: any;
-  change24h: any;
-  changeWeek: any;
-  changeMonth: any;
   txCount: any;
   volumeUSD: any;
-  apr24h: string;
   unclaimedFees?: BigNumber;
 }
 
@@ -119,28 +106,6 @@ export const Plugins = ({ poolId }: { poolId: Address }) => {
   );
 };
 
-export const AvgAPR = ({
-  children,
-  avgApr,
-  farmApr,
-  maxApr,
-}: {
-  children: ReactNode;
-  avgApr: string;
-  farmApr: string | undefined;
-  maxApr: string;
-}) => {
-  return (
-    <HoverCard>
-      <HoverCardTrigger>{children}</HoverCardTrigger>
-      <HoverCardContent>
-        <p>Avg. APR - {avgApr}</p>
-        {farmApr && <p>Farm APR - {farmApr}</p>}
-        <p>Max APR - {maxApr}</p>
-      </HoverCardContent>
-    </HoverCard>
-  );
-};
 
 // export const poolsColumns: ColumnDef<Pool>[] = [
 //   {
@@ -278,16 +243,6 @@ export const poolsColumns: ColumnDef<Pool>[] = [
     cell: ({ row }) => `${row.original.fee}%`,
   },
   {
-    accessorKey: 'apr24h',
-    header: () => <HeaderItem className="uppercase">APR 24H</HeaderItem>,
-    cell: ({ row }) =>
-      `${DynamicFormatAmount({
-        amount: row.original.apr24h,
-        decimals: 2,
-        endWith: '%',
-      })}`,
-  },
-  {
     accessorKey: 'tvlUSD',
     id: 'tvlUSD',
     header: () => <HeaderItem className="uppercase">TVL</HeaderItem>,
@@ -321,20 +276,6 @@ export const poolsColumns: ColumnDef<Pool>[] = [
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         }).format(row?.original?.volumeUSD)}
-      </span>
-    ),
-  },
-  {
-    accessorKey: 'volume24USD',
-    header: () => <HeaderItem className="uppercase">24h Volume</HeaderItem>,
-    cell: ({ row }) => (
-      <span>
-        {new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD',
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }).format(row?.original?.volume24USD)}
       </span>
     ),
   },
@@ -436,16 +377,6 @@ export const poolsColumnsMy: ColumnDef<Pool>[] = [
     accessorKey: 'fee',
     header: () => <HeaderItem className="uppercase">Fee</HeaderItem>,
     cell: ({ row }) => `${row.original.fee}%`,
-  },
-  {
-    accessorKey: 'apr24h',
-    header: () => <HeaderItem className="uppercase">APR 24H</HeaderItem>,
-    cell: ({ row }) =>
-      `${DynamicFormatAmount({
-        amount: row.original.apr24h,
-        decimals: 2,
-        endWith: '%',
-      })}`,
   },
   {
     accessorKey: 'tvlUSD',

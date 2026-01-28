@@ -93,138 +93,18 @@ const PoolsList = ({
         token1,
         fee,
         totalValueLockedUSD,
-        poolHourData,
-        poolDayData,
-        poolWeekData,
-        poolMonthData,
         txCount,
         volumeUSD,
         token0Price,
         createdAtTimestamp,
         liquidity,
         aprPercentage,
-      }) => {
-        const currentPool = poolDayData[0];
-        const lastDate = currentPool ? currentPool.date * 1000 : 0;
-        const currentDate = new Date().getTime();
-
-        function handleGap(
-          data: any[],
-          gap: number,
-          field: string,
-          endTime: number
-        ) {
-          data?.sort((a, b) => a[field] - b[field]);
-
-          let startTime = data[0]?.[field];
-
-          let currentTimestamp = startTime;
-          const filledData = [];
-
-          while (currentTimestamp <= endTime) {
-            const existingData = data.find(
-              (d) =>
-                d[field] >= currentTimestamp &&
-                d[field] < currentTimestamp + gap
-            );
-
-            filledData.push(
-              existingData || {
-                [field]: currentTimestamp,
-                volumeUSD: 0,
-              }
-            );
-
-            currentTimestamp += gap;
-          }
-
-          return filledData?.sort((a, b) => b[field] - a[field]);
-        }
-
-        function calculatePercentageChange(current: number, previous: number) {
-          if (previous === 0) {
-            return current === 0 ? 0 : 100; // Assume 100% change for a significant increase
-          }
-
-          // Calculate percentage change
-          const change = ((current - previous) / previous) * 100;
-
-          // Ensure the result is a valid number
-          return isNaN(change) || !isFinite(change) ? 0 : change;
-        }
-
-        //periodStartUnix
-
-        const handleGapHour = (data: any[], end: number) => {
-          return handleGap(data, 3600, 'periodStartUnix', end);
-        };
-
-        const handleDayGap = (data: any[], end: number) => {
-          return handleGap(data, 3600 * 24, 'date', end);
-        };
-
-        const handleGapWeek = (data: any[], end: number) => {
-          return handleGap(data, 3600 * 24 * 7, 'week', end);
-        };
-
-        const filledGapHours = handleGapHour(
-          poolHourData?.slice(0, 24) || [],
-          Math.floor(Date.now() / 1000)
-        );
-
-        const filledGapDays = handleDayGap(
-          poolDayData?.slice(0, 14) || [],
-          Math.floor(Date.now() / 1000)
-        );
-
-        const filledGapWeeks = handleGapWeek(
-          poolWeekData?.slice(0, 8),
-          Math.floor(Date.now() / 1000)
-        );
-        const changeHour = calculatePercentageChange(
-          Number(filledGapHours[0]?.volumeUSD || 0),
-          Number(filledGapHours[1]?.volumeUSD || 0)
-        );
-
-        const change24h = calculatePercentageChange(
-          filledGapHours
-            .slice(0, 24)
-            .reduce((sum, hour) => sum + Number(hour?.volumeUSD || 0), 0),
-          filledGapHours
-            .slice(24, 48)
-            .reduce((sum, hour) => sum + Number(hour?.volumeUSD || 0), 0)
-        );
-
-        const changeWeek = calculatePercentageChange(
-          filledGapDays
-            .slice(0, 7)
-            .reduce((sum, day) => sum + Number(day?.volumeUSD || 0), 0),
-          filledGapDays
-            .slice(7, 14)
-            .reduce((sum, day) => sum + Number(day?.volumeUSD || 0), 0)
-        );
-
-        const changeMonth = calculatePercentageChange(
-          filledGapWeeks
-            .slice(0, 4)
-            .reduce((sum, week) => sum + Number(week?.volumeUSD || 0), 0),
-          filledGapWeeks
-            .slice(4, 8)
-            .reduce((sum, week) => sum + Number(week?.volumeUSD || 0), 0)
-        );
-
-        /* time difference calculations here to ensure that the graph provides information for the last 24 hours */
-        const timeDifference = currentDate - lastDate;
-        const msIn24Hours = 24 * 60 * 60 * 1000;
+      }: any) => {
+        const apr = Number(aprPercentage || 0);
 
         const activeFarming = activeFarmings?.eternalFarmings.find(
-          (farming) => farming.pool === id
+          (farming: any) => farming.pool === id
         );
-
-        const poolMaxApr = aprPercentage;
-        const poolAvgApr = aprPercentage;
-        const farmApr = 0;
-        const avgApr = aprPercentage;
 
         return {
           id: id as Address,
@@ -234,25 +114,24 @@ const PoolsList = ({
           },
           fee: Number(fee) / 10_000,
           tvlUSD: Number(totalValueLockedUSD),
-          volume24USD:
-            timeDifference <= msIn24Hours ? currentPool.volumeUSD : 0,
-          fees24USD: timeDifference <= msIn24Hours ? currentPool.feesUSD : 0,
-          poolMaxApr,
-          poolAvgApr,
-          farmApr,
-          avgApr,
+          volume24USD: 0,
+          fees24USD: 0,
+          poolMaxApr: apr,
+          poolAvgApr: apr,
+          farmApr: 0,
+          avgApr: apr,
           hasActiveFarming: Boolean(activeFarming),
           createdAtTimestamp,
           liquidity,
           token0Price,
-          changeHour,
-          change24h,
-          changeWeek,
-          changeMonth,
+          changeHour: 0,
+          change24h: 0,
+          changeWeek: 0,
+          changeMonth: 0,
           txCount,
           volumeUSD,
           marktetcap: token0.marketCap,
-          apr24h: avgApr,
+          apr24h: apr,
         };
       }
     );
@@ -268,10 +147,6 @@ const PoolsList = ({
         token1,
         fee,
         totalValueLockedUSD,
-        poolHourData,
-        poolDayData,
-        poolWeekData,
-        poolMonthData,
         txCount,
         volumeUSD,
         token0Price,
@@ -279,128 +154,12 @@ const PoolsList = ({
         liquidity,
         aprPercentage,
         fees,
-      }) => {
-        const currentPool = poolDayData[0];
-        const lastDate = currentPool ? currentPool.date * 1000 : 0;
-        const currentDate = new Date().getTime();
-
-        function handleGap(
-          data: any[],
-          gap: number,
-          field: string,
-          endTime: number
-        ) {
-          data?.sort((a, b) => a[field] - b[field]);
-
-          let startTime = data[0]?.[field];
-
-          let currentTimestamp = startTime;
-          const filledData = [];
-
-          while (currentTimestamp <= endTime) {
-            const existingData = data.find(
-              (d) =>
-                d[field] >= currentTimestamp &&
-                d[field] < currentTimestamp + gap
-            );
-
-            filledData.push(
-              existingData || {
-                [field]: currentTimestamp,
-                volumeUSD: 0,
-              }
-            );
-
-            currentTimestamp += gap;
-          }
-
-          return filledData?.sort((a, b) => b[field] - a[field]);
-        }
-
-        function calculatePercentageChange(current: number, previous: number) {
-          if (previous === 0) {
-            return current === 0 ? 0 : 100; // Assume 100% change for a significant increase
-          }
-
-          // Calculate percentage change
-          const change = ((current - previous) / previous) * 100;
-
-          // Ensure the result is a valid number
-          return isNaN(change) || !isFinite(change) ? 0 : change;
-        }
-
-        //periodStartUnix
-
-        const handleGapHour = (data: any[], end: number) => {
-          return handleGap(data, 3600, 'periodStartUnix', end);
-        };
-
-        const handleDayGap = (data: any[], end: number) => {
-          return handleGap(data, 3600 * 24, 'date', end);
-        };
-
-        const handleGapWeek = (data: any[], end: number) => {
-          return handleGap(data, 3600 * 24 * 7, 'week', end);
-        };
-
-        const filledGapHours = handleGapHour(
-          poolHourData?.slice(0, 24) || [],
-          Math.floor(Date.now() / 1000)
-        );
-
-        const filledGapDays = handleDayGap(
-          poolDayData?.slice(0, 14) || [],
-          Math.floor(Date.now() / 1000)
-        );
-
-        const filledGapWeeks = handleGapWeek(
-          poolWeekData?.slice(0, 8),
-          Math.floor(Date.now() / 1000)
-        );
-        const changeHour = calculatePercentageChange(
-          Number(filledGapHours[0]?.volumeUSD || 0),
-          Number(filledGapHours[1]?.volumeUSD || 0)
-        );
-
-        const change24h = calculatePercentageChange(
-          filledGapHours
-            .slice(0, 24)
-            .reduce((sum, hour) => sum + Number(hour?.volumeUSD || 0), 0),
-          filledGapHours
-            .slice(24, 48)
-            .reduce((sum, hour) => sum + Number(hour?.volumeUSD || 0), 0)
-        );
-
-        const changeWeek = calculatePercentageChange(
-          filledGapDays
-            .slice(0, 7)
-            .reduce((sum, day) => sum + Number(day?.volumeUSD || 0), 0),
-          filledGapDays
-            .slice(7, 14)
-            .reduce((sum, day) => sum + Number(day?.volumeUSD || 0), 0)
-        );
-
-        const changeMonth = calculatePercentageChange(
-          filledGapWeeks
-            .slice(0, 4)
-            .reduce((sum, week) => sum + Number(week?.volumeUSD || 0), 0),
-          filledGapWeeks
-            .slice(4, 8)
-            .reduce((sum, week) => sum + Number(week?.volumeUSD || 0), 0)
-        );
-
-        /* time difference calculations here to ensure that the graph provides information for the last 24 hours */
-        const timeDifference = currentDate - lastDate;
-        const msIn24Hours = 24 * 60 * 60 * 1000;
+      }: any) => {
+        const apr = Number(aprPercentage || 0);
 
         const activeFarming = activeFarmings?.eternalFarmings.find(
-          (farming) => farming.pool === id
+          (farming: any) => farming.pool === id
         );
-
-        const poolMaxApr = aprPercentage;
-        const poolAvgApr = aprPercentage;
-        const farmApr = 0;
-        const avgApr = aprPercentage;
 
         const unclaimedFees = BigNumber(fees.toString());
 
@@ -412,25 +171,24 @@ const PoolsList = ({
           },
           fee: Number(fee) / 10_000,
           tvlUSD: Number(totalValueLockedUSD),
-          volume24USD:
-            timeDifference <= msIn24Hours ? currentPool.volumeUSD : 0,
-          fees24USD: timeDifference <= msIn24Hours ? currentPool.feesUSD : 0,
-          poolMaxApr,
-          poolAvgApr,
-          farmApr,
-          avgApr,
+          volume24USD: 0,
+          fees24USD: 0,
+          poolMaxApr: apr,
+          poolAvgApr: apr,
+          farmApr: 0,
+          avgApr: apr,
           hasActiveFarming: Boolean(activeFarming),
           createdAtTimestamp,
           liquidity,
           token0Price,
-          changeHour,
-          change24h,
-          changeWeek,
-          changeMonth,
+          changeHour: 0,
+          change24h: 0,
+          changeWeek: 0,
+          changeMonth: 0,
           txCount,
           volumeUSD,
           marktetcap: token0.marketCap,
-          apr24h: avgApr,
+          apr24h: apr,
           unclaimedFees,
         };
       }
