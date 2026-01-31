@@ -188,10 +188,13 @@ const SummaryCard = memo(function SummaryCard({
                   return '0';
                 }
 
-                // Standard formula: (receiptWeight * poolReward) / totalWeight
-                // Then convert from wei to decimal representation
-                const estimatedWei = (receiptWeight * poolReward) / totalWeight;
-                const estimated = (estimatedWei / Math.pow(10, decimals)) * 1e4;
+                // receiptWeight is in display units (weightPerToken already /1e4 * amount)
+                // Convert back to raw units to match totalWeight scale
+                const receiptWeightRaw = receiptWeight * 1e4;
+                // Account for the new deposit increasing totalWeight
+                const adjustedTotalWeight = totalWeight + receiptWeightRaw;
+                const estimatedWei = (receiptWeightRaw * poolReward) / adjustedTotalWeight;
+                const estimated = estimatedWei / Math.pow(10, decimals);
 
                 console.log('Calculation:', {
                   receiptWeight,
