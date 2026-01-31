@@ -11,6 +11,7 @@ import { TokenLogo } from '@honeypot/shared';
 
 import { Token } from '@honeypot/shared';
 import {
+  DynamicFormatAmount,
   formatAmountWithAlphabetSymbol,
 } from '@/lib/algebra/utils/common/formatAmount';
 import { observer } from 'mobx-react-lite';
