@@ -10,6 +10,7 @@ import { Address } from 'viem';
 import { Token } from '@honeypot/shared';
 import { Pool } from '@cryptoalgebra/sdk';
 import { observer } from 'mobx-react-lite';
+import { wallet } from '@honeypot/shared/lib/wallet';
 
 interface PoolHeaderProps {
   pool: Pool | null;
@@ -29,6 +30,7 @@ const PoolHeader = observer(({ pool, token0, token1 }: PoolHeaderProps) => {
               size={40}
               token={Token.getToken({
                 address: token0.address,
+                chainId: wallet.currentChainId.toString(),
               })}
             />
           )}
@@ -39,6 +41,7 @@ const PoolHeader = observer(({ pool, token0, token1 }: PoolHeaderProps) => {
               size={40}
               token={Token.getToken({
                 address: token1.address,
+                chainId: wallet.currentChainId.toString(),
               })}
             />
           )}

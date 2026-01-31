@@ -8,14 +8,10 @@ import BigNumber from 'bignumber.js';
 import { getSubgraphClientByChainId, Token } from '@honeypot/shared';
 import {
   OrderDirection,
-  Pot2Pump,
-  Pot2Pump_Filter,
   Pot2Pump_OrderBy,
   Pot2PumpDynamicFilterDocument,
   Pot2PumpDynamicFilterQuery,
   Pot2PumpDynamicFilterQueryVariables,
-} from '../generated/graphql';
-import {
   Pot2PumpPottingNearSuccessDocument,
   Pot2PumpPottingHighPriceDocument,
   Pot2PumpPottingNewTokensDocument,
@@ -39,6 +35,37 @@ type SubgraphToken = {
   derivedMatic: string;
   totalSupply: string;
   derivedUSD: string;
+  initialUSD?: string;
+  txCount?: string;
+  volumeUSD?: string;
+  totalValueLockedUSD?: string;
+  marketCap?: string;
+  poolCount?: string;
+  priceChange24hPercentage?: string;
+};
+
+type Pot2Pump = {
+  id: string;
+  DepositRaisedToken: string;
+  DepositLaunchToken: string;
+  creator: string;
+  raisedTokenMinCap: string;
+  participantsCount: string;
+  buyCount: string;
+  sellCount: string;
+  endTime: number;
+  createdAt: string;
+  state: string;
+  raisedTokenReachingMinCap: boolean;
+  participants: Array<{
+    amount: string;
+    claimed: boolean;
+    refunded: boolean;
+  }>;
+  launchToken: SubgraphToken;
+  raisedToken: SubgraphToken;
+  searchString: string;
+  depositRaisedTokenPercentageToMinCap: number;
 };
 
 export type Pot2PumpListData = {

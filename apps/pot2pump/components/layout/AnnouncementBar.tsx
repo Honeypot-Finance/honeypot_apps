@@ -5,14 +5,11 @@ import announceIcon from '@/public/images/icons/announcement-icon.png';
 import Image from 'next/image';
 
 import { cn } from '@nextui-org/theme';
-import { useGetLatestPumpingTokenQuery } from '@/lib/algebra/graphql/generated/graphql';
 
 interface AnnouncementBarProps {
   slogans: React.ReactNode[];
   interval: number;
 }
-
-const STORAGE_KEY = 'latest_pumping_token_id';
 
 const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
   slogans: initialSlogans,
@@ -22,35 +19,6 @@ const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timer, setTimer] = useState<NodeJS.Timeout>();
   const [localSlogans, setLocalSlogans] = useState(initialSlogans);
-  const [lastTokenId, setLastTokenId] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem(STORAGE_KEY) || '';
-    }
-    return '';
-  });
-
-  const { data: latestPumpingToken, refetch } = useGetLatestPumpingTokenQuery({
-    pollInterval: 10000, // 10 seconds
-  });
-
-  // Handle new pumping token
-  useEffect(() => {
-    if (latestPumpingToken?.pot2Pumps?.[0]) {
-      const newToken = latestPumpingToken.pot2Pumps[0];
-      if (newToken.id !== lastTokenId) {
-        const newAnnouncement = (
-          <span className="text-lg">
-            {newToken.launchToken?.symbol} ({newToken.launchToken?.name}) has
-            reached pumping stage!
-          </span>
-        );
-        setLocalSlogans([newAnnouncement, ...localSlogans]);
-        setLastTokenId(newToken.id);
-        localStorage.setItem(STORAGE_KEY, newToken.id);
-        setCurrentIndex(0);
-      }
-    }
-  }, [latestPumpingToken, lastTokenId, localSlogans]);
 
   useEffect(() => {
     const timer = setInterval(() => {

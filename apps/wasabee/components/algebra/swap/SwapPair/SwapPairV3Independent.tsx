@@ -21,7 +21,6 @@ import {
 import { SwapField, SwapFieldType } from '@/types/algebra/types/swap-field';
 import TokenCardV3 from '../TokenCard/TokenCardV3';
 import { ExchangeSvg } from '@/components/svg/exchange';
-import { chart } from '@honeypot/shared/services';
 
 import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { Token as AlgebraToken } from '@cryptoalgebra/sdk';
@@ -286,72 +285,6 @@ const SwapPairV3Independent = ({
     isOutputNative,
     toTokenAddress,
   ]);
-
-  useEffect(() => {
-    if (!isUpdatingPriceChart) {
-      return;
-    }
-    if (
-      baseCurrency &&
-      quoteCurrency &&
-      (baseCurrency?.isNative || quoteCurrency?.isNative) &&
-      baseCurrency?.wrapped.address == quoteCurrency?.wrapped.address
-    ) {
-      chart.setChartLabel(`${baseCurrency.wrapped.symbol}`);
-      Token.getToken({
-        address: baseCurrency.wrapped.address,
-        chainId: wallet.currentChainId.toString(),
-      })
-        .init()
-        .then((token) => {
-          chart.setChartTarget(token);
-          chart.setCurrencyCode('USD');
-        });
-    } else if (baseCurrency && quoteCurrency) {
-      const pairContract = new AlgebraPoolContract({
-        address: computePoolAddress({
-          tokenA: baseCurrency.wrapped,
-          tokenB: quoteCurrency.wrapped,
-          initCodeHashManualOverride:
-            wallet.currentChain.contracts.algebraPoolInitCodeHash,
-          poolDeployer: wallet.currentChain.contracts.algebraPoolDeployer,
-        }),
-      });
-      pairContract.init().then((pair) => {
-        chart.setChartLabel(`${baseCurrency.symbol}/${quoteCurrency.symbol}`);
-        chart.setCurrencyCode('TOKEN');
-        chart.setTokenNumber(
-          baseCurrency.wrapped.address.toLowerCase() ===
-            pair?.token0.value?.address.toLowerCase()
-            ? 0
-            : 1
-        );
-        chart.setChartTarget(pairContract);
-      });
-    } else if (baseCurrency) {
-      chart.setChartLabel(`${baseCurrency.symbol}`);
-      Token.getToken({
-        address: baseCurrency.wrapped.address,
-        chainId: wallet.currentChainId.toString(),
-      })
-        .init()
-        .then((token) => {
-          chart.setCurrencyCode('USD');
-          chart.setChartTarget(token);
-        });
-    } else if (quoteCurrency) {
-      chart.setChartLabel(`${quoteCurrency.symbol}`);
-      Token.getToken({
-        address: quoteCurrency.wrapped.address,
-        chainId: wallet.currentChainId.toString(),
-      })
-        .init()
-        .then((token) => {
-          chart.setCurrencyCode('USD');
-          chart.setChartTarget(token);
-        });
-    }
-  }, [baseCurrency, quoteCurrency, isUpdatingPriceChart]);
 
   return (
     <div className="flex flex-col gap-1 relative bg-[#1a1410] rounded-xl border border-[#2a2522] custom-dashed px-[18px] py-6 w-full">

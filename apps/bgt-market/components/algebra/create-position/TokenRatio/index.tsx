@@ -4,6 +4,7 @@ import { Token } from '@honeypot/shared';
 import { IDerivedMintInfo } from '@/lib/algebra/state/mintStore';
 import { useMemo } from 'react';
 import { zeroAddress } from 'viem';
+import { wallet } from '@honeypot/shared/lib/wallet';
 
 interface TokenRatioProps {
   mintInfo: IDerivedMintInfo;
@@ -75,6 +76,7 @@ const TokenRatio = ({ mintInfo }: TokenRatioProps) => {
               addtionalClasses="w-8 absolute left-2 top-0"
               token={Token.getToken({
                 address: currencyA ? currencyA.wrapped.address : zeroAddress,
+                chainId: wallet.currentChainId.toString(),
               })}
             />
             {`${parseFloat(token0Ratio).toFixed()}%`}
@@ -92,6 +94,7 @@ const TokenRatio = ({ mintInfo }: TokenRatioProps) => {
               addtionalClasses="w-8 absolute right-0 top-0"
               token={Token.getToken({
                 address: currencyB ? currencyB.wrapped.address : zeroAddress,
+                chainId: wallet.currentChainId.toString(),
               })}
             />
           </div>

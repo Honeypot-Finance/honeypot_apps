@@ -17,14 +17,8 @@ import {
   useDisclosure,
 } from '@nextui-org/react';
 import { useSpring, animated } from 'react-spring';
-import { getTokenTop10Holders } from '@/lib/algebra/graphql/clients/token';
-import { TokenTop10HoldersQuery } from '@/lib/algebra/graphql/generated/graphql';
-import BigNumber from 'bignumber.js';
 import { poolsByTokenPair } from '@honeypot/shared';
 import { useRouter } from 'next/router';
-import { ExternalLink } from 'lucide-react';
-import { Copy } from '@/components/Copy';
-import { VscCopy } from 'react-icons/vsc';
 
 const START_TIMESTAMP = 1734436800;
 const END_TIMESTAMP = 1734825600;
@@ -297,21 +291,13 @@ interface RacerWithToken extends Racer {
 const TopHoldersModal = observer(
   ({
     racer,
-    holders,
     isOpen,
     onClose,
   }: {
     racer: RacerWithToken;
-    holders: TokenTop10HoldersQuery;
     isOpen: boolean;
     onClose: () => void;
   }) => {
-    const TotalHoldingValue =
-      holders.token?.holders?.reduce(
-        (acc, holder) => acc + Number(holder.holdingValue),
-        0
-      ) || 0;
-
     return (
       <Modal
         isOpen={isOpen}
@@ -353,81 +339,7 @@ const TopHoldersModal = observer(
 
               <ModalBody className="p-0 mt-6">
                 <div className="w-full rounded-[32px] bg-[#202020] space-y-4 px-4 py-6 custom-dashed">
-                  <div className="border border-[#5C5C5C] rounded-2xl overflow-hidden">
-                    <table className="w-full">
-                      <thead className="bg-[#323232]">
-                        <tr>
-                          <th className="py-2 px-2 sm:px-4 text-left text-sm sm:text-base font-medium text-white">
-                            Rank
-                          </th>
-                          <th className="py-2 px-2 sm:px-4 text-left text-sm sm:text-base font-medium text-white">
-                            Address
-                          </th>
-                          <th className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base font-medium text-white">
-                            Balance
-                          </th>
-                          <th className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base font-medium text-white">
-                            Percentage
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="text-white divide-y divide-[#5C5C5C]">
-                        {holders.token?.holders?.map((holder, index) => (
-                          <tr
-                            key={holder.id}
-                            className="hover:bg-[#2a2a2a] transition-colors"
-                          >
-                            <td className="py-2 px-2 sm:px-4 text-sm sm:text-base whitespace-nowrap">
-                              <span className="flex items-center gap-2">
-                                {index === 0 ? '👑' : index + 1}
-                              </span>
-                            </td>
-                            <td className="py-2 px-2 sm:px-4 text-sm sm:text-base whitespace-nowrap">
-                              <div className="flex items-center gap-2">
-                                <a
-                                  href={`https://berascan.com/address/${holder.account.id}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="hover:text-[#FFCD4D] flex items-center gap-1"
-                                >
-                                  {holder.account.id}
-                                  <ExternalLink className="size-3" />
-                                </a>
-                                <Copy
-                                  className="p-1 hover:bg-[#3a3a3a] rounded flex items-center justify-center min-w-[24px]"
-                                  value={holder.account.id}
-                                  content="Copy address"
-                                >
-                                  <VscCopy className="size-3.5" />
-                                </Copy>
-                              </div>
-                            </td>
-                            <td className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base whitespace-nowrap">
-                              <div className="flex flex-col sm:flex-row justify-end items-end gap-1">
-                                <span>
-                                  {BigNumber(holder.holdingValue)
-                                    .dividedBy(1e18)
-                                    .toFixed(0)}
-                                </span>
-                                <span className="text-sm text-gray-400">
-                                  {holders.token?.symbol}
-                                </span>
-                              </div>
-                            </td>
-                            <td className="py-2 px-2 sm:px-4 text-right text-sm sm:text-base whitespace-nowrap">
-                              <span className="text-[#FFCD4D] font-medium">
-                                {(
-                                  (holder.holdingValue / TotalHoldingValue) *
-                                  100
-                                ).toFixed(2)}
-                                %
-                              </span>
-                            </td>
-                          </tr>
-                        )) || []}
-                      </tbody>
-                    </table>
-                  </div>
+                  <p className="text-white text-center">Holders data is currently unavailable.</p>
                 </div>
               </ModalBody>
             </div>
@@ -481,7 +393,6 @@ export const MemeHorseRace = observer(
       {}
     );
     const [isInitializing, setIsInitializing] = useState(true);
-    const [isLoading, setIsLoading] = useState(false);
     const [scrollPosition, setScrollPosition] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
     const timeSliderRef = useRef<HTMLInputElement>(null);
@@ -489,8 +400,6 @@ export const MemeHorseRace = observer(
     const [selectedRacer, setSelectedRacer] = useState<RacerWithToken | null>(
       null
     );
-    const [holdersData, setHoldersData] =
-      useState<TokenTop10HoldersQuery | null>(null);
     const [selectedTokenAddress, setSelectedTokenAddress] = useState<
       string | null
     >(null);
@@ -710,20 +619,11 @@ export const MemeHorseRace = observer(
       );
       if (!targetRacer) return;
 
-      try {
-        setIsLoading(true);
-        const data = await getTokenTop10Holders(tokenId);
-        setSelectedRacer({
-          ...targetRacer,
-          tokenOnchainData: tokens[targetRacer.tokenAddress],
-        });
-        setHoldersData(data);
-        onHoldersOpen();
-      } catch (error) {
-        console.error('Error fetching holders:', error);
-      } finally {
-        setIsLoading(false);
-      }
+      setSelectedRacer({
+        ...targetRacer,
+        tokenOnchainData: tokens[targetRacer.tokenAddress],
+      });
+      onHoldersOpen();
     };
 
     const handleAddLP = async (tokenAddress: string) => {
@@ -1006,10 +906,9 @@ export const MemeHorseRace = observer(
             </LoadingWrapper>
           )}
         </div>
-        {selectedRacer && holdersData && (
+        {selectedRacer && (
           <TopHoldersModal
             racer={selectedRacer}
-            holders={holdersData}
             isOpen={isHoldersOpen}
             onClose={onHoldersClose}
           />

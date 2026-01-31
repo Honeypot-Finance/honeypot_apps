@@ -21,7 +21,6 @@ import {
 import { SwapField, SwapFieldType } from '@/types/algebra/types/swap-field';
 import TokenCardV3 from '../TokenCard/TokenCardV3';
 import { ExchangeSvg } from '@/components/svg/exchange';
-import { chart } from '@honeypot/shared/services';
 
 import { Token } from '@honeypot/shared/lib/contract/token/token';
 import { Token as AlgebraToken } from '@cryptoalgebra/sdk';
@@ -286,115 +285,6 @@ const SwapPairV3 = ({
 
     initializeTokens();
   }, [fromTokenAddress, toTokenAddress]);
-
-  useEffect(() => {
-    if (!isUpdatingPriceChart) {
-      return;
-    }
-    if (
-      baseCurrency &&
-      quoteCurrency &&
-      (baseCurrency?.isNative || quoteCurrency?.isNative) &&
-      (baseCurrency?.wrapped || baseCurrency)?.address ==
-        (quoteCurrency?.wrapped || quoteCurrency)?.address
-    ) {
-      const wrappedToken = baseCurrency.wrapped || baseCurrency;
-      chart.setChartLabel(`${wrappedToken.symbol}`);
-      Token.getToken({
-        address: wrappedToken.address,
-        chainId: wallet.currentChainId.toString(),
-      })
-        .init()
-        .then((token) => {
-          chart.setChartTarget(token);
-          chart.setCurrencyCode('USD');
-        });
-    } else if (baseCurrency && quoteCurrency) {
-      // Get the actual tokens for pool computation
-      let tokenA, tokenB;
-
-      if (baseCurrency.isNative) {
-        if (!baseCurrency.wrapped) {
-          return;
-        }
-        tokenA = baseCurrency.wrapped;
-      } else if (baseCurrency.isToken) {
-        tokenA = baseCurrency;
-      } else {
-        return;
-      }
-
-      if (quoteCurrency.isNative) {
-        if (!quoteCurrency.wrapped) {
-          return;
-        }
-        tokenB = quoteCurrency.wrapped;
-      } else if (quoteCurrency.isToken) {
-        tokenB = quoteCurrency;
-      } else {
-        return;
-      }
-
-      // Skip if tokens don't have addresses
-      if (!tokenA?.address || !tokenB?.address) {
-        return;
-      }
-
-      const pairContract = new AlgebraPoolContract({
-        address: computePoolAddress({
-          tokenA: tokenA,
-          tokenB: tokenB,
-          initCodeHashManualOverride:
-            wallet.currentChain.contracts.algebraPoolInitCodeHash,
-          poolDeployer: wallet.currentChain.contracts.algebraPoolDeployer,
-        }),
-      });
-
-      pairContract.init().then((pair) => {
-        chart.setChartLabel(`${baseCurrency.symbol}/${quoteCurrency.symbol}`);
-        chart.setCurrencyCode('TOKEN');
-        chart.setTokenNumber(
-          tokenA.address.toLowerCase() ===
-            pair?.token0.value?.address.toLowerCase()
-            ? 0
-            : 1
-        );
-        chart.setChartTarget(pairContract);
-      });
-    } else if (baseCurrency) {
-      chart.setChartLabel(`${baseCurrency.symbol}`);
-      const tokenAddress =
-        baseCurrency.wrapped?.address ||
-        (baseCurrency.isToken ? baseCurrency.address : null);
-      if (!tokenAddress) return;
-
-      Token.getToken({
-        address: tokenAddress,
-        chainId: wallet.currentChainId.toString(),
-      })
-        .init()
-        .then((token) => {
-          chart.setCurrencyCode('USD');
-          chart.setChartTarget(token);
-        });
-    } else if (quoteCurrency) {
-      chart.setChartLabel(`${quoteCurrency.symbol}`);
-      const tokenAddress =
-        quoteCurrency.wrapped?.address ||
-        (quoteCurrency.isToken ? quoteCurrency.address : null);
-      if (!tokenAddress) return;
-
-      Token.getToken({
-        address: tokenAddress,
-        chainId: wallet.currentChainId.toString(),
-      })
-        .init()
-        .then((token) => {
-          chart.setCurrencyCode('USD');
-          chart.setChartTarget(token);
-        });
-    }
-  }, [baseCurrency, quoteCurrency, isUpdatingPriceChart]);
 
   return (
     <div className="flex flex-col gap-1 relative rounded-xl px-[18px] py-6 w-full">

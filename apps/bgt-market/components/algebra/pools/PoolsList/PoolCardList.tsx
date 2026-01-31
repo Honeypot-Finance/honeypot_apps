@@ -1,6 +1,7 @@
 import { TokenLogo } from '@honeypot/shared';
 
 import { Token } from '@honeypot/shared';
+import { wallet } from '@honeypot/shared/lib/wallet';
 import { Ellipsis } from 'lucide-react';
 import { AvgAPR, Plugins } from '../../common/Table/poolsColumns';
 import { formatUSD } from '@/lib/algebra/utils/common/formatUSD';
@@ -43,9 +44,11 @@ const PoolCardList = observer(({ data }: { data: Pool[] }) => {
       {data.map((pool) => {
         const token1 = Token.getToken({
           address: pool.pair.token0.id,
+          chainId: wallet.currentChainId.toString(),
         });
         const token2 = Token.getToken({
           address: pool.pair.token1.id,
+          chainId: wallet.currentChainId.toString(),
         });
 
         return (

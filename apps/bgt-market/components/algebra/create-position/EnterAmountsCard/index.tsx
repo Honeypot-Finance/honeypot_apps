@@ -7,6 +7,7 @@ import { formatCurrency } from '@/lib/algebra/utils/common/formatCurrency';
 
 import { Token } from '@honeypot/shared';
 import { TokenLogo } from '@honeypot/shared';
+import { wallet } from '@honeypot/shared/lib/wallet';
 import { cn } from '@/lib/utils';
 
 interface EnterAmountsCardProps {
@@ -57,6 +58,7 @@ const EnterAmountCard = ({
               addtionalClasses="w-8 h-8"
               token={Token.getToken({
                 address: currency.wrapped.address,
+                chainId: wallet.currentChainId.toString(),
               })}
             />
           )}

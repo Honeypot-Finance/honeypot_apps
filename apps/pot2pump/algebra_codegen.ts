@@ -4,7 +4,7 @@ import { QueryClient } from '@tanstack/react-query';
 const config: CodegenConfig = {
   overwrite: true,
   schema: [
-    'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-core/2.4.0/gn',
+    'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-berachain-mainnet/2.5.0/gn',
 
     'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-algebra-farming/2.0.0/gn',
   ],

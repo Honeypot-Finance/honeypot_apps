@@ -25,7 +25,6 @@ import { formatBalance } from '@/lib/algebra/utils/common/formatBalance';
 import { useUSDCValue } from '@/lib/algebra/hooks/common/useUSDCValue';
 import { useAccount, useBalance, useWatchBlockNumber } from 'wagmi';
 import { Address } from 'viem';
-import { chart } from '@honeypot/shared/services';
 import { computePoolAddress } from '@cryptoalgebra/sdk';
 import { AlgebraPoolContract } from '@/services/contract/algebra/algebra-pool-contract';
 
@@ -278,16 +277,6 @@ const SwapPairV3 = ({
 
     initializeTokens();
   }, [fromTokenAddress, toTokenAddress]);
-
-  // Update chart when currencies change
-  useEffect(() => {
-    if (!isUpdatingPriceChart) return;
-    
-    // Chart update logic here (simplified for brevity)
-    if (baseCurrency && quoteCurrency) {
-      chart.setChartLabel(`${baseCurrency.symbol}/${quoteCurrency.symbol}`);
-    }
-  }, [baseCurrency, quoteCurrency, isUpdatingPriceChart]);
 
   return (
     <div className="flex flex-col gap-2">

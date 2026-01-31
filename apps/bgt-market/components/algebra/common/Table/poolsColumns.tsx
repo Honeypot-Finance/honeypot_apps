@@ -17,6 +17,33 @@ import {
 import { observer } from 'mobx-react-lite';
 import BigNumber from 'bignumber.js';
 import { wallet } from '@honeypot/shared/lib/wallet';
+import { ReactNode } from 'react';
+import { Tooltip } from '@nextui-org/react';
+
+export const AvgAPR = ({
+  children,
+  avgApr,
+  farmApr,
+  maxApr,
+}: {
+  children: ReactNode;
+  avgApr: string;
+  farmApr: string | undefined;
+  maxApr: string;
+}) => {
+  const content = (
+    <div className="p-2">
+      <p>Avg. APR - {avgApr}</p>
+      {farmApr && <p>Farm APR - {farmApr}</p>}
+      <p>Max APR - {maxApr}</p>
+    </div>
+  );
+  return (
+    <Tooltip content={content}>
+      <span>{children}</span>
+    </Tooltip>
+  );
+};
 
 interface Pair {
   token0: TokenFieldsFragment;
