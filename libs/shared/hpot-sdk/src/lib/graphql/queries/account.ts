@@ -19,65 +19,16 @@ export const SINGLE_ACCOUNT_DETAILS = gql`
   }
 `;
 
-export const ACCOUNT_SWAPS_WITH_POOLS = gql`
-  query AccountSwapsWithPools($accountId: ID!, $pools: [String!]!) {
-    account(id: $accountId) {
-      transaction(where: { swaps_: { pool_in: $pools } }) {
-        swaps {
-          ...SwapFields
-        }
-      }
-    }
-  }
-`;
-
 export const ACCOUNT_FRAGMENT = gql`
   fragment AccountField on Account {
     id
     swapCount
-    memeTokenHoldingCount
-    pot2PumpLaunchCount
-    participateCount
     platformTxCount
     holdingPoolCount
     totalSpendUSD
     vaultShares {
       ...VaultShareField
     }
-    transaction(orderBy: timestamp, orderDirection: desc, first: 100) {
-      ...TransactionField
-    }
-    holder {
-      ...HoldingTokenField
-    }
-    participant {
-      ...ParticipantField
-    }
-  }
-`;
-
-export const HOLDING_TOKEN_FRAGMENT = gql`
-  fragment HoldingTokenField on HoldingToken {
-    id
-    holdingValue
-    token {
-      ...TokenField
-    }
-  }
-`;
-
-export const PARTICIPANT_FRAGMENT = gql`
-  fragment ParticipantField on Participant {
-    id
-    pot2Pump {
-      ...AccountPot2PumpField
-    }
-  }
-`;
-
-export const POT2PUMP_FRAGMENT = gql`
-  fragment AccountPot2PumpField on Pot2Pump {
-    id
   }
 `;
 
@@ -94,13 +45,6 @@ export const VAULT_SHARE_FRAGMENT = gql`
 export const VAULT_FRAGMENT = gql`
   fragment AlgebraVaultField on IchiVault {
     id
-  }
-`;
-
-export const TRANSACTION_FRAGMENT = gql`
-  fragment TransactionField on Transaction {
-    id
-    timestamp
   }
 `;
 

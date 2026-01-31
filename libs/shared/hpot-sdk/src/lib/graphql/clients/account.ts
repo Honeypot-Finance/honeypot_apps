@@ -3,11 +3,8 @@ import {
   SingleAccountDetailsDocument,
   SingleAccountDetailsQuery,
   SingleAccountDetailsQueryVariables,
-  AccountSwapsWithPoolsDocument,
-  AccountSwapsWithPoolsQuery,
-  AccountSwapsWithPoolsQueryVariables,
 } from '../generated/graphql';
-import { All_Accounts, SINGLE_ACCOUNT_DETAILS } from '../queries/account';
+import { All_Accounts } from '../queries/account';
 import { useSubgraphClient } from './../../../hooks/useSubgraphClients';
 import { ApolloClient } from '@apollo/client';
 import { createClientHook } from '../clientUtils';
@@ -20,22 +17,6 @@ export async function getAccountsPageData(client: ApolloClient<any>) {
   });
 
   return accountsQuery.data;
-}
-
-export async function getAccountSwapsWithPools(
-  client: ApolloClient<any>,
-  accountId: string,
-  pools: string[]
-) {
-  const swapsQuery = await client.query<
-    AccountSwapsWithPoolsQuery,
-    AccountSwapsWithPoolsQueryVariables
-  >({
-    query: AccountSwapsWithPoolsDocument,
-    variables: { accountId: accountId.toLowerCase(), pools: pools },
-  });
-
-  return swapsQuery.data;
 }
 
 export async function getSingleAccountDetails(
@@ -67,7 +48,6 @@ export const useAccount = createClientHook(
   () => useSubgraphClient('algebra_info'),
   {
     getAccountsPageData,
-    getAccountSwapsWithPools,
     getSingleAccountDetails,
   }
 );

@@ -4,13 +4,15 @@ import { subgraphAddresses } from './src/config/subgraphEndPoint';
 const config: CodegenConfig = {
   overwrite: true,
   schema: [
-    ...Object.values(subgraphAddresses).flatMap((subgraph) => [
-      subgraph.algebra_info,
-      subgraph.algebra_farming,
-      subgraph.bgt_market,
-      subgraph.lbp,
-      subgraph.wasabee_ido,
-    ]),
+    ...Object.values(subgraphAddresses)
+      .flatMap((subgraph) => [
+        subgraph.algebra_info,
+        subgraph.algebra_farming,
+        subgraph.bgt_market,
+        subgraph.lbp,
+        subgraph.wasabee_ido,
+      ])
+      .filter(Boolean),
   ],
   documents: 'src/lib/graphql/queries/!(*.d).{ts,tsx}',
   generates: {

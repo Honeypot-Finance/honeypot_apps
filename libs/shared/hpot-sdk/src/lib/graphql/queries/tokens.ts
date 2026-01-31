@@ -40,13 +40,6 @@ export const TOKEN_TOP_10_HOLDERS = gql`
     token(id: $tokenId) {
       id
       symbol
-      holders(first: 10, orderBy: holdingValue, orderDirection: desc) {
-        id
-        holdingValue
-        account {
-          id
-        }
-      }
     }
   }
 `;

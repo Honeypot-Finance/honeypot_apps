@@ -28,7 +28,7 @@ export const subgraphAddresses: Record<string, SubgraphAddresses> = {
       'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-bgt-market/bgt-market/gn',
     lbp: 'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/hpot-lbp/1.0.1/gn',
     wasabee_ido:
-      'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/wasabee-ido-berachain-mainnet/2.0.0/gn',
+      '',
     limit_order:
       'https://api.goldsky.com/api/public/project_cm78242tjtmme01uvcbkaay27/subgraphs/limit-orders/v1.0.0/gn',
   },

@@ -26,28 +26,6 @@ sqrtPrice
   }
 `;
 
-export const POOL_HOUR_DATA_FRAGMENT = gql`
-  fragment PoolHourDataFields on PoolHourData {
-    feesUSD
-    id
-    tvlUSD
-    txCount
-    volumeUSD
-    periodStartUnix
-  }
-`;
-
-export const POOL_DAY_DATA_FRAGMENT = gql`
-  fragment PoolDayDataFields on PoolDayData {
-    feesUSD
-    id
-    txCount
-    volumeUSD
-    tvlUSD
-    date
-  }
-`;
-
 export const TICK_FRAGMENT = gql`
   fragment TickFields on Tick {
     tickIdx
@@ -57,32 +35,6 @@ export const TICK_FRAGMENT = gql`
     price1
     feesUSD
     volumeUSD
-  }
-`;
-
-export const POOL_FEE_DATA_FRAGMENT = gql`
-  fragment PoolFeeDataFields on PoolDayData {
-    feesUSD
-  }
-`;
-
-export const POOL_WEEK_DATA_FRAGMENT = gql`
-  fragment PoolWeekDataFields on PoolWeekData {
-    feesUSD
-    tvlUSD
-    volumeUSD
-    id
-    week
-  }
-`;
-
-export const POOL_MONTH_DATA_FRAGMENT = gql`
-  fragment PoolMonthDataFields on PoolMonthData {
-    feesUSD
-    tvlUSD
-    volumeUSD
-    id
-    month
   }
 `;
 
@@ -124,18 +76,6 @@ export const MULTIPLE_POOLS = gql`
   query MultiplePools($poolIds: [ID!]) {
     pools(where: { id_in: $poolIds }) {
       ...PoolFields
-    }
-  }
-`;
-
-export const POOL_FEE_DATA = gql`
-  query PoolFeeData($poolId: String) {
-    poolDayDatas(
-      where: { pool: $poolId }
-      orderBy: date
-      orderDirection: desc
-    ) {
-      ...PoolFeeDataFields
     }
   }
 `;
