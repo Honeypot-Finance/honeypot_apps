@@ -182,7 +182,7 @@ export default function AllInOneVaultTable({
   useEffect(() => {
     const interval = setInterval(() => {
       setRefreshKey((prev) => prev + 1);
-    }, 1000);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, []); // Empty deps - runs once on mount

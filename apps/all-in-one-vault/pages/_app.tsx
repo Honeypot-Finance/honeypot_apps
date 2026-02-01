@@ -111,7 +111,21 @@ export default function App({
   });
 
   return (
-    <ErrorBoundary>
+    <ErrorBoundary fallback={({ resetError }) => (
+        <div className="flex flex-col items-center justify-center min-h-screen bg-[#140E06] text-white p-8">
+          <h1 className="text-2xl font-bold mb-4">Something went wrong</h1>
+          <p className="text-gray-400 mb-6">An unexpected error occurred. Please try refreshing the page.</p>
+          <button
+            onClick={() => {
+              resetError();
+              window.location.reload();
+            }}
+            className="px-6 py-3 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
+          >
+            Refresh Page
+          </button>
+        </div>
+      )}>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
           <PersistQueryClientProvider

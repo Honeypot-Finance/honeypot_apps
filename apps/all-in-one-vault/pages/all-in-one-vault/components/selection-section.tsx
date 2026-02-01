@@ -107,7 +107,12 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
     }
   }, [tokenBalance, selectedToken, weightPerCurrentToken]);
 
-  const parseAmount = parseUnits(amount || '0', decimals || 18).toString();
+  let parseAmount = '0';
+  try {
+    parseAmount = parseUnits(amount || '0', decimals || 18).toString();
+  } catch {
+    // Invalid amount string (e.g., trailing dot, scientific notation) — default to 0
+  }
 
   const handleBurnSuccess = () => {
     console.log('🔥 Burn successful!');
