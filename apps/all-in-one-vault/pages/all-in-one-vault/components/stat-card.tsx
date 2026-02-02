@@ -66,9 +66,11 @@ export default function StatCard() {
   const totalWeightItems = totalWeightData?.globals?.items[0]?.totalWeight;
 
   const queryClient = useQueryClient();
-  if (totalWeightData) {
-    queryClient.setQueryData(['totalWeightData'], totalWeightData);
-  }
+  useEffect(() => {
+    if (totalWeightData) {
+      queryClient.setQueryData(['totalWeightData'], totalWeightData);
+    }
+  }, [totalWeightData, queryClient]);
 
   const { data: lbgtBalanceData } = useReadContract({
     address: ESTIMATED_REWARDS,
