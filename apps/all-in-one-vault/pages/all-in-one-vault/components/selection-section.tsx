@@ -40,7 +40,6 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
   const amountRef = useRef<string>('');
   // Use state for insufficientBalance, but only update when needed
   const [insufficientBalance, setInsufficientBalance] = useState<boolean>(false);
-  const [belowMinimum, setBelowMinimum] = useState<boolean>(false);
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const [summaryData, setSummaryData] = useState({
     weightPerToken: '-',
@@ -163,7 +162,6 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
         tokenBalance={tokenBalance}
         userAddress={address}
         setInsufficientBalance={setInsufficientBalance}
-        setBelowMinimum={setBelowMinimum}
         className="w-full"
       />
 
@@ -190,7 +188,6 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
         onSuccess={handleBurnSuccess}
         onError={(error) => console.error(error)}
         insufficientBalance={insufficientBalance}
-        belowMinimum={belowMinimum}
       />
     </>
   );

@@ -14,8 +14,6 @@ import { ApprovalState } from '@/types/algebra/types/approve-state';
 import { AllInOneVaultABI } from '@/lib/abis';
 import { waitForTransactionReceipt } from '@wagmi/core';
 import { config } from '@/config/wagmi';
-import { MINIMUM_DEPOSIT_AMOUNT } from '../../utils/helper-function';
-
 // Helper function to parse contract errors
 function parseContractError(error: any): string {
   // Check for common error patterns
@@ -38,11 +36,6 @@ function parseContractError(error: any): string {
     // Token not supported
     if (message.includes('token not supported') || message.includes('unsupported token')) {
       return 'This token is not supported by the vault.';
-    }
-
-    // Minimum amount
-    if (message.includes('minimum') || message.includes('too small')) {
-      return `Minimum deposit is ${MINIMUM_DEPOSIT_AMOUNT.toLocaleString()} tokens.`;
     }
 
     // Revert reasons
@@ -70,7 +63,6 @@ interface ApproveAndBurnButtonProps {
   onSuccess?: () => void;
   onError?: (error: string) => void;
   insufficientBalance?: boolean;
-  belowMinimum?: boolean;
 }
 
 export function ApproveAndBurnButton({
@@ -81,7 +73,6 @@ export function ApproveAndBurnButton({
   onSuccess,
   onError,
   insufficientBalance = false,
-  belowMinimum = false,
 }: ApproveAndBurnButtonProps) {
   const { address: userAddress } = useAccount();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -114,8 +105,7 @@ export function ApproveAndBurnButton({
         !!userAmount &&
         !!tokenAddress &&
         approvalState === ApprovalState.APPROVED &&
-        !insufficientBalance &&
-        !belowMinimum,
+        !insufficientBalance,
     },
   });
 
@@ -176,14 +166,6 @@ export function ApproveAndBurnButton({
 
     if (!userAmount || userAmount === BigInt(0)) {
       return { text: 'Enter Amount', disabled: true, onClick: () => {} };
-    }
-
-    if (belowMinimum) {
-      return {
-        text: `Min. ${MINIMUM_DEPOSIT_AMOUNT.toLocaleString()} Tokens`,
-        disabled: true,
-        onClick: () => {},
-      };
     }
 
     if (insufficientBalance) {

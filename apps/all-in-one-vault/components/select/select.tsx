@@ -6,7 +6,7 @@ import { ExternalLink } from 'lucide-react';
 import { useQuery as useApolloQuery, ApolloClient } from '@apollo/client';
 import { TOKEN_SUPPORT_QUERY } from '@/lib/algebra/graphql/queries/token-support';
 import useGetSupportTokenInfo from '@/hooks/useGetSupportTokenInfo';
-import { calculateSummaryData, MINIMUM_DEPOSIT_AMOUNT, isAmountBelowMinimum } from '../../utils/helper-function';
+import { calculateSummaryData } from '../../utils/helper-function';
 import { useAccount, useReadContract } from 'wagmi';
 import { erc20Abi, formatUnits } from 'viem';
 import { Token, TokenLogo } from '@honeypot/shared';
@@ -27,7 +27,6 @@ interface InputSectionProps {
   setSummaryData?: (data: any) => void;
   setWeightPerCurrentToken?: (weight: string) => void;
   setInsufficientBalance?: (insufficient: boolean) => void;
-  setBelowMinimum?: (belowMin: boolean) => void;
   setTokenName?: (name: string) => void;
   amount?: string;
   className?: string;
@@ -45,7 +44,6 @@ export function InputSectionComponent({
   setSummaryData,
   setWeightPerCurrentToken,
   setInsufficientBalance,
-  setBelowMinimum,
   setTokenName,
   amount,
   className = '',
@@ -339,11 +337,6 @@ export function InputSectionComponent({
   const handleAmountChange = (value: string) => {
     if (isDisabled) return;
     onAmountChange?.(value);
-
-    // Check if amount is below minimum
-    if (setBelowMinimum) {
-      setBelowMinimum(isAmountBelowMinimum(value));
-    }
   };
 
   const handleSliderChange = (value: number | number[]) => {
@@ -365,11 +358,6 @@ export function InputSectionComponent({
 
     setSliderValue(sliderVal);
     onAmountChange?.(newAmount);
-
-    // Check if amount is below minimum
-    if (setBelowMinimum) {
-      setBelowMinimum(isAmountBelowMinimum(newAmount));
-    }
   };
 
   const handlePercentageButtonClick = (percentage: number) => {
@@ -389,11 +377,6 @@ export function InputSectionComponent({
 
     setSliderValue(percentage);
     onAmountChange?.(newAmount);
-
-    // Check if amount is below minimum
-    if (setBelowMinimum) {
-      setBelowMinimum(isAmountBelowMinimum(newAmount));
-    }
   };
 
   return (
@@ -549,12 +532,6 @@ export function InputSectionComponent({
             isClearable={!isDisabled}
             onClear={() => !isDisabled && onAmountChange?.('')}
           />
-          {/* Minimum amount indicator */}
-          {!isDisabled && (
-            <div className="mt-1 text-xs text-gray-500">
-              Minimum deposit: {MINIMUM_DEPOSIT_AMOUNT.toLocaleString()} tokens
-            </div>
-          )}
         </div>
         {/* Row 3: Slider section - Only appears in the right column */}
         <div></div> {/* Empty cell for left column */}
