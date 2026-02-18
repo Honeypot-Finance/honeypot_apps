@@ -45,6 +45,20 @@ type NavbarApiResponse = {
   menu: ApiMenu[];
 };
 
+// Check if a serialized element contains specific text content
+const hasTextContent = (serialized: unknown, text: string): boolean => {
+  if (!serialized || typeof serialized !== 'object') return false;
+  const elem = serialized as SerializedReactElement;
+  if (elem.props?.children === text) return true;
+  if (Array.isArray(elem.props?.children)) {
+    return elem.props.children.some((child: unknown) => child === text || hasTextContent(child, text));
+  }
+  if (typeof elem.props?.children === 'object') {
+    return hasTextContent(elem.props.children, text);
+  }
+  return false;
+};
+
 // Recreate React element from serialized format
 const recreateReactElement = (
   serialized: unknown,
@@ -54,6 +68,9 @@ const recreateReactElement = (
 
   const elem = serialized as SerializedReactElement;
   if (!elem.type || !elem.props) return undefined;
+
+  // Filter out "Pre-TGE" badge elements
+  if (hasTextContent(serialized, 'Pre-TGE')) return undefined;
 
   // Clone props and handle children recursively
   const props = { ...elem.props };
