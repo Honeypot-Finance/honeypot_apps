@@ -60,19 +60,6 @@ const convertToRelativePath = (url: string): string => {
   }
 };
 
-// Check if a serialized element contains specific text content
-const hasTextContent = (serialized: any, text: string): boolean => {
-  if (!serialized || typeof serialized !== 'object') return false;
-  if (serialized.props?.children === text) return true;
-  if (Array.isArray(serialized.props?.children)) {
-    return serialized.props.children.some((child: any) => child === text || hasTextContent(child, text));
-  }
-  if (typeof serialized.props?.children === 'object') {
-    return hasTextContent(serialized.props.children, text);
-  }
-  return false;
-};
-
 // Recreate React element from serialized format
 const recreateReactElement = (
   serialized: any,
@@ -80,9 +67,6 @@ const recreateReactElement = (
 ): ReactNode | undefined => {
   if (!serialized || typeof serialized !== 'object') return undefined;
   if (!serialized.type || !serialized.props) return undefined;
-
-  // Filter out "Pre-TGE" badge elements
-  if (hasTextContent(serialized, 'Pre-TGE')) return undefined;
 
   // Clone props and handle children recursively
   const props = { ...serialized.props };
