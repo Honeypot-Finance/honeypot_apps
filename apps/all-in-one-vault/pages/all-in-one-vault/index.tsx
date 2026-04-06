@@ -5,6 +5,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useChainId } from 'wagmi';
 import { useBerachainGuard } from '@/hooks/useBerachainGuard';
 import StatCard from './components/stat-card';
+import { OnChainReceiptsProvider } from '@/hooks/useOnChainReceipts';
 
 export default function AllInOneVault() {
   const [refetchReceiptsFn, setRefetchReceiptsFn] = useState<
@@ -72,13 +73,15 @@ export default function AllInOneVault() {
 
   return (
     <>
-      <div className="w-full flex flex-col justify-center items-center px-4 font-gliker">
-        <CardContainer className="xl:max-w-[1200px]">
-          <StatCard />
-          <AllInOneVaultTable onRefetchExpose={setRefetchReceiptsFn} />
-          <SelectionSection onRefetchReceipts={handleRefetchReceipts} />
-        </CardContainer>
-      </div>
+      <OnChainReceiptsProvider>
+        <div className="w-full flex flex-col justify-center items-center px-4 font-gliker">
+          <CardContainer className="xl:max-w-[1200px]">
+            <StatCard />
+            <AllInOneVaultTable onRefetchExpose={setRefetchReceiptsFn} />
+            <SelectionSection onRefetchReceipts={handleRefetchReceipts} />
+          </CardContainer>
+        </div>
+      </OnChainReceiptsProvider>
     </>
   );
 }

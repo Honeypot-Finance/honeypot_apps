@@ -1,23 +1,18 @@
 import {
-  ALL_IN_ONE_VAULT,
   ALL_IN_ONE_VAULT_PROXY,
-  BURN_TO_VAULT,
   ESTIMATED_REWARDS,
 } from '@/config/algebra/addresses';
-import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
 import {
-  formatRewards,
   formatSmallScientific,
 } from '../../utils/helper-function';
-// import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
-import { useQueryClient } from '@tanstack/react-query';
 import { Card } from '@nextui-org/react';
 import { memo, useMemo } from 'react';
 import { erc20Abi } from 'viem';
-import { useAccount, useReadContract } from 'wagmi';
+import { useReadContract } from 'wagmi';
 import { Token } from '@honeypot/shared';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { TokenLogo } from '@honeypot/shared';
+import { useOnChainReceipts } from '@/hooks/useOnChainReceipts';
 
 interface SummaryData {
   weightPerToken: string | number;
@@ -77,19 +72,7 @@ const SummaryCard = memo(function SummaryCard({
   );
 
   // estimated reward = (receipt.receiptWeight * poolReward) / totalWeight
-  const { address } = useAccount();
-  // Read totalWeightData from Tanstack Query cache (written by StatCard)
-  const queryClient = useQueryClient();
-  const totalWeightData = queryClient.getQueryData(['totalWeightData']) as any;
-  console.log('📊 totalWeightData', totalWeightData);
-  const totalWeight = totalWeightData;
-
-  // const { data: reward } = useReadContract({
-  //   address: `0x938f83738ccd5b4217862fa4b521b015f3355eb4`,
-  //   abi: rewardAbi,
-  //   functionName: 'previewLbgtMint',
-  //   args: address && REWARD_VAULT ? [address, REWARD_VAULT] : undefined,
-  // });
+  const { totalWeight: onChainTotalWeight } = useOnChainReceipts();
 
   // decimals
   const { data: decimals } = useReadContract({
@@ -107,13 +90,7 @@ const SummaryCard = memo(function SummaryCard({
       ? [ALL_IN_ONE_VAULT_PROXY as `0x${string}`]
       : undefined,
   });
-  const totalWeightItems =
-    totalWeight &&
-    totalWeight.globals &&
-    totalWeight.globals.items &&
-    totalWeight.globals.items[0]
-      ? totalWeight.globals.items[0].totalWeight
-      : undefined;
+  const totalWeightItems = onChainTotalWeight;
   // estimated reward = (receipt.receiptWeight * poolReward) / totalWeight
   console.log(
     '📊 estimate reward',

@@ -1,5 +1,4 @@
 import React from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { TableAction } from './generic-table';
 import { intervalToDuration } from 'date-fns';
@@ -14,12 +13,7 @@ import {
   ESTIMATED_REWARDS,
 } from '@/config/algebra/addresses';
 import { erc20Abi } from 'viem';
-import {
-  useQuery as useApolloQuery,
-  ApolloClient,
-  InMemoryCache,
-} from '@apollo/client';
-import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
+import { useOnChainReceipts } from '@/hooks/useOnChainReceipts';
 
 export interface StakingData {
   id: string;
@@ -101,9 +95,6 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
     header: 'Cooldown time',
     cell: ({ row }) => {
       const data = row.original;
-      const claimableAt = parseInt(data.claimableAt);
-      const now = Math.floor(Date.now() / 1000);
-      const isClaimable = now >= claimableAt;
 
       const formattedCooldown = formatCooldownTime(data.claimableAt);
       const isZero = formattedCooldown === '00:00:00';
@@ -141,17 +132,7 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
     accessorKey: 'rewards',
     header: 'Estimated Rewards',
     cell: ({ row }) => {
-      const queryClient = useQueryClient();
-      const totalWeightData = queryClient.getQueryData([
-        'totalWeightData',
-      ]) as any;
-      const totalWeightItems =
-        totalWeightData &&
-        totalWeightData.globals &&
-        totalWeightData.globals.items &&
-        totalWeightData.globals.items[0]
-          ? totalWeightData.globals.items[0].totalWeight
-          : undefined;
+      const { totalWeight: totalWeightItems } = useOnChainReceipts();
       const weight = Number(row.getValue('weight'));
       const { data: lbgtBalanceData } = useReadContract({
         address: ESTIMATED_REWARDS,
@@ -204,25 +185,18 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
       const data = row.original;
       const claimableAt = parseInt(data.claimableAt);
       const now = Math.floor(Date.now() / 1000);
-      const isClaimable = now >= claimableAt;
-      const {
-        data: hash,
-        isPending,
-        isError: isWriteError,
-        error: writeError,
-        writeContract: claimReceipt,
-      } = useWriteContract();
+      const { writeContract: claimReceipt } = useWriteContract();
 
       let actionConfig;
 
-      if (!isClaimable) {
+      if (now < claimableAt) {
         actionConfig = {
           label: 'Cooldown',
           isDisabled: true,
           className:
             'bg-gray-400 text-gray-700 px-3 py-1 rounded-md cursor-not-allowed',
         };
-      } else if (isClaimable && !data.isClaimed) {
+      } else if (!data.isClaimed) {
         actionConfig = {
           label: 'Claim',
           isDisabled: false,
@@ -230,20 +204,12 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
             'px-3 py-1 rounded-md text-black cursor-pointer hover:opacity-80 transition-opacity',
           style: { background: 'rgba(255, 169, 49, 1)' },
           onClick: async () => {
-            const payload = {
-              address: `0x20F4b92054F745c19ea3f3053B77372e73332945`,
-              abi: AllInOneVaultABI,
-              functionName: 'claim',
-              args: [data.id],
-            };
-            console.log(payload);
-            const hash = await claimReceipt({
-              address: `0x9c52cD80455a9ee50610aC90e846e46E04014f6d`,
+            claimReceipt({
+              address: ALL_IN_ONE_VAULT_PROXY,
               abi: AllInOneVaultABI,
               functionName: 'claim',
               args: [BigInt(data.id)],
             });
-            console.log(hash);
           },
         };
       } else {
@@ -266,8 +232,8 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
         </button>
       );
     },
-    enableSorting: true, // Enable sorting for this column
-    sortingFn: (rowA, rowB, columnId) => {
+    enableSorting: true,
+    sortingFn: (rowA, rowB) => {
       // Priority: Cooldown/Claim (0), Claimed (1)
       const getPriority = (label: string) => {
         if (label === 'Claimed') return 1;

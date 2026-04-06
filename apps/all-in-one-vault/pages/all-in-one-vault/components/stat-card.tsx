@@ -1,15 +1,9 @@
-import React, { useMemo, useCallback, useEffect } from 'react';
-// ...existing code...
-import { useQueryClient } from '@tanstack/react-query';
+import React, { useMemo } from 'react';
 import { Card, Tooltip } from '@nextui-org/react';
-import { useAccount, useReadContract } from 'wagmi';
+import { useReadContract } from 'wagmi';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
-import { RECEIPTS_LIST } from '@/lib/algebra/graphql/queries/receipts-list';
-import { TOTAL_WEIGHT } from '@/lib/algebra/graphql/queries/total-weight';
 import {
-  ALL_IN_ONE_VAULT,
   ALL_IN_ONE_VAULT_PROXY,
-  BURN_TO_VAULT,
   ESTIMATED_REWARDS,
 } from '@/config/algebra/addresses';
 import { erc20Abi } from 'viem';
@@ -20,21 +14,10 @@ import {
 } from '@apollo/client';
 import { TOTAL_CLAIMED } from '@/lib/algebra/graphql/queries/total-claimed';
 import { formatNumber } from '../../../utils/helper-function';
+import { useOnChainReceipts } from '@/hooks/useOnChainReceipts';
+
 export default function StatCard() {
-  const { address } = useAccount();
-  const allInOneVaultClient = useMemo(
-    () =>
-      new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/5018d16a-abf4-432d-b8a9-760dc08bcb8d',
-        cache: new InMemoryCache(),
-        defaultOptions: {
-          query: {
-            errorPolicy: 'all',
-          },
-        },
-      }),
-    []
-  );
+  const { totalWeight: totalWeightItems } = useOnChainReceipts();
 
   const statsClient = useMemo(
     () =>
@@ -49,28 +32,6 @@ export default function StatCard() {
       }),
     []
   );
-
-  // Total Weight
-  const {
-    data: totalWeightData,
-    // loading: totalWeightLoading,
-    // error: totalWeightError,
-  } = useApolloQuery(TOTAL_WEIGHT, {
-    client: statsClient,
-    errorPolicy: 'all',
-    notifyOnNetworkStatusChange: true,
-    fetchPolicy: 'cache-and-network',
-    nextFetchPolicy: 'cache-first',
-    pollInterval: 10000,
-  });
-  const totalWeightItems = totalWeightData?.globals?.items[0]?.totalWeight;
-
-  const queryClient = useQueryClient();
-  useEffect(() => {
-    if (totalWeightData) {
-      queryClient.setQueryData(['totalWeightData'], totalWeightData);
-    }
-  }, [totalWeightData, queryClient]);
 
   const { data: lbgtBalanceData } = useReadContract({
     address: ESTIMATED_REWARDS,
@@ -89,13 +50,6 @@ export default function StatCard() {
   });
   const lbgtLifetime = totalClaimedData?.globals?.items[0]?.totalClaimed || 0;
 
-  const { data: poolReward } = useReadContract({
-    address: `0xbaadcc2962417c01af99fb2b7c75706b9bd6babe`,
-    abi: erc20Abi,
-    functionName: 'balanceOf',
-    args: ALL_IN_ONE_VAULT ? [ALL_IN_ONE_VAULT as `0x${string}`] : undefined,
-  });
-
   // decimals
   const { data: decimals } = useReadContract({
     address: ESTIMATED_REWARDS,
@@ -103,98 +57,12 @@ export default function StatCard() {
     functionName: `decimals`,
   });
 
-  // estimated rewards
-  const { data: estimatedRewards } = useReadContract({
-    address: ESTIMATED_REWARDS,
-    abi: erc20Abi,
-    functionName: `balanceOf`,
-    args: BURN_TO_VAULT ? [BURN_TO_VAULT as `0x${string}`] : undefined,
-  });
-
-  const { data: receiptsData } = useApolloQuery(RECEIPTS_LIST, {
-    client: allInOneVaultClient,
-    variables: { user: address || '' },
-    skip: !address,
-    errorPolicy: 'all',
-    notifyOnNetworkStatusChange: true,
-  });
-
-  const listReceipts = receiptsData?.receipts?.items || [];
-
-  // Calculate estimated rewards for each receipt
-  const calculateEstimatedRewards = useCallback(
-    (receiptWeight: string): number => {
-      if (!receiptWeight || !totalWeightItems || !poolReward) return 0;
-
-      if (
-        receiptWeight === '-' ||
-        receiptWeight === '0' ||
-        String(receiptWeight) === '0'
-      )
-        return 0;
-
-      try {
-        const receiptWeightStr = String(receiptWeight);
-        if (!/^\d+(\.\d+)?$/.test(receiptWeightStr)) {
-          return 0;
-        }
-
-        const receiptWeightBigInt = BigInt(
-          Math.floor(parseFloat(receiptWeightStr))
-        );
-        const totalWeightBigInt = BigInt(totalWeightItems);
-        const poolRewardBigInt = BigInt(poolReward);
-
-        if (totalWeightBigInt === BigInt(0)) {
-          return 0;
-        }
-
-        return Number(
-          (receiptWeightBigInt * poolRewardBigInt) / totalWeightBigInt
-        );
-      } catch (error) {
-        console.error('Error calculating estimated rewards:', error);
-        return 0;
-      }
-    },
-    [totalWeightItems, poolReward]
-  );
-
-  // Calculate totals
-  const { totalBalance, totalLifetime, totalWeight } = useMemo(() => {
-    let balance = 0;
-    let lifetime = 0;
-    let weight = 0;
-
-    listReceipts.forEach((receipt: any) => {
-      const estimatedRewards = calculateEstimatedRewards(receipt.receiptWeight);
-      balance += estimatedRewards;
-      weight += parseFloat(receipt.receiptWeight || '0');
-
-      // Add to lifetime if receipt is claimed
-      if (receipt.isClaimed) {
-        lifetime += estimatedRewards;
-      }
-    });
-
-    return {
-      totalBalance: balance,
-      totalLifetime: lifetime,
-      totalWeight: weight,
-    };
-  }, [listReceipts, totalWeightItems, poolReward, calculateEstimatedRewards]);
-
-  const formatRewards = (value: number) => {
-    if (decimals === undefined) return '-';
-    return (value / Math.pow(10, decimals)).toFixed(1);
-  };
-
   const statsData = [
     {
       label: 'Current Total Weight',
       value:
         totalWeightItems !== undefined
-          ? formatNumber(totalWeightItems / 1e4)
+          ? formatNumber(Number(totalWeightItems) / 1e4)
           : '0.0',
     },
     {
