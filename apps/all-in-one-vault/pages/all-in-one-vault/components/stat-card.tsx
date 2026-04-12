@@ -45,7 +45,8 @@ export default function StatCard() {
     },
     {
       label: 'LBGT Lifetime',
-      value: '0.0',
+      // TODO: Restore when a reliable data source replaces the stalled ghostlogs subgraph
+      value: '-',
     },
   ];
 

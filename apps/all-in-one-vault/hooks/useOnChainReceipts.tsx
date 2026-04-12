@@ -41,6 +41,17 @@ const CONTRACT_ADDRESS = ALL_IN_ONE_VAULT_PROXY;
 const MULTICALL_BATCH_SIZE = 100;
 const MAX_CONCURRENT_BATCHES = 5;
 
+// Known token addresses that may be supported by the vault.
+// Ensures newly added tokens appear in the dropdown even if nobody has burned them yet.
+const KNOWN_TOKEN_ADDRESSES: `0x${string}`[] = [
+  '0xa32bFAf94E37911D08531212d32EADe94389243b',
+  '0x3A1d9069b791556C68c41860E70c2779B8D4509C',
+  '0x773f8b20CC9bb82a67Ad2C5d996bB3Db79118EE1',
+  '0x10AcD894a40d8584aD74628812525EF291e16C47',
+  '0x539ACed84eBB5cbD609CFaf4047Fb78b29553dA9',
+  '0x2bDE2638045e73dCE5c7b0e415d07D2884E39857',
+];
+
 const DEFAULT_STATE: OnChainReceiptsState = {
   receipts: [],
   supportedTokens: [],
@@ -54,9 +65,79 @@ const DEFAULT_STATE: OnChainReceiptsState = {
 
 const OnChainReceiptsContext = createContext<OnChainReceiptsState>(DEFAULT_STATE);
 
+type ReceiptTuple = [string, string, bigint, bigint, boolean];
+
+function isValidReceiptResult(result: unknown): result is ReceiptTuple {
+  return (
+    Array.isArray(result) &&
+    result.length === 5 &&
+    typeof result[0] === 'string' &&
+    typeof result[1] === 'string' &&
+    typeof result[4] === 'boolean'
+  );
+}
+
+/** Parse a batch of multicall results into user receipts and unique tokens. */
+function parseReceiptBatch(
+  batchStart: number,
+  results: { status: string; result: unknown }[],
+  lowerAddress: string,
+  userReceipts: OnChainReceipt[],
+  uniqueTokens: Set<string>
+) {
+  for (let j = 0; j < results.length; j++) {
+    const item = results[j];
+    if (item.status !== 'success' || !item.result) continue;
+    if (!isValidReceiptResult(item.result)) continue;
+
+    const [user, token, receiptWeight, claimableAt, claimed] = item.result;
+    uniqueTokens.add(token);
+
+    if (user.toLowerCase() !== lowerAddress) continue;
+
+    const receiptIndex = batchStart + j;
+    userReceipts.push({
+      id: String(receiptIndex),
+      receiptId: String(receiptIndex),
+      user,
+      token,
+      receiptWeight: String(receiptWeight),
+      claimableAt: String(claimableAt),
+      isClaimed: claimed,
+    });
+  }
+}
+
+/** Check which token addresses are currently supported (weight > 0). */
+async function fetchSupportedTokens(
+  publicClient: ReturnType<typeof usePublicClient>,
+  tokenAddresses: string[]
+): Promise<SupportedToken[]> {
+  if (!publicClient || tokenAddresses.length === 0) return [];
+
+  const contracts = tokenAddresses.map((t) => ({
+    address: CONTRACT_ADDRESS as `0x${string}`,
+    abi: AllInOneVaultABI,
+    functionName: 'supportedTokens' as const,
+    args: [t as `0x${string}`] as const,
+  }));
+  const results = await publicClient.multicall({ contracts });
+
+  const active: SupportedToken[] = [];
+  for (let i = 0; i < results.length; i++) {
+    const res = results[i];
+    if (res.status !== 'success' || !res.result) continue;
+    const weight = res.result as bigint;
+    if (weight > BigInt(0)) {
+      active.push({ id: tokenAddresses[i], weight: String(weight) });
+    }
+  }
+  return active;
+}
+
 /**
  * Provider that fetches on-chain receipts once and shares data with all consumers.
- * Wrap the page/section that contains StatCard, Table, etc.
+ * Also discovers supported tokens from receipt data + known addresses.
  */
 export function OnChainReceiptsProvider({
   children,
@@ -94,7 +175,6 @@ export function OnChainReceiptsProvider({
     async (total: number) => {
       if (!publicClient || !address) return;
 
-      // Abort any in-flight fetch
       abortRef.current?.abort();
       const controller = new AbortController();
       abortRef.current = controller;
@@ -108,7 +188,7 @@ export function OnChainReceiptsProvider({
         const allResults: OnChainReceipt[] = [];
         const uniqueTokens = new Set<string>();
 
-        // Build all batch definitions
+        // Build batch definitions
         const batches: { start: number; end: number }[] = [];
         for (let i = 0; i < total; i += MULTICALL_BATCH_SIZE) {
           batches.push({ start: i, end: Math.min(i + MULTICALL_BATCH_SIZE, total) });
@@ -130,72 +210,33 @@ export function OnChainReceiptsProvider({
                   args: [BigInt(j)] as const,
                 });
               }
-              const results = await publicClient.multicall({ contracts });
-              return { start, results };
+              return {
+                start,
+                results: await publicClient.multicall({ contracts }),
+              };
             })
           );
 
           if (controller.signal.aborted) return;
 
           for (const { start, results } of chunkResults) {
-            for (let j = 0; j < results.length; j++) {
-              const item = results[j];
-              if (item.status !== 'success' || !item.result) continue;
-
-              const [user, token, receiptWeight, claimableAt, claimed] =
-                item.result as [string, string, bigint, bigint, boolean];
-
-              // Collect all unique token addresses for supported token lookup
-              uniqueTokens.add(token);
-
-              if (user.toLowerCase() !== lowerAddress) continue;
-
-              const receiptIndex = start + j;
-              allResults.push({
-                id: String(receiptIndex),
-                receiptId: String(receiptIndex),
-                user,
-                token,
-                receiptWeight: String(receiptWeight),
-                claimableAt: String(claimableAt),
-                isClaimed: claimed,
-              });
-            }
+            parseReceiptBatch(start, results as any, lowerAddress, allResults, uniqueTokens);
           }
         }
 
         if (controller.signal.aborted) return;
 
-        // Sort by ID descending (newest first)
         allResults.reverse();
         setReceipts(allResults);
 
-        // Check which tokens are currently supported (weight > 0)
-        if (uniqueTokens.size > 0) {
-          const tokenAddresses = Array.from(uniqueTokens);
-          const tokenContracts = tokenAddresses.map((t) => ({
-            address: CONTRACT_ADDRESS as `0x${string}`,
-            abi: AllInOneVaultABI,
-            functionName: 'supportedTokens' as const,
-            args: [t as `0x${string}`] as const,
-          }));
-          const tokenResults = await publicClient.multicall({ contracts: tokenContracts });
+        // Merge discovered tokens with known list, then check weights
+        KNOWN_TOKEN_ADDRESSES.forEach((t) => uniqueTokens.add(t));
+        const activeTokens = await fetchSupportedTokens(
+          publicClient,
+          Array.from(uniqueTokens)
+        );
 
-          if (controller.signal.aborted) return;
-
-          const activeTokens: SupportedToken[] = [];
-          for (let k = 0; k < tokenResults.length; k++) {
-            const res = tokenResults[k];
-            if (res.status === 'success' && res.result) {
-              const weight = res.result as bigint;
-              if (weight > BigInt(0)) {
-                activeTokens.push({
-                  id: tokenAddresses[k],
-                  weight: String(weight),
-                });
-              }
-            }
-          }
+        if (!controller.signal.aborted) {
           setSupportedTokens(activeTokens);
         }
       } catch (err) {
@@ -235,22 +276,18 @@ export function OnChainReceiptsProvider({
     }
   }, [refetchNextId, refetchTotalWeight, fetchReceipts]);
 
-  // Lightweight poll: only re-reads nextReceiptID, totalWeight, and
-  // the current user's receipt claim statuses (not all 1348 receipts)
+  // Lightweight poll: only checks nextReceiptID + unclaimed receipt statuses
   const poll = useCallback(async () => {
     if (!publicClient || !address || receipts.length === 0) return;
 
     await refetchTotalWeight();
 
-    // Check if new receipts were added
     const { data: latestId } = await refetchNextId();
     if (latestId && Number(latestId) !== Number(nextReceiptID)) {
-      // New receipts added — do full refetch
       await fetchReceipts(Number(latestId));
       return;
     }
 
-    // Re-read only the user's receipt claim statuses
     const unclaimed = receipts.filter((r) => !r.isClaimed);
     if (unclaimed.length === 0) return;
 
@@ -270,7 +307,8 @@ export function OnChainReceiptsProvider({
         if (idx === -1) return r;
         const res = results[idx];
         if (res.status !== 'success' || !res.result) return r;
-        const claimed = (res.result as [string, string, bigint, bigint, boolean])[4];
+        if (!isValidReceiptResult(res.result)) return r;
+        const claimed = res.result[4];
         if (claimed && !r.isClaimed) {
           changed = true;
           return { ...r, isClaimed: true };
