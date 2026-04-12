@@ -3,8 +3,7 @@ import { WarppedNextSelect } from '../wrappedNextUI/Select/Select';
 import { SelectItem, Slider, Button } from '@nextui-org/react';
 import React, { useState, useEffect, useMemo } from 'react';
 import { ExternalLink } from 'lucide-react';
-import { useQuery as useApolloQuery, ApolloClient } from '@apollo/client';
-import { TOKEN_SUPPORT_QUERY } from '@/lib/algebra/graphql/queries/token-support';
+import { useOnChainReceipts } from '@/hooks/useOnChainReceipts';
 import useGetSupportTokenInfo from '@/hooks/useGetSupportTokenInfo';
 import { calculateSummaryData } from '../../utils/helper-function';
 import { useAccount, useReadContract } from 'wagmi';
@@ -30,7 +29,7 @@ interface InputSectionProps {
   setTokenName?: (name: string) => void;
   amount?: string;
   className?: string;
-  tokenSupportClient?: ApolloClient<any>;
+  tokenSupportClient?: unknown;
   totalWeight?: bigint | null;
   tokenBalance?: bigint | null;
   userAddress?: string;
@@ -105,23 +104,13 @@ export function InputSectionComponent({
 
   const isDisabled = !userAddress;
 
-  const {
-    data: tokenSupportData,
-    loading: tokenSupportLoading,
-    error: tokenSupportError,
-  } = useApolloQuery(TOKEN_SUPPORT_QUERY, {
-    client: tokenSupportClient,
-    errorPolicy: 'all',
-    notifyOnNetworkStatusChange: true,
-    skip: isDisabled,
-  });
+  const { supportedTokens: onChainSupportedTokens } = useOnChainReceipts();
   const tokenSupportList = useMemo(
     () =>
-      (tokenSupportData?.supportReceipts?.items || []).filter(
-        (token: { id: string }) =>
-          !TOKEN_BLOCK_LIST.includes(token.id.toLowerCase())
+      onChainSupportedTokens.filter(
+        (token) => !TOKEN_BLOCK_LIST.includes(token.id.toLowerCase())
       ),
-    [tokenSupportData?.supportReceipts?.items]
+    [onChainSupportedTokens]
   );
 
   // Initialize token logos
