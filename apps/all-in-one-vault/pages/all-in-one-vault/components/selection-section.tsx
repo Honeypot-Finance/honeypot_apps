@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import InputSection from '@/components/select/select';
 import SummaryCard from '@/components/summary/summary';
@@ -7,11 +7,6 @@ import {
   ALL_IN_ONE_VAULT,
   ALL_IN_ONE_VAULT_PROXY,
 } from '@/config/algebra/addresses';
-import {
-  useQuery as useApolloQuery,
-  ApolloClient,
-  InMemoryCache,
-} from '@apollo/client';
 import {
   useAccount,
   useReadContract,
@@ -52,20 +47,6 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  const tokenSupportClient = useMemo(
-    () =>
-      new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/5018d16a-abf4-432d-b8a9-760dc08bcb8d',
-        cache: new InMemoryCache(),
-        defaultOptions: {
-          query: {
-            errorPolicy: 'all',
-          },
-        },
-      }),
-    []
-  );
 
   const { data: tokenBalance, refetch: refetchBalance } = useReadContract({
     address: selectedToken as `0x${string}`,
@@ -158,7 +139,6 @@ function SelectionSectionClient({ onRefetchReceipts }: SelectionSectionProps) {
         amount={amount}
         onTokenChange={onTokenChange}
         onAmountChange={onAmountChange}
-        tokenSupportClient={tokenSupportClient}
         tokenBalance={tokenBalance}
         userAddress={address}
         setInsufficientBalance={setInsufficientBalance}

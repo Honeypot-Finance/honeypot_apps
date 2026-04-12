@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Card, Tooltip } from '@nextui-org/react';
 import { useReadContract } from 'wagmi';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
@@ -7,31 +7,11 @@ import {
   ESTIMATED_REWARDS,
 } from '@/config/algebra/addresses';
 import { erc20Abi } from 'viem';
-import {
-  ApolloClient,
-  InMemoryCache,
-  useQuery as useApolloQuery,
-} from '@apollo/client';
-import { TOTAL_CLAIMED } from '@/lib/algebra/graphql/queries/total-claimed';
 import { formatNumber } from '../../../utils/helper-function';
 import { useOnChainReceipts } from '@/hooks/useOnChainReceipts';
 
 export default function StatCard() {
   const { totalWeight: totalWeightItems } = useOnChainReceipts();
-
-  const statsClient = useMemo(
-    () =>
-      new ApolloClient({
-        uri: 'https://api.ghostlogs.xyz/gg/pub/4d9fda23-4a22-4b3a-9c0f-37077d3edf84',
-        cache: new InMemoryCache(),
-        defaultOptions: {
-          query: {
-            errorPolicy: 'all',
-          },
-        },
-      }),
-    []
-  );
 
   const { data: lbgtBalanceData } = useReadContract({
     address: ESTIMATED_REWARDS,
@@ -42,15 +22,6 @@ export default function StatCard() {
       : undefined,
   });
 
-  // LBGT Lifetime
-  const { data: totalClaimedData } = useApolloQuery(TOTAL_CLAIMED, {
-    client: statsClient,
-    errorPolicy: 'all',
-    notifyOnNetworkStatusChange: true,
-  });
-  const lbgtLifetime = totalClaimedData?.globals?.items[0]?.totalClaimed || 0;
-
-  // decimals
   const { data: decimals } = useReadContract({
     address: ESTIMATED_REWARDS,
     abi: erc20Abi,
@@ -74,10 +45,7 @@ export default function StatCard() {
     },
     {
       label: 'LBGT Lifetime',
-      value:
-        decimals !== undefined
-          ? formatNumber(((lbgtLifetime / Math.pow(10, decimals)) * 4) / 9)
-          : '0.0',
+      value: '0.0',
     },
   ];
 

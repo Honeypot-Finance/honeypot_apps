@@ -29,7 +29,6 @@ interface InputSectionProps {
   setTokenName?: (name: string) => void;
   amount?: string;
   className?: string;
-  tokenSupportClient?: unknown;
   totalWeight?: bigint | null;
   tokenBalance?: bigint | null;
   userAddress?: string;
@@ -46,7 +45,6 @@ export function InputSectionComponent({
   setTokenName,
   amount,
   className = '',
-  tokenSupportClient,
   totalWeight,
   tokenBalance,
   userAddress,
@@ -446,7 +444,7 @@ export function InputSectionComponent({
               listbox: 'p-0',
             }}
           >
-            {!isDisabled &&
+            {isDisabled ? [] :
               tokenSupportList.map((token: { id: string; weight: string }) => {
                 const tokenInfo = tokenInfoData?.[token.id];
                 const tokenInstance = getTokenInstance(token.id);

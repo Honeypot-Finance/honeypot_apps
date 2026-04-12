@@ -91,18 +91,6 @@ const SummaryCard = memo(function SummaryCard({
       : undefined,
   });
   const totalWeightItems = onChainTotalWeight;
-  // estimated reward = (receipt.receiptWeight * poolReward) / totalWeight
-  console.log(
-    '📊 estimate reward',
-    'receiptWeight:',
-    Number(data.receiptWeight),
-    'lbgtBalanceData:',
-    Number(lbgtBalanceData),
-    'totalWeightItems:',
-    totalWeightItems,
-    'decimals:',
-    decimals
-  );
   const formatNumber = (
     value: number | string,
     minFraction?: number,
@@ -172,15 +160,6 @@ const SummaryCard = memo(function SummaryCard({
                 const adjustedTotalWeight = totalWeight + receiptWeightRaw;
                 const estimatedWei = (receiptWeightRaw * poolReward) / adjustedTotalWeight;
                 const estimated = estimatedWei / Math.pow(10, decimals);
-
-                console.log('Calculation:', {
-                  receiptWeight,
-                  poolReward,
-                  totalWeight,
-                  estimatedWei,
-                  estimated,
-                  decimals,
-                });
 
                 return formatSmallScientific(estimated);
               })()

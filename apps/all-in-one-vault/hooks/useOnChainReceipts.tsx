@@ -34,6 +34,7 @@ interface OnChainReceiptsState {
   isError: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+  poll: () => Promise<void>;
 }
 
 const CONTRACT_ADDRESS = ALL_IN_ONE_VAULT_PROXY;
@@ -48,6 +49,7 @@ const DEFAULT_STATE: OnChainReceiptsState = {
   isError: false,
   error: null,
   refetch: async () => {},
+  poll: async () => {},
 };
 
 const OnChainReceiptsContext = createContext<OnChainReceiptsState>(DEFAULT_STATE);
@@ -224,6 +226,7 @@ export function OnChainReceiptsProvider({
     };
   }, []);
 
+  // Full refetch: re-reads nextReceiptID, totalWeight, and all receipts
   const refetch = useCallback(async () => {
     const { data } = await refetchNextId();
     await refetchTotalWeight();
@@ -231,6 +234,55 @@ export function OnChainReceiptsProvider({
       await fetchReceipts(Number(data));
     }
   }, [refetchNextId, refetchTotalWeight, fetchReceipts]);
+
+  // Lightweight poll: only re-reads nextReceiptID, totalWeight, and
+  // the current user's receipt claim statuses (not all 1348 receipts)
+  const poll = useCallback(async () => {
+    if (!publicClient || !address || receipts.length === 0) return;
+
+    await refetchTotalWeight();
+
+    // Check if new receipts were added
+    const { data: latestId } = await refetchNextId();
+    if (latestId && Number(latestId) !== Number(nextReceiptID)) {
+      // New receipts added — do full refetch
+      await fetchReceipts(Number(latestId));
+      return;
+    }
+
+    // Re-read only the user's receipt claim statuses
+    const unclaimed = receipts.filter((r) => !r.isClaimed);
+    if (unclaimed.length === 0) return;
+
+    const contracts = unclaimed.map((r) => ({
+      address: CONTRACT_ADDRESS as `0x${string}`,
+      abi: AllInOneVaultABI,
+      functionName: 'receipts' as const,
+      args: [BigInt(r.id)] as const,
+    }));
+
+    try {
+      const results = await publicClient.multicall({ contracts });
+      let changed = false;
+
+      const updated = receipts.map((r) => {
+        const idx = unclaimed.findIndex((u) => u.id === r.id);
+        if (idx === -1) return r;
+        const res = results[idx];
+        if (res.status !== 'success' || !res.result) return r;
+        const claimed = (res.result as [string, string, bigint, bigint, boolean])[4];
+        if (claimed && !r.isClaimed) {
+          changed = true;
+          return { ...r, isClaimed: true };
+        }
+        return r;
+      });
+
+      if (changed) setReceipts(updated);
+    } catch {
+      // Silently fail on poll — full refetch will retry
+    }
+  }, [publicClient, address, receipts, nextReceiptID, refetchNextId, refetchTotalWeight, fetchReceipts]);
 
   const value: OnChainReceiptsState = {
     receipts,
@@ -240,6 +292,7 @@ export function OnChainReceiptsProvider({
     isError,
     error,
     refetch,
+    poll,
   };
 
   return (
