@@ -2,6 +2,7 @@
 
 ## Create next app workspace
 
+
 ```sh
 npx create-nx-workspace@latest --preset=next
 ```
