@@ -134,7 +134,7 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
     cell: ({ row }) => {
       const { totalWeight: totalWeightItems } = useOnChainReceipts();
       const weight = Number(row.getValue('weight'));
-      const { data: lbgtBalanceData } = useReadContract({
+      const { data: rewardBalanceData } = useReadContract({
         address: ESTIMATED_REWARDS,
         abi: erc20Abi,
         functionName: 'balanceOf',
@@ -151,12 +151,12 @@ export const columns: ColumnDef<ReceiptTableData>[] = [
       let estimated: string | number | bigint = '-';
       if (
         weight !== undefined &&
-        lbgtBalanceData !== undefined &&
+        rewardBalanceData !== undefined &&
         totalWeightItems !== undefined &&
         decimals !== undefined
       ) {
         const est =
-          (Number(weight) * formatRewards(Number(lbgtBalanceData), decimals)) /
+          (Number(weight) * formatRewards(Number(rewardBalanceData), decimals)) /
           Number(totalWeightItems);
         estimated = formatSmallScientific(est);
       }
