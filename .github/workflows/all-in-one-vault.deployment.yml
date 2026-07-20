@@ -11,10 +11,21 @@ jobs:
       VERCEL_PROJECT_ID: prj_Nl9aICmsPZm9dQO92Kn0OQDFhmBF
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
       - name: Deploy to Vercel (production)
-        run: vercel deploy --prod --yes --token=${{ secrets.WORKFLOW_VERCEL_TOKEN }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.WORKFLOW_VERCEL_TOKEN }}
+        run: |
+          vercel whoami --token="$VERCEL_TOKEN"
+          echo "VERCEL_ORG_ID length: ${#VERCEL_ORG_ID}"
+          if ! vercel deploy --prod --yes --token="$VERCEL_TOKEN"; then
+            echo "env-var project retrieval failed; retrying with explicit link"
+            unset VERCEL_ORG_ID VERCEL_PROJECT_ID
+            rm -rf .vercel
+            vercel link --yes --project app-all-in-one-vault --scope yexlabs --token="$VERCEL_TOKEN"
+            vercel deploy --prod --yes --token="$VERCEL_TOKEN"
+          fi
