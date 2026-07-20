@@ -1,7 +1,6 @@
 import React from 'react';
-import { Card, Tooltip } from '@nextui-org/react';
+import { Card } from '@nextui-org/react';
 import { useReadContract } from 'wagmi';
-import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import {
   ALL_IN_ONE_VAULT_PROXY,
   ESTIMATED_REWARDS,
@@ -13,7 +12,7 @@ import { useOnChainReceipts } from '@/hooks/useOnChainReceipts';
 export default function StatCard() {
   const { totalWeight: totalWeightItems } = useOnChainReceipts();
 
-  const { data: lbgtBalanceData } = useReadContract({
+  const { data: rewardBalanceData } = useReadContract({
     address: ESTIMATED_REWARDS,
     abi: erc20Abi,
     functionName: 'balanceOf',
@@ -37,14 +36,14 @@ export default function StatCard() {
           : '0.0',
     },
     {
-      label: 'LBGT Balance',
+      label: 'WBERA Balance',
       value:
-        lbgtBalanceData !== undefined && decimals !== undefined
-          ? formatNumber(Number(lbgtBalanceData) / Math.pow(10, decimals))
+        rewardBalanceData !== undefined && decimals !== undefined
+          ? formatNumber(Number(rewardBalanceData) / Math.pow(10, decimals))
           : '0.0',
     },
     {
-      label: 'LBGT Lifetime',
+      label: 'WBERA Lifetime',
       // TODO: Restore when a reliable data source replaces the stalled ghostlogs subgraph
       value: '-',
     },
@@ -61,32 +60,6 @@ export default function StatCard() {
             <div className="p-4 text-center">
               <div className="text-sm text-gray-600 mb-1 font-theader flex items-center justify-center gap-1">
                 {stat.label}
-                {stat.label === 'LBGT Lifetime' && (
-                  <Tooltip
-                    content={
-                      <div className="text-center max-w-xs">
-                        <div className="text-xs">
-                          Berapaw take a 50% fee from all LBGT mint from this
-                          vault while returning 40% bribeback to this vault to
-                          strengthen the bribe power. The actual fee is 10% of
-                          all BGT or 20% of the delivered BGT. The delivered BGT
-                          is half the emission to this vault.
-                        </div>
-                      </div>
-                    }
-                    placement="top"
-                    closeDelay={100}
-                    classNames={{
-                      base: 'z-50',
-                      content:
-                        'bg-black text-white px-3 py-2 rounded text-xs max-w-xs',
-                    }}
-                  >
-                    <div className="inline-flex">
-                      <AiOutlineQuestionCircle className="text-gray-500 hover:text-gray-700 cursor-help text-base" />
-                    </div>
-                  </Tooltip>
-                )}
               </div>
               <div className="text-2xl font-bold text-gray-800">
                 {stat.value}

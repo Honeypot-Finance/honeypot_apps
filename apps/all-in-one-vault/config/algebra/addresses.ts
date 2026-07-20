@@ -119,6 +119,7 @@ export const REWARD_VAULT: Address =
 export const BURN_TO_VAULT: Address =
   '0x9c52cD80455a9ee50610aC90e846e46E04014f6d';
 
+// WBERA — BGT LSTs (LBGT 0xBaadCC29...) deprecated as incentive tokens with PoL Next
 export const ESTIMATED_REWARDS: Address =
-  '0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe';
+  '0x6969696969696969696969696969696969696969';
 

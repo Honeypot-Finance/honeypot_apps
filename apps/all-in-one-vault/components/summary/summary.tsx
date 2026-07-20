@@ -41,16 +41,16 @@ const SummaryCard = memo(function SummaryCard({
   className = '',
   isLoading = false,
 }: SummaryCardProps) {
-  // Helper function to get LBGT token instance
-  const getLBGTTokenInstance = () => {
+  // Helper function to get the reward token (WBERA) instance
+  const getRewardTokenInstance = () => {
     return Token.getToken({
       address: ESTIMATED_REWARDS,
       chainId: wallet.currentChainId.toString(),
     });
   };
 
-  // Get LBGT token instance
-  const lbgtToken = getLBGTTokenInstance();
+  // Get reward token instance
+  const rewardToken = getRewardTokenInstance();
   const formatValue = useMemo(
     () => (value: string | number | bigint) => {
       if (isLoading) return '...';
@@ -81,8 +81,8 @@ const SummaryCard = memo(function SummaryCard({
     functionName: `decimals`,
   });
 
-  // LBGT Balance
-  const { data: lbgtBalanceData } = useReadContract({
+  // Reward token (WBERA) balance held by the vault
+  const { data: rewardBalanceData } = useReadContract({
     address: ESTIMATED_REWARDS,
     abi: erc20Abi,
     functionName: 'balanceOf',
@@ -137,12 +137,12 @@ const SummaryCard = memo(function SummaryCard({
         label: 'Estimated Rewards',
         value:
           data.receiptWeight !== undefined &&
-          lbgtBalanceData !== undefined &&
+          rewardBalanceData !== undefined &&
           totalWeightItems !== undefined &&
           decimals !== undefined
             ? (() => {
                 const receiptWeight = Number(data.receiptWeight);
-                const poolReward = Number(lbgtBalanceData);
+                const poolReward = Number(rewardBalanceData);
                 const totalWeight = Number(totalWeightItems);
 
                 if (
@@ -167,7 +167,7 @@ const SummaryCard = memo(function SummaryCard({
         key: 'estimatedRewards',
       },
     ],
-    [data, lbgtBalanceData, totalWeightItems, decimals]
+    [data, rewardBalanceData, totalWeightItems, decimals]
   );
 
   return (
@@ -189,10 +189,10 @@ const SummaryCard = memo(function SummaryCard({
               >
                 {!isLoading && (
                   <div className="flex items-center justify-center gap-2">
-                    {item.key === 'estimatedRewards' && lbgtToken && (
+                    {item.key === 'estimatedRewards' && rewardToken && (
                       <div>
                         <TokenLogo
-                          token={lbgtToken}
+                          token={rewardToken}
                           size={20}
                           disableTooltip={false}
                         />
