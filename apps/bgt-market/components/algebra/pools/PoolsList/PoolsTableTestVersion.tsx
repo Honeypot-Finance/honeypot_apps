@@ -15,7 +15,6 @@ import {
 } from '@/lib/algebra/graphql/generated/graphql';
 import PoolCardList from './PoolCardList';
 import { SortingState } from '@tanstack/react-table';
-import { id } from 'ethers/lib/utils';
 import { useUserPools } from '@/lib/algebra/graphql/clients/pool';
 import { wallet } from '@honeypot/shared/lib/wallet';
 import BigNumber from 'bignumber.js';
