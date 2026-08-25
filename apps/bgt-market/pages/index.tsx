@@ -16,15 +16,16 @@ import {
 import { usePollingBlockNumber } from '@/lib/hooks/useBlockNumber';
 import { useEffect } from 'react';
 import { wallet } from '@honeypot/shared/lib/wallet';
+import { bgtRegistry } from '@/services/contract/bgt-registry';
 
 const HomePage: NextLayoutPage = observer(() => {
   const { block } = usePollingBlockNumber();
 
   useEffect(() => {
-    if (wallet.contracts.heyBgt) {
-      wallet.contracts.heyBgt.getBeraPrice();
+    if (bgtRegistry.heyBgt) {
+      bgtRegistry.heyBgt.getBeraPrice();
     }
-  }, [block, wallet.contracts.heyBgt]);
+  }, [block, bgtRegistry.heyBgt]);
 
   return (
     <div className="w-screen h-full p-2">

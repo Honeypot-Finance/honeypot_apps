@@ -67,12 +67,14 @@ export const SwapCard = observer(
       if (inputCurrency && isEthAddress(inputCurrency)) {
         swap.setFromToken(
           Token.getToken({
+            chainId: wallet.currentChainId.toString(),
             address: inputCurrency,
           })
         );
       } else {
         swap.setFromToken(
           Token.getToken({
+            chainId: wallet.currentChainId.toString(),
             address: '0x6969696969696969696969696969696969696969',
             isNative: true,
           })
@@ -82,12 +84,14 @@ export const SwapCard = observer(
       if (outputCurrency && isEthAddress(outputCurrency)) {
         swap.setToToken(
           Token.getToken({
+            chainId: wallet.currentChainId.toString(),
             address: outputCurrency,
           })
         );
       } else {
         swap.setToToken(
           Token.getToken({
+            chainId: wallet.currentChainId.toString(),
             address: '0xfc5e3743e9fac8bb60408797607352e24db7d65e',
           })
         );

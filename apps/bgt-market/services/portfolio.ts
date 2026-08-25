@@ -49,6 +49,7 @@ class Portfolio {
         const { marketCap, ...rest } = token;
 
         return Token.getToken({
+          chainId: wallet.currentChainId.toString(),
           ...rest,
           address: token.id.toLowerCase(),
           derivedETH: token.derivedMatic,

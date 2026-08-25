@@ -6,6 +6,7 @@ import { ICHIVaultFactoryABI } from '@/lib/abis/aquabera/ICHIVaultFactory';
 import { ContractWrite } from '@honeypot/shared';
 import { RewardVaultABI } from '@/lib/abis/bgt-market/RewardVaultABI';
 import { chain } from '@/services/chain';
+import { bgtRegistry } from '@/services/contract/bgt-registry';
 
 export class BGTVault implements BaseContract {
   static bgtVaultMap: Record<string, BGTVault> = {};
@@ -91,7 +92,7 @@ export class BGTVault implements BaseContract {
     const operator = await this.readOperator(wallet.account as Address);
 
     const isBgtMarketContractApproved =
-      operator === wallet.currentChain.contracts.bgtMarket;
+      operator === bgtRegistry.addresses.bgtMarket;
 
     if (isBgtMarketContractApproved) {
       runInAction(() => {

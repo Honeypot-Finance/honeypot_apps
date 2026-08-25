@@ -2,12 +2,12 @@ import { observer, useLocalObservable } from 'mobx-react-lite';
 import { FtoPairContract } from '@/services/contract/launches/fto/ftopair-contract';
 import { Button } from '@/components/button/button-next';
 import { MemePairContract } from '@/services/contract/launches/pot2pump/memepair-contract';
-import { LaunchDetailSwapCard } from '@/components/SwapCard/MemeSwap';
 import PottingModal from '@/components/atoms/Pot2PumpComponents/PottingModal';
 import { wallet } from '@honeypot/shared/lib/wallet';
 
 import { SwapField } from '@/types/algebra/types/swap-field';
 import { useDerivedSwapInfo } from '@/lib/algebra/state/swapStore';
+import { LaunchDetailSwapCard } from '@/components/SwapCard/MemeSwap';
 const SuccessAction = observer(
   ({
     pair,

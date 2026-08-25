@@ -10,6 +10,7 @@ import { debounce } from 'lodash';
 import dayjs from 'dayjs';
 import { chart } from './chart';
 import { zeroAddress } from 'viem';
+import { bgtRegistry } from '@/services/contract/bgt-registry';
 
 class Swap {
   fromToken: Token | undefined = undefined;
@@ -35,7 +36,7 @@ class Swap {
       routerPossiblePaths
     );
 
-    this.setRouterToken(bestPath.map((t) => Token.getToken({ address: t })));
+    this.setRouterToken(bestPath.map((t) => Token.getToken({ chainId: wallet.currentChainId.toString(), address: t })));
   };
 
   currentPair = new AsyncState(async () => {
@@ -170,11 +171,11 @@ class Swap {
   }
 
   get factoryContract() {
-    return wallet.contracts.factory;
+    return bgtRegistry.factory;
   }
 
   get routerV2Contract() {
-    return wallet.contracts.routerV2;
+    return bgtRegistry.routerV2;
   }
 
   get minToAmount() {
@@ -487,7 +488,7 @@ class Swap {
     }
 
     let finalAmountOut =
-      await wallet.contracts.routerV2.contract.read.getAmountsOut([
+      await bgtRegistry.routerV2.contract.read.getAmountsOut([
         BigInt(
           new BigNumber(startingAmount)
             .multipliedBy(new BigNumber(10).pow(this.fromToken!.decimals))
@@ -523,6 +524,7 @@ class Swap {
 
         for (let i = 0; i < toTokenRouterTokens.length; i++) {
           const RT = Token.getToken({
+            chainId: wallet.currentChainId.toString(),
             address: toTokenRouterTokens[i].toLowerCase(),
           });
           if (
@@ -546,6 +548,7 @@ class Swap {
 
         for (let i = 0; i < fromTokenRouterTokens.length; i++) {
           const RT = Token.getToken({
+            chainId: wallet.currentChainId.toString(),
             address: fromTokenRouterTokens[i].toLowerCase(),
           });
           if (
@@ -578,7 +581,7 @@ class Swap {
           rtoken.toLowerCase()
         )
       ) {
-        const RT = Token.getToken({ address: rtoken.toLowerCase() });
+        const RT = Token.getToken({ chainId: wallet.currentChainId.toString(), address: rtoken.toLowerCase() });
         RT.init();
         paths.push([RT]);
       }
@@ -604,10 +607,12 @@ class Swap {
           )
         ) {
           const RT1 = Token.getToken({
+            chainId: wallet.currentChainId.toString(),
             address: fromTokenRouterTokens[i].toLowerCase(),
           });
           RT1.init();
           const RT2 = Token.getToken({
+            chainId: wallet.currentChainId.toString(),
             address: toTokenRouterTokens[j].toLowerCase(),
           });
           RT2.init();
@@ -651,7 +656,7 @@ class Swap {
         return token.isRouterToken;
       })
       .map(([address, token]) => {
-        return Token.getToken({ address });
+        return Token.getToken({ chainId: wallet.currentChainId.toString(), address });
       });
 
     routerTokens.forEach(async (routerToken) => {
@@ -675,7 +680,9 @@ class Swap {
     chart.setChartTarget(undefined);
 
     if (this.fromToken && this.toToken) {
-      chart.setChartTarget(this.currentPair.value as PairContract);
+      // Local PairContract vs the shared one the chart store is typed against;
+      // same runtime object, differing only in two unread display fields.
+      chart.setChartTarget(this.currentPair.value as any);
     } else if (this.fromToken) {
       chart.setChartTarget(this.fromToken as Token);
     }

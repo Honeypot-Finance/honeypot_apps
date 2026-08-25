@@ -20,6 +20,7 @@ import { Pot2Pump } from '@/lib/algebra/graphql/clients/type';
 
 import { Token } from '@honeypot/shared';
 import { useProjectInfo } from '@/hooks/useProjectInfo';
+import { wallet } from '@honeypot/shared/lib/wallet';
 
 type launchCardVariants = 'list' | 'detail' | 'trending';
 
@@ -333,6 +334,7 @@ const DetailLaunchCard = observer(
             }),
             optionsPresets.importTokenToWallet({
               token: Token.getToken({
+                chainId: wallet.currentChainId.toString(),
                 address: pair?.launchedToken?.address ?? '',
               }),
             }),

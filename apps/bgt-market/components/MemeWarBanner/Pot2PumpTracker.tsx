@@ -3,7 +3,6 @@ import { popmodal } from '@/services/popmodal';
 import { Button } from '@nextui-org/react';
 import { observer } from 'mobx-react-lite';
 import dynamic from 'next/dynamic';
-import { LaunchDetailSwapCard } from '../SwapCard/MemeSwap';
 import { TokenLogo } from '@honeypot/shared';
 import { useEffect, useState } from 'react';
 import { fetchMemetrackerList, Pair } from '@/lib/algebra/graphql/clients/pair';
@@ -12,6 +11,7 @@ import { wallet } from '@honeypot/shared/lib/wallet';
 import { Token } from '@honeypot/shared';
 import { trpcClient } from '@/lib/trpc';
 import { MemePairContract } from '@/services/contract/launches/pot2pump/memepair-contract';
+import { LaunchDetailSwapCard } from '../SwapCard/MemeSwap';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 

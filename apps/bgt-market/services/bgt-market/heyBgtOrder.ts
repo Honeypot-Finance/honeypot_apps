@@ -17,6 +17,7 @@ import {
   OrderType,
 } from '@/lib/algebra/graphql/generated/graphql';
 import { BGTVault } from '../contract/bgt-market/bgt-vault';
+import { bgtRegistry } from '@/services/contract/bgt-registry';
 
 export class HeyBgtOrder {
   static gqlOrderToBgtOrder(order: Order): HeyBgtOrder {
@@ -170,9 +171,9 @@ export class HeyBgtOrder {
   }
 
   async getOrderDetails() {
-    if (!wallet.contracts.heyBgt) return;
+    if (!bgtRegistry.heyBgt) return;
     if (this.orderType === OrderType.BuyBgt) {
-      const res = await wallet.contracts.heyBgt.getBuyBgtOrder(
+      const res = await bgtRegistry.heyBgt.getBuyBgtOrder(
         BigInt(this.orderId)
       );
 
@@ -185,14 +186,14 @@ export class HeyBgtOrder {
       });
       return res;
     } else {
-      const res = await wallet.contracts.heyBgt.getSellBgtOrder(
+      const res = await bgtRegistry.heyBgt.getSellBgtOrder(
         BigInt(this.orderId)
       );
       runInAction(() => {
         this.setData({
           price:
             (Number(res.premiumRate) / 10000) *
-            wallet.contracts.heyBgt.beraprice,
+            bgtRegistry.heyBgt.beraprice,
           vaultAddress: res.rewardVault,
           spentBalance: res.filledAmount,
         });

@@ -46,15 +46,15 @@ export class HeyBgtContract implements BaseContract {
 
       await rewardVault.setOperatorIfNot(
         wallet.account as Address,
-        wallet.currentChain.contracts.heyBgt as Address
+        this.address as Address
       );
 
       const beraPrice = await this.getBeraPrice();
       const formattedPrice = BigInt(Math.floor((price / beraPrice) * 10000));
 
       const res = await wallet.publicClient.simulateContract({
-        address: wallet.contracts.heyBgt.address,
-        abi: wallet.contracts.heyBgt.abi,
+        address: this.address,
+        abi: this.abi,
         functionName: 'openSellBgtOrder',
         account: wallet.account as Address,
         args: [
@@ -90,6 +90,7 @@ export class HeyBgtContract implements BaseContract {
     }
 
     const HoneyToken = Token.getToken({
+      chainId: wallet.currentChainId.toString(),
       address: wallet.currentChain.validatedTokens.find(
         (token) => token.symbol === 'HONEY'
       )?.address as `0x${string}`,
@@ -97,14 +98,14 @@ export class HeyBgtContract implements BaseContract {
 
     //approve honey if not approved
     await HoneyToken.approveIfNoAllowance({
-      spender: wallet.contracts.heyBgt.address,
+      spender: this.address,
       amount: value.toString(),
     });
 
     try {
       const res = await wallet.publicClient.simulateContract({
-        address: wallet.contracts.heyBgt.address,
-        abi: wallet.contracts.heyBgt.abi,
+        address: this.address,
+        abi: this.abi,
         functionName: 'openBuyBgtOrder',
         account: wallet.account as Address,
         args: [price, value, BigInt(NODE_ID)],
@@ -150,6 +151,7 @@ export class HeyBgtContract implements BaseContract {
       return;
     }
     const HoneyToken = Token.getToken({
+      chainId: wallet.currentChainId.toString(),
       address: wallet.currentChain.validatedTokens.find(
         (token) => token.symbol === 'HONEY'
       )?.address as `0x${string}`,
@@ -157,14 +159,14 @@ export class HeyBgtContract implements BaseContract {
 
     //approve honey if not approved
     await HoneyToken.approveIfNoAllowance({
-      spender: wallet.contracts.heyBgt.address,
+      spender: this.address,
       amount: value.toString(),
     });
 
     try {
       const res = await wallet.publicClient.simulateContract({
-        address: wallet.contracts.heyBgt.address,
-        abi: wallet.contracts.heyBgt.abi,
+        address: this.address,
+        abi: this.abi,
         functionName: 'fillSellBgtOrder',
         account: wallet.account as Address,
         args: [orderId, BigInt(NODE_ID)],
@@ -202,12 +204,12 @@ export class HeyBgtContract implements BaseContract {
 
       await rewardVault.setOperatorIfNot(
         wallet.account as Address,
-        wallet.currentChain.contracts.heyBgt as Address
+        this.address as Address
       );
 
       const res = await wallet.publicClient.simulateContract({
-        address: wallet.contracts.heyBgt.address,
-        abi: wallet.contracts.heyBgt.abi,
+        address: this.address,
+        abi: this.abi,
         functionName: 'fillBuyBgtOrder',
         account: wallet.account as Address,
         args: [orderId, vaultAddress, BigInt(NODE_ID)],

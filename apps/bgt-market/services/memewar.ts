@@ -3,8 +3,9 @@ import { MemePairContract } from "./contract/launches/pot2pump/memepair-contract
 import BigNumber from "bignumber.js";
 import { liquidity } from "./liquidity";
 import { get } from "lodash";
-import { Token } from "./contract/token";
+import { Token } from '@honeypot/shared';
 import { FtoPairContract } from "./contract/launches/fto/ftopair-contract";
+import { wallet } from '@honeypot/shared/lib/wallet';
 
 export type EventState = "preview" | "active" | "ended";
 export type MemeWarParticipant = {
@@ -140,7 +141,7 @@ export class MemewarStore {
   }
 
   reloadParticipants = async () => {
-    this.tHpotToken = Token.getToken({ address: tHpotAddress });
+    this.tHpotToken = Token.getToken({ chainId: wallet.currentChainId.toString(), address: tHpotAddress });
     await this.tHpotToken.init();
     Object.keys(this.memewarParticipants).forEach((key) => {
       this.memewarParticipants[key].isPairInitialized = false;
@@ -170,7 +171,7 @@ export class MemewarStore {
       participant.type === "fto"
         ? new FtoPairContract({ address })
         : new MemePairContract({ address });
-    const token = Token.getToken({ address: participant.tokenAddress });
+    const token = Token.getToken({ chainId: wallet.currentChainId.toString(), address: participant.tokenAddress });
     await pair.init();
     await Promise.all([
       await token.init(),
