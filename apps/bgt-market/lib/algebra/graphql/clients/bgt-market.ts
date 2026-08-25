@@ -5,8 +5,16 @@ import { useEffect, useState } from 'react';
 
 const BERA_CHAIN_API_URL = 'https://api.berachain.com/';
 
+// Berachain enforces a client-name header on api.berachain.com; requests
+// without it are rejected. Keep this identifier stable — it is how the
+// Berachain Foundation attributes our traffic.
+const BERA_CHAIN_CLIENT_NAME = 'honeypot-finance';
+
 const bgtClient = new ApolloClient({
   uri: BERA_CHAIN_API_URL,
+  headers: {
+    'x-graphql-client-name': BERA_CHAIN_CLIENT_NAME,
+  },
   ssrMode: true,
   cache: new InMemoryCache(),
 });
