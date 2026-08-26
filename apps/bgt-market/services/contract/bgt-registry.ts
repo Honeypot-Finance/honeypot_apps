@@ -39,7 +39,16 @@ interface BgtContracts {
 // reconstructs its own `contracts` map in initWallet().
 let cached: BgtContracts | null = null;
 
-function contracts(): BgtContracts {
+function contracts(): BgtContracts | null {
+  // Callers guard with `if (bgtRegistry.heyBgt)`. On the shared wallet that
+  // guard is really an "is the wallet up yet?" check, because `wallet.contracts`
+  // stays `{}` until initWallet() runs. Handing out contracts any earlier makes
+  // those guards pass while `wallet.publicClient` is still undefined, and the
+  // viem contract then has no `read` — which is how /profile and / threw
+  // `Cannot read properties of undefined (reading 'getBeraPrice')`.
+  if (!wallet.publicClient) {
+    return null;
+  }
   const network = currentNetwork();
   if (cached && cached.chainId === network.chainId) {
     return cached;
@@ -62,18 +71,22 @@ function contracts(): BgtContracts {
   return cached;
 }
 
+// Typed as always-present to match how `wallet.contracts.*` was declared, so the
+// existing call sites and their `if (...)` guards keep working unchanged. The
+// values really are undefined until the wallet is initialised — that is the
+// behaviour the guards were written against.
 export const bgtRegistry = {
   get routerV2() {
-    return contracts().routerV2;
+    return contracts()?.routerV2 as RouterV2Contract;
   },
   get factory() {
-    return contracts().factory;
+    return contracts()?.factory as FactoryContract;
   },
   get bgtMarket() {
-    return contracts().bgtMarket;
+    return contracts()?.bgtMarket as BGTMarketContract;
   },
   get heyBgt() {
-    return contracts().heyBgt;
+    return contracts()?.heyBgt as HeyBgtContract;
   },
   /** Raw addresses, for the call sites that used `currentChain.contracts.*`. */
   get addresses() {
