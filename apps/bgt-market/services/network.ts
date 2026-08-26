@@ -2,6 +2,7 @@ import { Token } from '@honeypot/shared';
 import { Chain } from 'viem/chains';
 import { berachain } from '@/lib/chain';
 import { ALGEBRA_POSITION_MANAGER } from '@/config/algebra/addresses';
+import { wallet } from '@honeypot/shared/lib/wallet';
 
 export class Network {
   isActive: boolean = true;
@@ -78,6 +79,7 @@ export class Network {
       const token = Token.getToken({
         ...t,
         address,
+        chainId: wallet.currentChainId.toString(),
       });
       token.init();
       this.validatedTokensInfo[address] = token;

@@ -517,7 +517,7 @@ export const MemeHorseRace = observer(
           if (wallet.isInit) {
             const tokenMap: Record<string, Token> = {};
             for (const racer of initialRacers) {
-              const token = Token.getToken({ address: racer.tokenAddress });
+              const token = Token.getToken({ chainId: wallet.currentChainId.toString(), address: racer.tokenAddress });
               await token.init();
               tokenMap[racer.tokenAddress] = token;
             }

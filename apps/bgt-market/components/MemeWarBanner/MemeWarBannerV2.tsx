@@ -20,10 +20,10 @@ import { WarppedNextSelect } from '../wrappedNextUI/Select/Select';
 import BigNumber from 'bignumber.js';
 import dynamic from 'next/dynamic';
 import { popmodal } from '@/services/popmodal';
-import { LaunchDetailSwapCard } from '../SwapCard/MemeSwap';
 import { toCompactLocaleString } from '@/lib/utils';
 import { TokenLogo } from '@honeypot/shared';
 import { MemePairContract } from '@/services/contract/launches/pot2pump/memepair-contract';
+import { LaunchDetailSwapCard } from '../SwapCard/MemeSwap';
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const ANIMATION_DURATION = 500; //ms

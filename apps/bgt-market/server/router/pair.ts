@@ -8,6 +8,9 @@ import { createPublicClientByChain } from '@/lib/client';
 import IUniswapV2Pair from '@uniswap/v2-core/build/IUniswapV2Pair.json';
 import PQueue from 'p-queue';
 import { networksMap } from '@honeypot/shared';
+// `factory` is a bgt-market contract; the shared ContractAddresses does not
+// carry it, so the address comes from this app's own network config.
+import { networksMap as bgtNetworksMap } from '@/services/network';
 import { kv } from '@/lib/kv';
 import { pairQueryOutput } from '@/types/pair';
 import { indexer } from '@/services/indexer/indexer';
@@ -88,7 +91,7 @@ export const pairRouter = router({
           const { chainId } = input;
           const currentNetwork = networksMap[chainId];
           const factoryContract = getContract({
-            address: currentNetwork.contracts.factory as `0x${string}`,
+            address: bgtNetworksMap[chainId].contracts.factory as `0x${string}`,
             abi: factoryABI,
             // 1a. Insert a single client
             client: {

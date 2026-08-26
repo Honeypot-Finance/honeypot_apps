@@ -40,12 +40,12 @@ export class BGTMarketContract implements BaseContract {
 
       await rewardVault.setOperatorIfNot(
         wallet.account as Address,
-        wallet.currentChain.contracts.bgtMarket as Address
+        this.address as Address
       );
 
       const res = await wallet.publicClient.simulateContract({
-        address: wallet.contracts.bgtMarket.address,
-        abi: wallet.contracts.bgtMarket.abi,
+        address: this.address,
+        abi: this.abi,
         functionName: 'postOrder',
         account: wallet.account as Address,
         args: [BigInt(price), (vaultAddress ?? zeroAddress) as Address],
@@ -82,8 +82,8 @@ export class BGTMarketContract implements BaseContract {
 
     try {
       const res = await wallet.publicClient.simulateContract({
-        address: wallet.contracts.bgtMarket.address,
-        abi: wallet.contracts.bgtMarket.abi,
+        address: this.address,
+        abi: this.abi,
         functionName: 'postOrder',
         account: wallet.account as Address,
         args: [BigInt(price)],
@@ -129,8 +129,8 @@ export class BGTMarketContract implements BaseContract {
 
     try {
       const res = await wallet.publicClient.simulateContract({
-        address: wallet.contracts.bgtMarket.address,
-        abi: wallet.contracts.bgtMarket.abi,
+        address: this.address,
+        abi: this.abi,
         functionName: 'fillOrder',
         account: wallet.account as Address,
         args: [orderId],
@@ -169,12 +169,12 @@ export class BGTMarketContract implements BaseContract {
 
       await rewardVault.setOperatorIfNot(
         wallet.account as Address,
-        wallet.currentChain.contracts.bgtMarket as Address
+        this.address as Address
       );
 
       const res = await wallet.publicClient.simulateContract({
-        address: wallet.contracts.bgtMarket.address,
-        abi: wallet.contracts.bgtMarket.abi,
+        address: this.address,
+        abi: this.abi,
         functionName: 'fillOrder',
         account: wallet.account as Address,
         args: [orderId, vaultAddress],

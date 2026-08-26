@@ -16,6 +16,7 @@ import {
   VaultDeposit,
   VaultWithdraw,
 } from '@/lib/algebra/graphql/generated/graphql';
+import { bgtRegistry } from '@/services/contract/bgt-registry';
 
 // const totalSupply = await pairContract.methods.totalSupply().call()
 // const LPTokenBalance = await this.balanceOf(pairAddress)
@@ -152,7 +153,7 @@ export class PairContract implements BaseContract {
   }
 
   get routerV2Contract() {
-    return wallet.contracts.routerV2;
+    return bgtRegistry.routerV2;
   }
 
   constructor(args: Partial<PairContract>) {
@@ -271,6 +272,7 @@ export class PairContract implements BaseContract {
         await Promise.all([
           (async () => {
             this.token = Token.getToken({
+              chainId: wallet.currentChainId.toString(),
               address: this.address,
             });
 

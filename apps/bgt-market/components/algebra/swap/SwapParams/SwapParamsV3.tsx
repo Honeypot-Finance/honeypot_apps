@@ -33,6 +33,7 @@ import { ChevronDownIcon, ChevronRightIcon, ZapIcon } from 'lucide-react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { FaLongArrowAltRight } from 'react-icons/fa';
 import { Address } from 'viem';
+import { wallet } from '@honeypot/shared/lib/wallet';
 
 const SwapParamsV3 = () => {
   const {
@@ -257,6 +258,7 @@ const SwapRoute = ({
             <div>
               <TokenLogo
                 token={Token.getToken({
+                  chainId: wallet.currentChainId.toString(),
                   address: token.address,
                 })}
               />

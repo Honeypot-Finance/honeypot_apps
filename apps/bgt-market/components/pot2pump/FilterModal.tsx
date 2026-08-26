@@ -44,6 +44,7 @@ export const Filter = observer(
 
       const raiseTokens = wallet.currentChain.raisedTokenData.map((token) =>
         Token.getToken({
+          chainId: wallet.currentChainId.toString(),
           address: token.address,
           force: true,
         })

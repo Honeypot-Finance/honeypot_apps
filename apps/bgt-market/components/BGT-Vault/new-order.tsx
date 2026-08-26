@@ -14,6 +14,7 @@ import { simulateContract } from 'viem/actions';
 import { useEffect, useMemo, useState } from 'react';
 import { useUserBgtVaults } from '@/lib/hooks/useUserBgtVaults';
 import { WrappedToastify } from '@/lib/wrappedToastify';
+import { bgtRegistry } from '@/services/contract/bgt-registry';
 
 type FormValues = {
   price: string;
@@ -46,7 +47,7 @@ export const BgtMarketPostOrderModal: NextLayoutPage = observer(() => {
     try {
       if (OrderType.BuyBgt === data.orderType) {
         console.log('buy');
-        const orderTransaction = wallet.contracts.bgtMarket.postBuyOrder(
+        const orderTransaction = bgtRegistry.bgtMarket.postBuyOrder(
           BigInt(Math.floor(Number(data.price) * 10000)),
           BigInt(parseEther(data.orderBuyValue ?? '0'))
         );
@@ -54,7 +55,7 @@ export const BgtMarketPostOrderModal: NextLayoutPage = observer(() => {
         await orderTransaction;
       } else {
         console.log('sell');
-        const orderTransaction = wallet.contracts.bgtMarket.postSellOrder(
+        const orderTransaction = bgtRegistry.bgtMarket.postSellOrder(
           BigInt(Math.floor(Number(data.price) * 10000)),
           (data.vaultAddress ?? zeroAddress) as Address
         );
@@ -212,14 +213,14 @@ export const HeyBgtPostOrderModal: NextLayoutPage = observer(() => {
     setBuyOrSellLoading(true);
     try {
       if (OrderType.BuyBgt === data.orderType) {
-        const orderTransaction = wallet.contracts.heyBgt.postBuyOrder(
+        const orderTransaction = bgtRegistry.heyBgt.postBuyOrder(
           BigInt(parseEther(Number(data.price).toFixed(18))),
           BigInt(parseEther(totalOrderValue.toString() ?? '0'))
         );
 
         await orderTransaction;
       } else {
-        const orderTransaction = wallet.contracts.heyBgt.postSellOrder(
+        const orderTransaction = bgtRegistry.heyBgt.postSellOrder(
           Number(data.price),
           (data.vaultAddress ?? zeroAddress) as Address
         );
@@ -238,10 +239,10 @@ export const HeyBgtPostOrderModal: NextLayoutPage = observer(() => {
   };
 
   useEffect(() => {
-    if (wallet.contracts.heyBgt) {
-      wallet.contracts.heyBgt.getBeraPrice();
+    if (bgtRegistry.heyBgt) {
+      bgtRegistry.heyBgt.getBeraPrice();
     }
-  }, [wallet.contracts.heyBgt]);
+  }, [bgtRegistry.heyBgt]);
 
   useEffect(() => {
     const fetchHoneyBalance = async () => {
@@ -318,7 +319,7 @@ export const HeyBgtPostOrderModal: NextLayoutPage = observer(() => {
                 className={
                   'w-full bg-white rounded-[12px] md:rounded-[16px] px-3 md:px-4 py-2 md:py-[18px] text-black outline-none border border-black shadow-[0px_332px_93px_0px_rgba(0,0,0,0.00),0px_212px_85px_0px_rgba(0,0,0,0.01),0px_119px_72px_0px_rgba(0,0,0,0.05),0px_53px_53px_0px_rgba(0,0,0,0.09),0px_13px_29px_0px_rgba(0,0,0,0.10)] placeholder:text-black/50 text-sm md:text-base font-medium h-[40px] md:h-[60px]'
                 }
-                placeholder={`Enter Price(>=${wallet.contracts.heyBgt?.beraprice?.toFixed(
+                placeholder={`Enter Price(>=${bgtRegistry.heyBgt?.beraprice?.toFixed(
                   4
                 )})`}
               />

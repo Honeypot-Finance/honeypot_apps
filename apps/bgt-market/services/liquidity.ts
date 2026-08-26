@@ -16,6 +16,7 @@ import { add, debounce, forEach } from 'lodash';
 import dayjs from 'dayjs';
 import { PageRequest, PairFilter } from './indexer/indexerTypes';
 import { Address, zeroAddress } from 'viem';
+import { bgtRegistry } from '@/services/contract/bgt-registry';
 
 class Liquidity {
   pairPage = new OldIndexerPaginationState<PairFilter, PairContract>({
@@ -32,10 +33,12 @@ class Liquidity {
       if (pairs.status === 'success') {
         const pariContracts = pairs.data.pairs.map((pair) => {
           const token0 = Token.getToken({
+            chainId: wallet.currentChainId.toString(),
             ...pair.token0,
             address: pair.token0.id,
           });
           const token1 = Token.getToken({
+            chainId: wallet.currentChainId.toString(),
             ...pair.token1,
             address: pair.token1.id,
           });
@@ -100,6 +103,7 @@ class Liquidity {
       if (pairs.status === 'success') {
         const pariContracts = pairs.data.holdingPairs.map((pair) => {
           const token0 = Token.getToken({
+            chainId: wallet.currentChainId.toString(),
             address: pair.pair.token0Id,
             name: pair.pair.token0name,
             symbol: pair.pair.token0symbol,
@@ -108,6 +112,7 @@ class Liquidity {
           });
 
           const token1 = Token.getToken({
+            chainId: wallet.currentChainId.toString(),
             address: pair.pair.token1Id,
             name: pair.pair.token1name,
             symbol: pair.pair.token1symbol,
@@ -259,11 +264,11 @@ class Liquidity {
   }
 
   get routerV2Contract() {
-    return wallet.contracts.routerV2;
+    return bgtRegistry.routerV2;
   }
 
   get factoryContract() {
-    return wallet.contracts.factory;
+    return bgtRegistry.factory;
   }
 
   get isDisabled() {
@@ -595,6 +600,7 @@ class Liquidity {
     validatedTokenPairs.status === 'success' &&
       validatedTokenPairs.data.pairs.forEach((pair) => {
         const token0 = Token.getToken({
+          chainId: wallet.currentChainId.toString(),
           address: pair.token0.id.toLowerCase(),
           name: pair.token0.name,
           symbol: pair.token0.symbol,
@@ -602,6 +608,7 @@ class Liquidity {
           isRouterToken: true,
         });
         const token1 = Token.getToken({
+          chainId: wallet.currentChainId.toString(),
           address: pair.token1.id.toLowerCase(),
           name: pair.token1.name,
           symbol: pair.token1.symbol,
@@ -643,8 +650,14 @@ class Liquidity {
       if (pair) {
         const pairContract = new PairContract({
           address: pair.address,
-          token0: Token.getToken(pair.token0),
-          token1: Token.getToken(pair.token1),
+          token0: Token.getToken({
+            ...pair.token0,
+            chainId: wallet.currentChainId.toString(),
+          }),
+          token1: Token.getToken({
+            ...pair.token1,
+            chainId: wallet.currentChainId.toString(),
+          }),
         });
 
         pairContract.init();
@@ -662,8 +675,8 @@ class Liquidity {
         if (pairAdd && pairAdd !== zeroAddress) {
           const pairContract = new PairContract({
             address: pairAdd,
-            token0: Token.getToken({ address: token0Address }),
-            token1: Token.getToken({ address: token1Address }),
+            token0: Token.getToken({ chainId: wallet.currentChainId.toString(), address: token0Address }),
+            token1: Token.getToken({ chainId: wallet.currentChainId.toString(), address: token1Address }),
           });
 
           pairContract.init();
@@ -679,7 +692,7 @@ class Liquidity {
   }
 
   isFtoRaiseToken(tokenAddress: string): boolean {
-    return wallet.currentChain.contracts.ftoTokens.some(
+    return bgtRegistry.ftoTokens.some(
       (ftoToken) =>
         ftoToken.address?.toLowerCase() === tokenAddress.toLowerCase()
     );
@@ -721,7 +734,7 @@ class Liquidity {
   getTokenToRaisedTokenPairs(tokenAddress: string): string[] {
     const pairTokens: string[] = [];
 
-    wallet.currentChain.contracts.ftoTokens.forEach((ftoToken) => {
+    bgtRegistry.ftoTokens.forEach((ftoToken) => {
       const memoryPair = this.getMemoryPair(
         tokenAddress.toLowerCase(),
         ftoToken.address?.toLowerCase() ?? ''

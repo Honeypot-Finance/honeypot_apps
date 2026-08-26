@@ -19,6 +19,7 @@ import { MemePairContract } from './../contract/launches/pot2pump/memepair-contr
 import { PageRequest } from './../indexer/indexerTypes';
 import { fetchPairsList } from '@/lib/algebra/graphql/clients/pair';
 import { FilterState } from '@/constants/pot2pump.type';
+import { bgtRegistry } from '@/services/contract/bgt-registry';
 
 export const PAGE_LIMIT = 9;
 
@@ -239,10 +240,12 @@ class LaunchPad {
 
         const raisedToken = this.isRaiseToken(pairAddress.token1.id)
           ? Token.getToken({
+            chainId: wallet.currentChainId.toString(),
               ...pairAddress.token1,
               address: pairAddress.token1.id,
             })
           : Token.getToken({
+            chainId: wallet.currentChainId.toString(),
               address: pairAddress.token0.id,
             });
 
@@ -250,10 +253,12 @@ class LaunchPad {
           raisedToken.address.toLowerCase() ===
           pairAddress.token1.id.toLowerCase()
             ? Token.getToken({
+              chainId: wallet.currentChainId.toString(),
                 ...pairAddress.token0,
                 address: pairAddress.token0.id,
               })
             : Token.getToken({
+              chainId: wallet.currentChainId.toString(),
                 ...pairAddress.token1,
                 address: pairAddress.token1.id,
               });
@@ -288,10 +293,12 @@ class LaunchPad {
 
         const raisedToken = this.isRaiseToken(pairAddress.token1.id)
           ? Token.getToken({
+            chainId: wallet.currentChainId.toString(),
               ...pairAddress.token1,
               address: pairAddress.token1.id,
             })
           : Token.getToken({
+            chainId: wallet.currentChainId.toString(),
               address: pairAddress.token0.id,
             });
 
@@ -299,10 +306,12 @@ class LaunchPad {
           raisedToken.address.toLowerCase() ===
           pairAddress.token1.id.toLowerCase()
             ? Token.getToken({
+              chainId: wallet.currentChainId.toString(),
                 ...pairAddress.token0,
                 address: pairAddress.token0.id,
               })
             : Token.getToken({
+              chainId: wallet.currentChainId.toString(),
                 ...pairAddress.token1,
                 address: pairAddress.token1.id,
               });
@@ -391,11 +400,13 @@ class LaunchPad {
 
           const raisedToken = this.isRaiseToken(pairAddress.token1.id)
             ? Token.getToken({
+              chainId: wallet.currentChainId.toString(),
                 ...pairAddress.token1,
                 address: pairAddress.token1.id,
                 decimals: Number(pairAddress.token1.decimals),
               })
             : Token.getToken({
+              chainId: wallet.currentChainId.toString(),
                 address: pairAddress.token0.id,
               });
 
@@ -403,11 +414,13 @@ class LaunchPad {
             raisedToken.address.toLowerCase() ===
             pairAddress.token1.id.toLowerCase()
               ? Token.getToken({
+                chainId: wallet.currentChainId.toString(),
                   ...pairAddress.token0,
                   address: pairAddress.token0.id,
                   decimals: Number(pairAddress.token0.decimals),
                 })
               : Token.getToken({
+                chainId: wallet.currentChainId.toString(),
                   ...pairAddress.token1,
                   address: pairAddress.token1.id,
                   decimals: Number(pairAddress.token1.decimals),
@@ -471,10 +484,12 @@ class LaunchPad {
 
           const raisedToken = this.isRaiseToken(pairAddress.pair.token1.id)
             ? Token.getToken({
+              chainId: wallet.currentChainId.toString(),
                 ...pairAddress.pair.token1,
                 address: pairAddress.pair.token1.id,
               })
             : Token.getToken({
+              chainId: wallet.currentChainId.toString(),
                 address: pairAddress.pair.token0.id,
               });
 
@@ -482,10 +497,12 @@ class LaunchPad {
             raisedToken.address.toLowerCase() ===
             pairAddress.pair.token1.id.toLowerCase()
               ? Token.getToken({
+                chainId: wallet.currentChainId.toString(),
                   ...pairAddress.pair.token0,
                   address: pairAddress.pair.token0.id,
                 })
               : Token.getToken({
+                chainId: wallet.currentChainId.toString(),
                   ...pairAddress.pair.token1,
                   address: pairAddress.pair.token1.id,
                 });
@@ -547,10 +564,12 @@ class LaunchPad {
 
           const raisedToken = this.isRaiseToken(pairAddress.token1.id)
             ? Token.getToken({
+              chainId: wallet.currentChainId.toString(),
                 ...pairAddress.token1,
                 address: pairAddress.token1.id,
               })
             : Token.getToken({
+              chainId: wallet.currentChainId.toString(),
                 address: pairAddress.token0.id,
               });
 
@@ -558,10 +577,12 @@ class LaunchPad {
             raisedToken.address.toLowerCase() ===
             pairAddress.token1.id.toLowerCase()
               ? Token.getToken({
+                chainId: wallet.currentChainId.toString(),
                   ...pairAddress.token0,
                   address: pairAddress.token0.id,
                 })
               : Token.getToken({
+                chainId: wallet.currentChainId.toString(),
                   ...pairAddress.token1,
                   address: pairAddress.token1.id,
                 });
@@ -634,7 +655,7 @@ class LaunchPad {
             tokenName,
             tokenSymbol,
             BigInt(new BigNumber(tokenAmount).multipliedBy(1e18).toFixed()),
-            wallet.currentChain.contracts.routerV3 as `0x${string}`,
+            bgtRegistry.addresses.routerV3 as `0x${string}`,
             BigInt(raisingCycle),
           ]);
         } else {
@@ -643,8 +664,7 @@ class LaunchPad {
               raisedToken: raisedToken as `0x${string}`,
               name: tokenName,
               symbol: tokenSymbol,
-              swapHandler: wallet.currentChain.contracts
-                .routerV3 as `0x${string}`,
+              swapHandler: bgtRegistry.addresses.routerV3 as `0x${string}`,
             },
           ]);
         }
@@ -737,7 +757,7 @@ class LaunchPad {
   );
 
   isRaiseToken(tokenAddress: string): boolean {
-    return wallet.currentChain.contracts.ftoTokens.some(
+    return bgtRegistry.ftoTokens.some(
       (ftoToken) =>
         ftoToken.address?.toLowerCase() === tokenAddress.toLowerCase()
     );

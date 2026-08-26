@@ -18,7 +18,7 @@ import { createSiweMessage } from '@/lib/siwe';
 const payContract = '0x166a064C9D0E243fea5d9afA3E7B06a8b94E05F9';
 const ethersProvider =
   typeof window !== 'undefined' && window.ethereum
-    ? new ethers.providers.Web3Provider(window.ethereum)
+    ? new ethers.BrowserProvider(window.ethereum)
     : null;
 
 function toDataURL(src: string, callback: (arg0: string) => void) {
@@ -275,7 +275,21 @@ const BeraVoteForm = observer(
     const [logoBase64, setLogoBase64] = useState('');
     const [paymentFee, setPaymentFee] = useState('');
     const [formSpaceId, setFormSpaceId] = useState(pair.projectName);
-    const signer = ethersProvider?.getSigner();
+    // ethers v6 returns a promise from getSigner(); v5 returned it synchronously.
+    const [signer, setSigner] = useState<ethers.Signer | null>(null);
+    useEffect(() => {
+      if (!ethersProvider) {
+        return;
+      }
+      let cancelled = false;
+      ethersProvider.getSigner().then(
+        (resolved) => !cancelled && setSigner(resolved),
+        () => !cancelled && setSigner(null)
+      );
+      return () => {
+        cancelled = true;
+      };
+    }, []);
     const [allCreatedSpaces, setAllCreatedSpaces] = useState<string[]>([]);
 
     useEffect(() => {
@@ -361,7 +375,7 @@ const BeraVoteForm = observer(
                 </p>
                 <p>
                   cost of dao creation:{' '}
-                  {paymentFee && ethers.utils.formatEther(paymentFee)} Bera
+                  {paymentFee && ethers.formatEther(paymentFee)} Bera
                 </p>
               </div>
 

@@ -47,7 +47,9 @@ export const vaultQueryResToVaultContract = (
     ...vault.vaultWithdraws,
   ].sort((a, b) => Number(b.createdAtTimestamp) - Number(a.createdAtTimestamp));
 
-  vaultContract.pool = poolQueryToContract(vault.pool);
+  // This app keeps its own PairContract; the shared one additionally declares
+  // apr_24h / volumeChange24h, which nothing on this path reads.
+  vaultContract.pool = poolQueryToContract(vault.pool) as any;
 
   vaultContract.token0.init();
   vaultContract.token1.init();

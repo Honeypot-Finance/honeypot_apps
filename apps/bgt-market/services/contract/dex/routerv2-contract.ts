@@ -1,7 +1,7 @@
 import { routerV2ABI } from "@/lib/abis/routerv2";
 import { BaseContract } from "..";
 
-import { wallet } from "../../wallet";
+import { wallet } from '@honeypot/shared/lib/wallet';
 import { getContract } from "viem";
 import { ContractWrite } from "../../utils";
 

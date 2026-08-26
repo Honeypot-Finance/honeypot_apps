@@ -95,13 +95,13 @@ export class ICHIVaultContract implements BaseContract {
 
   async getToken0() {
     const token0 = await this.contract.read.token0();
-    this.token0 = Token.getToken({ address: token0 });
+    this.token0 = Token.getToken({ chainId: wallet.currentChainId.toString(), address: token0 });
     return this.token0;
   }
 
   async getToken1() {
     const token1 = await this.contract.read.token1();
-    this.token1 = Token.getToken({ address: token1 });
+    this.token1 = Token.getToken({ chainId: wallet.currentChainId.toString(), address: token1 });
     return this.token1;
   }
 

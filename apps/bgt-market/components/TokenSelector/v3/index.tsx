@@ -69,6 +69,7 @@ export const TokenSelector = observer(
             return;
           }
           const token = Token.getToken({
+            chainId: wallet.currentChainId.toString(),
             address: state.search,
           });
           await token.init();

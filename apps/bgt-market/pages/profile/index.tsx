@@ -20,6 +20,7 @@ import { UserOrderListHeyBgt } from '@/components/BGT-Vault/OrdersList/UserOrder
 import { globalService } from '@/services/global';
 import { UserOrderListBgtMarket } from '@/components/BGT-Vault/OrdersList/UserOrderListBgtMarket';
 import { usePollingBlockNumber } from '@/lib/hooks/useBlockNumber';
+import { bgtRegistry } from '@/services/contract/bgt-registry';
 
 export const Profile = observer(() => {
   const [notify, setNotify] = useState(false);
@@ -27,10 +28,10 @@ export const Profile = observer(() => {
   const { block } = usePollingBlockNumber();
 
   useEffect(() => {
-    if (wallet.contracts.heyBgt) {
-      wallet.contracts.heyBgt.getBeraPrice();
+    if (bgtRegistry.heyBgt) {
+      bgtRegistry.heyBgt.getBeraPrice();
     }
-  }, [block, wallet.contracts.heyBgt]);
+  }, [block, bgtRegistry.heyBgt]);
 
   useEffect(() => {
     setNotify(

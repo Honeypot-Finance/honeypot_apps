@@ -11,6 +11,7 @@ import { ADDRESS_ZERO } from '@cryptoalgebra/sdk';
 import { truncate } from '@/lib/format';
 import { Tooltip } from '@nextui-org/react';
 import Image from 'next/image';
+import { bgtRegistry } from '@/services/contract/bgt-registry';
 
 export const UserBgtVaults = observer(() => {
   const { bgtVaults, loading } = useUserBgtVaults();
@@ -64,7 +65,7 @@ export const UserBgtVaults = observer(() => {
                         className="bg-[green] w-full m-0"
                         onPress={() =>
                           vault.setOperator(
-                            wallet.currentChain.contracts.bgtMarket as Address
+                            bgtRegistry.addresses.bgtMarket as Address
                           )
                         }
                       >

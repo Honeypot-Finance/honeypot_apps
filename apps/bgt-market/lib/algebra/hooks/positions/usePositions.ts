@@ -181,6 +181,8 @@ export function usePositionInFarming(tokenId: string | number | undefined) {
   const { position } = usePosition(tokenId);
 
   const { address: account } = useAccount();
+  // Matches how the farming hooks in lib/algebra/hooks/farming resolve this client.
+  const farmingClient = useSubgraphClient('algebra_farming');
 
   const { data: deposits } = useDepositsQuery({
     variables: {

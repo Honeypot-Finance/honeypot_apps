@@ -445,8 +445,8 @@ export class MemePairContract implements BaseLaunchContract {
       this.projectName = res.name;
     }
     // await this.getLaunchedTokenProvider(res.provider);
-    // await this.getLaunchedToken(Token.getToken({ address: res.launch_token }));
-    // await this.getRaisedToken(Token.getToken({ address: res.raising_token }));
+    // await this.getLaunchedToken(Token.getToken({ chainId: wallet.currentChainId.toString(), address: res.launch_token }));
+    // await this.getRaisedToken(Token.getToken({ chainId: wallet.currentChainId.toString(), address: res.raising_token }));
     if (res.logo_url) {
       this.logoUrl = res.logo_url;
       this.launchedToken?.setLogoURI(res.logo_url);
@@ -642,7 +642,7 @@ export class MemePairContract implements BaseLaunchContract {
       const res = (await this.contract.read.raisedToken()) as `0x${string}`;
       this.raiseToken = Token.getToken({
         address: res,
-        chainId: wallet.currentChainId,
+        chainId: wallet.currentChainId.toString(),
       });
     }
   }
@@ -655,7 +655,7 @@ export class MemePairContract implements BaseLaunchContract {
     } else {
       const res = (await this.contract.read.launchedToken()) as `0x${string}`;
       console.log('res', res);
-      this.launchedToken = Token.getToken({ address: res, force });
+      this.launchedToken = Token.getToken({ chainId: wallet.currentChainId.toString(), address: res, force });
       console.log('this.launchedToken', this.launchedToken);
     }
   }

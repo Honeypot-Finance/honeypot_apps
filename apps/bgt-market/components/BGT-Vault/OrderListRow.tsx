@@ -19,6 +19,7 @@ import { usePollingBlockNumber } from '@/lib/hooks/useBlockNumber';
 import { UserBgtVaults } from './UserBgtVaults';
 import { useUserBgtVaults } from '@/lib/hooks/useUserBgtVaults';
 import { BgtMarketOrder } from '@/services/bgt-market/bgtMarketOrder';
+import { bgtRegistry } from '@/services/contract/bgt-registry';
 
 export const UserOrderListRow = observer(
   ({
@@ -77,7 +78,7 @@ export const UserOrderListRow = observer(
                   disabled={!wallet.walletClient}
                   isDisabled={!wallet.walletClient}
                   onPress={() => {
-                    wallet.contracts.bgtMarket
+                    bgtRegistry.bgtMarket
                       .closeOrder(BigInt(order.orderId))
                       ?.then(() => {
                         order.status = OrderStatus.Closed;
@@ -146,7 +147,7 @@ export const BuyOrderListRow = observer(
                   disabled={!wallet.walletClient}
                   isDisabled={!wallet.walletClient}
                   onPress={() => {
-                    wallet.contracts.bgtMarket
+                    bgtRegistry.bgtMarket
                       .closeOrder(BigInt(order.orderId))
                       ?.then(() => {
                         order.status = OrderStatus.Closed;
@@ -219,7 +220,7 @@ export const SellOrderListRow = observer(
                   disabled={!wallet.walletClient || !wallet.isInit}
                   isDisabled={!wallet.walletClient || !wallet.isInit}
                   onPress={() => {
-                    wallet.contracts.bgtMarket
+                    bgtRegistry.bgtMarket
                       .closeOrder(BigInt(order.orderId))
                       ?.then(() => actionCallBack);
                   }}
@@ -234,7 +235,7 @@ export const SellOrderListRow = observer(
                   disabled={!wallet.walletClient}
                   isDisabled={!wallet.walletClient}
                   onPress={() => {
-                    wallet.contracts.bgtMarket
+                    bgtRegistry.bgtMarket
                       .fillSellOrder(
                         BigInt(order.orderId),
                         BigInt(
@@ -304,7 +305,7 @@ const FillBuyOrderModal = ({
 
   const handleClick = () => {
     if (!selectedVault) return;
-    wallet.contracts.bgtMarket
+    bgtRegistry.bgtMarket
       .fillBuyOrder(BigInt(order.orderId), selectedVault)
       ?.then(() => actionCallBack);
   };

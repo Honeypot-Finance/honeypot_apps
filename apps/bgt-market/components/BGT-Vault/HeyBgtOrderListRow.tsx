@@ -20,6 +20,7 @@ import { UserBgtVaults } from './UserBgtVaults';
 import { useUserBgtVaults } from '@/lib/hooks/useUserBgtVaults';
 import { BgtMarketOrder } from '@/services/bgt-market/bgtMarketOrder';
 import { HeyBgtOrder } from '@/services/bgt-market/heyBgtOrder';
+import { bgtRegistry } from '@/services/contract/bgt-registry';
 
 export const HeyBgtUserOrderListRow = observer(
   ({
@@ -79,7 +80,7 @@ export const HeyBgtUserOrderListRow = observer(
                   disabled={!wallet.walletClient || !wallet.isInit}
                   isDisabled={!wallet.walletClient || !wallet.isInit}
                   onPress={() => {
-                    wallet.contracts.heyBgt
+                    bgtRegistry.heyBgt
                       .closeOrder(BigInt(order.orderId), order.orderType)
                       ?.then(() => {
                         order.status = OrderStatus.Closed;
@@ -104,13 +105,13 @@ export const HeyBgtUserOrderListRow = observer(
                   isDisabled={!wallet.walletClient}
                   onPress={async () => {
                     const beraPrice =
-                      await wallet.contracts.heyBgt.getBeraPrice();
+                      await bgtRegistry.heyBgt.getBeraPrice();
                     const vaultBgt =
                       await order.rewardVault?.readAddressBgtInVault(
                         order.dealerId
                       );
                     const value = beraPrice * Number(vaultBgt) * 1.1;
-                    wallet.contracts.heyBgt
+                    bgtRegistry.heyBgt
                       .fillSellOrder(BigInt(order.orderId), BigInt(value))
                       ?.then(() => actionCallBack?.());
                   }}
@@ -176,7 +177,7 @@ export const HeyBgtBuyOrderListRow = observer(
                   disabled={!wallet.walletClient}
                   isDisabled={!wallet.walletClient}
                   onPress={() => {
-                    wallet.contracts.heyBgt
+                    bgtRegistry.heyBgt
                       .closeOrder(BigInt(order.orderId), 'BuyBGT')
                       ?.then(() => {
                         order.status = OrderStatus.Closed;
@@ -249,7 +250,7 @@ export const HeyBgtSellOrderListRow = observer(
                   disabled={!wallet.walletClient || !wallet.isInit}
                   isDisabled={!wallet.walletClient || !wallet.isInit}
                   onPress={() => {
-                    wallet.contracts.heyBgt
+                    bgtRegistry.heyBgt
                       .closeOrder(BigInt(order.orderId), 'SellBGT')
                       ?.then(() => actionCallBack);
                   }}
@@ -265,13 +266,13 @@ export const HeyBgtSellOrderListRow = observer(
                   isDisabled={!wallet.walletClient}
                   onPress={async () => {
                     const beraPrice =
-                      await wallet.contracts.heyBgt.getBeraPrice();
+                      await bgtRegistry.heyBgt.getBeraPrice();
                     const vaultBgt =
                       await order.rewardVault?.readAddressBgtInVault(
                         order.dealerId
                       );
                     const value = beraPrice * Number(vaultBgt) * 1.1;
-                    wallet.contracts.heyBgt
+                    bgtRegistry.heyBgt
                       .fillSellOrder(BigInt(order.orderId), BigInt(value))
                       ?.then(() => actionCallBack);
                   }}
@@ -337,7 +338,7 @@ const HeyBgtFillBuyOrderModal = ({
 
   const handleClick = () => {
     if (!selectedVault) return;
-    wallet.contracts.bgtMarket
+    bgtRegistry.bgtMarket
       .fillBuyOrder(BigInt(order.orderId), selectedVault)
       ?.then(() => actionCallBack);
   };

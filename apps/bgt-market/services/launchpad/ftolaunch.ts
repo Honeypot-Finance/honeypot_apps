@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { PageController } from '../lib/factory';
 import { createSiweMessage } from '@/lib/siwe';
-import { AsyncState } from '../utils';
+import { AsyncState } from '@honeypot/shared/lib/utils/utils';
 
 import { wallet } from '@honeypot/shared/lib/wallet';
 import { trpcClient } from '@/lib/trpc';
